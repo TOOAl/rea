@@ -1,0 +1,28 @@
+{
+  "name": "creator-loop-default",
+  "width": 1920,
+  "height": 1080,
+  "palette": ["#0B1220", "#123A6B", "#F2C14E", "#E4572E", "#F5F7FA"],
+  "accent": "#F2C14E",
+  "text": "#F5F7FA",
+  "caption_bar": "#0B1220",
+  "grain": 6,
+  "vignette": 0.35,
+  "margin": 110,
+  "watermark": "",
+  "fonts": {
+    "extrabold": "NanumGothicExtraBold",
+    "bold": "NanumGothicBold",
+    "regular": "NanumGothic"
+  },
+  "caption_style": {
+    "fontname": "NanumGothicExtraBold",
+    "accent_ass": "&H004EC1F2"
+  },
+  "thumbnail": {
+    "badge_color": "#E4572E",
+    "max_bytes": 2097152,
+    "variants": ["A", "B", "C"]
+  },
+  "notes": "브랜드킷은 영상의 시각적 일관성을 유지하면서도 '템플릿 반복'이 되지 않도록 variation profile(팔레트·구도·훅)이 씬 단위로 회전합니다. watermark를 비워두면 썸네일/엔딩에만 브랜드가 표시됩니다."
+}

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>creator-loop 스튜디오 — 진정성 우선 제작 루프</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>creator-loop <span>스튜디오</span></h1>
+    <p class="tag">① 사람이 주제 결정 → ② AI 고속 제작 → ③ 제목·썸네일 최적화 → ④ 데이터 리포트 → ① 로 되돌아감</p>
+  </div>
+  <div id="doctor" class="doctor">환경 점검 중…</div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="research" class="active">① 리서치</button>
+  <button data-tab="script">② 대본·게이트</button>
+  <button data-tab="produce">② 제작</button>
+  <button data-tab="package">③ 패키징</button>
+  <button data-tab="policy">정책 감사</button>
+  <button data-tab="analytics">④ 분석</button>
+  <button data-tab="log">이벤트 로그</button>
+</nav>
+
+<main>
+  <!-- ① research -->
+  <section id="tab-research" class="tab active">
+    <div class="grid two">
+      <div class="card">
+        <h2>니치 선택 (사람 결정)</h2>
+        <p class="hint">점수는 <code>personal_advantage</code>(당신만의 유리함)를 반영합니다. 이 값은 AI가 대신 채울 수 없습니다.</p>
+        <div id="niches"></div>
+      </div>
+      <div class="card">
+        <h2>주제 브리프 작성</h2>
+        <label>작업 제목
+          <input id="brief-title" placeholder="예: 개인사업자 첫 부가세 신고, 미리채움 그대로 쓰면 안 되는 이유" />
+        </label>
+        <div class="row">
+          <label>포맷
+            <select id="brief-format">
+              <option value="long_form">long_form</option>
+              <option value="shorts">shorts</option>
+              <option value="hybrid">hybrid</option>
+            </select>
+          </label>
+          <label>목표 런타임(초)<input id="brief-runtime" type="number" value="240" min="30" max="1200" /></label>
+          <label>유리함 1~5<input id="brief-advantage" type="number" value="4" min="1" max="5" /></label>
+        </div>
+        <label>키워드 (쉼표 구분)<input id="brief-keywords" placeholder="부가가치세 신고, 경비처리, 홈택스" /></label>
+        <label>출처/근거 자료 (선택, 줄바꿈)<textarea id="brief-sources" rows="2" placeholder="본인 정산서, 국세청 자료 URL 등"></textarea></label>
+        <h3>당신이 답해야 하는 질문</h3>
+        <div id="questions"></div>
+        <h3>고유 기여(value-add) 증거</h3>
+        <p class="hint">정책 리포트가 요구하는 '원작자 기여' 항목입니다. 최소 2건을 권장합니다.</p>
+        <div id="value-adds"></div>
+        <button id="add-value-add" class="ghost">+ 증거 추가</button>
+        <div class="row end">
+          <button id="create-brief" class="primary">① 브리프 생성 (결정 로그 기록)</button>
+        </div>
+        <div id="brief-result" class="result"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② script -->
+  <section id="tab-script" class="tab">
+    <div class="card">
+      <h2>AI 초안 + 사람 편집</h2>
+      <p class="hint">초안은 AI가 만들고, <b>훅·근거·결론은 당신이 다시 씁니다.</b> 편집 내용이 결정 로그에 남아 수익화 근거가 됩니다.</p>
+      <div class="row">
+        <label>프로젝트<select id="script-brief"></select></label>
+        <label>variation<select id="variation">
+          <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        </select></label>
+        <label>화면비<select id="aspect"><option>16:9</option><option>9:16</option><option>1:1</option></select></label>
+        <label>해상도<select id="resolution"><option>720p</option><option selected>1080p</option></select></label>
+        <label>런타임(초)<input id="runtime" type="number" value="240" /></label>
+        <label>TTS<select id="tts">
+          <option value="">자동 (무료 우선)</option>
+          <option value="espeak-ng">espeak-ng (오프라인)</option>
+          <option value="edge-tts">edge-tts (무료·온라인)</option>
+          <option value="human-recording">본인 녹음</option>
+          <option value="openai-tts">OpenAI TTS (키 필요)</option>
+          <option value="elevenlabs">ElevenLabs (키 필요)</option>
+          <option value="google-tts">Google TTS (키 필요)</option>
+          <option value="silent">무음</option>
+        </select></label>
+      </div>
+      <label>장문 텍스트 → 영상 (Pictory 경로, 선택)
+        <textarea id="article" rows="3" placeholder="본인이 쓴 글 전체를 붙여넣으면 그 글이 대본 소스가 됩니다 (고유 기여 100%)."></textarea>
+      </label>
+      <div class="row end">
+        <button id="draft-script" class="primary">초안 생성</button>
+      </div>
+      <div id="script-meta" class="result"></div>
+      <div id="gates" class="gates"></div>
+      <div id="scenes"></div>
+      <div class="row end">
+        <button id="save-edits" class="primary">사람 편집 저장 (게이트 통과)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② produce -->
+  <section id="tab-produce" class="tab">
+    <div class="grid two">
+      <div class="card">
+        <h2>고속 제작</h2>
+        <div class="row">
+          <label>예산(USD)<input id="budget" type="number" step="0.5" value="0" /></label>
+          <label class="check"><input id="allow-paid" type="checkbox" /> 유료 프로바이더 허용</label>
+          <label class="check"><input id="native-audio" type="checkbox" /> 네이티브 오디오 샷 요구</label>
+          <label>fps<input id="fps" type="number" value="30" /></label>
+        </div>
+        <label>본인 미디어 라이브러리 경로<input id="media-dir" placeholder="/path/to/my/clips" /></label>
+        <div class="row end">
+          <button id="produce" class="primary">② 영상 렌더 + ③ 패키징 + 정책 감사</button>
+          <button id="produce-force" class="ghost">게이트 무시하고 진행</button>
+        </div>
+        <div id="produce-status" class="result"></div>
+        <div id="produce-warnings"></div>
+      </div>
+      <div class="card">
+        <h2>미리보기</h2>
+        <video id="player" controls preload="metadata" poster=""></video>
+        <div id="frames" class="frames"></div>
+        <div id="highlights"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ package -->
+  <section id="tab-package" class="tab">
+    <div class="card">
+      <h2>제목 후보</h2>
+      <div id="titles"></div>
+      <h2>썸네일 A/B/C</h2>
+      <div id="thumbnails" class="thumbs"></div>
+      <h2>설명·챕터·공개 문구</h2>
+      <pre id="description" class="pre"></pre>
+      <div id="ab-plan" class="result"></div>
+      <h2>업로드 번들 (사람이 최종 실행)</h2>
+      <pre id="upload-bundle" class="pre"></pre>
+      <div class="row end">
+        <button id="approve" class="primary">최종 승인 기록</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- policy -->
+  <section id="tab-policy" class="tab">
+    <div class="card">
+      <h2>2025-07-15 비진정성(inauthentic content) 감사</h2>
+      <p class="hint">fail-closed: 차단(block) 소견이 하나라도 있으면 업로드 단계로 넘어가지 않습니다.</p>
+      <div class="row end"><button id="run-policy" class="primary">현재 프로젝트 감사</button></div>
+      <div id="policy-score" class="score"></div>
+      <div id="policy-findings"></div>
+    </div>
+  </section>
+
+  <!-- ④ analytics -->
+  <section id="tab-analytics" class="tab">
+    <div class="grid two">
+      <div class="card">
+        <h2>YouTube Studio 데이터 가져오기</h2>
+        <p class="hint">Studio → 콘텐츠 → CSV 내보내기 파일을 붙여넣거나 업로드하세요. 열 이름은 영어/한국어 모두 인식합니다.</p>
+        <textarea id="csv-text" rows="6" placeholder="Video title,Video ID,Published,Views,..."></textarea>
+        <div class="row end">
+          <button id="analyze-text" class="primary">붙여넣은 CSV 분석</button>
+          <label class="file">CSV 파일<input id="csv-file" type="file" accept=".csv,text/csv" /></label>
+          <button id="analyze-latest" class="ghost">저장된 데이터로 리포트</button>
+        </div>
+        <pre id="analytics-summary" class="pre"></pre>
+      </div>
+      <div class="card">
+        <h2>다음 주제 추천 (④ → ①)</h2>
+        <div id="recommendations"></div>
+        <h2>코호트</h2>
+        <div id="cohorts"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- log -->
+  <section id="tab-log" class="tab">
+    <div class="card">
+      <h2>이벤트 로그</h2>
+      <pre id="log" class="pre tall"></pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>이 스튜디오는 업로드를 대신하지 않습니다. <code>upload.json</code> 번들을 사람이 확인하고 직접 올리세요 — 정책·공개 문구·챕터가 함께 들어 있습니다.</p>
+</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

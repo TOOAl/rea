@@ -1,0 +1,35 @@
+{
+  "product": "kling",
+  "artifact_kind": "본인 계정 API 응답 + 공식 문서 대조 (샘플 manifest)",
+  "collected_at": "2026-10-16",
+  "collected_from": "본인 계정 요청 응답 관찰 (URL/토큰 미기록)",
+  "legal_basis": "상호운용 목적의 사실 관찰",
+  "observed_capabilities": [
+    {
+      "feature": "camera_control",
+      "observed_values": {"type": ["simple", "dynamic"], "axes": ["horizontal", "vertical", "pan", "tilt", "roll", "zoom"], "range": [-10, 10]},
+      "constraint": "type=simple 일 때 0이 아닌 축은 1개만 허용",
+      "evidence": "out/rea/evidence/kling-web.json#record-3",
+      "maps_to_creator_loop": "direction.kling_camera_control"
+    },
+    {
+      "feature": "negative_prompt",
+      "observed_values": {"max_length": 2000},
+      "constraint": "negative_prompt는 cfg_scale과 함께 사용 시 효과 체감이 큼",
+      "evidence": "out/rea/evidence/kling-web.json#record-7",
+      "maps_to_creator_loop": "direction.compile_for_kling"
+    },
+    {
+      "feature": "motion_amount",
+      "observed_values": {"cfg_scale_range": [0, 1]},
+      "constraint": "기본값 0.5",
+      "evidence": "out/rea/evidence/kling-web.json#record-9",
+      "maps_to_creator_loop": "direction.motion_profile"
+    }
+  ],
+  "observed_limits": [
+    {"name": "max_duration_s", "value": 10, "evidence": "공식 문서 + 요청 응답"},
+    {"name": "aspect_ratios", "value": ["16:9", "9:16", "1:1"], "evidence": "요청 응답"}
+  ],
+  "not_observed": ["모델 가중치", "서버측 프롬프트 확장 문구", "타사 계정 데이터"]
+}

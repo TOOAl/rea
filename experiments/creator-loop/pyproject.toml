@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "creator-loop"
+version = "0.1.0"
+description = "Authenticity-first YouTube creator loop: human topic strategy, AI production pipeline, packaging optimizer, analytics feedback."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+  "imageio-ffmpeg>=0.5.1",
+  "pillow>=10.3.0",
+  "numpy>=1.24",
+  "espeakng-loader>=0.2",
+  "koreanize-matplotlib>=0.1",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.2"]
+tts = ["edge-tts>=6.1"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+creatorloop = "creatorloop.cli:main"
+
+[tool.setuptools]
+packages = ["creatorloop", "creatorloop.providers"]
+
+[tool.setuptools.package-data]
+creatorloop = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

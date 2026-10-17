@@ -1,0 +1,21 @@
+# Generated runtime artifacts (never commit binaries or rendered media)
+out/
+out-*/
+runs/
+.pytest_cache/
+*.srt
+*.ass
+
+.venv/
+__pycache__/
+*.pyc
+*.wav
+*.mp3
+*.mp4
+*.png
+*.jpg
+!data/samples/*.png
+!creatorloop/static/*.png
+.env
+.env.*
+!.env.example
