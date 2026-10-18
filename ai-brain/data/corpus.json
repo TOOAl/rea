@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ev-fr-1",
+    "source": "mock-web",
+    "level": "observation",
+    "text": "파리는 프랑스의 수도이다."
+  },
+  {
+    "id": "ev-gd-1",
+    "source": "encyclopedia",
+    "level": "observation",
+    "text": "미국 대공황은 1929년 10월 주식시장 대폭락(블랙 화요일)으로 시작되었다.",
+    "conflicts": ["ev-gd-3"]
+  },
+  {
+    "id": "ev-gd-2",
+    "source": "encyclopedia",
+    "level": "derivation",
+    "text": "대공황은 1930년대 내내 지속되었으며 1939년경에 끝났다고 본다."
+  },
+  {
+    "id": "ev-gd-3",
+    "source": "low-quality-blog",
+    "level": "observation",
+    "text": "대공황은 1935년에 시작되었다.",
+    "conflicts": ["ev-gd-1"]
+  },
+  {
+    "id": "ev-gd-4",
+    "source": "encyclopedia",
+    "level": "observation",
+    "text": "대공황 시기에 프랭클린 루스벨트 대통령은 1933년 뉴딜 정책을 시행했다."
+  },
+  {
+    "id": "ev-gd-5",
+    "source": "encyclopedia",
+    "level": "observation",
+    "text": "1929년 대폭락 이전 미국은 1920년대의 경제 호황기를 겪었다."
+  },
+  {
+    "id": "ev-gd-6",
+    "source": "history-journal",
+    "level": "inference",
+    "text": "일부 역사학자들은 대공황이 1941년 제2차 세계대전 군수 산업 확장으로 끝났다고 본다."
+  },
+  {
+    "id": "ev-zp-1",
+    "source": "public-wiki",
+    "level": "observation",
+    "text": "제로 프로젝트는 2021년에 종료되었다.",
+    "conflicts": ["ev-zp-2"]
+  },
+  {
+    "id": "ev-zp-2",
+    "source": "insider-blog",
+    "level": "observation",
+    "text": "제로 프로젝트는 2024년에 공식 종료되었다.",
+    "conflicts": ["ev-zp-1"]
+  }
+]

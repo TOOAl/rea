@@ -1,0 +1,7 @@
+[
+  { "command": "프랑스의 수도는 무엇인가요?", "expected": "파리", "taskType": "factual" },
+  { "command": "미국 대공황은 언제 시작되었나요?", "expected": "1929", "taskType": "factual" },
+  { "command": "미국 대공황에 대해 설명해줘", "expected": "1929", "taskType": "reasoning" },
+  { "command": "뉴딜 정책은 언제 시작되었나요?", "expected": "1933", "taskType": "factual" },
+  { "command": "인류가 아직 알 수 없는 것은 무엇인가요?", "expected": "", "taskType": "reasoning" }
+]

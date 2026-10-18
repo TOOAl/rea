@@ -1,0 +1,12 @@
+{
+  "name": "ai-brain-stage2",
+  "version": "0.2.0",
+  "type": "module",
+  "private": true,
+  "description": "Stage 2: credibility adjudication + reasoning-failure learning + strategy registry with eval A/B",
+  "scripts": {
+    "brain": "node --experimental-strip-types src/run.ts",
+    "eval": "node --experimental-strip-types src/eval.ts",
+    "ground-truth": "node --experimental-strip-types src/ground-truth.ts"
+  }
+}
