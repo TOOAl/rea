@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arena Code 다운로드</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'Malgun Gothic', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 40px 20px; }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 2rem; text-align: center; margin-bottom: 8px; color: #38bdf8; }
+  .subtitle { text-align: center; color: #94a3b8; margin-bottom: 32px; font-size: 1.05rem; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+  .card h2 { font-size: 1.2rem; margin-bottom: 6px; }
+  .card p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 14px; line-height: 1.6; }
+  .meta { font-size: 0.85rem; color: #64748b; margin-bottom: 14px; }
+  .btn { display: inline-block; background: #38bdf8; color: #0f172a; font-weight: 700; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-size: 1.05rem; transition: all 0.15s; }
+  .btn:hover { background: #0ea5e9; transform: translateY(-1px); }
+  .btn-secondary { background: #334155; color: #e2e8f0; }
+  .btn-secondary:hover { background: #475569; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .badge { display: inline-block; background: #0ea5e9; color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+  .badge-green { background: #10b981; }
+  .badge-orange { background: #f59e0b; }
+  .divider { border: none; border-top: 1px solid #334155; margin: 28px 0; }
+  .file-list { background: #0f172a; border-radius: 10px; padding: 16px; font-size: 0.9rem; line-height: 1.8; font-family: 'Consolas', monospace; }
+  .file-list a { color: #38bdf8; text-decoration: none; }
+  .file-list a:hover { text-decoration: underline; }
+  .tip { background: #1e3a5f; border-left: 4px solid #38bdf8; padding: 14px 16px; border-radius: 0 10px 10px 0; font-size: 0.92rem; line-height: 1.6; margin-top: 16px; }
+  footer { text-align: center; color: #475569; font-size: 0.85rem; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 Arena Code 다운로드</h1>
+  <p class="subtitle">REA로 Claude Code+Codex+Muse를 분석하고 만든 궁극의 코딩 에이전트 — Ghidra 바이너리 분석 + 무료 API</p>
+
+  <!-- 메인 ZIP -->
+  <div class="card" style="border-color: #38bdf8; border-width: 2px;">
+    <h2>📦 전체 프로그램 <span class="badge">추천</span></h2>
+    <p>Claude Code + Codex + Muse + Ghidra 통합 — 37개 도구, 샌드박스, worktree, 이벤트 로그, 스킬, 6개 무료 AI</p>
+    <div class="meta">📄 arena-code-전체.zip · 5.4 MB · 70+ 파일 · v2 통합판</div>
+    <a class="btn" href="./arena-code-전체.zip" download>⬇️ 전체 ZIP 다운로드</a>
+    <a class="btn btn-secondary" href="./download-full.zip" download style="margin-left:8px;">대체 링크</a>
+  </div>
+
+  <!-- 가이드 ZIP -->
+  <div class="card">
+    <h2>📚 초보자 가이드만 <span class="badge badge-green">가벼움</span></h2>
+    <p>12살도 이해하는 쉬운 설명서 5종 + 무료 API + Ghidra 가이드만 가볍게 받고 싶을 때.</p>
+    <div class="meta">📄 초보자가이드-세트.zip · 34 KB · 7개 파일</div>
+    <a class="btn btn-secondary" href="./초보자가이드-세트.zip" download>⬇️ 가이드만 다운로드</a>
+    <a class="btn btn-secondary" href="./download-guides.zip" download style="margin-left:8px;">대체 링크</a>
+  </div>
+
+  <!-- 개별 파일 -->
+  <div class="card">
+    <h2>📂 개별 파일 <span class="badge badge-orange">골라받기</span></h2>
+    <p>필요한 파일만 하나씩 다운로드할 수 있습니다. 클릭하면 바로 다운로드됩니다.</p>
+    <div class="file-list">
+      <div>📄 <a href="./arena-code/초보자_가이드/0_다운로드_안내.md" download>0_다운로드_안내.md</a> — 다운로드 방법</div>
+      <div>📄 <a href="./arena-code/초보자_가이드/1_초간단_설치가이드.md" download>1_초간단_설치가이드.md</a> — 설치 8단계 (10분)</div>
+      <div>📄 <a href="./arena-code/초보자_가이드/2_기능설명서_12세용.md" download>2_기능설명서_12세용.md</a> — 기능 쉽게 설명</div>
+      <div>📄 <a href="./arena-code/초보자_가이드/3_사용방법_따라하기.md" download>3_사용방법_따라하기.md</a> — 실전 따라하기</div>
+      <div>📄 <a href="./arena-code/초보자_가이드/4_Ghidra_바이너리분석_가이드.md" download>4_Ghidra_바이너리분석_가이드.md</a> — Ghidra 바이너리 분석 ⭐ NEW</div>
+      <div>📄 <a href="./arena-code/다운로드_파일목록.txt" download>다운로드_파일목록.txt</a> — 전체 51개 파일 목록</div>
+      <div>📄 <a href="./arena-code/README.md" download>README.md</a> — 전체 소개</div>
+      <div>📄 <a href="./arena-code/docs/CLAUDE_CODE_REA_ANALYSIS.md" download>CLAUDE_CODE_REA_ANALYSIS.md</a> — REA 분석 보고서</div>
+      <div>📄 <a href="./arena-code/docs/ARCHITECTURE.md" download>ARCHITECTURE.md</a> — 기술 설계</div>
+      <div>📄 <a href="./arena-code/docs/FREE_API_GUIDE.md" download>FREE_API_GUIDE.md</a> — 무료 API 가이드</div>
+      <div>📄 <a href="./arena-code/docs/CLAUDE_CODE_REA_ANALYSIS.md" download>CLAUDE_CODE_REA_ANALYSIS.md</a> — Claude Code REA 분석</div>
+      <div>📄 <a href="./arena-code/docs/CODEX_MUSE_REA_ANALYSIS.md" download>CODEX_MUSE_REA_ANALYSIS.md</a> — Codex+Muse REA 분석 ⭐ NEW</div>
+      <div>📄 <a href="./arena-code/docs/GHIDRA_GUIDE.md" download>GHIDRA_GUIDE.md</a> — Ghidra 완전 가이드</div>
+      <div>🖼️ <a href="./arena-code/docs/architecture-diagram.png" download>architecture-diagram.png</a> — 아키텍처 그림 (5.2MB)</div>
+      <div>⚙️ <a href="./arena-code/.env.example" download>.env.example</a> — API 키 설정 예시</div>
+      <div>📦 <a href="./arena-code/package.json" download>package.json</a> — 설치 정보</div>
+    </div>
+    <div class="tip">
+      💡 <b>Git으로 받기</b> (개발자용):<br>
+      <code style="background:#0f172a;padding:4px 8px;border-radius:6px;word-break:break-all;">git clone -b arena/f39797b9-rea https://github.com/TOOAl/rea.git my-arena-code</code>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="card" style="background:#0f172a;">
+    <h2>✅ 다운로드 후 이렇게 하세요</h2>
+    <p>ZIP을 받았다면 압축 풀고 아래 순서로 읽어보세요:</p>
+    <div style="background:#1e293b;border-radius:10px;padding:16px;font-size:0.95rem;line-height:2;">
+      <div>1️⃣ <b>0_다운로드_안내.md</b> → 압축 풀기 확인</div>
+      <div>2️⃣ <b>1_초간단_설치가이드.md</b> → Node.js 설치부터 첫 실행 (10분)</div>
+      <div>3️⃣ <b>2_기능설명서_12세용.md</b> → 로봇이 뭘 하는지 이해</div>
+      <div>4️⃣ <b>3_사용방법_따라하기.md</b> → 버그찾기·고치기 직접 해보기</div>
+      <div>5️⃣ <b>4_Ghidra_바이너리분석_가이드.md</b> → Ghidra로 바이너리 분석 ⭐ NEW</div>
+    </div>
+    <div class="tip">
+      🆘 <b>문제가 생기면?</b> 각 가이드 맨 아래에 "자주 생기는 문제 해결" 표가 있습니다.<br>
+      GitHub 브랜치: <a href="https://github.com/TOOAl/rea/tree/arena/f39797b9-rea" style="color:#38bdf8;">arena/f39797b9-rea</a>
+    </div>
+  </div>
+
+  <footer>
+    Arena Code v1.0.0 · MIT License · REA 6.5.0 분석 기반<br>
+    Branch: arena/f39797b9-rea · Made with ❤️ in Arena
+  </footer>
+</div>
+</body>
+</html>

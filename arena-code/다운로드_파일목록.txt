@@ -1,0 +1,38 @@
+📦 Arena Code v2 다운로드 파일 목록 (Claude+Codex+Muse+Ghidra 통합)
+========================================================================
+
+[프로그램 — 코딩 (Claude Code)]
+  arena-code/src/cli.ts                    - CLI v2 (샌드박스/worktree/skills/eventLog)
+  arena-code/src/loop/queryLoop.ts         - Agentic Loop
+  arena-code/src/loop/context.ts           - AGENTS.md 계층 + Compaction
+  arena-code/src/loop/permissions.ts       - 권한 시스템
+  arena-code/src/providers/ (6개)          - Gemini/OpenRouter/Groq/Ollama/Arena/Anthropic
+  arena-code/src/tools/ (37개)             - 8 코딩 + 29 Ghidra
+    ├── read/write/edit/bash/glob/grep/todo/webfetch (8)
+    └── ghidra/ (29) — inspect/decompile/search/xrefs 등
+
+[통합 — Codex + Muse]
+  arena-code/src/sandbox/index.ts          - 3단계 샌드박스 (Codex) ⭐ NEW
+  arena-code/src/eventLog/index.ts         - Event Log JSONL (Muse) ⭐ NEW
+  arena-code/src/worktree/index.ts         - Git worktree 병렬 (Muse) ⭐ NEW
+  arena-code/src/skills/index.ts           - /plan,/grill,/goal,/loop,/ghidra (Muse) ⭐ NEW
+  arena-code/src/background/index.ts       - 4 Background Observers (Muse) ⭐ NEW
+  arena-code/src/config/agentsMd.ts        - AGENTS.md 계층 로더 (.git까지, Codex/Muse) ⭐ NEW
+
+[문서 — REA 분석]
+  arena-code/docs/CLAUDE_CODE_REA_ANALYSIS.md  - Claude Code 역분석 (REA)
+  arena-code/docs/CODEX_MUSE_REA_ANALYSIS.md   - Codex+Muse 역분석 (REA) ⭐ NEW
+  arena-code/docs/ARCHITECTURE.md         - 설계 문서
+  arena-code/docs/GHIDRA_GUIDE.md         - Ghidra 완전 가이드
+  arena-code/docs/FREE_API_GUIDE.md        - 무료 API 가이드
+  arena-code/docs/architecture-diagram.png - 아키텍처 그림
+
+[초보자 가이드 - 12살도 이해!]
+  arena-code/초보자_가이드/0_다운로드_안내.md
+  arena-code/초보자_가이드/1_초간단_설치가이드.md
+  arena-code/초보자_가이드/2_기능설명서_12세용.md
+  arena-code/초보자_가이드/3_사용방법_따라하기.md
+  arena-code/초보자_가이드/4_Ghidra_바이너리분석_가이드.md
+
+총 70+ 파일, 5.5MB (압축)
+Arena Code v2: 37 tools, 6 providers, 5 skills, 3 sandbox modes, event log, worktrees
