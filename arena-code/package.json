@@ -1,0 +1,31 @@
+{
+  "name": "arena-code",
+  "version": "1.0.0",
+  "description": "Claude Code 클론 — REA 분석 기반, Arena Agent + 무료 API 지원",
+  "type": "module",
+  "bin": {
+    "arena-code": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["agent", "coding", "claude-code", "arena", "rea"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "fast-glob": "^3.3.3",
+    "yoctocolors": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

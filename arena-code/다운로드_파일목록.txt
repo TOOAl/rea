@@ -1,38 +1,67 @@
-📦 Arena Code v2 다운로드 파일 목록 (Claude+Codex+Muse+Ghidra 통합)
-========================================================================
+📦 Arena Code 다운로드 파일 목록 (Ghidra 통합판)
+========================================
 
-[프로그램 — 코딩 (Claude Code)]
-  arena-code/src/cli.ts                    - CLI v2 (샌드박스/worktree/skills/eventLog)
-  arena-code/src/loop/queryLoop.ts         - Agentic Loop
-  arena-code/src/loop/context.ts           - AGENTS.md 계층 + Compaction
-  arena-code/src/loop/permissions.ts       - 권한 시스템
-  arena-code/src/providers/ (6개)          - Gemini/OpenRouter/Groq/Ollama/Arena/Anthropic
-  arena-code/src/tools/ (37개)             - 8 코딩 + 29 Ghidra
-    ├── read/write/edit/bash/glob/grep/todo/webfetch (8)
-    └── ghidra/ (29) — inspect/decompile/search/xrefs 등
+이 폴더에 포함된 모든 파일입니다:
 
-[통합 — Codex + Muse]
-  arena-code/src/sandbox/index.ts          - 3단계 샌드박스 (Codex) ⭐ NEW
-  arena-code/src/eventLog/index.ts         - Event Log JSONL (Muse) ⭐ NEW
-  arena-code/src/worktree/index.ts         - Git worktree 병렬 (Muse) ⭐ NEW
-  arena-code/src/skills/index.ts           - /plan,/grill,/goal,/loop,/ghidra (Muse) ⭐ NEW
-  arena-code/src/background/index.ts       - 4 Background Observers (Muse) ⭐ NEW
-  arena-code/src/config/agentsMd.ts        - AGENTS.md 계층 로더 (.git까지, Codex/Muse) ⭐ NEW
+[프로그램 — 코딩]
+  arena-code/src/cli.ts                    - 메인 프로그램 (CLI)
+  arena-code/src/loop/queryLoop.ts         - 로봇의 두뇌 회로 (Agentic Loop)
+  arena-code/src/loop/context.ts           - 기억 관리 (AGENT.md + 압축)
+  arena-code/src/loop/permissions.ts       - 규칙 관리 (권한 시스템)
+  arena-code/src/providers/                - 6가지 두뇌 (Gemini, OpenRouter 등)
+    ├── types.ts                           - 두뇌 공통 규격
+    ├── gemini.ts                          - Google Gemini (무료 추천!)
+    ├── openrouter.ts                      - OpenRouter 무료 모델
+    ├── groq.ts                            - Groq 초고속
+    ├── ollama.ts                          - 로컬 Ollama (오프라인)
+    ├── arena.ts                           - Arena Agent 연동
+    ├── anthropic.ts                       - Claude 유료
+    └── index.ts                           - 두뇌 선택기
+  arena-code/src/tools/                    - 37개 도구 (8 기본 + 29 Ghidra)
+    ├── read.ts                            - 파일 읽기
+    ├── write.ts                           - 파일 쓰기
+    ├── edit.ts                            - 파일 고치기
+    ├── bash.ts                            - 명령 실행
+    ├── glob.ts                            - 파일 찾기
+    ├── grep.ts                            - 내용 찾기
+    ├── todo.ts                            - 할일 목록
+    ├── webfetch.ts                        - 인터넷 가져오기
+    └── ghidra/                            - Ghidra 29개 도구 ⭐ NEW
+        ├── helpers.ts                     - REA Ghidra 래퍼
+        ├── inspect.ts                     - 바이너리 전체 분석 (2개)
+        ├── procedures.ts                  - 함수/심볼 목록 (4개)
+        ├── decompile.ts                   - 디컴파일 (3개)
+        ├── instructions.ts                - 어셈블리/바이트 (4개)
+        ├── search.ts                      - 검색 (5개)
+        ├── refs.ts                        - 참조/그래프 (6개)
+        ├── annotate.ts                    - 어노테이션/비교 (5개)
+        └── index.ts                       - 전체 export
+  arena-code/package.json                  - 설치 정보
+  arena-code/package-lock.json             - 정확한 버전 정보
+  arena-code/tsconfig.json                 - TypeScript 설정
+  arena-code/.env.example                  - API 키 설정 예시
+  arena-code/.gitignore                    - 무시할 파일 목록
+  arena-code/AGENT.md                      - 로봇 규칙 파일
 
-[문서 — REA 분석]
-  arena-code/docs/CLAUDE_CODE_REA_ANALYSIS.md  - Claude Code 역분석 (REA)
-  arena-code/docs/CODEX_MUSE_REA_ANALYSIS.md   - Codex+Muse 역분석 (REA) ⭐ NEW
-  arena-code/docs/ARCHITECTURE.md         - 설계 문서
-  arena-code/docs/GHIDRA_GUIDE.md         - Ghidra 완전 가이드
+[문서]
+  arena-code/README.md                     - 전체 소개 (Ghidra 포함)
+  arena-code/docs/CLAUDE_CODE_REA_ANALYSIS.md  - REA 분석 보고서 (전문가용)
+  arena-code/docs/ARCHITECTURE.md         - 기술 설계 문서 (개발자용)
   arena-code/docs/FREE_API_GUIDE.md        - 무료 API 가이드
+  arena-code/docs/GHIDRA_GUIDE.md         - Ghidra 완전 가이드 (어른용) ⭐ NEW
   arena-code/docs/architecture-diagram.png - 아키텍처 그림
 
-[초보자 가이드 - 12살도 이해!]
-  arena-code/초보자_가이드/0_다운로드_안내.md
-  arena-code/초보자_가이드/1_초간단_설치가이드.md
-  arena-code/초보자_가이드/2_기능설명서_12세용.md
-  arena-code/초보자_가이드/3_사용방법_따라하기.md
-  arena-code/초보자_가이드/4_Ghidra_바이너리분석_가이드.md
+[초보자 가이드 - 12살도 이해!] ⭐
+  arena-code/초보자_가이드/0_다운로드_안내.md       - 다운로드 방법
+  arena-code/초보자_가이드/1_초간단_설치가이드.md   - 설치 8단계
+  arena-code/초보자_가이드/2_기능설명서_12세용.md   - 기능 쉽게 설명
+  arena-code/초보자_가이드/3_사용방법_따라하기.md   - 실전 따라하기
+  arena-code/초보자_가이드/4_Ghidra_바이너리분석_가이드.md - Ghidra 쉽게 배우기 ⭐ NEW
 
-총 70+ 파일, 5.5MB (압축)
-Arena Code v2: 37 tools, 6 providers, 5 skills, 3 sandbox modes, event log, worktrees
+[예제]
+  arena-code/examples/demo.md              - 사용 예시 모음
+  arena-code/examples/test-project.sh      - 버그 연습 프로젝트 생성기
+
+총 64개 파일, 약 5.4MB (압축)
+빌드 후(dist) + 의존성(node_modules) 포함 시 약 45MB
+Ghidra 도구는 Ghidra 설치 후 사용 가능 (https://ghidra-sre.org/)
