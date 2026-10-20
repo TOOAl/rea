@@ -426,6 +426,12 @@ CLI: `arena-code --harness2 --k 2 --depth 2 --harness2-fleet [--fleet-use-worktr
 
 CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on, llm off). Evidence 요약에 `ragHits/selectionMode` 기록.
 
+### 10.6 Genius Skills (v2.8.0) + NL 트리거 (v2.9.0) + Guard 2축 (v2.9.1) + Library Context7/Serena (v2.10.0)
+- Genius 4종(Curie/Da Vinci/Euler/Turing) + NL 트리거 라우팅 + code-review 2축(Standards/Spec) + Context7 2-tool/Serena 3-tool로 v2.10 완성
+
+### 10.6.1 Memory Bank (v2.11.0)
+- `src/memory/bank.ts` — `.memory-bank/<domain>/<slug>.md` 영속 기억, cue/content/evidence, TF-IDF+cue bonus search, Harness Library와 분리된 세션 기억
+
 ### 10.6 향후
 
 - Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
