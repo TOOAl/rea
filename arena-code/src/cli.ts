@@ -66,6 +66,8 @@ program
   .option("--k <n>", "(alias) --harness2-k")
   .option("--mode <mode>", "(alias) --harness2-mode")
   .option("--evidence-root <path>", "(alias) --harness2-evidence-root")
+  .option("--harness2-depth <n>", "Harness2 recurrent depth 1~5 (GPT-6 Astra, 기본 1)")
+  .option("--harness2-no-guard", "Harness2 guard 비활성")
   .argument("[prompt]", "프롬프트 (대안)")
   .action(async (promptArg, opts) => {
     // MCP 모드는 초기에 분기 — config/session 없이 registry만으로 동작
@@ -188,24 +190,47 @@ program
         const { Harness2Engine } = await import("./harness2/engine.js");
         let baseHarness: Record<string, string> = {};
         try { baseHarness = readH2Tree(ARENA_SURFACE, cwd); } catch {}
-        console.log("\nHarness2 run: k=" + h2k + " mode=" + h2mode + " dryRun=" + h2dry + " domain=" + (h2domain ?? "(none)"));
-        console.log("   taskId=" + taskId + " evidenceRoot=" + (h2evidenceRoot ?? ".arena/harness2/evidence"));
-        const engine = new Harness2Engine(session.provider);
-        const result = await engine.run({
-          taskId, taskPrompt, baseHarness,
-          provider: session.provider, cwd,
-          k: h2k, mode: h2mode,
-          taskDomain: h2domain,
-          evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
-          dryRun: h2dry,
-        });
-        console.log("\nHarness2 done - ok=" + result.ok + " stages=" + result.stages.length + " finals=" + result.finals.join(",") + " errors=" + result.errors.length);
+        const rawDepth = (opts.harness2Depth as string) ?? "1";
+        const h2depth = Math.max(1, Math.min(5, parseInt(String(rawDepth), 10) || 1));
+        const h2guard = !(opts.harness2NoGuard === true);
+        console.log("\nHarness2 run: k=" + h2k + " mode=" + h2mode + " depth=" + h2depth + " guard=" + h2guard + " dryRun=" + h2dry + " domain=" + (h2domain ?? "(none)"));
+        console.log("   taskId=" + taskId + " evidenceRoot=" + (h2evidenceRoot ?? ".arena/harness2/evidence"))
+        let result: any;
+        if (h2depth > 1) {
+          const { RecurrentDepthRunner } = await import("./harness2/depth.js");
+          const runner = new RecurrentDepthRunner(session.provider);
+          result = await runner.run({
+            taskId, taskPrompt, baseHarness,
+            provider: session.provider, cwd,
+            k: h2k, mode: h2mode, depth: h2depth, guard: h2guard,
+            taskDomain: h2domain,
+            evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
+            dryRun: h2dry,
+          });
+          console.log("\nHarness2 Depth done - ok=" + result.ok + " depth=" + result.executedDepth + "/" + result.depth + " bestDepth=" + result.bestDepth + " guardIssues=" + result.guardReports.filter((g: any) => !g.ok).length);
+          for (const note of result.depthNotes) console.log("   * " + note);
+        } else {
+          const engine = new Harness2Engine(session.provider);
+          result = await engine.run({
+            taskId, taskPrompt, baseHarness,
+            provider: session.provider, cwd,
+            k: h2k, mode: h2mode,
+            taskDomain: h2domain,
+            evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
+            dryRun: h2dry,
+          });
+          console.log("\nHarness2 done - ok=" + result.ok + " stages=" + result.stages.length + " finals=" + result.finals.join(",") + " errors=" + result.errors.length);
+        }
         if (result.selection) console.log("   selection: " + result.selection.chosenLabel + " - " + result.selection.reason.slice(0,120));
+        if (result.guardReports) {
+          for (const g of result.guardReports) if (!g.ok) console.log("   guard d" + g.depth + " issues: " + g.issues.join(" | ").slice(0,200));
+        }
         for (const s of result.stages) {
           console.log("   - " + s.label + " [" + s.dim + "] keptBase=" + s.keptBase + " fellBack=" + s.fellBack + " notes=" + s.notes.slice(0,80));
         }
         if (result.errors.length) console.log("   errors: " + result.errors.slice(0,3).join(" | ").slice(0,500));
-        console.log("   finalHarness keys: " + (Object.keys(result.finalHarness).join(", ").slice(0,200) || "(empty)"));
+        console.log("   finalHarness keys: " + (Object.keys(result.finalHarness).join(", ").slice(0,200) || "(empty)"))
+        if (result.bestHarness) console.log("   bestHarness keys: " + (Object.keys(result.bestHarness).join(", ").slice(0,200) || "(empty)"));
       } catch (e) {
         console.error("\nHarness2 failed: " + (e instanceof Error ? e.message : String(e)));
         if (e instanceof Error && e.stack) console.error(e.stack.slice(0,2000));
