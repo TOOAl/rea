@@ -2,7 +2,7 @@
 
 > **Stably AI — Orca: The Agent Development Environment (ADE)**  
 > 저장소: `stablyai/orca` · 라이선스: MIT · 버전: 1.4.214 (2026-10-20 기준) · 커밋 15,284개 · 파일 38,133개  
-> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.6 (Hybrid HF 완료)  
+> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.7 (D1+D2 완료)  
 > 분석 소스: `/tmp/orca` (git clone --depth 1, 2026-10-20), 공식 문서 https://onorca.dev
 
 ---
@@ -16,7 +16,7 @@
 | **오케스트레이션** | **Run → Task → Dispatch → worker_done** — Run은 네임스페이스/우편함, Task는 DAG 노드, Dispatch는 한 번의 시도. `worker_done --outcome succeeded/failed`로만 완료 처리 [3](https://www.onorca.dev/docs/cli/orchestration) |
 | **우리와 관계** | 우리 `WorktreeManager`(1개 worktree), `BackgroundAgentManager`(4 observer)는 Orca의 fleet(무제한 worktree) + coordinator(감독자) 개념의 단순 버전 — 흡수하면 **Harness²(한 개체를 똑똑하게) + Orca(여러 개체를 함께)**가 결합됨 |
 | **흡수 전략** | Electron GUI 없이 **CLI-first 경량 fleet**으로 흡수: `src/fleet/` 모듈 추가 (Run/Task/Dispatch 상태 DB + `arena-code --fleet` 명령). 기존 Harness² 진행과 충돌 없음 — 서로 보완 |
-| **진행 상태 (v2.6)** | **Harness² H1~H5(e678e8f) + Fleet O1~O3(b59d929) + Hybrid HF(v2.6.0, fleetProbe) 완료** — Harness² probe를 Fleet dispatch로 병렬화, depth×fleet, GH, tsc0 build0 vitest70 — 다음은 Design Mode / Library RAG 후보 |
+| **진행 상태 (v2.7)** | **Harness² H1~H5(e678e8f)+Fleet O1~O3(b59d929)+Hybrid(5272bbe)+D1 browser 6 tools+D2 RAG TF-IDF/LLM selection(v2.7.0) 완료** — Design Mode(Playwright/fetch fallback)+RAG(topK filtering)+LLM judge, tsc0 build0 vitest70 — 다음은 dense embeddings/E2E hardening |
 
 ---
 
@@ -333,4 +333,4 @@ arena-code/src/fleet/
 | **증거** | `node dist/cli.js --harness2 --k 1 --dry-run --mock --harness2-fleet` → fleetRunId run_xxx fleetTasks=3, depth2 시 6 tasks — tsc0 build0 vitest70 |
 | **테스트** | `tests/harness2_fleet.test.ts` 7개 — engine no-fleet vs fleet, sequential, depth fleet, batch |
 
-> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea` v2.6(Hybrid HF 완료) 시점에 갱신되었다. 다음 질문/수정은 이 문서에 코멘트하거나 Hybrid 코드(`src/harness2/fleetProbe.ts`)로 이어가면 된다.
+> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea` v2.7(D1+D2 완료) 시점에 갱신되었다. 다음 질문/수정은 이 문서에 코멘트하거나 D1/D2 코드(`src/tools/browser.ts`, `src/harness2/library.ts` RAG)로 이어가면 된다.

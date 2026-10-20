@@ -68,6 +68,10 @@ export interface EngineOptions {
   probeFn?: ProbeFn;
   /** Fleet hybrid (Orca ADE) — probe를 Fleet Task/Dispatch로 실행 (Harness²×Fleet) */
   fleet?: FleetProbeOptions;
+  /** Library RAG — topK 관련 항목만 증거에 포함 (Harness² 원본 개선) */
+  libraryRag?: { enabled?: boolean; topK?: number; query?: string };
+  /** Selection LLM화 — 익명 투표를 LLM judge로 (selection.py 완전 포팅) */
+  selectionLlm?: { enabled?: boolean; temperature?: number };
 }
 
 /** Probe 함수: 하네스 하나로 queryLoop 실행 → RolloutView */
@@ -98,6 +102,8 @@ export interface EngineResult {
   selection?: { chosenLabel: string; reason: string };
   fleetRunId?: string;
   fleetTasks?: string[]; // TaskIds created via Fleet
+  ragHits?: Array<{ slug: string; score: number; cue: string }>;
+  selectionMode?: "heuristic" | "llm";
 }
 
 // ---------------------------------------------------------------------------
@@ -212,6 +218,7 @@ export class Harness2Engine {
     let fleetRunId: string | undefined = opts.fleet?.runId;
     let fleetCoordinator: unknown = opts.fleet?.coordinator;
     let fleetTaskIds: string[] = [];
+    let globalRagHits: Array<{ slug: string; score: number; cue: string }> | undefined;
     let probeFn: ProbeFn;
     if (opts.fleet?.enabled) {
       const { createFleetProbeFn } = await import("./fleetProbe.js");
@@ -258,12 +265,32 @@ export class Harness2Engine {
         const evidenceDir = join(evidenceRoot, `${taskId}-${stepLabel}`);
 
         // 1) Evidence Tree 구축
+        // Library RAG — topK 필터링 (Phase D2)
+        let effectiveLibraryDir: string | null = opts.libraryDir ?? null;
+        let ragHitsForStep: Array<{ slug: string; score: number; cue: string }> | undefined;
+        if (opts.libraryRag?.enabled && opts.taskDomain && opts.libraryDir) {
+          try {
+            const { HarnessLibrary } = await import("./library.js");
+            const lib = new HarnessLibrary({ root: join(evidenceRoot, "..", "library"), domain: opts.taskDomain });
+            // if buildRagSnapshot exists, use it
+            const q = opts.libraryRag.query ?? `${taskPrompt} ${opts.taskDomain}`;
+            const topK = opts.libraryRag.topK ?? 3;
+            // prefer in-memory search then filtered snapshot
+            if (typeof (lib as unknown as Record<string, unknown>).search === "function") {
+              const hits = (lib as unknown as { search: (q:string,k:number)=>Array<Record<string,unknown>> }).search(q, topK);
+              ragHitsForStep = hits.map(h => ({ slug: String(h.slug), score: Number(h.score), cue: String(h.cue ?? "") }));
+              globalRagHits = ragHitsForStep;
+              const snap = (lib as unknown as { buildRagSnapshot?: (q:string,k:number)=>string|null }).buildRagSnapshot?.(q, topK);
+              if (snap) effectiveLibraryDir = snap;
+            }
+          } catch {}
+        }
         const evidence = buildEvidenceTree(evidenceDir, {
           taskId: `${taskId}#${stepLabel}`,
           taskPrompt,
           rollouts: Object.values(rollouts),
           harness: currentHarness,
-          libraryDir: opts.libraryDir ?? null,
+          libraryDir: effectiveLibraryDir,
         });
         const mission = buildMission(evidence, { job: `Improve harness for: ${taskPrompt.slice(0, 80)}` });
         // MISSION.md 저장 (디버깅용)
@@ -462,7 +489,19 @@ export class Harness2Engine {
         deliverable: rollouts[label]?.deliverable ?? trees[label] ? JSON.stringify(trees[label]).slice(0, 1000) : undefined,
         rollout: rollouts[label] ?? null,
       }));
-      const selection = selectAnonymous({ candidates: selectionPool, baseLabel: "base" });
+      let selection: { chosenLabel: string; reason: string; isBase: boolean };
+      let selectionMode: "heuristic" | "llm" = "heuristic";
+      if (opts.selectionLlm?.enabled && !opts.dryRun) {
+        try {
+          const { selectAnonymousWithLLM } = await import("./composer.js");
+          selection = await selectAnonymousWithLLM({ candidates: selectionPool, baseLabel: "base", taskPrompt }, this.provider as unknown as never, { temperature: opts.selectionLlm.temperature });
+          selectionMode = "llm";
+        } catch {
+          selection = selectAnonymous({ candidates: selectionPool, baseLabel: "base" });
+        }
+      } else {
+        selection = selectAnonymous({ candidates: selectionPool, baseLabel: "base" });
+      }
 
       return {
         taskId,
@@ -478,6 +517,8 @@ export class Harness2Engine {
         selection,
         fleetRunId,
         fleetTasks: fleetTaskIds,
+        ragHits: globalRagHits,
+        selectionMode,
       };
     } else {
       // Sequential (mode === "sequential") — 원본: carry refined harness through K steps
@@ -486,12 +527,27 @@ export class Harness2Engine {
       const decisions: Record<string, string> = {};
       for (let step = 1; step <= k; step++) {
         const evidenceDir = join(evidenceRoot, `${taskId}-seq-${step}`);
+        let effectiveLibraryDir2: string | null = opts.libraryDir ?? null;
+        if (opts.libraryRag?.enabled && opts.taskDomain && opts.libraryDir) {
+          try {
+            const { HarnessLibrary: HarnessLibrary2 } = await import("./library.js");
+            const lib2 = new HarnessLibrary2({ root: join(evidenceRoot, "..", "library"), domain: opts.taskDomain });
+            const q2 = opts.libraryRag.query ?? `${taskPrompt} ${opts.taskDomain}`;
+            const topK2 = opts.libraryRag.topK ?? 3;
+            if (typeof (lib2 as unknown as Record<string, unknown>).search === "function") {
+              const hits2 = (lib2 as unknown as { search: (q:string,k:number)=>Array<Record<string,unknown>> }).search(q2, topK2);
+              try { globalRagHits = hits2.map(h => ({ slug: String(h.slug), score: Number(h.score), cue: String(h.cue ?? "") })); } catch {}
+              const snap2 = (lib2 as unknown as { buildRagSnapshot?: (q:string,k:number)=>string|null }).buildRagSnapshot?.(q2, topK2);
+              if (snap2) effectiveLibraryDir2 = snap2;
+            }
+          } catch {}
+        }
         const evidence = buildEvidenceTree(evidenceDir, {
           taskId: `${taskId}#seq-${step}`,
           taskPrompt,
           rollouts: Object.values(rollouts),
           harness: currentHarness,
-          libraryDir: opts.libraryDir ?? null,
+          libraryDir: effectiveLibraryDir2,
           decisions: Object.keys(decisions).length > 0 ? decisions : undefined,
         });
         const mission = buildMission(evidence, { job: `Sequential refine step ${step}/${k} for: ${taskPrompt.slice(0, 60)}` });
@@ -627,6 +683,20 @@ export class Harness2Engine {
       }
 
       const finals = [`compose-${k}`];
+      const finalsPool = finals.map((label) => ({
+        label,
+        deliverable: rollouts[label]?.deliverable ?? trees[label] ? JSON.stringify(trees[label]).slice(0, 1000) : undefined,
+        rollout: rollouts[label] ?? null,
+      }));
+      let finalSelection: { chosenLabel: string; reason: string; isBase: boolean } | undefined;
+      let seqSelectionMode: "heuristic" | "llm" = "heuristic";
+      if (opts.selectionLlm?.enabled && !opts.dryRun) {
+        try {
+          const { selectAnonymousWithLLM: selectLLM2 } = await import("./composer.js");
+          finalSelection = await selectLLM2({ candidates: finalsPool, baseLabel: "base", taskPrompt }, this.provider as unknown as never);
+          seqSelectionMode = "llm";
+        } catch { finalSelection = undefined; }
+      }
       return {
         taskId,
         k,
@@ -638,8 +708,11 @@ export class Harness2Engine {
         finalHarness: trees[finals[0]] ?? currentHarness,
         ok: true,
         errors,
+        selection: finalSelection,
         fleetRunId,
         fleetTasks: fleetTaskIds,
+        ragHits: globalRagHits,
+        selectionMode: seqSelectionMode,
       };
     }
   }

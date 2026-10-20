@@ -83,6 +83,29 @@ function field(path: string, key: string): string {
 // Library — 도메인별 도서관
 // ---------------------------------------------------------------------------
 
+const STOP = new Set(["the","a","an","and","or","but","in","on","at","to","for","of","with","is","are","was","were","be","been","this","that","it","as","by","from","are","has","have","had","will","would","can","should","could","may","will","you","your","our","we","us","they","them","their","its","if","then","else","when","what","which","how","why","not","no","yes","do","does","did","done","about","into","over","under","after","before","up","down","out","so","such","than","too","very"]);
+
+function tokenize(text: string): string[] {
+  return text.toLowerCase().split(/[^a-z0-9]+/g).filter(w => w.length >= 2 && w.length <= 24 && !STOP.has(w));
+}
+function tf(tokens: string[]): Map<string, number> {
+  const m = new Map<string, number>();
+  for (const tt of tokens) m.set(tt, (m.get(tt) ?? 0) + 1);
+  const len = tokens.length || 1;
+  for (const [k, v] of m) m.set(k, v / len);
+  return m;
+}
+function cosine(a: Map<string, number>, b: Map<string, number>): number {
+  let dot = 0, na = 0, nb = 0;
+  for (const [k, va] of a) { dot += va * (b.get(k) ?? 0); na += va * va; }
+  for (const [, vb] of b) nb += vb * vb;
+  const denom = Math.sqrt(na) * Math.sqrt(nb) || 1;
+  return dot / denom;
+}
+export interface RagHit {
+  slug: string; taskId: string; score: number; cue: string; lesson: string; evidence: string; why: string; harnessKeys: string; path: string;
+}
+
 export class HarnessLibrary {
   readonly root: string;     // 예: .arena/harness2/library
   readonly domain: string;
@@ -213,6 +236,93 @@ export class HarnessLibrary {
     }
   }
 
+  private docText(slugName: string): { cue: string; lesson: string; evidence: string; why: string; harnessKeys: string } {
+    const ed = join(this.dir, "harnesses", slugName);
+    const expPath = join(ed, "EXPERIENCE.md");
+    const cue = field(expPath, "cue");
+    const lesson = field(expPath, "lesson");
+    const evidence = field(expPath, "evidence");
+    let why = "";
+    try {
+      const full = readFileSync(expPath, "utf-8");
+      const m = /## Why this was chosen\n([\s\S]*?)(\n## |\n?$)/.exec(full);
+      if (m) why = m[1].trim().slice(0, 500);
+    } catch {}
+    let harnessKeys = "";
+    try {
+      const tree = readTree(ARENA_SURFACE, join(ed, "harness"));
+      harnessKeys = Object.keys(tree).join(", ");
+    } catch {}
+    return { cue, lesson, evidence, why, harnessKeys };
+  }
+  search(query: string, topK: number = 5): RagHit[] {
+    const slugs = this.entries();
+    if (slugs.length === 0 || !query.trim()) return [];
+    const qTokens = tokenize(query);
+    if (qTokens.length === 0) return [];
+    const qTf = tf(qTokens);
+    const docs: Array<{ slug: string; tokens: string[]; tf: Map<string, number>; doc: ReturnType<HarnessLibrary["docText"]> }> = [];
+    const df = new Map<string, number>();
+    for (const slugName of slugs) {
+      const doc = this.docText(slugName);
+      const text = [doc.cue, doc.lesson, doc.evidence, doc.why, doc.harnessKeys].filter(Boolean).join(" ");
+      const tokens = tokenize(text);
+      docs.push({ slug: slugName, tokens, tf: tf(tokens), doc });
+      const uniq = new Set(tokens);
+      for (const tk of uniq) df.set(tk, (df.get(tk) ?? 0) + 1);
+    }
+    const N = docs.length || 1;
+    const idf = new Map<string, number>();
+    for (const [tk, cnt] of df) idf.set(tk, Math.log((N + 1) / (cnt + 1)) + 1);
+    const weigh = (m: Map<string, number>): Map<string, number> => {
+      const out = new Map<string, number>();
+      for (const [tk, w] of m) out.set(tk, w * (idf.get(tk) ?? 1));
+      return out;
+    };
+    const qVec = weigh(qTf);
+    const scored: RagHit[] = [];
+    for (const d of docs) {
+      const dVec = weigh(d.tf);
+      let score = cosine(qVec, dVec);
+      const cueTokens = new Set(tokenize(d.doc.cue));
+      let cueBonus = 0;
+      for (const qt of qTokens) if (cueTokens.has(qt)) cueBonus += 0.08;
+      scored.push({ slug: d.slug, taskId: d.slug.replace(/__/g, "/"), score: score + cueBonus, cue: d.doc.cue, lesson: d.doc.lesson, evidence: d.doc.evidence, why: d.doc.why, harnessKeys: d.doc.harnessKeys, path: join(this.dir, "harnesses", d.slug) });
+    }
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, Math.max(1, Math.min(topK, scored.length)));
+  }
+  buildRagSnapshot(query: string, topK: number = 5): string | null {
+    const hits = this.search(query, topK);
+    if (hits.length === 0) return null;
+    const { mkdtempSync } = require("node:fs") as typeof import("node:fs");
+    const { tmpdir } = require("node:os") as typeof import("node:os");
+    const tmp = mkdtempSync(join(tmpdir(), "arena-rag-"));
+    const dstDomain = join(tmp, this.domainSlug);
+    mkdirSync(join(dstDomain, "harnesses"), { recursive: true });
+    for (const h of hits) {
+      const src = join(this.dir, "harnesses", h.slug);
+      const dst = join(dstDomain, "harnesses", h.slug);
+      try {
+        const { copyFileSync: _cp, readdirSync: _rd, statSync: _st, mkdirSync: _mk } = require("node:fs") as typeof import("node:fs");
+        const stack: Array<[string, string]> = [[src, dst]];
+        while (stack.length) {
+          const [s, d] = stack.pop()!;
+          _mk(d, { recursive: true });
+          for (const e of _rd(s)) {
+            const se = join(s, e); const de = join(d, e);
+            const st = _st(se);
+            if (st.isDirectory()) stack.push([se, de]);
+            else if (st.isFile()) _cp(se, de);
+          }
+        }
+      } catch {}
+    }
+    const rows: string[] = [`# Library — ${this.domain} (RAG filtered: top ${hits.length} for "${query.slice(0,60)}")`, ""];
+    for (const h of hits) rows.push(`## \`harnesses/${h.slug}/\``, `- score: ${h.score.toFixed(3)}`, `- cue: ${h.cue || "(none)"}`, `- harness: ${h.harnessKeys}`, "");
+    writeFileSync(join(dstDomain, "INDEX.md"), rows.join("\n"), "utf-8");
+    return tmp;
+  }
   /** INDEX.md 재생성 */
   rebuildIndex(): string {
     const rows: string[] = [

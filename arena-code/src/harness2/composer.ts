@@ -269,23 +269,87 @@ export function selectAnonymous(input: SelectionInput): SelectionResult {
   if (pool.length === 0) {
     return { chosenLabel: input.baseLabel ?? "base", reason: "no candidates — keep base", isBase: true };
   }
-
-  // deliverable 길이로 랭킹 (실제로는 LLM이 품질 판단)
   let best = pool[0];
   let bestScore = (best.deliverable?.length ?? 0) + (best.rollout?.trajectory.length ?? 0) * 0.1;
-
   for (const c of pool.slice(1)) {
     const score = (c.deliverable?.length ?? 0) + (c.rollout?.trajectory.length ?? 0) * 0.1;
-    if (score > bestScore) {
-      best = c;
-      bestScore = score;
-    }
+    if (score > bestScore) { best = c; bestScore = score; }
   }
-
   const isBase = best.label === input.baseLabel;
-  return {
-    chosenLabel: best.label,
-    reason: `picked ${best.label} — longest deliverable (${best.deliverable?.length ?? 0} chars) as quality proxy (MVP heuristic)`,
-    isBase,
-  };
+  return { chosenLabel: best.label, reason: `picked ${best.label} — longest deliverable (${best.deliverable?.length ?? 0} chars) as quality proxy (MVP heuristic)`, isBase };
 }
+
+// ---------------------------------------------------------------------------
+// LLM-based Selection — Selection LLM화 (Phase D2)
+// ---------------------------------------------------------------------------
+
+export interface LlmSelectionInput extends SelectionInput {
+  taskPrompt?: string;
+  providerName?: string;
+}
+
+export interface LlmSelectionOptions {
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/**
+ * LLM-based 익명 투표 — 원본 harness2/core/selection.py 대응
+ * 각 candidate의 deliverable/trajectory를 익명 A/B/C로 제시하고 LLM이 판단.
+ * 실패 시 heuristic으로 fallback (안전).
+ */
+export async function selectAnonymousWithLLM(
+  input: LlmSelectionInput,
+  provider: { name: string; model: string; streamChat: (req: unknown) => AsyncGenerator<unknown> },
+  opts: LlmSelectionOptions = {},
+): Promise<SelectionResult> {
+  const pool = input.candidates;
+  if (pool.length === 0) return { chosenLabel: input.baseLabel ?? "base", reason: "no candidates — keep base", isBase: true };
+  if (pool.length === 1) return { chosenLabel: pool[0].label, reason: `only one candidate: ${pool[0].label}`, isBase: pool[0].label === input.baseLabel };
+
+  const labeled = pool.map((c, i) => ({ anon: String.fromCharCode(65 + i), label: c.label, c }));
+  const taskCtx = input.taskPrompt ? `Task: ${input.taskPrompt.slice(0,400)}\n` : "";
+  const sections = labeled.map(({ anon, c }) => {
+    const deliv = (c.deliverable ?? "").slice(0, 2000) || "(no deliverable)";
+    const traj = (c.rollout?.trajectory ?? "").slice(0, 800) || "(no trajectory)";
+    const ok = c.rollout?.ok ? "ok" : "fail";
+    return `## Candidate ${anon} [${ok}]\nDeliverable (${deliv.length} chars):\n${deliv}\n\nTrajectory excerpt:\n${traj}`;
+  }).join("\n\n---\n\n");
+
+  const prompt = `${taskCtx}You are an expert judge for coding agent harnesses. Compare the anonymous candidates below on correctness, completeness, and evidence grounding. Pick the single best deliverable.\n\n${sections}\n\nInstructions:\n- Be concise. Consider whether trajectory shows real tool use vs hallucination.\n- Prefer deliverables that are complete, correct, and show concrete evidence.\n- Reply in JSON only: {"choice":"A|B|C...", "reason":"one sentence"}. If unsure, pick the longest complete deliverable.`;
+
+  try {
+    const req: Record<string, unknown> = {
+      system: "You are a strict harness selection judge. Reply JSON only.",
+      messages: [{ role: "user", content: prompt }],
+      tools: [],
+      model: provider.model,
+      maxTokens: opts.maxTokens ?? 512,
+      temperature: opts.temperature ?? 0.2,
+    };
+    let text = "";
+    for await (const ev of provider.streamChat(req as never)) {
+      const e = ev as Record<string, unknown>;
+      if (e.type === "text_delta" && typeof e.text === "string") text += e.text;
+      else if (e.type === "text" && typeof (e as Record<string, unknown>).text === "string") text += (e as Record<string, unknown>).text as string;
+    }
+    const m = /\{[\s\S]*"choice"\s*:\s*"([A-Z])"[\s\S]*\}/.exec(text) ?? /"choice"\s*:\s*"([A-Z])"/.exec(text) ?? /\b([A-Z])\b/.exec(text);
+    const choiceLetter = m ? m[1].toUpperCase() : null;
+    const chosen = labeled.find(l => l.anon === choiceLetter);
+    if (chosen) {
+      const reasonMatch = /"reason"\s*:\s*"([^"]+)"/.exec(text);
+      const reason = reasonMatch ? reasonMatch[1].slice(0,200) : `LLM judge picked ${chosen.anon} (${chosen.label})`;
+      return { chosenLabel: chosen.label, reason: `[LLM ${provider.name}] ${reason}`, isBase: chosen.label === input.baseLabel };
+    }
+    // fallback: parse freeform mention of A/B
+    for (const l of labeled) if (text.includes(l.anon) && text.length < 1000) {
+      return { chosenLabel: l.label, reason: `[LLM ${provider.name} fallback] text mentions ${l.anon}: ${text.slice(0,120)}`, isBase: l.label === input.baseLabel };
+    }
+  } catch (e) {
+    // fall through to heuristic
+  }
+  // heuristic fallback
+  const fallback = selectAnonymous(input);
+  return { ...fallback, reason: fallback.reason + " (LLM fallback)" };
+}
+

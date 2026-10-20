@@ -340,11 +340,11 @@ CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
 - [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
 - [x] Session persistence (JSONL) — EventLog + .arena/events.log
 - [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
-- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
+- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0) + D1 Design Mode/D2 RAG (v2.7.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
 
 ---
 
-## 10. Fleet — Orca ADE Orchestration (v2.5, O1~O3 완료) + Harness²×Fleet Hybrid (v2.6)
+## 10. Fleet — Orca ADE Orchestration (v2.5, O1~O3 완료) + Hybrid & Design+RAG (v2.6~2.7)
 
 Orca `fleet`(stablyai/orca, MIT) CLI 계약을 `arena-code`에 경량 포팅 — Electron/30+에이전트 제외, 핵심 오케스트레이션만 흡수. 상세 REA `docs/ORCA_ADE_REA_ANALYSIS.md`.
 
@@ -416,7 +416,17 @@ CLI: `arena-code --harness2 --k 2 --depth 2 --harness2-fleet [--fleet-use-worktr
  증거: `.arena/fleet.json` (Fleet Run+Tasks+Messages) + `.arena/harness2/evidence/<task>-depth-summary.json` (fleetRunId+fleetTaskIds+guardReports)
  테스트: `tests/harness2_fleet.test.ts` 7개 — engine standalone vs fleet, sequential, depth fleet, batch helper — vitest 70.
 
-### 10.5 향후
+### 10.5 Design Mode & Library RAG (v2.7, D1+D2)
+
+**Design Mode** `src/tools/browser.ts` (6 tools, ~350줄) — Orca `design_mode` + REA `browser-observation` passive CDP 모델을 Active Playwright 드라이버로 포팅. `browser_navigate`→`snapshot`→`act`→`screenshot`→`evaluate`→`close` 파이프라인. Playwright 없으면 fetch+DOM fallback으로 graceful degrade. 설치: `npm i -D playwright && npx playwright install chromium`. ToolRegistry에 자동 등록.
+
+**Library RAG** `src/harness2/library.ts` TF-IDF lexical search — `STOP` 필터 + `tokenize/tf/cosine/idf` + cue bonus(0.08). `search(query, topK)` + `buildRagSnapshot(query, topK)` → 증거 트리 `library/`를 topK 필터링된 임시 스냅샷으로 교체 (evidence 예산 절약, 관련성 ↑).
+
+**Selection LLM** `src/harness2/composer.ts` `selectAnonymousWithLLM(input, provider)` — 원본 `selection.py` 완전 포팅. 후보 deliverable/trajectory를 익명 A/B/C로 프롬프트, LLM judge가 JSON `{"choice":"A","reason":"..."}`로 투표. 실패 시 heuristic fallback. Engine/DepthRunner에서 `selectionLlm.enabled && !dryRun` 시 사용.
+
+CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on, llm off). Evidence 요약에 `ragHits/selectionMode` 기록.
+
+### 10.6 향후
 
 - Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
 - Library RAG/Selection LLM화 — `src/harness2/composer.ts` selectAnonymous를 LLM judge로, Library를 dense retrieval로

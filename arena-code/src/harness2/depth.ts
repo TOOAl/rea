@@ -53,6 +53,8 @@ export interface DepthResult extends EngineResult {
   depthNotes: string[];                  // 각 depth 요약
   fleetRunId?: string;
   fleetTaskIds?: string[];
+  ragHits?: Array<{ slug: string; score: number; cue: string }>;
+  selectionMode?: "heuristic" | "llm";
 }
 
 // ---------------------------------------------------------------------------
@@ -125,6 +127,8 @@ export class RecurrentDepthRunner {
         mode: modeForDepth,
         evidenceRoot,
         fleet: fleetForDepth,
+        libraryRag: (opts as unknown as { libraryRag?: unknown }).libraryRag as never,
+        selectionLlm: (opts as unknown as { selectionLlm?: unknown }).selectionLlm as never,
       });
       if ((engineRes as unknown as { fleetTasks?: string[] }).fleetTasks) {
         for (const id of (((engineRes as unknown as { fleetTasks?: string[] }).fleetTasks) ?? [])) if (!allFleetTaskIds.includes(id)) allFleetTaskIds.push(id);
@@ -237,6 +241,8 @@ export class RecurrentDepthRunner {
       depthNotes,
       fleetRunId,
       fleetTaskIds: allFleetTaskIds,
+      ragHits: (depthHistory[0] as unknown as { ragHits?: unknown })?.ragHits as never,
+      selectionMode: (depthHistory[0] as unknown as { selectionMode?: unknown })?.selectionMode as never,
     };
   }
 }
