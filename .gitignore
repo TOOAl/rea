@@ -24,6 +24,9 @@ env/
 
 # Local agent tooling
 .codex/
+!arena-code/.codex/
+!arena-code/.codex/skills/
+!arena-code/.codex/skills/**
 .devin/
 .factory/
 codedb.snapshot

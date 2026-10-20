@@ -1,6 +1,6 @@
 {
   "name": "arena-code",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "Claude Code 클론 — REA 분석 기반, Arena Agent + 무료 API 지원 (Hook/MCP/외부 패키지/에이전트 허브 + Harness² Self-Improving Brain H1~H5 + Fleet + Hybrid + Design Mode + RAG)",
   "type": "module",
   "bin": {
