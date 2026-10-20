@@ -32,6 +32,123 @@ const HALLUCINATION_PATTERNS: Array<{ re: RegExp; msg: string; severity: "issue"
 
 const ALWAYS_ON_BUDGET_RATIO = 0.8; // always-on이 예산의 80% 넘으면 경고
 
+// Fowler 냄새 — Standards 축에서 추가 검사 (Matt Pocock 2축 리뷰 기반)
+const FOWLER_PATTERNS: Array<{ re: RegExp; msg: string; severity: "issue" | "warning" }> = [
+  { re: /\bany\b/, msg: "Fowler smell: any 타입 남용 — 구체 타입 필요", severity: "warning" },
+  { re: /:\s*any\s*[,)>\]]/, msg: "Fowler smell: : any 시그니처", severity: "warning" },
+];
+
+export interface TwoAxisReport {
+  standards: GuardReport;
+  spec: GuardReport;
+  combined: GuardReport;
+  verdict: "PASS" | "WARN" | "FAIL";
+  meta: { baseRef?: string; hasCodingStandards: boolean; specProvided: boolean };
+}
+
+function loadCodingStandards(tree: Tree, standardsPath = "CODING_STANDARDS.md"): string | null {
+  return tree[standardsPath] ?? null;
+}
+
+function checkStandardsAxis(tree: Tree, opts?: { standardsPath?: string }): GuardReport {
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  const allText = Object.values(tree).join("\n\n");
+
+  // 기본 패턴 + Fowler
+  const patterns = [...HALLUCINATION_PATTERNS, ...FOWLER_PATTERNS];
+  for (const { re, msg, severity } of patterns) {
+    const testRe = new RegExp(re.source, re.flags.replace("g", ""));
+    const globalRe = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags);
+    if (testRe.test(allText)) {
+      if (re.source.includes("https?")) {
+        const matches = allText.match(globalRe);
+        if (matches && matches.length > 2) {
+          (severity === "issue" ? issues : warnings).push(`${msg}: ${matches.length}개 발견 — ${matches.slice(0, 2).join(", ")}...`);
+        } else if (matches) warnings.push(`${msg}: ${matches[0]}`);
+        continue;
+      }
+      (severity === "issue" ? issues : warnings).push(msg);
+    }
+  }
+
+  // skill 검증 (기존과 동일)
+  for (const name of skillNames(ARENA_SURFACE, tree)) {
+    const content = tree[`skills/${name}/SKILL.md`] ?? "";
+    if (!/^name:\s*\S+/m.test(content)) warnings.push(`skill "${name}"에 frontmatter name 없음`);
+    const descM = /^description:\s*(.+)$/m.exec(content);
+    if (!descM || descM[1].trim().length < 10) warnings.push(`skill "${name}" description이 너무 짧거나 없음`);
+    if (content.length < 50) warnings.push(`skill "${name}" 본문이 너무 짧음 (${content.length} chars)`);
+  }
+
+  // CODING_STANDARDS.md 존재 여부
+  const standardsContent = loadCodingStandards(tree, opts?.standardsPath);
+  if (!standardsContent) {
+    warnings.push(`Standards: WARN — CODING_STANDARDS.md 없음 (기본 Fowler 기준만 적용)`);
+  } else {
+    // 간단한 규칙 위반 검사: CODING_STANDARDS.md에 bullet 규칙이 있으면, 그 키워드가 위반됐는지 휴리스틱
+    const rules = standardsContent.split("\n").filter((l) => l.trim().startsWith("-") || l.trim().startsWith("*"));
+    if (rules.length > 0 && /no any/i.test(standardsContent) && /\bany\b/.test(allText)) {
+      warnings.push(`Standards: CODING_STANDARDS.md 규칙 위반 — "no any" 규칙에도 any 사용`);
+    }
+  }
+
+  // always-on 예산
+  const alwaysOnLen = ARENA_SURFACE.alwaysOn.map((a) => tree[a] ?? "").join("\n\n").length;
+  if (alwaysOnLen > ARENA_SURFACE.alwaysOnMax * ALWAYS_ON_BUDGET_RATIO) {
+    warnings.push(`always-on 텍스트가 예산의 ${Math.round((alwaysOnLen / ARENA_SURFACE.alwaysOnMax) * 100)}% 사용 (${alwaysOnLen}/${ARENA_SURFACE.alwaysOnMax}) — skill로 분리 고려`);
+  }
+  if (alwaysOnLen > ARENA_SURFACE.alwaysOnMax) {
+    issues.push(`always-on 초과: ${alwaysOnLen} > ${ARENA_SURFACE.alwaysOnMax} (매 토큰 비용 폭증)`);
+  }
+
+  return { ok: issues.length === 0, issues, warnings, checkedAt: new Date().toISOString() };
+}
+
+function checkSpecAxis(tree: Tree, spec?: string): GuardReport {
+  if (!spec || !spec.trim()) {
+    return { ok: true, issues: [], warnings: ["Spec: WARN — spec 없음 — Standards만 검토"], checkedAt: new Date().toISOString() };
+  }
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  const allText = Object.values(tree).join("\n\n").toLowerCase();
+  const specLower = spec.toLowerCase();
+  // 토큰화 (간단)
+  const STOP = new Set(["the","a","an","and","or","but","in","on","at","to","for","of","with","is","are","was","were","be","been","this","that","it","as","by","from","has","have","had","will","would","can","should","could","may","will","you","your","our","we","us","they","them","their","its","if","then","else","when","what","which","how","why","not","no","yes","do","does","did","done"]);
+  const tokenize = (t: string) => t.toLowerCase().split(/[^a-z0-9]+/g).filter(w => w.length>=3 && !STOP.has(w));
+  const specTokens = tokenize(specLower);
+  const treeTokens = new Set(tokenize(allText));
+  if (specTokens.length === 0) {
+    warnings.push("Spec: WARN — spec 토큰 없음");
+    return { ok: true, issues, warnings, checkedAt: new Date().toISOString() };
+  }
+  const missing = specTokens.filter(tk => !treeTokens.has(tk));
+  const overlap = 1 - missing.length / specTokens.length;
+  if (overlap < 0.15) {
+    issues.push(`Spec: FAIL — spec 불일치: harness가 spec 키워드 ${missing.slice(0,5).join(", ")}를 포함하지 않음 (overlap ${(overlap*100).toFixed(1)}%)`);
+  } else if (overlap < 0.4) {
+    warnings.push(`Spec: WARN — spec 부분 일치: missing ${missing.slice(0,4).join(", ")} (overlap ${(overlap*100).toFixed(1)}%)`);
+  }
+  // 간단한 과구현 탐지: tree에 spec에 없는 도메인 키워드가 많으면 경고는 생략 (정밀도 낮음)
+  return { ok: issues.length === 0, issues, warnings, checkedAt: new Date().toISOString() };
+}
+
+export function guardTwoAxis(tree: Tree, opts?: { spec?: string; standardsPath?: string; baseRef?: string }): TwoAxisReport {
+  const standards = checkStandardsAxis(tree, { standardsPath: opts?.standardsPath });
+  const spec = checkSpecAxis(tree, opts?.spec);
+  const combinedIssues = [...standards.issues, ...spec.issues];
+  const combinedWarnings = [...standards.warnings, ...spec.warnings];
+  const verdict: TwoAxisReport["verdict"] = combinedIssues.length > 0 ? "FAIL" : combinedWarnings.length > 0 ? "WARN" : "PASS";
+  const combined: GuardReport = { ok: combinedIssues.length === 0, issues: combinedIssues, warnings: combinedWarnings, checkedAt: new Date().toISOString() };
+  return {
+    standards,
+    spec,
+    combined,
+    verdict,
+    meta: { baseRef: opts?.baseRef, hasCodingStandards: !!loadCodingStandards(tree, opts?.standardsPath), specProvided: !!opts?.spec?.trim() },
+  };
+}
+
 export function guardHarness(tree: Tree): GuardReport {
   const issues: string[] = [];
   const warnings: string[] = [];
