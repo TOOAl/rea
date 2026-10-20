@@ -340,5 +340,66 @@ CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
 - [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
 - [x] Session persistence (JSONL) — EventLog + .arena/events.log
 - [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
-- [ ] **Orca Fleet O1~O3** — `src/fleet/` Run→Task→Dispatch→worker_done, `--fleet --fanout N` (REAs docs/ORCA_ADE_REA_ANALYSIS.md 준비 완료)
+- [x] **Orca Fleet O1~O3 (v2.5.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
+
+---
+
+## 10. Fleet — Orca ADE Orchestration (v2.5, O1~O3 완료)
+
+Orca `fleet`(stablyai/orca, MIT) CLI 계약을 `arena-code`에 경량 포팅 — Electron/30+에이전트 제외, 핵심 오케스트레이션만 흡수. 상세 REA `docs/ORCA_ADE_REA_ANALYSIS.md`.
+
+### 10.1 모듈
+
+```
+arena-code/src/fleet/
+├── types.ts          99줄 — Run/Task/Dispatch/Message/DecisionGate/FleetState, TaskStatus/DispatchStatus/MessageType, genId
+├── store.ts         394줄 — FleetStore .arena/fleet.json + fleet.log, CRUD, DAG unblockDependents, circuit-breaker(per-task 3회→blocked), worker_done 자동 전이, check/ack/status
+├── worktreeFleet.ts  70줄 — FleetWorktreeManager(WorktreeManager 확장) createFleet(N≤16) + injectPreamble(.arena/fleet/PREAMBLE.md)
+├── dispatch.ts      170줄 — FleetDispatcher dispatchTask(preamble 주입)+runWorker(queryLoop 재활용)+ghCommand(gh CLI passthrough)
+├── coordinator.ts   220줄 — FleetCoordinator canonical supervised loop: runCreate/taskCreate/workerStart/fanOut/check/ack/workerDone/workerRelease/status/collectDiffs/ghCommand
+├── worker.ts        150줄 — WorkerAgent 5 obligations: parsePreamble/heartbeat/check/workerDone 1회 보장(lifecycle 검증)/idle, parseFilesModified
+└── cli.ts           250줄 — handleFleetCommand(run-create/run-list/task-create/task-list/worker-start/fan-out/check/ack/worker-done/worker-release/status/gh/diffs)
+```
++ `src/cli.ts` Fleet 통합: `arena-code fleet <sub>` (Orca 호환) + `arena-code --fleet --fanout N --dry-run` + `arena-code --fleet-worker-done --task-id/--dispatch-id/--outcome` + allowUnknownOption pass-through.
+
+### 10.2 Execution Flow
+
+```
+# 1) Run/Task 생성 (코디네이터)
+ arena-code fleet run-create --objective "flux 분해" → run_xxx
+ arena-code fleet task-create --run run_xxx --spec "core utils" → task_xxx (ready)
+ arena-code fleet task-create --run run_xxx --spec "api" --deps '["task_xxx"]' → task_yyy (pending, DAG)
+
+# 2) Fan-out (병렬 후보) — 하나를 N개 worktree에서 동시에
+ arena-code --fleet --print "flux 구현" --fanout 3 --dry-run
+   → FleetCoordinator.fanOut(count=3) → FleetWorktreeManager.createFleet(3) → N dispatches (current worktree fallback in non-git)
+   → (real) dispatcher.runWorker(queryLoop 12턴, preamble 주입) 병렬
+
+# 3) Worker 계약 (각 worktree 내부)
+ heartbeat() → check(decision_gate?) → 작업 → --fleet-worker-done --task-id T --dispatch-id D --outcome succeeded --files-modified a,b --summary "3줄"
+   → FleetStore.createMessage(worker_done) → Task completed → unblockDependents(pending→ready) / failureCount≥3→blocked
+   → 후 대기(worker_done 1회 보장), coordinator가 ack
+
+# 4) Coordinator check (감독자 루프)
+ arena-code fleet check --run run_xxx --types worker_done,escalation,question --wait --timeout 90000
+ arena-code fleet ack --run run_xxx  # 또는 --message msg_xxx
+ arena-code fleet gh issue view 123 --json title,state  # gh passthrough
+ arena-code fleet diffs --run run_xxx  # 각 worktree diff 수집, 승자 병합 재료
+```
+
+### 10.3 Persisted State
+
+```
+.arena/
+├── fleet.json     — {version:1, runs{}, tasks{}, dispatches{}, messages{}, gates{}, updatedAt}
+├── fleet.log      — JSONL append-only (run_create/task_create/dispatch_create/message/ack/gate)
+└── harness2/      — Harness² 증거와 분리, 동시 운용 가능 (Harness²×Fleet 결합은 다음 단계)
+```
+
+### 10.4 향후 (Harness²×Fleet)
+
+- Subagents(Task 도구) + Fleet worker 결합: 각 Harness² probe를 Fleet dispatch로 실행
+- Recurrent Depth × Fleet fan-out: depth 각 단계에서 N개 후보를 Fleet으로 병렬 평가
+- Design Mode (browser automation) — Orca Design Mode 포팅 후보
+
 

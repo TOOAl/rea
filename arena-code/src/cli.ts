@@ -32,8 +32,8 @@ const program = new Command();
 
 program
   .name("arena-code")
-  .description("Arena Code v2.4 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain")
-  .version("2.4.0")
+  .description("Arena Code v2.5 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain")
+  .version("2.5.0")
   .option("-p, --print <prompt>", "Headless: 한 번 질문하고 종료")
   .option("--provider <name>", "LLM: arena|openrouter|gemini|groq|ollama|anthropic")
   .option("--model <model>", "모델 이름 직접 지정")
@@ -68,6 +68,18 @@ program
   .option("--evidence-root <path>", "(alias) --harness2-evidence-root")
   .option("--harness2-depth <n>", "Harness2 recurrent depth 1~5 (GPT-6 Astra, 기본 1)")
   .option("--harness2-no-guard", "Harness2 guard 비활성")
+  .option("--fleet", "Fleet orchestration (Orca ADE, Worktree+GH)")
+  .option("--fleet-run <id>", "Fleet Run ID (for --fleet fan-out)")
+  .option("--fleet-task <id>", "Fleet Task ID (for --fleet fan-out)")
+  .option("--fanout <n>", "Fleet fan-out count (1..16, default 3)")
+  .option("--fleet-worker-done", "Fleet worker_done report (requires --task-id/--dispatch-id/--outcome)")
+  .option("--task-id <id>", "Fleet task id (for worker-done)")
+  .option("--dispatch-id <id>", "Fleet dispatch id (for worker-done)")
+  .option("--outcome <o>", "Fleet worker outcome: succeeded|failed")
+  .option("--files-modified <list>", "Fleet worker files-modified (comma separated)")
+  .option("--summary <text>", "Fleet worker summary")
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
   .argument("[prompt]", "프롬프트 (대안)")
   .action(async (promptArg, opts) => {
     // MCP 모드는 초기에 분기 — config/session 없이 registry만으로 동작
@@ -78,6 +90,57 @@ program
       for (const p of config.pluginPaths) await registry.loadPlugin(p);
       const { runMcpServer } = await import("./mcp/server.js");
       await runMcpServer({ registry, cwd: cwdForConfig });
+      return;
+    }
+
+    // ── Fleet subcommand: arena-code fleet <sub> ... (orca orchestration 포팅)
+    // Commander treats "fleet" as [prompt] — detect here and delegate to FleetCli
+    if ((promptArg as string) === "fleet") {
+      const fleetIdx = process.argv.findIndex((a: string) => a === "fleet");
+      const fleetArgs = process.argv.slice(fleetIdx + 1);
+      const sub = fleetArgs[0] ?? "status";
+      // parse fleet flags from fleetArgs into opts-like object
+      const fleetOpts: Record<string, unknown> = {};
+      const fleetPositional: string[] = [];
+      for (let i = 1; i < fleetArgs.length; i++) {
+        const a = fleetArgs[i];
+        if (a.startsWith("--")) {
+          const key = a.slice(2).replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase());
+          const next = fleetArgs[i + 1];
+          if (next !== undefined && !next.startsWith("--")) { fleetOpts[key] = next; i++; }
+          else fleetOpts[key] = true;
+        } else if (a.startsWith("-") && a.length === 2) {
+          // ignore short
+        } else {
+          fleetPositional.push(a);
+        }
+      }
+      // also merge --cwd if present in main opts
+      if (opts.cwd) fleetOpts.cwd = opts.cwd;
+      if (fleetOpts.json === undefined && (opts as any).json) fleetOpts.json = true;
+      const { handleFleetCommand } = await import("./fleet/cli.js");
+      await handleFleetCommand(sub, fleetPositional, fleetOpts as any);
+      return;
+    }
+
+    // --fleet-worker-done top-level shortcut (worker obligation 4)
+    if (opts.fleetWorkerDone) {
+      const cwdForFleet = resolve(opts.cwd ?? process.cwd());
+      const taskId = (opts.taskId as string) ?? (opts as any).fleetTask ?? undefined;
+      const dispatchId = (opts.dispatchId as string) ?? undefined;
+      const outcome = (opts.outcome as string) as "succeeded" | "failed";
+      if (!taskId || !dispatchId || !outcome) {
+        console.error("Usage: arena-code --fleet-worker-done --task-id <id> --dispatch-id <id> --outcome succeeded|failed [--files-modified a,b] [--summary ...]");
+        process.exit(1);
+      }
+      const filesModified = typeof opts.filesModified === "string" ? (opts.filesModified as string).split(",").map((s: string) => s.trim()).filter(Boolean) : [];
+      const { WorkerAgent } = await import("./fleet/worker.js");
+      const { FleetStore } = await import("./fleet/store.js");
+      const store = new FleetStore(cwdForFleet);
+      const worker = new WorkerAgent(cwdForFleet, store);
+      const r = worker.workerDone({ taskId, dispatchId, outcome, filesModified, summary: opts.summary as string | undefined, cwd: cwdForFleet });
+      if (!r.ok) { console.error("worker-done failed: " + r.error); process.exit(1); }
+      console.log(JSON.stringify({ ok: true, messageId: r.messageId, taskId, dispatchId, outcome }, null, 2));
       return;
     }
 
@@ -172,6 +235,47 @@ program
 
     const session = await bootstrapSession(config, providerOverride);
     const cwd = session.effectiveCwd;
+
+    // Fleet fan-out mode (arena-code --fleet --print "prompt" --fanout 3)
+    if (opts.fleet) {
+      const cwdForFleet = resolve(opts.cwd ?? process.cwd());
+      const prompt = (promptArg as string) || (opts.print as string) || "";
+      const fanout = Math.max(1, Math.min(16, parseInt(String(opts.fanout ?? "3"), 10) || 3));
+      const runIdOpt = (opts.fleetRun as string) ?? undefined;
+      const taskIdOpt = (opts.fleetTask as string) ?? undefined;
+      try {
+        const { FleetCoordinator } = await import("./fleet/coordinator.js");
+        const coordinator = new FleetCoordinator({ workspaceRoot: cwdForFleet });
+        let taskId = taskIdOpt;
+        let runId = runIdOpt;
+        if (!taskId) {
+          if (!runId) {
+            const run = coordinator.runCreate(prompt || "Fleet run: " + new Date().toISOString(), {});
+            runId = run.id;
+            console.log("Fleet run created: " + run.id + " objective=" + run.objective.slice(0,80));
+          }
+          const spec = prompt || "Fleet task: implement requested change";
+          const task = coordinator.taskCreate(runId!, spec);
+          taskId = task.id;
+          console.log("Fleet task created: " + task.id + " spec=" + spec.slice(0,80));
+        }
+        console.log("Fleet fan-out: task=" + taskId + " count=" + fanout + " dryRun=" + (!!opts.dryRun));
+        const { dispatches, errors, worktrees } = await coordinator.fanOut({ taskId: taskId!, count: fanout, dryRun: !!opts.dryRun });
+        console.log("Fleet dispatches: " + dispatches.map(d => d.id).join(", "));
+        if (worktrees.length) console.log("Worktrees: " + worktrees.join(", "));
+        if (errors.length) console.error("Fleet errors: " + errors.join(" | "));
+        // if not dryRun and provider available, optionally run workers (best-effort, sequential for now)
+        if (!opts.dryRun && dispatches.length && prompt) {
+          console.log("Fleet workers would run here (use --dry-run to skip LLM calls, or run workers via fleet worker-start per worktree)");
+        }
+        console.log(JSON.stringify({ runId, taskId, dispatches: dispatches.map(d => ({ id: d.id, worktree: d.worktreePath })), worktrees, errors }, null, 2));
+      } catch (e: unknown) {
+        console.error("Fleet failed: " + (e instanceof Error ? e.message : String(e)));
+        if (e instanceof Error && e.stack) console.error(e.stack.slice(0,2000));
+        process.exit(1);
+      }
+      return;
+    }
 
     // Harness2 mode (arena-code --harness2 ...)
     const h2Enabled = !!opts.harness2;

@@ -1,4 +1,4 @@
-# Arena Code v2.4 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain
+# Arena Code v2.5 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain
 
 > **REA로 3대 코딩 에이전트를 역분석하고, Arena Agent + 무료 API로 재구현한 궁극의 코딩 에이전트**
 > **+ NSA Ghidra (Apache 2.0) + REA Bridge — 외부 패키지 + 자동 업데이트 + Harness² Self-Improving Brain (Google harness2 + GPT-6 Astra + Orca ADE REA)!**
@@ -8,7 +8,7 @@ Claude Code(52만줄), Codex CLI(Rust 95%), Muse Code(영구 에이전트+worktr
 ```
 Claude Code Loop + Codex 샌드박스 + Muse Worktree/EventLog + Ghidra 29 + REA Bridge
 + Hook/MCP/외부패키지/자동업데이트 + Harness² Self-Improving Brain (Propose-Probe-Compose)
-= Arena Code v2.4 ⭐  (H1~H5: Harness Tree→Evidence+Proposer→Composer+Engine→FailureStore+Library+CLI→Guard+Depth)
+= Arena Code v2.5 ⭐  (H1~H5 + Fleet O1~O3: Harness Tree→Evidence+Proposer→Composer+Engine→FailureStore+Library+CLI→Guard+Depth)
 ```
 
 ---
@@ -33,7 +33,11 @@ arena-code/
 │   │   ├── library.ts              256줄 HarnessLibrary .arena/harness2/library/<domain> (H4)
 │   │   ├── guard.ts                Guard TODO/{{/budget 환각 검사 (H5 GPT-6 Astra)
 │   │   └── depth.ts                249줄 RecurrentDepth depth1..5 earlyStop/bestScore (H5)
-│   ├── cli.ts                       CLI v2.4 — --harness2/--k/--mode/--depth/--domain/--evidence-root/--dry-run + --mcp/--update/--agent
+│   ├── cli.ts                       CLI v2.5 — --harness2/--k/--mode/--depth/--domain/--evidence-root/--dry-run + --fleet/--fanout + --mcp/--update/--agent
+│   ├── fleet/                     ⭐ NEW v2.5 — Orca ADE Fleet (6모듈, ~1200줄)
+│   │   ├── types.ts/store.ts     Run→Task→Dispatch→worker_done, DAG, circuit-breaker
+│   │   ├── worktreeFleet.ts/dispatch.ts  fan-out N=16 + preamble + runWorker(queryLoop)+gh
+│   │   └── coordinator.ts/worker.ts/cli.ts  supervised loop + 5 obligations + fleet CLI
 │   ├── hooks/                       ⭐ NEW — preToolUse/postToolUse/preCompact 등
 │   ├── mcp/                         ⭐ NEW — MCP stdio 서버 (Muse Code 호환)
 │   ├── updates/                     ⭐ NEW — GitHub releases 추적/승인/적용

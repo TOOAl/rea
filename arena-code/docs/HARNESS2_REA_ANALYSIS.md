@@ -2,7 +2,7 @@
 
 > **Google Research — Harness²: Recursive Agent Harnessing for an Open World**  
 > 논문: `arXiv:2610.14224` (2026-10-12) · 코드: `google-research/harness2` (Apache 2.0) · `6,308` 라인 분석  
-> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.4 · 구현: H1~H5 완료 (e678e8f)
+> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.5 · 구현: H1~H5 완료 (e678e8f) + Fleet O1~O3 (v2.5.0)
 
 ---
 
@@ -16,7 +16,7 @@
 | **효과 (1-step)** | WorkBuddy +11.5, JobBench +4.5, LAB +11.8%p. 약한 모델(GLM-5)+좋은 하네스 > 강한 모델+나쁜 하네스 |
 | **우리와 관계** | 우리 `queryLoop + hooks + skills + agents + memory` 구조가 Harness²의 8개 컴포넌트와 1:1 매칭 — 흡수가 매우 쉬움 |
 | **흡수 전략** | Provider를 감싸는 `SelfImprovingHarness` 래퍼: 기존 Gemini/OpenRouter/Ollama 위에 Propose-Probe-Compose 레이어를 투명하게 올림 |
-| **구현 상태 (v2.4)** | **H1(380줄 harness) → H2(352줄 context+382줄 proposer) → H3(614줄 engine+291줄 composer) → H4(FailureStore+Library+CLI) → H5(Guard+Depth 511줄) 완료** — `npm run typecheck` 0, `build` 0, `vitest` 47 passed, CLI `--harness2 --k/--mode/--depth/--domain/--evidence-root/--dry-run` 동작 |
+| **구현 상태 (v2.5)** | **H1~H5(9모듈) + Fleet O1~O3(6모듈, Run→Task→Dispatch, fan-out N=16, GH, decisionGate) 완료** — `tsc` 0, `build` 0, `vitest` 63, CLI `fleet --k/--mode/--depth` + `fleet --fanout/--dry-run` + `orchestration check/ack` 동작 |
 
 ---
 

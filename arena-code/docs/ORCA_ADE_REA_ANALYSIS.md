@@ -2,7 +2,7 @@
 
 > **Stably AI — Orca: The Agent Development Environment (ADE)**  
 > 저장소: `stablyai/orca` · 라이선스: MIT · 버전: 1.4.214 (2026-10-20 기준) · 커밋 15,284개 · 파일 38,133개  
-> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.4 → v2.5  
+> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.5 (Fleet O1~O3 완료)  
 > 분석 소스: `/tmp/orca` (git clone --depth 1, 2026-10-20), 공식 문서 https://onorca.dev
 
 ---
@@ -16,7 +16,7 @@
 | **오케스트레이션** | **Run → Task → Dispatch → worker_done** — Run은 네임스페이스/우편함, Task는 DAG 노드, Dispatch는 한 번의 시도. `worker_done --outcome succeeded/failed`로만 완료 처리 [3](https://www.onorca.dev/docs/cli/orchestration) |
 | **우리와 관계** | 우리 `WorktreeManager`(1개 worktree), `BackgroundAgentManager`(4 observer)는 Orca의 fleet(무제한 worktree) + coordinator(감독자) 개념의 단순 버전 — 흡수하면 **Harness²(한 개체를 똑똑하게) + Orca(여러 개체를 함께)**가 결합됨 |
 | **흡수 전략** | Electron GUI 없이 **CLI-first 경량 fleet**으로 흡수: `src/fleet/` 모듈 추가 (Run/Task/Dispatch 상태 DB + `arena-code --fleet` 명령). 기존 Harness² 진행과 충돌 없음 — 서로 보완 |
-| **진행 상태 (v2.4)** | **Harness² H1~H5 완료(e678e8f)** — Fleet은 다음 Phase O1~O3 후보 (본 문서는 Fleet 설계 완료, 코드 미착수) |
+| **진행 상태 (v2.5)** | **Harness² H1~H5 완료(e678e8f) + Fleet O1~O3 완료(2.5.0)** — Run→Task→Dispatch→worker_done, fan-out, GH/decisionGate 모두 구현, tsc0 build0 vitest63 — 다음은 Harness²×Fleet 결합 + Design Mode 후보 |
 
 ---
 
@@ -312,4 +312,15 @@ arena-code/src/fleet/
 - [ ] worker_done 검증을 엄격히 할지 (lifecycle ID 대조 필수)
 - [ ] 다음 단계: Harness² H1 커밋과 함께 갈지, Orca 분석만 먼저 커밋할지
 
-> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea` v2.4(Harness² H1~H5 완료) 시점에 갱신되었다. Fleet O1~O3는 다음 단계이며, 질문/수정은 이 문서에 코멘트하거나 해당 Phase 코드로 이어가면 된다.
+### Fleet O1~O3 구현 완료 (2026-10-20, commit TBD — v2.5.0)
+
+| Phase | 모듈 | 라인수 | 핵심 기능 |
+|-------|------|--------|-----------|
+| O1 | `src/fleet/types.ts` 99줄 + `store.ts` 393줄 | 타입(Run/Task/Dispatch/Message/Gate/FleetState) + FleetStore(.arena/fleet.json+.arena/fleet.log, DAG pending→ready→dispatched→completed/failed/blocked, circuit-breaker per-task 3회, check/ack) |
+| O2 | `src/fleet/worktreeFleet.ts` 70줄 + `dispatch.ts` 170줄 | FleetWorktreeManager.createFleet(N) fan-out + injectPreamble() Orca dispatch --inject 포팅, FleetDispatcher.dispatchTask()+runWorker(queryLoop 재활용)+gh CLI passthrough |
+| O3 | `src/fleet/coordinator.ts` 220줄 + `worker.ts` 150줄 + `cli.ts` 250줄 | FleetCoordinator canonical supervised loop (runCreate/taskCreate/workerStart/fanOut/check/ack/workerDone/workerRelease/gatherDiffs/ghCommand), WorkerAgent 5 obligations (preamble/heartbeat/check/worker_done 1회/후대기) + FleetCli `arena-code fleet ...` + `--fleet --fanout N --dry-run` + `--fleet-worker-done` |
+| CLI | `src/cli.ts` +150줄 | `arena-code fleet <run-create|run-list|task-create|task-list|worker-start|fan-out|check|ack|worker-done|worker-release|status|gh|diffs>` + `arena-code --fleet --fanout N` + `--fleet-worker-done` + allowUnknownOption pass-through |
+
+증거: `npm test` 63 passed(8 files, fleet 16 tests), `tsc` 0, `node dist/cli.js fleet status/run-create/task-create/worker-start/check/ack` 모두 통과, `node dist/cli.js --fleet --fanout 2 --dry-run` 통과.
+
+> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea` v2.5(Fleet O1~O3 완료) 시점에 갱신되었다. 다음 질문/수정은 이 문서에 코멘트하거나 Phase O1~O3 코드(`src/fleet/`)로 이어가면 된다.
