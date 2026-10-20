@@ -18,6 +18,7 @@
  */
 
 import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, statSync, rmSync } from "node:fs";
+import { resolveLibraryId as ctxResolveLibraryId, queryDocs as ctxQueryDocs, type ResolvedLibrary } from "./context7.js";
 import { join, resolve, dirname } from "node:path";
 import type { Tree } from "./harness.js";
 import { writeTree, readTree, ARENA_SURFACE } from "./harness.js";
@@ -350,6 +351,24 @@ export class HarnessLibrary {
     mkdirSync(this.dir, { recursive: true });
     writeFileSync(this.indexPath, rows.join("\n"), "utf-8");
     return this.indexPath;
+  }
+
+  // --- Context7 2-tool adapter (docs/CODING_TOOLS_REA_ANALYSIS.md 3.1) ---
+  async resolveLibraryId(libraryName: string, query?: string): Promise<ResolvedLibrary[]> {
+    return ctxResolveLibraryId(libraryName, query);
+  }
+  async queryDocs(libraryId: string, query: string): Promise<{ libraryId: string; query: string; snippets: string[]; source: "context7" | "fallback" }> {
+    return ctxQueryDocs(libraryId, query);
+  }
+  /** Context7 문서를 RAG 이전에 주입 — query → snippets를 별도 tmp로 저장 후 Evidence에 첨부 가능 */
+  async buildContext7Snapshot(libraryId: string, query: string): Promise<string | null> {
+    const docs = await this.queryDocs(libraryId, query);
+    if (!docs.snippets.length) return null;
+    const { mkdtempSync } = require("node:fs") as typeof import("node:fs");
+    const { tmpdir } = require("node:os") as typeof import("node:os");
+    const tmp = mkdtempSync(join(tmpdir(), "arena-ctx7-"));
+    writeFileSync(join(tmp, "CTX7.md"), `# Context7 — ${libraryId}\n\nQuery: ${query}\n\n${docs.snippets.join("\n\n---\n\n")}\n`, "utf-8");
+    return tmp;
   }
 
   /** 전체 도메인 목록 (root 하위) */

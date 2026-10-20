@@ -1,6 +1,6 @@
-# Coding Tools REA Analysis — 14종 도구 장점 흡수 설계 (v2.9.1)
+# Coding Tools REA Analysis — 14종 도구 장점 흡수 설계 (v2.10.0)
 
-> 분석일: 2026-10-21 · 대상 브랜치: `arena/41417706-rea` v2.9.0 · 분석자: Arena Code REA (정적 + 동적)
+> 분석일: 2026-10-21 · 대상 브랜치: `arena/41417706-rea` v2.10.0 · 분석자: Arena Code REA (정적 + 동적)
 > 영상 챕터 14개(0:23~9:17) 기반 — OCR 일부 유실로 추정 복원, 1차 단계 4개 집중 분석, 흡수 형태는 문서 검토 후 결정(decide_after)
 
 ## 1. 전체 14종 목록 (영상 기준, 일부 추정)
@@ -26,7 +26,7 @@
 
 ## 2. 우선순위 선정 이유 (phased 4개)
 
-기존 Arena Code 스택: **Harness² H1~H5 + Fleet O1~O3 + Hybrid HF + D1 Browser 6 tools + D2 RAG TF-IDF+LLM + Genius NL v2.9** 와 직접 맞물리는 영역을 1차로 선정:
+기존 Arena Code 스택: **Harness² H1~H5 + Fleet O1~O3 + Hybrid HF + D1 Browser 6 tools + D2 RAG TF-IDF+LLM + Genius NL v2.10** 와 직접 맞물리는 영역을 1차로 선정:
 
 - **P1-1 라이브러리 문서 (Context7/Serena)**: D2 RAG/Library 흡수 — 토큰·심볼 효율 개선
 - **P1-4 코드 리뷰 (PR-Agent/Matt Pocock)**: Guard/Depth 흡수 — 2축 리뷰(Standards/Spec) 품질 게이트
@@ -148,4 +148,4 @@
 2. **2차 10개 중 2차 우선순위**: 예) Firecrawl, superpowers, GitHub MCP
 3. **구현 순서**: D1 Browser 고도화(1일) → Guard 2축(1일) → D2 Context7/Serena(2일) → Fleet wave(설계)
 
-> 본 문서는 `arena-code` 저장소 일부이며, PR `#1` 머지(v2.9) 이후 후속 분석으로 작성되었다. 질문/수정은 이 문서에 코멘트하거나 해당 모듈 코드로 이어가면 된다.
+> 본 문서는 `arena-code` 저장소 일부이며, PR `#1` 머지(v2.10) 이후 후속 분석으로 작성되었다. 질문/수정은 이 문서에 코멘트하거나 해당 모듈 코드로 이어가면 된다.
