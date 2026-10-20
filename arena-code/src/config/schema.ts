@@ -2,6 +2,7 @@
  * Arena Config Schema — 통합 설정의 단일 진실 공급원
  * 우선순위: CLI flags > arena.config.json > .env > defaults
  */
+import type { AgentDefinition } from "../agents/types.js";
 
 export interface ArenaConfig {
   provider: string;
@@ -20,25 +21,24 @@ export interface ArenaConfig {
   eventLogEnabled: boolean;
   mock: boolean;
   printPrompt?: string;
-  /** MCP server mode */
   mcp: boolean;
-  /** 외부 패키지 (monorepo workspace) */
   externalPackages: {
-    ghidra?: string; // override path, default packages/ghidra-tools
+    ghidra?: string;
     rea?: string;
   };
-  /** 업데이트 감시 설정 */
   updates: {
     enabled: boolean;
     checkIntervalHours: number;
     repos: UpdateRepo[];
     autoCheck: boolean;
   };
+  /** 외부 에이전트 (자유 연결) */
+  agents: AgentDefinition[];
 }
 
 export interface UpdateRepo {
-  name: string;        // "ghidra" | "rea" | "arena-code"
-  repo: string;        // "NationalSecurityAgency/ghidra" | "TOOAl/rea" 등
+  name: string;
+  repo: string;
   currentVersion?: string;
   lastChecked?: string;
 }
@@ -74,9 +74,9 @@ export const DEFAULT_CONFIG: ArenaConfig = {
     ],
     autoCheck: true,
   },
+  agents: [],
 };
 
-/** arena.config.json 파일 스키마 */
 export interface ArenaConfigFile {
   provider?: string;
   model?: string;
@@ -91,4 +91,5 @@ export interface ArenaConfigFile {
   mcp?: boolean;
   externalPackages?: { ghidra?: string; rea?: string };
   updates?: Partial<ArenaConfig["updates"]>;
+  agents?: AgentDefinition[];
 }

@@ -51,6 +51,7 @@ export function resolveConfig(
     cwd: resolve(cwd),
     updates: { ...DEFAULT_CONFIG.updates, repos: [...DEFAULT_CONFIG.updates.repos] },
     externalPackages: { ...DEFAULT_CONFIG.externalPackages },
+    agents: [...DEFAULT_CONFIG.agents],
   };
 
   if (fileConfig) {
@@ -70,6 +71,7 @@ export function resolveConfig(
       cfg.updates = { ...cfg.updates, ...fileConfig.updates };
       if (fileConfig.updates.repos) cfg.updates.repos = fileConfig.updates.repos;
     }
+    if (fileConfig.agents) cfg.agents = fileConfig.agents;
   }
 
   // CLI flags (최고 우선순위)

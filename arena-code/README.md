@@ -97,12 +97,52 @@ cp arena.config.example.json arena.config.json
 # → provider, sandbox, updates.repos 등을 프로젝트별로 고정
 ```
 
+### 외부 에이전트 — 원하는 에이전트를 자유롭게 연결 ⭐ NEW
+
+어떤 외부 에이전트든 한 번 등록하면 **provider로 선택**하거나 **도구로 위임** 가능:
+
+```bash
+# 1) 한 줄로 연결 (CLI)
+arena-code --agent 'my-gpt=openai:https://api.openai.com/v1' --provider my-gpt
+arena-code --agent 'codex=mcp:npx @openai/codex mcp'  # MCP 도구로
+arena-code --agent 'local=http:http://localhost:8080/v1'
+arena-code --agent-config ./my-agents.json  # JSON 파일로 여러 개
+
+# 2) 영구 등록 (arena.config.json → agents[])
+arena-code --list-agents   # 등록된 에이전트 목록 확인
+```
+
+```jsonc
+// arena.config.json — agents 예시
+{
+  "agents": [
+    { "id": "my-gpt", "transport": "openai", "baseUrl": "https://api.openai.com/v1", "apiKey": "${ENV:OPENAI_API_KEY}", "model": "gpt-4o-mini" },
+    { "id": "codex-tools", "transport": "mcp", "command": "npx", "args": ["-y", "@openai/codex"], "provides": "tools" },
+    { "id": "bridge", "transport": "module", "module": "./my-agent.js" },
+    { "id": "runner", "transport": "command", "command": "./agent.sh" }
+  ]
+}
+```
+
+지원 transport: `openai/http` (LLM API), `mcp` (stdio/sse/http), `module` (로컬 JS), `command` (서브프로세스).
+API 키는 `${ENV:KEY_NAME}` 또는 `${ENV:KEY:-fallback}` 치환 지원.
+
+```bash
+# 3) 대화형에서
+/agent list                          # 목록
+/agent add '{"id":"x","transport":"openai","baseUrl":"https://..."}'
+/agent test my-gpt                   # 연결 테스트
+/agent remove my-gpt
+# 도구로 위임: 모델이 AskAgent({agentId, prompt})를 호출해 외부 에이전트에 위임
+```
+
 ### 대화형 명령어
 ```
 /help, /clear, /status, /config, /tools
 /plan <요청>  /grill  /goal <목표>  /ghidra <요청>
 /worktree <task>  /sandbox <mode>  /resume
-/update [check|apply]  /hooks    ⭐ NEW
+/update [check|apply]  /hooks
+/agent [list|add|remove|test]       ⭐ NEW
 ```
 
 ---
@@ -198,7 +238,7 @@ stdio JSON-RPC: `initialize / tools/list / tools/call / ping`
 | 바이너리 | 없음 | 없음 | 없음 | **Ghidra 29 + REA 6** |
 | MCP 서버 | ✅ | ✅ | ✅ | **✅ (--mcp)** |
 | 업데이트 추적 | — | — | — | **GitHub releases + 승인/적용** |
-| 외부 패키지 | — | — | — | **@arena-code/* 2개** |
+| 외부 에이전트 허브 | — | — | — | **openai/mcp/module/command 무제한** |
 | 품질 | — | — | — | **Vitest 15 + CI + ESLint/Prettier** |
 | 비용 | 유료 | ChatGPT Plus | 내일/유료 | **무료 API $0** |
 

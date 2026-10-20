@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Arena Code CLI v2.2 — Claude Code + Codex + Muse + Ghidra Fusion
+ * Arena Code CLI v2.3 — Claude Code + Codex + Muse + Ghidra Fusion
  *
  * Phase 2: Hook 시스템 + MCP 서버 (--mcp)
  * Phase 4: 외부 패키지 (@arena-code/ghidra-tools/@arena-code/rea-bridge) + 업데이트
+ * Phase 5: 외부 에이전트 허브 (--agent, /agent)
  */
 import { createInterface } from "node:readline";
 import { resolve } from "node:path";
@@ -22,15 +23,17 @@ import { WorktreeManager } from "./worktree/index.js";
 import { BackgroundAgentManager } from "./background/index.js";
 import { autoCheckUpdates, manualCheckUpdates } from "./updates/index.js";
 import { applyUpdate } from "./updates/apply.js";
-import { loadStore } from "./updates/store.js";
+import { AgentManager } from "./agents/manager.js";
+import { createAskAgentTool } from "./agents/tool.js";
+import { parseAgentSpec } from "./cli.parseAgent.js";
 
 // ─── CLI 정의 ──────────────────────────────────────────────
 const program = new Command();
 
 program
   .name("arena-code")
-  .description("Arena Code v2.2 — Claude Code + Codex + Muse + Ghidra (Hook/MCP/업데이트)")
-  .version("2.2.0")
+  .description("Arena Code v2.3 — Claude Code + Codex + Muse + Ghidra (Hook/MCP/업데이트/에이전트)")
+  .version("2.3.0")
   .option("-p, --print <prompt>", "Headless: 한 번 질문하고 종료")
   .option("--provider <name>", "LLM: arena|openrouter|gemini|groq|ollama|anthropic")
   .option("--model <model>", "모델 이름 직접 지정")
@@ -49,6 +52,9 @@ program
   .option("--mcp", "MCP 서버 모드로 실행 (stdio JSON-RPC)")
   .option("--update <action>", "업데이트: check|apply [대상: ghidra|rea|all]")
   .option("--update-target <target>", "업데이트 대상 지정", "all")
+  .option("--agent <spec>", "외부 에이전트 추가: id=transport:target (예: my-gpt=openai:https://api.example.com/v1)")
+  .option("--agent-config <path>", "외부 에이전트 config JSON 경로")
+  .option("--list-agents", "등록된 외부 에이전트 목록 출력 후 종료")
   .option("--yes", "업데이트 시 자동 승인 (질문 없이 진행)")
   .option("--dry-run", "업데이트 dry-run (적용 없이 계획만 표시)")
   .argument("[prompt]", "프롬프트 (대안)")
@@ -74,6 +80,40 @@ program
       return;
     }
 
+    // --list-agents
+    if (opts.listAgents) {
+      const cwdForConfig = resolve(opts.cwd ?? process.cwd());
+      const config = resolveConfig(cwdForConfig, opts);
+      const mgr = new AgentManager(cwdForConfig);
+      if (config.agents.length) mgr.loadFromConfig(config.agents);
+      // --agent-config 추가 로드
+      if (opts.agentConfig) {
+        try {
+          const { readFileSync } = await import("node:fs");
+          const extra = JSON.parse(readFileSync(resolve(opts.agentConfig), "utf-8"));
+          const list = Array.isArray(extra) ? extra : (extra.agents ?? [extra]);
+          mgr.loadFromConfig(list);
+        } catch (e: unknown) { console.error(`--agent-config 로드 실패: ${e instanceof Error ? e.message : String(e)}`); }
+      }
+      if (opts.agent) {
+        const spec = parseAgentSpec(opts.agent);
+        if (spec) { try { mgr.add(spec); } catch (e: unknown) { console.error(`--agent 파싱 실패: ${e instanceof Error ? e.message : String(e)}`); } }
+      }
+      const agents = mgr.list();
+      if (!agents.length) console.log("등록된 외부 에이전트 없음. arena.config.json → agents[] 또는 --agent 로 추가하세요.");
+      else {
+        console.log(`\n외부 에이전트 ${agents.length}개:\n`);
+        for (const a of agents) {
+          console.log(`  - ${a.id} [${a.transport}] ${a.description ?? ""}`);
+          if (a.baseUrl) console.log(`    baseUrl: ${a.baseUrl}`);
+          if (a.command) console.log(`    command: ${a.command} ${(a.args ?? []).join(" ")}`);
+          if (a.module) console.log(`    module: ${a.module}`);
+          if (a.url) console.log(`    url: ${a.url}`);
+        }
+      }
+      return;
+    }
+
     // 일반 세션 플로우
     const cwdForConfig = resolve(opts.cwd ?? process.cwd());
     const config = resolveConfig(cwdForConfig, opts);
@@ -87,15 +127,59 @@ program
     else if (opts.print) config.printPrompt = opts.print;
     if (opts.model) config.model = opts.model;
 
-    const session = await bootstrapSession(config);
+    // CLI --agent / --agent-config 를 config.agents에 병합
+    if (opts.agent) {
+      const spec = parseAgentSpec(opts.agent);
+      if (spec) config.agents.push(spec);
+    }
+    if (opts.agentConfig) {
+      try {
+        const { readFileSync } = await import("node:fs");
+        const extra = JSON.parse(readFileSync(resolve(opts.agentConfig as string), "utf-8"));
+        const list = Array.isArray(extra) ? extra : (extra.agents ?? [extra]);
+        for (const a of list) config.agents.push(a);
+      } catch (e: unknown) { console.error(`--agent-config 로드 실패: ${e instanceof Error ? e.message : String(e)}`); }
+    }
+
+    // AgentManager — 외부 에이전트
+    const agentManager = new AgentManager(cwdForConfig);
+    let agentLoadErrors: string[] = [];
+    if (config.agents.length) {
+      const r = agentManager.loadFromConfig(config.agents);
+      agentLoadErrors = r.errors;
+    }
+    // provider가 외부 에이전트 id와 일치하면 AgentManager에서 provider 생성 시도
+    let providerOverride: import("./providers/types.js").Provider | null = null;
+    if (agentManager.get(config.provider)) {
+      try {
+        providerOverride = await agentManager.createProvider(config.provider);
+        console.log(`\n🔗 외부 에이전트 provider: ${config.provider} (${agentManager.get(config.provider)?.transport})`);
+      } catch (e: unknown) {
+        console.error(`\n⚠️ 외부 에이전트 provider 실패 (${config.provider}): ${e instanceof Error ? e.message : String(e)} — 기본 provider로 fallback`);
+      }
+    }
+
+    const session = await bootstrapSession(config, providerOverride);
     const cwd = session.effectiveCwd;
 
-    // Tool Registry — 외부 패키지 포함 (async)
+    // Tool Registry — 외부 패키지 + 외부 에이전트 MCP/tools 포함 (async)
     const registry = await buildRegistryAsync(config.disabledTools);
     for (const p of config.pluginPaths) {
       const r = await registry.loadPlugin(p);
       if (r.error) console.log(`   ⚠️ 플러그인 로드 실패 (${p}): ${r.error}`);
       else if (r.loaded > 0) console.log(`   🔌 플러그인 ${p}: ${r.loaded}개 도구 로드`);
+    }
+    // 외부 에이전트: MCP/tools 수집 → registry에 주입
+    if (agentManager.list().length) {
+      const { tools: agentTools } = await agentManager.collectTools();
+      for (const t of agentTools) {
+        try { registry.register(t, { category: "plugin", source: `agent:${t.name.split("__")[0]}` }); } catch {}
+      }
+      if (agentTools.length) console.log(`   🤖 외부 에이전트 tools: ${agentTools.length}개`);
+    }
+    // AskAgent 도구 — 에이전트가 하나라도 있으면 항상 제공 (위임용)
+    if (agentManager.list().length) {
+      try { registry.register(createAskAgentTool(agentManager), { category: "plugin", source: "builtin:AskAgent" }); } catch {}
     }
     const tools = registry.all();
 
@@ -104,6 +188,8 @@ program
     if (config.pluginPaths.length) console.log(`   🔌 플러그인: ${config.pluginPaths.join(", ")}`);
     if (registry.size() !== tools.length) console.log(`   Tools: ${tools.length}개 활성 / ${registry.size()}개 등록`);
     if (session.hooks.size > 0) console.log(`   🪝 Hooks: ${session.hooks.size}개 활성`);
+    if (agentLoadErrors.length) console.log(`   ⚠️ 에이전트 로드 오류: ${agentLoadErrors.join("; ")}`);
+    if (agentManager.list().length) console.log(`   🤖 외부 에이전트: ${agentManager.list().map(a => `${a.id}(${a.transport})`).join(", ")}`);
 
     // 업데이트 자동 체크 (비동기, 결과는 배너 아래 표시 — sessionStart 이후)
     if (config.updates.enabled && config.updates.autoCheck && !config.mock) {
@@ -120,6 +206,7 @@ program
       hooks: session.hooks,
       cwd,
       config,
+      agentManager,
     };
 
     if (config.printPrompt) {
@@ -204,6 +291,7 @@ interface SharedOpts {
   hooks?: HookManager;
   cwd: string;
   config: ArenaConfig;
+  agentManager: AgentManager;
 }
 
 async function runPrompt(
@@ -283,6 +371,10 @@ async function runInteractive(
   /update [check|apply] 업데이트 확인/적용 (GitHub releases 추적)
   /update:check   업데이트 확인
   /hooks          활성 hooks 목록
+  /agent list     외부 에이전트 목록
+  /agent add <json> 외부 에이전트 추가 (예: /agent add {"id":"my-gpt","transport":"openai","baseUrl":"https://..."})
+  /agent remove <id> 에이전트 제거
+  /agent test <id> 에이전트 연결 테스트
   /exit, exit, quit 종료
   /config         현재 config 덤프
   /tools          등록된 도구 목록
@@ -306,6 +398,38 @@ async function runInteractive(
     if (input === "/hooks") {
       const entries = shared.hooks ? (["sessionStart", "preToolUse", "postToolUse", "postTurn", "preCompact", "sessionEnd"] as const).flatMap(e => shared.hooks!.forEvent(e).map(h => `  - [${e}] ${h.source}`)) : [];
       console.log(entries.length ? `\nHooks (${entries.length}개):\n${entries.join("\n")}` : "\n활성 hooks 없음. .arena/hooks/*.js 로 추가하세요.");
+      return true;
+    }
+    // /agent — 외부 에이전트 관리
+    if (input.startsWith("/agent")) {
+      const rest = input.slice("/agent".length).trim();
+      const [sub, ...argsParts] = rest.split(/\s+/);
+      const argsStr = argsParts.join(" ").trim();
+      const mgr = shared.agentManager;
+      if (!sub || sub === "list" || sub === ":list") {
+        const agents = mgr.list();
+        if (!agents.length) console.log("\n등록된 외부 에이전트 없음.\n추가: /agent add '{\"id\":\"my-gpt\",\"transport\":\"openai\",\"baseUrl\":\"https://...\",\"apiKey\":\"${ENV:MY_KEY}\"}'\n또는 arena.config.json → agents[]\n형식: http/openai/mcp/module/command");
+        else { console.log(`\n외부 에이전트 ${agents.length}개:`); for (const a of agents) { const d = a.baseUrl ?? a.command ?? a.module ?? a.url ?? ""; console.log(`  - ${a.id} [${a.transport}] ${a.description ?? ""} ${d ? `→ ${d}` : ""} ${a.enabled===false?"(disabled)":""}`); } }
+        return true;
+      }
+      if (sub === "add" || sub === ":add") {
+        if (!argsStr) { console.log('사용법: /agent add \'{"id":"my-gpt","transport":"openai","baseUrl":"https://..."}\''); return true; }
+        try { const def = JSON.parse(argsStr); mgr.add(def); if (def.transport==="mcp") { console.log(`  MCP ${def.id} 추가 — 도구 수집 중...`); const { tools: nt } = await mgr.collectTools(); for (const t of nt) { try { shared.tools.push(t); } catch {} } if (nt.length) console.log(`  → ${nt.length}개 도구 추가`); } console.log(`✅ 추가: ${def.id} (${def.transport})`); } catch (e) { const m=e instanceof Error?e.message:String(e); console.log(`❌ 실패: ${m}`); }
+        return true;
+      }
+      if (sub === "remove" || sub === ":remove") {
+        if (!argsStr) { console.log("사용법: /agent remove <id>"); return true; }
+        console.log(mgr.remove(argsStr.trim()) ? `✅ 제거: ${argsStr.trim()}` : `❌ 없음: ${argsStr.trim()}`);
+        return true;
+      }
+      if (sub === "test" || sub === ":test") {
+        const id = argsStr.trim() || mgr.list()[0]?.id;
+        if (!id) { console.log("테스트할 에이전트 없음"); return true; }
+        console.log(`🔍 테스트: ${id} ...`);
+        try { const r = await mgr.delegate(id, "Hello! Respond with one short sentence."); console.log(`✅ 응답:\n${r.slice(0,2000)}`); } catch (e) { const m=e instanceof Error?e.message:String(e); console.log(`❌ 실패: ${m}`); }
+        return true;
+      }
+      console.log("사용법: /agent [list|add|remove|test]\n  /agent list\n  /agent add '{\"id\":\"my-gpt\",\"transport\":\"openai\",\"baseUrl\":\"https://api.example.com/v1\"}'\n  /agent test my-gpt");
       return true;
     }
     if (input.startsWith("/update")) {

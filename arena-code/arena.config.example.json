@@ -21,5 +21,26 @@
       { "name": "rea", "repo": "TOOAl/rea" },
       { "name": "arena-code", "repo": "TOOAl/rea" }
     ]
-  }
+  },
+  "agents": [
+    {
+      "id": "my-openai",
+      "description": "예시: OpenAI 호환 API (주석 해제 후 사용)",
+      "transport": "openai",
+      "baseUrl": "https://api.openai.com/v1",
+      "apiKey": "${ENV:OPENAI_API_KEY}",
+      "model": "gpt-4o-mini",
+      "enabled": false,
+      "provides": "provider"
+    },
+    {
+      "id": "my-mcp-tools",
+      "description": "예시: MCP 서버 (주석 해제 후 사용)",
+      "transport": "mcp",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "enabled": false,
+      "provides": "tools"
+    }
+  ]
 }

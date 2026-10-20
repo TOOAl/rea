@@ -1,7 +1,7 @@
 {
   "name": "arena-code",
-  "version": "2.2.0",
-  "description": "Claude Code 클론 — REA 분석 기반, Arena Agent + 무료 API 지원 (Hook/MCP/외부 패키지)",
+  "version": "2.3.0",
+  "description": "Claude Code 클론 — REA 분석 기반, Arena Agent + 무료 API 지원 (Hook/MCP/외부 패키지/에이전트 허브)",
   "type": "module",
   "bin": {
     "arena-code": "dist/cli.js"
@@ -10,12 +10,11 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "tsc && npm run build:packages",
-    "build:packages": "npm run build --workspace=@arena-code/ghidra-tools --workspace=@arena-code/rea-bridge || true",
+    "build": "tsc",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src packages/*/src --ext .ts",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.{ts,json}\" \"packages/*/src/**/*.{ts,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,json}\" \"packages/*/src/**/*.{ts,json}\"",
     "test": "vitest run",
@@ -23,19 +22,9 @@
     "update:check": "node dist/cli.js --update check",
     "update:apply": "node dist/cli.js --update apply"
   },
-  "keywords": [
-    "agent",
-    "coding",
-    "claude-code",
-    "arena",
-    "rea",
-    "mcp",
-    "hooks"
-  ],
+  "keywords": ["agent", "coding", "claude-code", "arena", "rea", "mcp", "hooks", "external-agents"],
   "license": "MIT",
-  "engines": {
-    "node": ">=22.19.0"
-  },
+  "engines": { "node": ">=22.19.0" },
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
