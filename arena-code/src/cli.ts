@@ -57,6 +57,15 @@ program
   .option("--list-agents", "등록된 외부 에이전트 목록 출력 후 종료")
   .option("--yes", "업데이트 시 자동 승인 (질문 없이 진행)")
   .option("--dry-run", "업데이트 dry-run (적용 없이 계획만 표시)")
+  .option("--harness2", "Harness2 실행 (task-level recursion)")
+  .option("--harness2-k <n>", "Harness2 K 예산 (기본 1)")
+  .option("--harness2-mode <mode>", "Harness2 모드: parallel|sequential")
+  .option("--harness2-domain <domain>", "Harness2 도메인 (library 키)")
+  .option("--harness2-evidence-root <path>", "Harness2 증거 트리 루트")
+  .option("--harness2-dry-run", "Harness2 dryRun (LLM 없이)")
+  .option("--k <n>", "(alias) --harness2-k")
+  .option("--mode <mode>", "(alias) --harness2-mode")
+  .option("--evidence-root <path>", "(alias) --harness2-evidence-root")
   .argument("[prompt]", "프롬프트 (대안)")
   .action(async (promptArg, opts) => {
     // MCP 모드는 초기에 분기 — config/session 없이 registry만으로 동작
@@ -161,6 +170,51 @@ program
 
     const session = await bootstrapSession(config, providerOverride);
     const cwd = session.effectiveCwd;
+
+    // Harness2 mode (arena-code --harness2 ...)
+    const h2Enabled = !!opts.harness2;
+    if (h2Enabled) {
+      const rawK = opts.harness2K ?? opts.k ?? "1";
+      const rawMode = opts.harness2Mode ?? opts.mode ?? "parallel";
+      const h2k = Math.max(1, Math.min(5, parseInt(String(rawK), 10) || 1));
+      const h2mode = (String(rawMode).toLowerCase() === "sequential" ? "sequential" : "parallel") as "parallel" | "sequential";
+      const h2dry = !!(opts.harness2DryRun || opts.dryRun);
+      const h2domain = (opts.harness2Domain as string) || undefined;
+      const h2evidenceRoot = (opts.harness2EvidenceRoot ?? opts.evidenceRoot) as string | undefined;
+      const taskPrompt = (promptArg as string) || (opts.print as string) || config.printPrompt || "Improve harness via Harness2 recursion";
+      const taskId = (taskPrompt.slice(0, 24).replace(/[^a-z0-9]+/gi, "-").toLowerCase() || "task") + "-h2";
+      try {
+        const { ARENA_SURFACE, readTree: readH2Tree } = await import("./harness2/harness.js");
+        const { Harness2Engine } = await import("./harness2/engine.js");
+        let baseHarness: Record<string, string> = {};
+        try { baseHarness = readH2Tree(ARENA_SURFACE, cwd); } catch {}
+        console.log("\nHarness2 run: k=" + h2k + " mode=" + h2mode + " dryRun=" + h2dry + " domain=" + (h2domain ?? "(none)"));
+        console.log("   taskId=" + taskId + " evidenceRoot=" + (h2evidenceRoot ?? ".arena/harness2/evidence"));
+        const engine = new Harness2Engine(session.provider);
+        const result = await engine.run({
+          taskId, taskPrompt, baseHarness,
+          provider: session.provider, cwd,
+          k: h2k, mode: h2mode,
+          taskDomain: h2domain,
+          evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
+          dryRun: h2dry,
+        });
+        console.log("\nHarness2 done - ok=" + result.ok + " stages=" + result.stages.length + " finals=" + result.finals.join(",") + " errors=" + result.errors.length);
+        if (result.selection) console.log("   selection: " + result.selection.chosenLabel + " - " + result.selection.reason.slice(0,120));
+        for (const s of result.stages) {
+          console.log("   - " + s.label + " [" + s.dim + "] keptBase=" + s.keptBase + " fellBack=" + s.fellBack + " notes=" + s.notes.slice(0,80));
+        }
+        if (result.errors.length) console.log("   errors: " + result.errors.slice(0,3).join(" | ").slice(0,500));
+        console.log("   finalHarness keys: " + (Object.keys(result.finalHarness).join(", ").slice(0,200) || "(empty)"));
+      } catch (e) {
+        console.error("\nHarness2 failed: " + (e instanceof Error ? e.message : String(e)));
+        if (e instanceof Error && e.stack) console.error(e.stack.slice(0,2000));
+        process.exit(1);
+      }
+      session.hooks.emit("sessionEnd", { cwd, event: "sessionEnd" });
+      session.eventLog?.sessionEnd("harness2 done");
+      return;
+    }
 
     // Tool Registry — 외부 패키지 + 외부 에이전트 MCP/tools 포함 (async)
     const registry = await buildRegistryAsync(config.disabledTools);

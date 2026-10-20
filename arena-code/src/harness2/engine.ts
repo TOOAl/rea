@@ -31,6 +31,9 @@ import type { RolloutView } from "./context.js";
 import { buildEvidenceTree, buildMission } from "./context.js";
 import { HarnessProposer } from "./proposer.js";
 import { composeFromCandidates, selectAnonymous } from "./composer.js";
+import { diffSummary } from "./harness.js";
+import { FailureStore, recordAndResearch, tryAlternativeMerge } from "./failures.js";
+import { HarnessLibrary } from "./library.js";
 import type { Provider } from "../providers/types.js";
 
 // ---------------------------------------------------------------------------
@@ -289,7 +292,7 @@ export class Harness2Engine {
         trees[`dom-${step}`] = domHarness;
 
         // 4) Compose — 행동 대비로 합성
-        const composeRes = composeFromCandidates({
+        let composeRes = composeFromCandidates({
           base: currentHarness,
           baseRollout,
           candidates: [
@@ -297,6 +300,77 @@ export class Harness2Engine {
             { label: `dom-${step}`, dim: "domain", harness: domHarness, rollout: domRollout, reply: domReply },
           ],
         });
+
+        // 4.1) 실패 시: 실패 저장 + 연구 + 대체 합치기 시도 (사용자 요청)
+        if (composeRes.keptBase && composeRes.errors.length > 0) {
+          try {
+            const failureStore = new FailureStore(join(evidenceRoot, ".."));
+            const failure = recordAndResearch(failureStore, {
+              taskId,
+              k,
+              mode,
+              step,
+              baseKeys: Object.keys(currentHarness),
+              candidateLabels: [`inv-${step}`, `dom-${step}`],
+              candidateDiffs: [
+                { label: `inv-${step}`, ...diffSummary(ARENA_SURFACE, currentHarness, invHarness) },
+                { label: `dom-${step}`, ...diffSummary(ARENA_SURFACE, currentHarness, domHarness) },
+              ],
+              errors: composeRes.errors,
+              fellBack: composeRes.fellBack,
+              finalAttemptKeys: Object.keys(composeRes.finalHarness),
+              strategy: "merge-all",
+            });
+            // 증거 디렉토리에 실패 연구 결과 저장
+            writeFileSync(join(evidence.root, "failure-research.json"), JSON.stringify(failure, null, 2), "utf-8");
+            // 연구에서 추천한 대체 전략 시도
+            if (failure.research?.recommended) {
+              const altStrategy = failure.research.alternatives.find(a => a.id === failure.research!.recommended);
+              if (altStrategy) {
+                const altTree = tryAlternativeMerge(currentHarness, [
+                  { label: `inv-${step}`, harness: invHarness },
+                  { label: `dom-${step}`, harness: domHarness },
+                ], altStrategy);
+                if (altTree) {
+                  // 대체 하네스가 검증 통과하면 사용
+                  const altValidate = (await import("./harness.js")).validate(ARENA_SURFACE, altTree);
+                  if (altValidate.ok) {
+                    composeRes = {
+                      ...composeRes,
+                      finalHarness: altTree,
+                      keptBase: false,
+                      notes: composeRes.notes + `\n[Failure Research] Alternative strategy "${altStrategy.id}" succeeded: ${altStrategy.why}`,
+                      errors: [...composeRes.errors, `[Research] applied alternative: ${altStrategy.id}`],
+                    };
+                    writeFileSync(join(evidence.root, "alternative-harness.json"), JSON.stringify({ strategy: altStrategy.id, harness: altTree }, null, 2), "utf-8");
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            errors.push(`[FailureStore] research failed: ${e instanceof Error ? e.message : String(e)}`);
+          }
+        }
+
+        // 4.2) 성공 시 Library에 저장 (Harnessing-level recursion)
+        if (!composeRes.keptBase && opts.taskDomain) {
+          try {
+            const lib = new HarnessLibrary({ root: join(evidenceRoot, "..", "library"), domain: opts.taskDomain });
+            lib.add({
+              taskId: `${taskId}#${stepLabel}`,
+              harness: composeRes.finalHarness,
+              label: `compose-${step}`,
+              why: composeRes.notes.slice(0, 500),
+              experience: {
+                cue: `Task: ${taskPrompt.slice(0, 80)} — ${composeRes.changed.added.length} added, ${composeRes.changed.modified.length} modified`,
+                lesson: composeRes.notes.slice(0, 300),
+                evidence: `Base vs inv/dom contrast: ${composeRes.fellBack.length === 0 ? "both valid" : `fellBack ${composeRes.fellBack.join(",")}`}`,
+              },
+            });
+          } catch (e) {
+            errors.push(`[Library] save failed: ${e instanceof Error ? e.message : String(e)}`);
+          }
+        }
 
         // 하네스 트리를 증거 디렉트에 저장 (재현용)
         if (composeRes.finalHarness) {
@@ -424,7 +498,7 @@ export class Harness2Engine {
         trees[`inv-${step}`] = invHarness;
         trees[`dom-${step}`] = domHarness;
 
-        const composeRes = composeFromCandidates({
+        let composeRes = composeFromCandidates({
           base: currentHarness,
           baseRollout,
           candidates: [
@@ -432,6 +506,74 @@ export class Harness2Engine {
             { label: `dom-${step}`, dim: "domain", harness: domHarness, rollout: domRollout, reply: domReply },
           ],
         });
+
+        // 실패 시 연구 + 대체 시도 (sequential도 동일)
+        if (composeRes.keptBase && composeRes.errors.length > 0) {
+          try {
+            const failureStore = new FailureStore(join(evidenceRoot, ".."));
+            const failure = recordAndResearch(failureStore, {
+              taskId,
+              k,
+              mode,
+              step,
+              baseKeys: Object.keys(currentHarness),
+              candidateLabels: [`inv-${step}`, `dom-${step}`],
+              candidateDiffs: [
+                { label: `inv-${step}`, ...diffSummary(ARENA_SURFACE, currentHarness, invHarness) },
+                { label: `dom-${step}`, ...diffSummary(ARENA_SURFACE, currentHarness, domHarness) },
+              ],
+              errors: composeRes.errors,
+              fellBack: composeRes.fellBack,
+              finalAttemptKeys: Object.keys(composeRes.finalHarness),
+              strategy: "merge-all",
+            });
+            writeFileSync(join(evidence.root, "failure-research.json"), JSON.stringify(failure, null, 2), "utf-8");
+            if (failure.research?.recommended) {
+              const altStrategy = failure.research.alternatives.find(a => a.id === failure.research!.recommended);
+              if (altStrategy) {
+                const altTree = tryAlternativeMerge(currentHarness, [
+                  { label: `inv-${step}`, harness: invHarness },
+                  { label: `dom-${step}`, harness: domHarness },
+                ], altStrategy);
+                if (altTree) {
+                  const altValidate = (await import("./harness.js")).validate(ARENA_SURFACE, altTree);
+                  if (altValidate.ok) {
+                    composeRes = {
+                      ...composeRes,
+                      finalHarness: altTree,
+                      keptBase: false,
+                      notes: composeRes.notes + `\n[Failure Research] Alternative "${altStrategy.id}" succeeded: ${altStrategy.why}`,
+                      errors: [...composeRes.errors, `[Research] applied alternative: ${altStrategy.id}`],
+                    };
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            errors.push(`[FailureStore] research failed: ${e instanceof Error ? e.message : String(e)}`);
+          }
+        }
+
+        if (!composeRes.keptBase && opts.taskDomain) {
+          try {
+            const lib = new HarnessLibrary({ root: join(evidenceRoot, "..", "library"), domain: opts.taskDomain });
+            lib.add({
+              taskId: `${taskId}#seq-${step}`,
+              harness: composeRes.finalHarness,
+              label: `compose-${step}`,
+              why: composeRes.notes.slice(0, 500),
+              experience: {
+                cue: `Task: ${taskPrompt.slice(0, 80)}`,
+                lesson: composeRes.notes.slice(0, 300),
+                evidence: `Sequential step ${step} contrast`,
+              },
+            });
+          } catch (e) {
+            errors.push(`[Library] save failed: ${e instanceof Error ? e.message : String(e)}`);
+          }
+        }
+
+        writeHarnessTree(ARENA_SURFACE, composeRes.finalHarness, join(evidence.root, "final-harness"), { stubs: false });
 
         stages.push(
           { label: `inv-${step}`, dim: "invariant", harness: invHarness, keptBase: invReply.text.includes("KEEP_BASE"), fellBack: composeRes.fellBack.includes(`inv-${step}`), notes: invReply.text.slice(0, 500), rollout: invRollout },
