@@ -6,7 +6,7 @@ import { ALL_TOOLS, CORE_TOOLS } from "../tools/index.js";
 import type { Session } from "./bootstrap.js";
 
 export function printBanner(session: Session, printPrompt?: string): void {
-  console.log(`\n🤖 Arena Code v2.1 — Claude Code + Codex + Muse + Ghidra`);
+  console.log(`\n🤖 Arena Code v2.2 — Claude Code + Codex + Muse + Ghidra`);
   console.log(`   Provider: ${session.provider.name} (${session.provider.model})`);
   console.log(`   CWD: ${session.effectiveCwd}${session.effectiveCwd !== session.config.cwd ? ` (원래: ${session.config.cwd})` : ""}`);
   console.log(`   Tools: ${ALL_TOOLS.length}개 (코딩 ${CORE_TOOLS.length} + Ghidra ${ALL_TOOLS.length - CORE_TOOLS.length})`);

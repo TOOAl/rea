@@ -6,6 +6,7 @@ import type { Provider, Message, ContentBlock, ToolDefinition } from "../provide
 import type { Tool, ToolContext } from "../tools/types.js";
 import { assembleSystemPrompt, estimateTokens, compactMessages } from "./context.js";
 import { checkPermission, loadPermissionConfig, type PermissionConfig } from "./permissions.js";
+import type { HookManager } from "../hooks/index.js";
 
 // --- Events ---
 
@@ -35,6 +36,7 @@ export interface LoopParams {
   permissions?: PermissionConfig;
   signal?: AbortSignal;
   onAskPermission?: (block: ContentBlock) => Promise<boolean>;
+  hooks?: HookManager;
 }
 
 // --- Main Loop ---
@@ -73,6 +75,7 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     // --- Context management: compaction check ---
     const tokens = estimateTokens(state.messages);
     if (tokens > maxContextTokens * 0.8) {
+      if (params.hooks) await params.hooks.emit("preCompact", { cwd: params.cwd, turn: state.turnCount });
       yield { type: "compacting", message: `Context ${tokens} tokens > 80% of ${maxContextTokens}, compacting...` };
       state.messages = await compactMessages(state.messages, params.provider, system);
     }
@@ -135,6 +138,18 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     for (const block of toolCalls) {
       if (block.type !== "tool_use") continue;
 
+      // Hooks: preToolUse — input 수정/차단
+      if (params.hooks) {
+        const hook = await params.hooks.runPreToolUse({ cwd: params.cwd, event: "preToolUse", toolName: block.name, input: (block.input ?? {}) as Record<string, unknown> });
+        if (hook?.block) {
+          const reason = hook.reason ?? `Hook blocked ${block.name}`;
+          yield { type: "tool_denied", tool: block.name!, reason };
+          state.messages.push({ role: "user", content: [{ type: "tool_result", tool_use_id: block.id!, content: `⛔ Blocked by hook: ${reason}` }] });
+          continue;
+        }
+        if (hook?.modifiedInput) block.input = { ...(block.input ?? {}), ...hook.modifiedInput };
+      }
+
       yield { type: "tool_start", tool: block.name!, input: (block.input ?? {}) as Record<string, unknown> };
 
       // Permission check
@@ -174,7 +189,12 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
       }
 
       try {
-        const result = await tool.execute((block.input ?? {}) as Record<string, unknown>, toolCtx);
+        let result = await tool.execute((block.input ?? {}) as Record<string, unknown>, toolCtx);
+        // Hooks: postToolUse — result 수정
+        if (params.hooks) {
+          const post = await params.hooks.runPostToolUse({ cwd: params.cwd, event: "postToolUse", toolName: block.name, input: (block.input ?? {}) as Record<string, unknown>, result });
+          if (post?.modifiedResult != null) result = post.modifiedResult;
+        }
         yield { type: "tool_result", tool: block.name!, result: result.slice(0, 5000) + (result.length > 5000 ? "\n... (truncated)" : "") };
         state.messages.push({
           role: "user",
@@ -191,6 +211,7 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     }
 
     yield { type: "turn_end", turn: state.turnCount + 1 };
+    if (params.hooks) await params.hooks.emit("postTurn", { cwd: params.cwd, turn: state.turnCount + 1 });
     state.turnCount++;
 
     // Small delay to avoid tight loop / rate limit

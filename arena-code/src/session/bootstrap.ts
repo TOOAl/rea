@@ -11,6 +11,7 @@ import { SkillManager } from "../skills/index.js";
 import { BackgroundAgentManager } from "../background/index.js";
 import { loadAgentsMdHierarchy } from "../config/agentsMd.js";
 import { createProvider } from "../providers/index.js";
+import { HookManager } from "../hooks/index.js";
 import type { ArenaConfig } from "../config/schema.js";
 
 export interface Session {
@@ -25,6 +26,7 @@ export interface Session {
   provider: ReturnType<typeof createProvider>;
   agentsMdEntries: ReturnType<typeof loadAgentsMdHierarchy>;
   skillExtra: string;
+  hooks: HookManager;
 }
 
 export async function bootstrapSession(config: ArenaConfig): Promise<Session> {
@@ -104,8 +106,18 @@ export async function bootstrapSession(config: ArenaConfig): Promise<Session> {
   const agentsMdEntries = loadAgentsMdHierarchy(cwd);
   const bgMgr = new BackgroundAgentManager(eventLog ?? undefined);
 
+  // Hooks — load from .arena/hooks + built-in
+  const hooks = new HookManager();
+  try {
+    const hookDir = `${cwd}/.arena/hooks`;
+    const r = await hooks.loadFromDir(hookDir);
+    if (r.loaded > 0) console.log(`   🪝 Hooks: ${r.loaded}개 로드 (${hookDir})`);
+    if (r.errors.length) console.log(`   ⚠️ Hook 로드 실패: ${r.errors.join("; ")}`);
+  } catch {}
+  hooks.emit("sessionStart", { cwd, event: "sessionStart" });
+
   return {
     config, cwd, effectiveCwd, sandbox, eventLog, worktreeMgr,
-    skillMgr, bgMgr, provider, agentsMdEntries, skillExtra,
+    skillMgr, bgMgr, provider, agentsMdEntries, skillExtra, hooks,
   };
 }

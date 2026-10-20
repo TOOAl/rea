@@ -1,18 +1,15 @@
 #!/usr/bin/env node
 /**
- * Arena Code CLI v2.1 — Claude Code + Codex + Muse + Ghidra Fusion
+ * Arena Code CLI v2.2 — Claude Code + Codex + Muse + Ghidra Fusion
  *
- * Phase 1 (기반 다지기): config 통합 + registry + session 분리
- * - config/resolve.ts: arena.config.json + .env + CLI 병합
- * - session/bootstrap.ts: sandbox/eventLog/worktree/skill/provider 초기화
- * - session/banner.ts: 상태 출력
- * - tools/registry.ts: 동적 도구 등록 (플러그인 슬롯)
+ * Phase 2: Hook 시스템 + MCP 서버 (--mcp)
+ * Phase 4: 외부 패키지 (@arena-code/ghidra-tools/@arena-code/rea-bridge) + 업데이트
  */
 import { createInterface } from "node:readline";
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { queryLoop } from "./loop/queryLoop.js";
-import { buildRegistry } from "./tools/index.js";
+import { buildRegistry, buildRegistryAsync } from "./tools/index.js";
 import type { Message } from "./providers/types.js";
 import { resolveConfig } from "./config/resolve.js";
 import { bootstrapSession } from "./session/bootstrap.js";
@@ -23,14 +20,17 @@ import type { SandboxMode } from "./sandbox/index.js";
 import { EventLog } from "./eventLog/index.js";
 import { WorktreeManager } from "./worktree/index.js";
 import { BackgroundAgentManager } from "./background/index.js";
+import { autoCheckUpdates, manualCheckUpdates } from "./updates/index.js";
+import { applyUpdate } from "./updates/apply.js";
+import { loadStore } from "./updates/store.js";
 
 // ─── CLI 정의 ──────────────────────────────────────────────
 const program = new Command();
 
 program
   .name("arena-code")
-  .description("Arena Code v2.1 — Claude Code + Codex + Muse + Ghidra (37 tools)")
-  .version("2.1.0")
+  .description("Arena Code v2.2 — Claude Code + Codex + Muse + Ghidra (Hook/MCP/업데이트)")
+  .version("2.2.0")
   .option("-p, --print <prompt>", "Headless: 한 번 질문하고 종료")
   .option("--provider <name>", "LLM: arena|openrouter|gemini|groq|ollama|anthropic")
   .option("--model <model>", "모델 이름 직접 지정")
@@ -46,13 +46,37 @@ program
   .option("--approval-mode <mode>", "승인 모드: on-request|never|untrusted")
   .option("--config <path>", "arena.config.json 경로 직접 지정")
   .option("--disable-tools <list>", "비활성화할 도구 (콤마 구분)")
+  .option("--mcp", "MCP 서버 모드로 실행 (stdio JSON-RPC)")
+  .option("--update <action>", "업데이트: check|apply [대상: ghidra|rea|all]")
+  .option("--update-target <target>", "업데이트 대상 지정", "all")
+  .option("--yes", "업데이트 시 자동 승인 (질문 없이 진행)")
+  .option("--dry-run", "업데이트 dry-run (적용 없이 계획만 표시)")
   .argument("[prompt]", "프롬프트 (대안)")
   .action(async (promptArg, opts) => {
-    // 1) 통합 config 해석 (arena.config.json + .env + CLI)
+    // MCP 모드는 초기에 분기 — config/session 없이 registry만으로 동작
+    if (opts.mcp) {
+      const cwdForConfig = resolve(opts.cwd ?? process.cwd());
+      const config = resolveConfig(cwdForConfig, opts);
+      const registry = await buildRegistryAsync(config.disabledTools);
+      for (const p of config.pluginPaths) await registry.loadPlugin(p);
+      const { runMcpServer } = await import("./mcp/server.js");
+      await runMcpServer({ registry, cwd: cwdForConfig });
+      return;
+    }
+
+    // --update check/apply 는 헤드리스 유틸리티 명령
+    if (opts.update) {
+      const cwdForConfig = resolve(opts.cwd ?? process.cwd());
+      const config = resolveConfig(cwdForConfig, opts);
+      await handleUpdateCommand(opts.update, {
+        cwd: cwdForConfig, config, target: opts.updateTarget, yes: !!opts.yes, dryRun: !!opts.dryRun,
+      });
+      return;
+    }
+
+    // 일반 세션 플로우
     const cwdForConfig = resolve(opts.cwd ?? process.cwd());
     const config = resolveConfig(cwdForConfig, opts);
-
-    // --disable-tools CLI 병합
     if (opts.disableTools) {
       const extra = (opts.disableTools as string).split(",").map((s: string) => s.trim()).filter(Boolean);
       config.disabledTools = [...config.disabledTools, ...extra];
@@ -61,30 +85,30 @@ program
     if (opts.resume) (config as unknown as Record<string, unknown>).resume = true;
     if (promptArg && !opts.print) config.printPrompt = promptArg;
     else if (opts.print) config.printPrompt = opts.print;
-
-    // provider/model 환경변수 반영 (resolveConfig가 이미 처리하지만 CLI 직접 주입도 보정)
     if (opts.model) config.model = opts.model;
 
-    // 2) 세션 부트스트랩
     const session = await bootstrapSession(config);
     const cwd = session.effectiveCwd;
 
-    // 3) Tool Registry (config.disabledTools 반영)
-    const registry = buildRegistry(config.disabledTools);
-    const tools = registry.all();
-
-    // 플러그인 로드 (있는 경우)
+    // Tool Registry — 외부 패키지 포함 (async)
+    const registry = await buildRegistryAsync(config.disabledTools);
     for (const p of config.pluginPaths) {
       const r = await registry.loadPlugin(p);
       if (r.error) console.log(`   ⚠️ 플러그인 로드 실패 (${p}): ${r.error}`);
       else if (r.loaded > 0) console.log(`   🔌 플러그인 ${p}: ${r.loaded}개 도구 로드`);
     }
+    const tools = registry.all();
 
-    // 4) 배너
     printBanner(session, config.printPrompt);
     if (config.disabledTools.length) console.log(`   🚫 비활성 도구: ${config.disabledTools.join(", ")}`);
     if (config.pluginPaths.length) console.log(`   🔌 플러그인: ${config.pluginPaths.join(", ")}`);
     if (registry.size() !== tools.length) console.log(`   Tools: ${tools.length}개 활성 / ${registry.size()}개 등록`);
+    if (session.hooks.size > 0) console.log(`   🪝 Hooks: ${session.hooks.size}개 활성`);
+
+    // 업데이트 자동 체크 (비동기, 결과는 배너 아래 표시 — sessionStart 이후)
+    if (config.updates.enabled && config.updates.autoCheck && !config.mock) {
+      autoCheckUpdates(cwd, config).catch(() => {});
+    }
 
     const shared: SharedOpts = {
       dangerouslySkipPermissions: config.dangerouslySkipPermissions,
@@ -93,20 +117,82 @@ program
       skillExtra: session.skillExtra,
       worktreeMgr: session.worktreeMgr ?? undefined,
       tools,
+      hooks: session.hooks,
+      cwd,
+      config,
     };
 
     if (config.printPrompt) {
       await runPrompt(config.printPrompt, session.provider, cwd, config.maxTurns, shared);
+      session.hooks.emit("sessionEnd", { cwd, event: "sessionEnd" });
       session.eventLog?.sessionEnd("headless done");
       return;
     }
     await runInteractive(session.provider, cwd, config.maxTurns, shared, session.skillMgr);
+    session.hooks.emit("sessionEnd", { cwd, event: "sessionEnd" });
     session.eventLog?.sessionEnd("interactive ended");
   });
+
+// ─── Update CLI handler ──────────────────────────────────
+async function handleUpdateCommand(
+  action: string,
+  opts: { cwd: string; config: import("./config/schema.js").ArenaConfig; target: string; yes: boolean; dryRun: boolean },
+): Promise<void> {
+  const { cwd, config, yes, dryRun } = opts;
+  // 정규화: --update check 또는 --update=check 둘 다 지원
+  const act = (action || "check").toLowerCase();
+  const target = (opts.target || "all").toLowerCase();
+
+  if (act === "check") {
+    console.log(`\n🔍 업데이트 확인 중... (repos: ${config.updates.repos.map(r => r.repo).join(", ")})\n`);
+    const infos = await manualCheckUpdates(cwd, config);
+    // 인터랙티브라면 결과 후 종료
+    if (infos.some(i => i.updateAvailable)) {
+      console.log(`\n적용 방법:  arena-code --update apply${target !== "all" ? ` --update-target ${target}` : ""}${yes ? " --yes" : ""}`);
+    }
+    return;
+  }
+
+  if (act === "apply") {
+    console.log(`\n📦 업데이트 적용${target !== "all" ? ` (대상: ${target})` : ""}...\n`);
+    const infos = await manualCheckUpdates(cwd, config);
+    const toApply = target === "all"
+      ? infos.filter(i => i.updateAvailable)
+      : infos.filter(i => i.name === target && i.updateAvailable);
+
+    if (toApply.length === 0) {
+      console.log(target === "all" ? "적용할 업데이트가 없습니다." : `'${target}' 업데이트 없음. --update check로 확인하세요.`);
+      return;
+    }
+
+    for (const info of toApply) {
+      console.log(`\n— ${info.name}: ${info.localVersion} → ${info.remoteTag} —`);
+      const askFn = yes ? undefined : async (msg: string) => {
+        const rl = createInterface({ input: process.stdin, output: process.stdout });
+        const ans = await new Promise<string>(res => rl.question(`${msg} `, res));
+        rl.close();
+        const t = ans.trim().toLowerCase();
+        return t === "" || t === "y" || t === "yes";
+      };
+      const r = await applyUpdate({
+        cwd, name: info.name, repo: info.repo, targetTag: info.remoteTag,
+        dryRun, requireApproval: !yes || !!askFn, askFn,
+      });
+      console.log(r.ok ? `✅ ${r.message}` : `❌ ${r.message}`);
+      if (r.command) console.log(`   실행: ${r.command}`);
+    }
+    return;
+  }
+
+  console.error(`알 수 없는 업데이트 액션: ${action} (check|apply 중 하나)`);
+  process.exit(1);
+}
 
 // ─── Helpers ─────────────────────────────────────────────
 import type { Tool } from "./tools/types.js";
 import type { SandboxConfig } from "./sandbox/index.js";
+import type { HookManager } from "./hooks/index.js";
+import type { ArenaConfig } from "./config/schema.js";
 
 interface SharedOpts {
   dangerouslySkipPermissions?: boolean;
@@ -115,6 +201,9 @@ interface SharedOpts {
   skillExtra?: string;
   worktreeMgr?: WorktreeManager;
   tools: Tool[];
+  hooks?: HookManager;
+  cwd: string;
+  config: ArenaConfig;
 }
 
 async function runPrompt(
@@ -191,25 +280,45 @@ async function runInteractive(
   /worktree:prune 모든 arena worktree 정리
   /sandbox <mode> 샌드박스 전환 (read-only/workspace-write/danger-full-access)
   /resume         이벤트 로그 복구
+  /update [check|apply] 업데이트 확인/적용 (GitHub releases 추적)
+  /update:check   업데이트 확인
+  /hooks          활성 hooks 목록
   /exit, exit, quit 종료
-  /config         현재 config 덤프 (v2.1+)
-  /tools          등록된 도구 목록 (v2.1+)
+  /config         현재 config 덤프
+  /tools          등록된 도구 목록
 `);
       return true;
     }
     if (input === "/clear") { messages.length = 0; console.log("🧹 초기화됨."); return true; }
     if (input === "/status") {
       const wt = shared.worktreeMgr ? await shared.worktreeMgr.list() : null;
-      console.log(`\nProvider: ${provider.name} (${provider.model})\nCWD: ${cwd}\nMessages: ${messages.length}\nMax turns: ${maxTurns}\nSandbox: ${shared.sandbox?.mode}\nEvent Log: ${shared.eventLog?.logPath}\nWorktrees: ${wt ? wt.worktrees.length + "개" : "없음"}\nSkills: ${skillMgr.list().map(s => "/" + s.name).join(", ")}\nTools: ${shared.tools.map(t => t.name).join(", ")}`);
+      console.log(`\nProvider: ${provider.name} (${provider.model})\nCWD: ${cwd}\nMessages: ${messages.length}\nMax turns: ${maxTurns}\nSandbox: ${shared.sandbox?.mode}\nHooks: ${shared.hooks?.size ?? 0}개\nEvent Log: ${shared.eventLog?.logPath}\nWorktrees: ${wt ? wt.worktrees.length + "개" : "없음"}\nSkills: ${skillMgr.list().map(s => "/" + s.name).join(", ")}\nTools: ${shared.tools.map(t => t.name).join(", ")}`);
       return true;
     }
     if (input === "/config") {
-      // 현재 세션의 sandbox/provider 등 상태 출력
-      console.log(`\nSandbox: ${shared.sandbox?.mode}\nProvider: ${provider.name} (${provider.model})\nMaxTurns: ${maxTurns}\nCWD: ${cwd}\nTools: ${shared.tools.length}개`);
+      console.log(`\nSandbox: ${shared.sandbox?.mode}\nProvider: ${provider.name} (${provider.model})\nMaxTurns: ${maxTurns}\nCWD: ${cwd}\nTools: ${shared.tools.length}개\nUpdates: ${shared.config.updates.enabled ? "ON" : "OFF"} (repos: ${shared.config.updates.repos.map(r => r.name).join(", ")})`);
       return true;
     }
     if (input === "/tools") {
       console.log(`\nTools (${shared.tools.length}개):\n${shared.tools.map(t => `  - ${t.name}: ${t.description.slice(0, 80)}`).join("\n")}`);
+      return true;
+    }
+    if (input === "/hooks") {
+      const entries = shared.hooks ? (["sessionStart", "preToolUse", "postToolUse", "postTurn", "preCompact", "sessionEnd"] as const).flatMap(e => shared.hooks!.forEvent(e).map(h => `  - [${e}] ${h.source}`)) : [];
+      console.log(entries.length ? `\nHooks (${entries.length}개):\n${entries.join("\n")}` : "\n활성 hooks 없음. .arena/hooks/*.js 로 추가하세요.");
+      return true;
+    }
+    if (input.startsWith("/update")) {
+      const rest = input.slice("/update".length).trim().replace(/^:/, "").trim();
+      const act = rest.split(/\s+/)[0] || "check";
+      const tgt = rest.split(/\s+/)[1] || "all";
+      if (act === "check" || act === "apply" || act === "") {
+        await handleUpdateCommand(act || "check", {
+          cwd, config: shared.config, target: tgt, yes: false, dryRun: false,
+        });
+      } else {
+        console.log(`사용법: /update [check|apply] [대상]\n예: /update:check, /update apply ghidra`);
+      }
       return true;
     }
     if (input.startsWith("/worktree")) {
@@ -298,6 +407,7 @@ async function runLoop(
       signal,
       onAskPermission,
       systemExtra: shared.skillExtra,
+      hooks: shared.hooks,
     })) {
       switch (event.type) {
         case "text": process.stdout.write(event.text); fullText += event.text; shared.eventLog?.modelResponse({ delta: event.text }); break;

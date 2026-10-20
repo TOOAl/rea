@@ -10,5 +10,16 @@
   "disabledTools": [],
   "plugins": [],
   "permissionsPath": ".arena-code/settings.json",
-  "eventLogEnabled": true
+  "eventLogEnabled": true,
+  "externalPackages": {},
+  "updates": {
+    "enabled": true,
+    "checkIntervalHours": 24,
+    "autoCheck": true,
+    "repos": [
+      { "name": "ghidra", "repo": "NationalSecurityAgency/ghidra" },
+      { "name": "rea", "repo": "TOOAl/rea" },
+      { "name": "arena-code", "repo": "TOOAl/rea" }
+    ]
+  }
 }

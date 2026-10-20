@@ -1,0 +1,20 @@
+{
+  "name": "@arena-code/rea-bridge",
+  "version": "1.0.0",
+  "description": "REA(ReVerse Engineer Anything) 브리지 — 바이너리/앱 분석을 Arena Code에서 호출 (REA CLI/MCP 래퍼)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./helpers": "./dist/helpers.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TOOAl/rea",
+    "directory": "arena-code/packages/rea-bridge"
+  },
+  "keywords": ["rea", "reverse-engineering", "binary-analysis", "arena-code"],
+  "license": "MIT",
+  "engines": { "node": ">=22.19.0" }
+}
