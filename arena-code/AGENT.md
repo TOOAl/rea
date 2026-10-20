@@ -21,7 +21,7 @@ Arena Code가 매 턴마다 자동으로 읽는 프로젝트 메모리입니다.
 - 검증: Bash로 `npm test` 또는 `npm run build` 실행
 
 ## 현재 프로젝트 상태
-- arena-code v2.8: Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain + Orca Fleet (REA v2.6→2.7)
+- arena-code v2.10: Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain + Orca Fleet (REA v2.6→2.7)
 - Provider: gemini/openrouter/groq/ollama/arena/anthropic + 외부 에이전트(openai/mcp/module/command 무제한)
 - Tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, WebFetch + Ghidra 29 + REA 6 + MCP
 - Harness²: H1~H5 9모듈 (e678e8f) + Fleet O1~O3 6모듈 (b59d929) + Hybrid HF (5272bbe) + D1 Design Mode browser 6 tools/D2 RAG TF-IDF+LLM selection — vitest 70

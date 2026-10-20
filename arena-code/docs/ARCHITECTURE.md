@@ -340,7 +340,7 @@ CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
 - [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
 - [x] Session persistence (JSONL) — EventLog + .arena/events.log
 - [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
-- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0) + D1 Design Mode/D2 RAG (v2.8.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
+- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0) + D1 Design Mode/D2 RAG (v2.10.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
 
 ---
 
