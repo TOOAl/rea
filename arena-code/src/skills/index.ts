@@ -19,6 +19,7 @@ export interface Skill {
   description: string;   // 짧은 설명 (skill 파일 첫 줄)
   content: string;       // 전체 내용
   source: string;        // arena-code, ghidra, user 등
+  triggers?: string[];   // 자연어 트리거 (Genius: ["퀴리","curie"...])
 }
 
 // 빌트인 Skills (Muse Code bundling 근사)
@@ -106,6 +107,31 @@ export class SkillManager {
     this.loadUserSkills();
   }
 
+  private parseFrontmatter(content: string): { description?: string; triggers?: string[] } {
+    const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+    if (!fmMatch) return {};
+    const fm = fmMatch[1];
+    let description: string | undefined;
+    const descMatch = fm.match(/^description:\s*(.+)$/m);
+    if (descMatch) {
+      description = descMatch[1].trim().replace(/^["']|["']$/g, "");
+    }
+    let triggers: string[] | undefined;
+    const trigMatch = fm.match(/^triggers:\s*(\[.*?\])/ms);
+    if (trigMatch) {
+      try {
+        triggers = JSON.parse(trigMatch[1]);
+      } catch {
+        const inner = trigMatch[1].slice(1, -1);
+        triggers = inner
+          .split(",")
+          .map((s) => s.trim().replace(/^["']|["']$/g, ""))
+          .filter(Boolean);
+      }
+    }
+    return { description, triggers };
+  }
+
   private loadUserSkills(): void {
     // 검색 경로 (Muse Code와 Codex 모두 지원)
     // Muse Code: .codex/skills, .agents/skills, .claude/skills
@@ -145,8 +171,16 @@ export class SkillManager {
             }
 
             const content = readFileSync(skillFile, "utf-8");
-            const lines = content.split("\n").filter(l => l.trim());
-            const description = lines[0]?.slice(0, 200) || `사용자 정의 스킬: ${skillName}`;
+            const fm = this.parseFrontmatter(content);
+            // description 우선: frontmatter > body 첫 유의미 라인 > fallback
+            let description: string;
+            if (fm.description) {
+              description = fm.description.slice(0, 200);
+            } else {
+              const body = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "");
+              const lines = body.split("\n").filter((l) => l.trim() && !l.trim().startsWith("#"));
+              description = lines[0]?.slice(0, 200) || `사용자 정의 스킬: ${skillName}`;
+            }
 
             this.skills.set(skillName.toLowerCase(), {
               name: skillName.toLowerCase(),
@@ -154,6 +188,7 @@ export class SkillManager {
               description,
               content,
               source: dir,
+              triggers: fm.triggers,
             });
           } catch {}
         }
@@ -166,7 +201,6 @@ export class SkillManager {
   }
 
   get(name: string): Skill | undefined {
-    // / 제거
     const clean = name.replace(/^\//, "").toLowerCase();
     return this.skills.get(clean);
   }
@@ -186,26 +220,46 @@ export class SkillManager {
   allDescriptions(): string {
     if (this.skills.size === 0) return "";
     const lines = Array.from(this.skills.values())
-      .map(s => `- /${s.name}: ${s.description}`)
+      .map((s) => `- /${s.name}: ${s.description}`)
       .join("\n");
     return `\nAvailable skills (use /<name> to activate):\n${lines}`;
   }
 
-  // 메시지에서 /command 파싱
+  // 메시지에서 /command 파싱 — "/" 접두사 + 자연어 트리거 모두 지원
   parseCommand(message: string): { skill: string; args: string } | null {
     const trimmed = message.trim();
-    if (!trimmed.startsWith("/")) return null;
+    if (!trimmed) return null;
 
-    const spaceIdx = trimmed.indexOf(" ");
-    if (spaceIdx === -1) {
-      const name = trimmed.slice(1).toLowerCase();
-      if (this.has(name)) return { skill: name, args: "" };
+    // 1) 명시적 슬래시 커맨드: /skill [args]
+    if (trimmed.startsWith("/")) {
+      const spaceIdx = trimmed.indexOf(" ");
+      if (spaceIdx === -1) {
+        const name = trimmed.slice(1).toLowerCase();
+        if (this.has(name)) return { skill: name, args: "" };
+        return null;
+      }
+      const name = trimmed.slice(1, spaceIdx).toLowerCase();
+      const args = trimmed.slice(spaceIdx + 1).trim();
+      if (this.has(name)) return { skill: name, args };
       return null;
     }
 
-    const name = trimmed.slice(1, spaceIdx).toLowerCase();
-    const args = trimmed.slice(spaceIdx + 1).trim();
-    if (this.has(name)) return { skill: name, args };
+    // 2) 자연어 트리거 라우팅 — triggers: ["퀴리","curie"...] 부분일치 (대소문자 무시, 최장 트리거 우선)
+    const lower = trimmed.toLowerCase();
+    let best: { skill: string; trigger: string } | null = null;
+    for (const skill of this.skills.values()) {
+      if (!skill.triggers?.length) continue;
+      for (const trig of skill.triggers) {
+        const tLower = trig.toLowerCase();
+        if (!tLower) continue;
+        if (lower.includes(tLower)) {
+          if (!best || trig.length > best.trigger.length) {
+            best = { skill: skill.name, trigger: trig };
+          }
+        }
+      }
+    }
+    if (best) return { skill: best.skill, args: trimmed };
     return null;
   }
 
