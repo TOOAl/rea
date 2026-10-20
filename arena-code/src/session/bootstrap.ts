@@ -1,0 +1,111 @@
+/**
+ * Session Bootstrap — CLI에서 분리한 세션 초기화 로직
+ * sandbox / eventLog / worktree / skills / provider 생성을 한 곳에 모음
+ */
+import { resolve } from "node:path";
+import { getDefaultSandbox } from "../sandbox/index.js";
+import type { SandboxConfig } from "../sandbox/index.js";
+import { EventLog } from "../eventLog/index.js";
+import { WorktreeManager } from "../worktree/index.js";
+import { SkillManager } from "../skills/index.js";
+import { BackgroundAgentManager } from "../background/index.js";
+import { loadAgentsMdHierarchy } from "../config/agentsMd.js";
+import { createProvider } from "../providers/index.js";
+import type { ArenaConfig } from "../config/schema.js";
+
+export interface Session {
+  config: ArenaConfig;
+  cwd: string;
+  effectiveCwd: string;
+  sandbox: SandboxConfig;
+  eventLog: EventLog | null;
+  worktreeMgr: WorktreeManager | null;
+  skillMgr: SkillManager;
+  bgMgr: BackgroundAgentManager;
+  provider: ReturnType<typeof createProvider>;
+  agentsMdEntries: ReturnType<typeof loadAgentsMdHierarchy>;
+  skillExtra: string;
+}
+
+export async function bootstrapSession(config: ArenaConfig): Promise<Session> {
+  let cwd = resolve(config.cwd);
+  let effectiveCwd = cwd;
+
+  // Sandbox
+  const sandbox = getDefaultSandbox(config.sandbox, cwd);
+
+  // EventLog
+  let eventLog: EventLog | null = null;
+  if (config.eventLogEnabled) {
+    try { eventLog = new EventLog(cwd); } catch { /* read-only 등 */ }
+  }
+
+  // Worktree
+  let worktreeMgr: WorktreeManager | null = null;
+  if (config.worktree) {
+    worktreeMgr = new WorktreeManager(cwd);
+    if (worktreeMgr.isGitRepo()) {
+      console.log(`\n🔀 Worktree 생성 중: ${config.worktree}`);
+      const r = await worktreeMgr.create(config.worktree);
+      if (!r.error) {
+        effectiveCwd = r.worktree.path;
+        cwd = effectiveCwd;
+        console.log(`   → ${r.worktree.path} (branch: ${r.worktree.branch})`);
+      } else {
+        console.log(`   ⚠️ ${r.error} — 원래 workspace에서 진행`);
+      }
+    } else {
+      console.log(`   ⚠️ Git 저장소가 아님 — worktree 없이 진행`);
+    }
+  }
+
+  // Resume 조회 (표시만 — 실제 복원은 queryLoop에서 messages로)
+  if (config.printPrompt == null && (config as unknown as Record<string, unknown>).resume) {
+    if (eventLog) {
+      const events = EventLog.findLastSession(cwd);
+      if (events?.length) {
+        console.log(`\n🔄 이전 세션 복구: ${events.length}개 이벤트, session ${events[0]?.session_id}`);
+        console.log(`   마지막 이벤트: ${events[events.length - 1]?.type} at ${events[events.length - 1]?.timestamp}`);
+      } else {
+        console.log(`\n⚠️ 복구할 세션이 없습니다`);
+      }
+    }
+  }
+
+  // Skills
+  const skillMgr = new SkillManager(cwd);
+  let skillExtra = "";
+  if (config.skill) {
+    const sk = skillMgr.get(config.skill);
+    if (sk) {
+      skillExtra = skillMgr.formatForPrompt(config.skill) || "";
+      console.log(`\n✨ Skill 활성화: /${config.skill} — ${sk.description}`);
+    } else {
+      console.log(`\n⚠️ 스킬 없음: ${config.skill}. 사용 가능: ${skillMgr.list().map(s => s.name).join(", ")}`);
+    }
+  }
+
+  // Provider — mock은 환경변수 선설정 (타 provider도 mock 우회)
+  if (config.mock || process.env.ARENA_MOCK === "true") {
+    process.env.ARENA_MOCK = "true";
+    // mock이면 provider 강제 arena (mockStream 보유)
+    config.provider = "arena";
+  }
+  let provider: ReturnType<typeof createProvider>;
+  try {
+    provider = createProvider(config.provider);
+    if (config.model) provider.model = config.model;
+  } catch (e: unknown) {
+    console.error(`\n❌ Provider 오류: ${e instanceof Error ? e.message : String(e)}`);
+    console.error(`\n설정 방법 (.env 또는 arena.config.json):\n  cp .env.example .env\n  GEMINI_API_KEY=... (https://aistudio.google.com/app/apikey)\n  OPENROUTER_API_KEY=... (https://openrouter.ai/keys)\n  GROQ_API_KEY=... (https://console.groq.com/keys)\n  또는 --mock으로 데모\n`);
+    process.exit(1);
+  }
+
+  const agentsMdEntries = loadAgentsMdHierarchy(cwd);
+  const bgMgr = new BackgroundAgentManager(eventLog ?? undefined);
+
+  return {
+    config, cwd, effectiveCwd, sandbox, eventLog, worktreeMgr,
+    skillMgr, bgMgr, provider, agentsMdEntries, skillExtra,
+  };
+}

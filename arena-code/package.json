@@ -1,6 +1,6 @@
 {
   "name": "arena-code",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Claude Code 클론 — REA 분석 기반, Arena Agent + 무료 API 지원",
   "type": "module",
   "bin": {
