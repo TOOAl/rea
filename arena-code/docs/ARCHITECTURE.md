@@ -441,6 +441,9 @@ CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on
 ### 10.6.4 Browser agent-browser (v2.11.0)
 - `src/tools/browser.ts` — agent-browser Rust CDP 백엔드 우선 시도 (82% 토큰 절감, 280 vs 8k chars), `browser_batch` 한 호출로 여러 act. Gap #13 browser-use/agent-browser/Playwright 흡수
 
+### 10.6.5 Superpowers 절차 (v2.11.0)
+- `.codex/skills/superpowers/SKILL.md` — brainstorm→plan→execute→review 4단계 엄격 파이프라인, subagents/worktree 격리, Matt Pocock skills(개별 도구)와 상호보완. Gap #7 superpowers 흡수
+
 ### 10.6 향후
 
 - Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
