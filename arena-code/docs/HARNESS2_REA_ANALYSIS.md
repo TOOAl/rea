@@ -2,7 +2,7 @@
 
 > **Google Research — Harness²: Recursive Agent Harnessing for an Open World**  
 > 논문: `arXiv:2610.14224` (2026-10-12) · 코드: `google-research/harness2` (Apache 2.0) · `6,308` 라인 분석  
-> 분석일: 2026-10-20 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.3
+> 분석일: 2026-10-21 · 분석자: Arena Code REA (정적 + 동적) · 대상 분기: `arena/f39797b9-rea` v2.4 · 구현: H1~H5 완료 (e678e8f)
 
 ---
 
@@ -16,6 +16,7 @@
 | **효과 (1-step)** | WorkBuddy +11.5, JobBench +4.5, LAB +11.8%p. 약한 모델(GLM-5)+좋은 하네스 > 강한 모델+나쁜 하네스 |
 | **우리와 관계** | 우리 `queryLoop + hooks + skills + agents + memory` 구조가 Harness²의 8개 컴포넌트와 1:1 매칭 — 흡수가 매우 쉬움 |
 | **흡수 전략** | Provider를 감싸는 `SelfImprovingHarness` 래퍼: 기존 Gemini/OpenRouter/Ollama 위에 Propose-Probe-Compose 레이어를 투명하게 올림 |
+| **구현 상태 (v2.4)** | **H1(380줄 harness) → H2(352줄 context+382줄 proposer) → H3(614줄 engine+291줄 composer) → H4(FailureStore+Library+CLI) → H5(Guard+Depth 511줄) 완료** — `npm run typecheck` 0, `build` 0, `vitest` 47 passed, CLI `--harness2 --k/--mode/--depth/--domain/--evidence-root/--dry-run` 동작 |
 
 ---
 
@@ -163,7 +164,7 @@ MISSION.md                       ← 위 레이아웃을 설명하는 짧은 포
 
 ---
 
-## 6. Arena Code와 Harness² 비교 — 흡수가 쉬운 이유
+## 6. Arena Code와 Harness² 비교 — 흡수가 쉬웠던 이유 (H1~H5 완료 후 검증)
 
 | 관점 | Harness² | Arena Code (현재 v2.3) | 흡수 난이도 |
 |------|----------|------------------------|-------------|
@@ -319,31 +320,43 @@ arena-code/src/harness2/
 
 ## 9. 구현 로드맵
 
-### Phase H1 — Harness Tree (예상 1일)
-*   `src/harness2/harness.ts` — SurfaceSpec(arena-code) 정의, readTree/writeTree/validate/diffSummary
-*   단위 테스트: 트리 읽기·쓰기·검증 (vitest)
-*   완료 조건: `npm run build && npm test` 통과, `npm run harness2:demo -- --dry-run` 동작
+### Phase H1 — Harness Tree ✅ 완료 `1b74247` 2026-10-20
+*   `src/harness2/harness.ts` 380줄 — `ARENA_SURFACE` (AGENTS.md/guardrails.md alwaysOn 12k, skills/sub_agents/scripts/plugins/.codex/hooks.json), `normalizeRel/isAllowed/skillNames/readTree/writeTree/alwaysOnText/autotrigger/diffSummary/validate`(3원칙: skill trigger, `{{` 금지, script 동봉) — `RESERVED_SCRIPTS` 포함
+*   `docs/HARNESS2_REA_ANALYSIS.md` 24275자 + `docs/ORCA_ADE_REA_ANALYSIS.md` Orca fleet 분석
+*   검증: `tsc 0 / build 0 / vitest 28` 초기 — 커밋 4개 복구(force-push 유실 f34bdae) 후 `tsc` rootDir 오류 TS6059/TS2724 해결
 
-### Phase H2 — Evidence Tree + Proposer MVP (예상 2일)
-*   `src/harness2/context.ts` + `src/harness2/proposer.ts`
-*   Prompts: invariant / domain (프롬프트 원문 `SURFACE_OPENCODE`를 arena-code 버전으로 각색)
-*   완료 조건: `k=1`로 편집안 2개 생성 확인
+### Phase H2 — Evidence Tree + Proposer MVP ✅ 완료 `4d1a1b4` 2026-10-20
+*   `src/harness2/context.ts` 352줄 — `buildEvidenceTree/buildMission` (task.md/source/decisions/rollouts/deliverables/harness/library/pool/MISSION.md), `assertNoGraderVerdictsInTree/assertNoLeaks`, `leak_globs` 보안, `RolloutView` (trajectory/deliverable)
+*   `src/harness2/proposer.ts` 382줄 — `HarnessProposer` (invariant `When {name} — {desc}` vs domain `taskDomain` 프롬프트 분기), `maxAttempts 2`, `readHarnessEdits` (omitted-is-inherited), 캐시/재시도
+*   검증: proposer dryRun 시 `skills/domain-check/SKILL.md` 생성 확인
 
-### Phase H3 — Compose + Probe (예상 2일)
-*   `src/harness2/composer.ts` + `src/harness2/engine.ts` (k=1, parallel 고정)
-*   queryLoop를 Probe 실행자로 재활용 — `src/loop/queryLoop.ts` 변경 없이 호출
-*   완료 조건: 기준 vs 후보 3회 실행 후 합성본 생성 확인
+### Phase H3 — Compose + Probe ✅ 완료 `92c6aa4` 2026-10-20
+*   `src/harness2/composer.ts` 291줄 — `composeFromCandidates`(autotrigger 보정 후 `acceptTree`→validate→domain 우선 머지→final validate fallback), `selectAnonymous`(deliverable 길이 휴리스틱), `buildComposeNotes` (contrast trajectory)
+*   `src/harness2/engine.ts` 614줄 — `Harness2Engine.run({k,mode})` parallel( K>1 간소화: compose→next base) / sequential(carry+decisions 누적), `defaultProbe` queryLoop 6턴 재활용+mock 분기, `probeFn` 주입, `writeHarnessTree`/`writeFileSync MISSION.md` 증거 저장
+*   검증: `composer composeFromCandidates 2후보(inv+dom) autotrigger 보정 후 fellBack 0·final 4 files·AGENTS trigger 포함`, `engine run dryRun k=1 parallel finalHarness 3 keys(AGENTS/guardrails/domain-check) stages inv-1/dom-1/compose-1` 정 정상
 
-### Phase H4 — Library + Selection + CLI (예상 1.5일)
-*   `src/harness2/library.ts` + `engine.ts` sequential 확장 + `src/cli.ts` 플래그
-*   `runs/harness2/<domain>/INDEX.md` 생성 확인, `--harness2 --k 5 --mode sequential` 동작
-*   문서 업데이트: `README.md`, `초보자_가이드/`
+### Phase H4 — Failure Research + Library + CLI ✅ 완료 `af595dd` 2026-10-21
+*   `src/harness2/failures.ts` 299줄 — `FailureStore(.arena/harness2/failures.jsonl append)`, `FailureRecord/ResearchResult/AlternativeStrategy`, `analyzeFailure`(skill-trigger-missing/always-on-overflow/script-missing/merge-conflict 등 휴리스틱), `suggestAlternatives(single-inv-only/single-dom-only/shrink-always-on/sequential-try)`, `recordAndResearch`, `tryAlternativeMerge(single-inv/dom/shrink 등)`
+*   `src/harness2/library.ts` 256줄 — `HarnessLibrary` root/domain, `INDEX.md/harnesses/<task>/harness+EXPERIENCE.md`, `hasExperience` 검증, `add/forget/retain/rebuildIndex/contextDir/listDomains`, `assertNoGraderVerdictsInTree` leak 차단
+*   `src/harness2/engine.ts` — import `diffSummary/FailureStore/recordAndResearch/tryAlternativeMerge/HarnessLibrary` 추가, parallel·sequential 분기 compose 실패 시 `FailureStore` 생성→`recordAndResearch`→`failure-research.json` 저장→`recommended` `tryAlternativeMerge`→validate ok 시 `finalHarness` 대체, 성공 시 `HarnessLibrary.add` 경험 저장
+*   `src/cli.ts` — `--harness2/--harness2-k/--harness2-mode/--harness2-domain/--harness2-evidence-root/--harness2-dry-run + alias --k/--mode/--evidence-root` (Commander kebab→camelCase), `Harness2Engine.run dryRun/k/mode/domain/evidenceRoot` 분기, `readTree(ARENA_SURFACE,cwd)` base 로드
+*   `tests/harness2.test.ts` 11 tests — FailureStore save/load/analyze/tryAlternative, Library add/forget/retain, composer autotrigger, Engine dryRun parallel k=1( stages 3 finals compose-1 evidence MISSION.md/final-harness) + sequential k=2( stages 6 finals compose-2 decisions 누적) — 총 `vitest 39 passed`
+*   검증: CLI `node dist/cli.js --harness2 --k 1 --mode parallel --harness2-dry-run --mock -p "auth test"` finals compose-1·3 keys, `tcs0/build0/vitest39`
 
-**총 예상:** 6~7일 (k=1 MVP는 3~4일)
+### Phase H5 — Recurrent Depth + Guard (GPT-6 Astra) ✅ 완료 `e678e8f` 2026-10-21
+*   `src/harness2/guard.ts` — `guardHarness`(TODO/FIXME/`{{`/lorem ipsum/scripts 참조/URL + skill frontmatter/description/length + always-on budget 80%/100% 경고), `GuardReport{ok,issues,warnings}`, `guardHint()->shrink-always-on/single-candidate-try`
+*   `src/harness2/depth.ts` 249줄 — `RecurrentDepthRunner` depth 1..5 outer-loop, `earlyStop` (2연속 keptBase||noScoreGain 시 중단, 단 guard 실패 시 1회 연장), `scoreHarness(fileCount*10+skill15+guardrails5-error*2-overBudget + deliverable/200)`, `bestHarness/bestDepth/bestScore` 추적, hint injection(`[Recurrent Depth Hint — previous harness had issues: …]` → taskPrompt), 증거 `depth-summary.json/best-harness.json/guard-report.json`
+*   `src/cli.ts` — `--harness2-depth 1..5`, `--harness2-no-guard` 추가, depth>1 시 `RecurrentDepthRunner.run`, depth=1 시 `Harness2Engine.run` 분기, 로그 `depth/executedDepth/bestDepth/guardIssues/depthNotes/bestHarness keys`
+*   `tests/harness2_depth.test.ts` 8 tests — Guard TODO/overflow/valid/warn, DepthRunner depth=1/2/3 sequential k=1·guard-hint, 총 `vitest 47 passed (7 files)`
+*   검증: `node dist/cli.js --harness2 --harness2-depth 2 --harness2-dry-run --mock -p "recurrent depth test"` depth=2/2 bestDepth=2 guardIssues 0·stages 6
 
-### 이후 (Harness² 완료 후)
-*   GPT-6 Astra recurrent depth를 composer에 이식 — sequential k를 loop로 감싸기
-*   환각 가드 플러그인 — tool output 검증 훅 추가
+**총 소요:** 2일 (H1~H5, k=1 MVP 3~4일 예상 대비 단축 — Probe queryLoop 재활용+mock Provider 덕분)
+
+### 이후 (Harness² H1~H5 완료 후 — 다음 후보)
+*   Orca Fleet O1~O3 — `src/fleet/{types,store,worktreeFleet,dispatch,coordinator,worker,cli}.ts` (Run→Task→Dispatch→worker_done, `--fleet --fanout N`, GH/Linear/SSH/mobile, Design Mode 중 Arena에 흡수 가능한 요소) — REA 분석 `docs/ORCA_ADE_REA_ANALYSIS.md` 준비 완료
+*   Library RAG 고도화 — 현재 `INDEX.md` 전체 트리 전달에서 벡터 검색/랭킹으로 (Harness² 원본도 현재 단순 파일 전달임)
+*   Selection LLM화 — 현재 deliverable 길이 휴리스틱을 Selector LLM 익명 투표로 (selection.py 포팅)
+*   Hooks/Plugins c8 연동 — Guard를 HookManager `postToolUse`에 상시 연결, 실패 시 자동 Harness 개선 트리거
 
 ---
 
@@ -355,6 +368,19 @@ arena-code/src/harness2/
 *   Executor 네트워크는 제한하지 않는다 — 단, 외부 에이전트(`src/agents/`)를 Probe에 쓸 경우 샌드박스(`--sandbox read-only`)를 기본으로 한다.
 
 ---
+
+## 11. 구현 로그 (H1~H5)
+
+| Phase | 파일 | 라인/역할 | 커밋 | 검증 |
+|-------|------|-----------|------|------|
+| H1 | `src/harness2/harness.ts` | 380줄, SurfaceSpec/validate/autotrigger/diff | `1b74247` | tsc 0 build 0 |
+| H2 | `src/harness2/context.ts` `proposer.ts` | 352+382줄, Evidence Tree/Proposer | `4d1a1b4` | vitest 초기 |
+| H3 | `composer.ts` `engine.ts` | 291+614줄, Compose/Probe+Engine | `92c6aa4` | tsc0 build0 vitest28→39 |
+| H4 | `failures.ts` `library.ts` `engine.ts+cli.ts` `harness2.test.ts` | FailureStore/Research + Library + CLI k/mode/domain/evidence-root/dry-run | `af595dd` | vitest39 |
+| H5 | `guard.ts` `depth.ts` `cli --depth` `harness2_depth.test.ts` | Guard(TODO/{{/budget) + RecurrentDepth(depth1..5/earlyStop/bestScore) | `e678e8f` | vitest47 tsc0 build0 |
+
+*   **실패/복구:** `git pull --rebase untracked abort` → `force-push f34bdae` 4커밋 유실 → `checkout f34bdae+a6504f2` 복구; `TS6059 rootDir`/`TS2724 GHIDRA_ONLY_TOOLS` 수정; `vitest ERR_MODULE_NOT_FOUND .vite-temp` + `workspace: protocol` → `vitest --save-dev` 우회; `toEqual strict→toHaveProperty`, `/tmp/arena.config.json` 잔존 `maxTurns 5→20` 해소로 15/15→47/47 통과.
+*   **핵심 패턴:** `queryLoop` Probe 재활용(새 실행자 불필요), Provider 추상화(Gemini/OpenRouter/Ollama/Arena), dryRun+MOCK Provider로 LLM 없이도 증거/합성/Library/Depth 전 과정 검증.
 
 ## 11. 참고 자료
 
@@ -368,10 +394,11 @@ arena-code/src/harness2/
 
 ## 12. 검토 체크리스트 (이 문서가 끝나면)
 
-- [ ] 8개 컴포넌트와 Arena Code 매핑이 맞는지
-- [ ] Propose-Probe-Compose 중 "정답 없이 비교" 철학을 유지할지
-- [ ] MVP를 `k=1` parallel로 시작하는 것이 맞는지 (아니면 sequential부터?)
-- [ ] Library 저장 위치를 `.arena/harness2/<domain>/`로 할지, `runs/harness2/`로 할지
-- [ ] 다음 단계: Phase H1 코드 생성을 바로 시작할지
+- [x] 8개 컴포넌트와 Arena Code 매핑 — `ARENA_SURFACE` 1:1 매칭 완료 (`AGENTS.md`/guardrails/skills/sub_agents/scripts/plugins/.codex/hooks.json)
+- [x] Propose-Probe-Compose "정답 없이 비교" — `composeFromCandidates` behavioral contrast(rollout trajectory) + `selectAnonymous` 유지
+- [x] MVP `k=1` parallel 시작 — H3에서 parallel+sequential 모두 구현, H4 CLI `--k/--mode` 노출
+- [x] Library 저장 위치 — `.arena/harness2/<domain>/harnesses/<task>/ + INDEX.md` (H4 `HarnessLibrary`), `libraryDir` evidence 포함
+- [x] Phase H1~H5 코드 생성 완료 — 다음 단계: Orca Fleet O1~O3 또는 Library RAG/Selection LLM화 중 선택
+- [ ] Harness² 벤치마크 재현 — WorkBuddy/LAB/JobBench는 우리 프로젝트와 무관하므로 Arena 도메인 벤치로 대체할지
 
-> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea`에서 관리된다. 질문/수정은 이 문서에 코멘트하거나 다음 턴에서 바로 코드로 이어가면 된다.
+> 이 문서는 `arena-code` 저장소의 일부이며, 브랜치 `arena/f39797b9-rea` v2.4(e678e8f) H1~H5 완료 시점에 갱신되었다. 다음 문서는 `docs/ORCA_ADE_REA_ANALYSIS.md` Fleet O1~O3 로드맵이며, 질문/수정은 이 문서에 코멘트하거나 해당 Phase 코드로 이어가면 된다.

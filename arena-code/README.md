@@ -1,14 +1,14 @@
-# Arena Code v2.2 — Claude Code + Codex + Muse + Ghidra (REA 분석 기반)
+# Arena Code v2.4 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain
 
 > **REA로 3대 코딩 에이전트를 역분석하고, Arena Agent + 무료 API로 재구현한 궁극의 코딩 에이전트**
-> **+ NSA Ghidra (Apache 2.0) + REA Bridge — 외부 패키지 + 자동 업데이트!**
+> **+ NSA Ghidra (Apache 2.0) + REA Bridge — 외부 패키지 + 자동 업데이트 + Harness² Self-Improving Brain (Google harness2 + GPT-6 Astra + Orca ADE REA)!**
 
 Claude Code(52만줄), Codex CLI(Rust 95%), Muse Code(영구 에이전트+worktree)는 모두 `while(tool_use) → loop` harness지만 **각자 다른 강점**이 있습니다. 세 솔루션의 **최고 장점만** 결합해, 무료 API로 누구나 쓸 수 있는 에이전트를 제공합니다.
 
 ```
 Claude Code Loop + Codex 샌드박스 + Muse Worktree/EventLog + Ghidra 29 + REA Bridge
-+ Hook/MCP/외부패키지/자동업데이트
-= Arena Code v2.2 ⭐
++ Hook/MCP/외부패키지/자동업데이트 + Harness² Self-Improving Brain (Propose-Probe-Compose)
+= Arena Code v2.4 ⭐  (H1~H5: Harness Tree→Evidence+Proposer→Composer+Engine→FailureStore+Library+CLI→Guard+Depth)
 ```
 
 ---
@@ -23,7 +23,17 @@ arena-code/
 │   └── rea-bridge/                  6 tools (TOOAl/rea 추적)
 │       └── src/{helpers,tools}      ReaDoctor/Analyze/Inspect/Trace/Graph/Catalog
 ├── src/
-│   ├── cli.ts                       CLI v2.2 — --mcp/--update/--dry-run/--yes
+│   ├── harness2/                    ⭐ NEW v2.3~2.4 — Harness² Self-Improving Brain
+│   │   ├── harness.ts              380줄 SurfaceSpec/validate/autotrigger/diff (H1)
+│   │   ├── context.ts              352줄 Evidence Tree MISSION.md (H2)
+│   │   ├── proposer.ts             382줄 invariant/domain Proposer (H2)
+│   │   ├── composer.ts             291줄 Compose+Selection behavioral contrast (H3)
+│   │   ├── engine.ts               614줄 Harness2Engine parallel/sequential + FailureStore/Library (H3~H4)
+│   │   ├── failures.ts             299줄 FailureStore/Failure Research .arena/harness2/failures.jsonl (H4)
+│   │   ├── library.ts              256줄 HarnessLibrary .arena/harness2/library/<domain> (H4)
+│   │   ├── guard.ts                Guard TODO/{{/budget 환각 검사 (H5 GPT-6 Astra)
+│   │   └── depth.ts                249줄 RecurrentDepth depth1..5 earlyStop/bestScore (H5)
+│   ├── cli.ts                       CLI v2.4 — --harness2/--k/--mode/--depth/--domain/--evidence-root/--dry-run + --mcp/--update/--agent
 │   ├── hooks/                       ⭐ NEW — preToolUse/postToolUse/preCompact 등
 │   ├── mcp/                         ⭐ NEW — MCP stdio 서버 (Muse Code 호환)
 │   ├── updates/                     ⭐ NEW — GitHub releases 추적/승인/적용
@@ -36,10 +46,10 @@ arena-code/
 │   ├── sandbox/  eventLog/  worktree/  skills/  background/
 │   ├── providers/ (6: arena/openrouter/gemini/groq/ollama/anthropic)
 │   └── tools/{read,write,edit,bash,glob,grep,todo,webfetch,ghidra,registry}
-├── tests/                           ⭐ NEW — Vitest 15 tests
+├── tests/                           ⭐ — Vitest 47 tests (harness2 19 포함)
 ├── .github/workflows/ci.yml         ⭐ NEW — GitHub Actions
 ├── arena.config.example.json        업데이트 설정 포함
-└── package.json (2.2.0)
+└── package.json (2.4.0)
 ```
 
 ---
@@ -55,7 +65,7 @@ cd arena-code
 npm install
 npm run build
 cp .env.example .env  # GEMINI_API_KEY 등 설정
-npm test              # 15 tests — 전체 통과 확인
+npm test              # 47 tests — 전체 통과 확인 (harness2 19 포함)
 ```
 
 ### Ghidra 설치 (바이너리 분석, 선택)
@@ -135,6 +145,45 @@ API 키는 `${ENV:KEY_NAME}` 또는 `${ENV:KEY:-fallback}` 치환 지원.
 /agent remove my-gpt
 # 도구로 위임: 모델이 AskAgent({agentId, prompt})를 호출해 외부 에이전트에 위임
 ```
+
+### Harness² Self-Improving Brain — 작업할수록 똑똑해지는 하네스 ⭐ NEW v2.3~2.4
+
+Google Harness²(Apache 2.0, arXiv:2610.14224) + GPT-6 Astra recurrent depth를 Arena에 포팅 — 모델 가중치는 안 건드리고 **하네스(프롬프트/스킬/가드레일/도구)**만 개선. 정답지 없이도 **행동 대비(behavioral contrast)**로 편집을 가이드하고, 같은 도메인 반복 시 **Library**에 교훈을 축적해 점점 똑똑해짐.
+
+```bash
+# 기본: 1작업에 2후보(inv+domain) → Probe → Compose → Library
+node dist/cli.js --harness2 --harness2-k 1 --harness2-mode parallel --harness2-dry-run --mock -p "로그인 기능 만들어줘"
+
+# 깊게: sequential 2단계 + recurrent depth 3 + guard
+node dist/cli.js --harness2 --k 2 --mode sequential --harness2-depth 3 --harness2-domain auth --mock -p "인증 연마"
+
+# 도메인 학습: auth 도메인 Library에 저장 → 다음 auth 작업 시 자동 참조
+node dist/cli.js --harness2 --harness2-domain auth --harness2-evidence-root .arena/harness2/evidence -p "로그아웃 추가"
+
+# 전체 옵션
+# --harness2                  Harness² 실행
+# --harness2-k <n>            K 예산 1~5 (parallel: 탐험, sequential: 연마)
+# --harness2-mode parallel|sequential
+# --harness2-depth 1..5       GPT-6 Astra recurrent depth (바깥 루프, earlyStop/bestScore)
+# --harness2-domain <name>    Library 도메인 (예: auth, payments)
+# --harness2-evidence-root <path>  증거 트리 루트
+# --harness2-dry-run          LLM 없이 휴리스틱 (데모/CI용)
+# --harness2-no-guard         guard 비활성
+# alias: --k/--mode/--evidence-root/--dry-run 도 동일
+```
+
+**증거 레이아웃:**
+
+```
+.arena/harness2/
+├── evidence/<task>#d<depth>-step-<k>/MISSION.md + harness/ + final-harness/ + failure-research.json
+├── evidence/<task>-depth-summary.json + <task>-best-harness.json
+├── failures.jsonl             실패 저장 + 대체 전략 연구 (single-inv/dom/shrink…)
+└── library/<domain>/INDEX.md + harnesses/<task>/harness + EXPERIENCE.md  — 다음 작업에 자동 주입
+```
+
+상세 설계: `arena-code/docs/HARNESS2_REA_ANALYSIS.md`(H1~H5 구현 로그), `arena-code/docs/ORCA_ADE_REA_ANALYSIS.md`(Fleet O1~O3 로드맵, 다음 단계)
+
 
 ### 대화형 명령어
 ```
@@ -225,11 +274,11 @@ stdio JSON-RPC: `initialize / tools/list / tools/call / ping`
 
 ---
 
-## 6. 3사 비교 vs Arena Code v2.2
+## 6. 3사 비교 vs Arena Code v2.4 (Harness² 포함)
 
 | 구분 | Claude Code | Codex CLI | Muse Code | **Arena Code v2.2** |
 |------|-------------|-----------|-----------|---------------------|
-| 도구 | 40+ | 30+ | 40+ | **43개 (8+29+6)** |
+| 도구 | 40+ | 30+ | 40+ | **43개 (8+29+6) + harness2 9모듈** |
 | 샌드박스 | 7단계 | **3단계** | OS | **3단계 통합** |
 | 병렬 | Subagents | Cloud Tasks | **Worktree** | **Worktree** |
 | 지속성 | 세션 내 | 세션 내 | **EventLog** | **EventLog + resume** |
@@ -239,7 +288,8 @@ stdio JSON-RPC: `initialize / tools/list / tools/call / ping`
 | MCP 서버 | ✅ | ✅ | ✅ | **✅ (--mcp)** |
 | 업데이트 추적 | — | — | — | **GitHub releases + 승인/적용** |
 | 외부 에이전트 허브 | — | — | — | **openai/mcp/module/command 무제한** |
-| 품질 | — | — | — | **Vitest 15 + CI + ESLint/Prettier** |
+| **Self-Improving Brain** | — | — | — | **Harness² H1~H5: Propose-Probe-Compose + Library + FailureStore + Guard + Depth** |
+| 품질 | — | — | — | **Vitest 47 + CI + ESLint/Prettier (harness2 19)** |
 | 비용 | 유료 | ChatGPT Plus | 내일/유료 | **무료 API $0** |
 
 ---

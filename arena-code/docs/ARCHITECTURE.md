@@ -284,11 +284,61 @@ async function compact(messages: Message[], provider: Provider): Promise<Message
 
 ---
 
-## 9. 향후 확장 (Roadmap)
+## 9. Harness² — Self-Improving Brain (v2.4, H1~H5 완료)
 
-- [ ] Subagents (Task 도구, depth=1)
-- [ ] Skills (`.arena-code/skills/*/SKILL.md`)
-- [ ] Hooks (tool 실행 전후 스크립트)
-- [ ] MCP 클라이언트 완전 구현
-- [ ] Plan Mode (읽기 전용 선회)
-- [ ] Session persistence (JSONL)
+Google `harness2` (Apache 2.0) 포팅 — 하네스=파일 트리, 개선=파일 편집으로 단순화. Arena `AGENTS.md`/skills/hooks/tools가 Harness² 8개 컴포넌트(c1~c8)와 1:1 매칭되어 흡수가 쉬웠다. 상세 REA는 `docs/HARNESS2_REA_ANALYSIS.md`.
+
+### 9.1 모듈
+
+```
+arena-code/src/harness2/
+├── harness.ts   380줄 — ARENA_SURFACE (alwaysOn AGENTS.md+guardrails+CLAUDE.md+systemprompt.md, 12k), skills/sub_agents/scripts/plugins/.codex/hooks.json, normalizeRel/isAllowed/readTree/writeTree/validate(3원칙: trigger/{{/script동봉)/diffSummary/autotrigger
+├── context.ts   352줄 — buildEvidenceTree(build MISSION.md: task.md/source/decisions/rollouts/deliverables/harness/library/pool) + assertNoLeaks, RolloutView
+├── proposer.ts  382줄 — HarnessProposer invariant(vs domain) 프롬프트 분기, maxAttempts 2, omitted-is-inherited, cache
+├── composer.ts  291줄 — composeFromCandidates(acceptTree validate→autotrigger 보정→domain 우선 머지→final validate fallback) + selectAnonymous(deliverable 길이 휴리스틱)
+├── engine.ts    614줄 — Harness2Engine.run({k,mode,dryRun,probeFn}) parallel/sequential, defaultProbe queryLoop 6턴 재활용 + MOCK, FailureStore+Library 연동
+├── failures.ts  299줄 — FailureStore(.arena/harness2/failures.jsonl) + analyzeFailure(5분류) + suggestAlternatives + recordAndResearch + tryAlternativeMerge
+├── library.ts   256줄 — HarnessLibrary .arena/harness2/library/<domain>/INDEX.md + harnesses/<task>/harness+EXPERIENCE.md, hasExperience/forget/retain
+├── guard.ts     — guardHarness(TODO/{{/budget/skill frontmatter) + guardHint → 다음 depth 힌트
+└── depth.ts     249줄 — RecurrentDepthRunner depth1..5/earlyStop/bestScore/scoreHarness, GPT-6 Astra recurrent depth 영감
+```
+
+### 9.2 Execution Flow
+
+```
+CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
+  → bootstrapSession provider 생성
+  → readTree(ARENA_SURFACE, cwd) baseHarness
+  → (depth>1 ? RecurrentDepthRunner(depth/k/mode/guard/earlyStop) : Harness2Engine(k/mode))
+       → buildEvidenceTree(task.md + rollouts + harness + library) → MISSION.md
+       → HarnessProposer.propose(invariant + domain) — 2회 재시도
+       → probe(queryLoop 6턴) base vs inv vs dom → trajectory/deliverable
+       → composeFromCandidates(autotrigger→validate→domain우선머지→final validate) — 실패 시 FailureStore→failure-research.json→recommended tryAlternativeMerge
+       → guardHarness → depth hint 주입("[Recurrent Depth Hint]") → 다음 depth
+       → HarnessLibrary.add(INDEX.md) 성공 시, depth-summary.json/best-harness.json 저장
+  → finalHarness 최종 적용 → queryLoop 최종 실행
+```
+
+### 9.3 Evidence Layout (H4~H5)
+
+```
+.arena/harness2/
+├── evidence/
+│   ├── <task>#d1-step-1/MISSION.md + rollouts/ + harness/ + final-harness/ + failure-research.json + alternative-harness.json + guard-report.json
+│   ├── <task>-depth-summary.json   — wantDepth/executedDepth/bestDepth/bestScore/depthNotes/guardReports
+│   └── <task>-best-harness.json
+├── failures.jsonl                  — FailureStore append (재현 가능)
+└── library/<domain>/INDEX.md + harnesses/<taskId>/harness + EXPERIENCE.md
+```
+
+### 9.4 향후 확장 (Roadmap)
+
+- [x] **Harness² H1~H5 완료** — Harness Tree → Evidence+Proposer → Composer+Engine → FailureStore+Library+CLI → Guard+Depth (GPT-6 Astra) — `e678e8f`, tsc0 build0 vitest47
+- [ ] Subagents (Task 도구, depth=1) — Harness² c6 `sub_agents/<name>/AGENT.md` 이미 SurfaceSpec에 정의됨
+- [x] Skills (`.arena-code/skills/*/SKILL.md`) — 5개 + Harness² skills/* 연동 (domain-check 등)
+- [x] Hooks (tool 실행 전후 스크립트) — `postToolUse`에 Guard 연결 후보
+- [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
+- [x] Session persistence (JSONL) — EventLog + .arena/events.log
+- [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
+- [ ] **Orca Fleet O1~O3** — `src/fleet/` Run→Task→Dispatch→worker_done, `--fleet --fanout N` (REAs docs/ORCA_ADE_REA_ANALYSIS.md 준비 완료)
+

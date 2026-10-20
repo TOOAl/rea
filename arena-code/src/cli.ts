@@ -32,8 +32,8 @@ const program = new Command();
 
 program
   .name("arena-code")
-  .description("Arena Code v2.3 — Claude Code + Codex + Muse + Ghidra (Hook/MCP/업데이트/에이전트)")
-  .version("2.3.0")
+  .description("Arena Code v2.4 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain")
+  .version("2.4.0")
   .option("-p, --print <prompt>", "Headless: 한 번 질문하고 종료")
   .option("--provider <name>", "LLM: arena|openrouter|gemini|groq|ollama|anthropic")
   .option("--model <model>", "모델 이름 직접 지정")
