@@ -340,7 +340,7 @@ CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
 - [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
 - [x] Session persistence (JSONL) — EventLog + .arena/events.log
 - [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
-- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0) + D1 Design Mode/D2 RAG (v2.10.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
+- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0) + D1 Design Mode/D2 RAG (v2.11.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
 
 ---
 
@@ -426,8 +426,8 @@ CLI: `arena-code --harness2 --k 2 --depth 2 --harness2-fleet [--fleet-use-worktr
 
 CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on, llm off). Evidence 요약에 `ragHits/selectionMode` 기록.
 
-### 10.6 Genius Skills (v2.8.0) + NL 트리거 (v2.9.0) + Guard 2축 (v2.9.1) + Library Context7/Serena (v2.10.0)
-- Genius 4종(Curie/Da Vinci/Euler/Turing) + NL 트리거 라우팅 + code-review 2축(Standards/Spec) + Context7 2-tool/Serena 3-tool로 v2.10 완성
+### 10.6 Genius Skills (v2.8.0) + NL 트리거 (v2.9.0) + Guard 2축 (v2.9.1) + Library Context7/Serena (v2.11.0)
+- Genius 4종(Curie/Da Vinci/Euler/Turing) + NL 트리거 라우팅 + code-review 2축(Standards/Spec) + Context7 2-tool/Serena 3-tool로 v2.11 완성
 
 ### 10.6.1 Memory Bank (v2.11.0)
 - `src/memory/bank.ts` — `.memory-bank/<domain>/<slug>.md` 영속 기억, cue/content/evidence, TF-IDF+cue bonus search, Harness Library와 분리된 세션 기억
@@ -443,6 +443,9 @@ CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on
 
 ### 10.6.5 Superpowers 절차 (v2.11.0)
 - `.codex/skills/superpowers/SKILL.md` — brainstorm→plan→execute→review 4단계 엄격 파이프라인, subagents/worktree 격리, Matt Pocock skills(개별 도구)와 상호보완. Gap #7 superpowers 흡수
+
+### 10.6.6 Atlassian 협업 (v2.11.0)
+- `src/tools/atlassian.ts` — JiraSearch/JiraCreateIssue/ConfluenceSearch 3툴 (Basic Auth, ATLASSIAN_SITE/EMAIL/API_TOKEN, fallback mock), GitHub MCP와 PR↔이슈 동기화. Gap #8 Atlassian 흡수
 
 ### 10.6 향후
 

@@ -1,6 +1,6 @@
-# Coding Tools Gap 분석 — 지금까지 결과물(v2.10.0)에 필요한 것 (REA)
+# Coding Tools Gap 분석 — 지금까지 결과물(v2.11.0)에 필요한 것 (REA)
 
-> 분석일: 2026-10-21 · 대상: `arena-code v2.10.0` (Harness² H1~H5 + Fleet O1~O3 + D1/D2 + Genius NL + Guard 2축 + Library Context7/Serena, 5b78e04) vs 영상 14종(0:23~9:17)
+> 분석일: 2026-10-21 · 대상: `arena-code v2.11.0` (Harness² H1~H5 + Fleet O1~O3 + D1/D2 + Genius NL + Guard 2축 + Library Context7/Serena, 5b78e04) vs 영상 14종(0:23~9:17)
 > 목적: 첨부 14개 중 **현재 결과물에 보완이 필요한 것**만 REA로 선별
 
 ## 1. 현황 요약
@@ -10,7 +10,7 @@
 | Harness² H1~H5, Guard, Depth | ✅ 완료 | 11 보안(부분) |
 | Fleet (Run/Task/Dispatch/worktree) | ✅ 완료 | 5 동시 실행(Orca) |
 | D1 Browser 6 tools | ✅ 완료(Playwright fallback) | 13 브라우저(부분) |
-| D2 Library RAG + Context7/Serena | ✅ v2.10 완료 | 1 라이브러리 문서 |
+| D2 Library RAG + Context7/Serena | ✅ v2.11 완료 | 1 라이브러리 문서 |
 | Guard 2축 + code-review 스킬 | ✅ v2.9.1 | 4 코드 리뷰 |
 | Genius 4종 NL 트리거 | ✅ v2.9 | — |
 | CLI/agents/MCP/ToolRegistry | ✅ | 8 협업(GitHub MCP) 부분 |
@@ -19,7 +19,7 @@
 
 | # | 영상 제목(OCR) | 현재 반영도 | 필요도 | 판단 근거 | 흡수 난이도 |
 |---|----------------|-------------|--------|-----------|-------------|
-| **1** | 라이브러리 문서 Context7 vs Serena | **완료** | — | v2.10에서 resolveLibraryId→queryDocs + Serena 3툴로 흡수 | — |
+| **1** | 라이브러리 문서 Context7 vs Serena | **완료** | — | v2.11에서 resolveLibraryId→queryDocs + Serena 3툴로 흡수 | — |
 | **2** | 기억 Muse-mem vs Muse | **미흡** | **높음** | Harness² Library는 도메인별 경험만 저장, 세션 간 장기 기억(per-project `.memory-bank`) 없음. Muse/Codex의 영속 memory 필요 | 중간 |
 | **3** | 스킬 찾기 find-skills vs 공식 플러그인 목록 | **미흡** | **중간** | SkillManager는 로컬 `.codex/.arena/.agents`만 스캔, 외부 마켓플레이스 검색 없음. Discovery 필요 | 낮음 |
 | **4** | 코드 리뷰 PR-Agent vs Matt Pocock | **완료** | — | v2.9.1 Guard 2축 + code-review 스킬로 흡수 | — |
@@ -36,7 +36,7 @@
 
 ## 3. REA 결론 — 꼭 필요한 6개
 
-> 현재 v2.10.0에서 **당장 보완 시 ROI가 높은 6개** (상위 → 하위):
+> 현재 v2.11.0에서 **당장 보완 시 ROI가 높은 6개** (상위 → 하위):
 
 1. **2 기억 (Claude-mem)** — `.memory-bank/<project>` 영속 기억 + `.serena/` 분리. Harness Library가 도메인 경험이라면, memory는 세션 간 의사결정 로그. 1일 구현.
 2. **11 보안 시점별** — Guard에 SAST 시점 게이트(작성/커밋/PR) 추가, 2축과 연동해 `Verdict: FAIL` 시 Fleet block. 1일.
@@ -55,4 +55,4 @@
 - **Phase 2B (1일):** 12 Firecrawl + 13 agent-browser → D1/D2 토큰/검색 강화
 - **Phase 2C (1~2일):** 7 superpowers + 8 Atlassian → 절차/협업 확장
 
-> 본 문서는 `docs/CODING_TOOLS_REA_ANALYSIS.md v2.10.0` 후속 Gap 분석이며, 코드는 `decide_after` 원칙에 따라 문서 검토 후 반영한다.
+> 본 문서는 `docs/CODING_TOOLS_REA_ANALYSIS.md v2.11.0` 후속 Gap 분석이며, 코드는 `decide_after` 원칙에 따라 문서 검토 후 반영한다.
