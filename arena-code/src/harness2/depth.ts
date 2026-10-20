@@ -51,6 +51,8 @@ export interface DepthResult extends EngineResult {
   bestDepth: number;                     // bestHarness가 나온 depth (1-indexed)
   guardReports: Array<{ depth: number; ok: boolean; issues: string[]; warnings: string[] }>;
   depthNotes: string[];                  // 각 depth 요약
+  fleetRunId?: string;
+  fleetTaskIds?: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -77,6 +79,21 @@ export class RecurrentDepthRunner {
     const guardReports: DepthResult["guardReports"] = [];
     const depthNotes: string[] = [];
 
+    // Fleet hybrid — depth 전체를 하나의 Fleet Run으로 묶기 (audit trail)
+    let fleetRunId: string | undefined = opts.fleet?.runId;
+    let fleetCoordinator: unknown = opts.fleet?.coordinator;
+    let allFleetTaskIds: string[] = [];
+    if (opts.fleet?.enabled && !fleetRunId) {
+      try {
+        const { FleetCoordinator } = await import("../fleet/coordinator.js");
+        const coord = (opts.fleet.coordinator as unknown) ?? new (FleetCoordinator as unknown as new (arg:any)=>unknown)({ workspaceRoot: cwd });
+        fleetCoordinator = coord;
+        const c = coord as unknown as { runCreate: (objective:string, opts:any)=>{id:string} };
+        const run = c.runCreate(`Harness² Depth ${opts.taskId} depth=${wantDepth} k=${opts.k} — ${opts.taskPrompt.slice(0,60)}`, { metadata: { engineTaskId: opts.taskId, depth: wantDepth, mode: "harness2-depth-fleet" } });
+        fleetRunId = run.id;
+      } catch {}
+    }
+
     let currentHarness: Tree = { ...opts.baseHarness };
     let bestHarness: Tree = { ...currentHarness };
     let bestDepth = 0;
@@ -96,6 +113,7 @@ export class RecurrentDepthRunner {
         taskPromptForDepth += `\n\n[Recurrent Depth Hint — previous harness had issues: ${hint} — avoid these in this iteration. Focus on fixing them.]`;
       }
 
+      const fleetForDepth = opts.fleet?.enabled ? { ...opts.fleet, runId: fleetRunId, coordinator: fleetCoordinator as unknown as import("../fleet/coordinator.js").FleetCoordinator } : undefined;
       const engineRes: EngineResult = await this.engine.run({
         ...opts,
         taskId: taskIdForDepth,
@@ -106,7 +124,12 @@ export class RecurrentDepthRunner {
         k: kForDepth,
         mode: modeForDepth,
         evidenceRoot,
+        fleet: fleetForDepth,
       });
+      if ((engineRes as unknown as { fleetTasks?: string[] }).fleetTasks) {
+        for (const id of (((engineRes as unknown as { fleetTasks?: string[] }).fleetTasks) ?? [])) if (!allFleetTaskIds.includes(id)) allFleetTaskIds.push(id);
+      }
+      if ((engineRes as unknown as { fleetRunId?: string }).fleetRunId && !fleetRunId) fleetRunId = (engineRes as unknown as { fleetRunId?: string }).fleetRunId;
 
       depthHistory.push(engineRes);
       depthNotes.push(`Depth ${d}/${wantDepth}: k=${kForDepth} mode=${modeForDepth} keptBase=${engineRes.stages.some(s => s.keptBase)} finals=${engineRes.finals.join(",")} errors=${engineRes.errors.length}`);
@@ -177,6 +200,8 @@ export class RecurrentDepthRunner {
         bestScore,
         depthNotes,
         guardReports,
+        fleetRunId,
+        fleetTaskIds: allFleetTaskIds,
         finals: depthHistory.map((r, i) => ({ depth: i + 1, finalKeys: Object.keys(r.finalHarness), keptBase: r.stages.some(s => s.keptBase), errors: r.errors.length })),
       }, null, 2), "utf-8");
     } catch {}
@@ -210,6 +235,8 @@ export class RecurrentDepthRunner {
       bestDepth: bestDepth || executedDepth,
       guardReports,
       depthNotes,
+      fleetRunId,
+      fleetTaskIds: allFleetTaskIds,
     };
   }
 }

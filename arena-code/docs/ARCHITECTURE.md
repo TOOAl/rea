@@ -340,11 +340,11 @@ CLI --harness2 --k 2 --mode parallel --depth 3 --domain auth --dry-run --mock
 - [x] MCP 클라이언트 완전 구현 — `--mcp` stdio JSON-RPC (Muse Code 호환)
 - [x] Session persistence (JSONL) — EventLog + .arena/events.log
 - [ ] Plan Mode (읽기 전용 선회) — skills/plan + /grill 연동
-- [x] **Orca Fleet O1~O3 (v2.5.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
+- [x] **Orca Fleet O1~O3 (v2.5.0) + Hybrid HF (v2.6.0)** — `src/fleet/` Run→Task→Dispatch→worker_done, `arena-code --fleet --fanout N --dry-run` + `arena-code fleet <run-create|task-create|worker-start|check|ack|worker-done|gh|diffs>` — `fleet` 6모듈, tsc0 build0 vitest63 — REA docs/ORCA_ADE_REA_ANALYSIS.md v2.5
 
 ---
 
-## 10. Fleet — Orca ADE Orchestration (v2.5, O1~O3 완료)
+## 10. Fleet — Orca ADE Orchestration (v2.5, O1~O3 완료) + Harness²×Fleet Hybrid (v2.6)
 
 Orca `fleet`(stablyai/orca, MIT) CLI 계약을 `arena-code`에 경량 포팅 — Electron/30+에이전트 제외, 핵심 오케스트레이션만 흡수. 상세 REA `docs/ORCA_ADE_REA_ANALYSIS.md`.
 
@@ -393,13 +393,34 @@ arena-code/src/fleet/
 .arena/
 ├── fleet.json     — {version:1, runs{}, tasks{}, dispatches{}, messages{}, gates{}, updatedAt}
 ├── fleet.log      — JSONL append-only (run_create/task_create/dispatch_create/message/ack/gate)
-└── harness2/      — Harness² 증거와 분리, 동시 운용 가능 (Harness²×Fleet 결합은 다음 단계)
+├── fleetProbe.ts 150줄 — createFleetProbeFn() Fleet-aware ProbeFn, Task/Dispatch/workerDone 추적, directProbe fallback
+└── harness2/      — 증거 트리와 Fleet store 동시 기록 (hybrid 시 .arena/fleet.json + .arena/harness2/evidence 동시 생성)
 ```
 
-### 10.4 향후 (Harness²×Fleet)
+### 10.4 Harness²×Fleet Hybrid (v2.6, HF 완료)
 
-- Subagents(Task 도구) + Fleet worker 결합: 각 Harness² probe를 Fleet dispatch로 실행
-- Recurrent Depth × Fleet fan-out: depth 각 단계에서 N개 후보를 Fleet으로 병렬 평가
-- Design Mode (browser automation) — Orca Design Mode 포팅 후보
+`EngineOptions.fleet={enabled, useWorktrees, runId, coordinator}` + `DepthOptions.fleet` → Engine이 `createFleetProbeFn()`으로 probeFn을 Fleet-aware로 래핑:
+
+```
+Engine.run() probeFn 결정
+  fleet.enabled=false → defaultProbe (queryLoop 6턴)
+  fleet.enabled=true  → createFleetProbeFn({provider, taskPrompt, cwd}) → per-candidate Fleet Task/Dispatch/workerDone
+    - coordinator.taskCreate(runId, spec) → Task ready
+    - coordinator.workerStart({taskId, worktree?}) → Dispatch running
+    - coordinator.dispatcher.runWorker({dispatch, task, provider, systemExtra: harnessExtra}) → RolloutView
+    - coordinator.workerDone({taskId, dispatchId, outcome}) → Task completed (DAG unblock)
+DepthRunner.run() → Fleet Run 1개를 depth 전체에 재사용 (audit trail), depthNotes에 fleetRunId/fleetTaskIds 기록
+```
+
+CLI: `arena-code --harness2 --k 2 --depth 2 --harness2-fleet [--fleet-use-worktrees] --dry-run --mock`
+ 증거: `.arena/fleet.json` (Fleet Run+Tasks+Messages) + `.arena/harness2/evidence/<task>-depth-summary.json` (fleetRunId+fleetTaskIds+guardReports)
+ 테스트: `tests/harness2_fleet.test.ts` 7개 — engine standalone vs fleet, sequential, depth fleet, batch helper — vitest 70.
+
+### 10.5 향후
+
+- Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
+- Library RAG/Selection LLM화 — `src/harness2/composer.ts` selectAnonymous를 LLM judge로, Library를 dense retrieval로
+- Design Mode (browser automation) — Orca Design Mode 포팅 후보 (Playwright)
+
 
 

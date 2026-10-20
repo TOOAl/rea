@@ -32,8 +32,8 @@ const program = new Command();
 
 program
   .name("arena-code")
-  .description("Arena Code v2.5 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain")
-  .version("2.5.0")
+  .description("Arena Code v2.6 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain")
+  .version("2.6.0")
   .option("-p, --print <prompt>", "Headless: 한 번 질문하고 종료")
   .option("--provider <name>", "LLM: arena|openrouter|gemini|groq|ollama|anthropic")
   .option("--model <model>", "모델 이름 직접 지정")
@@ -69,6 +69,9 @@ program
   .option("--harness2-depth <n>", "Harness2 recurrent depth 1~5 (GPT-6 Astra, 기본 1)")
   .option("--harness2-no-guard", "Harness2 guard 비활성")
   .option("--fleet", "Fleet orchestration (Orca ADE, Worktree+GH)")
+  .option("--harness2-fleet", "Harness²×Fleet hybrid — harness probes via Fleet dispatches")
+  .option("--fleet-use-worktrees", "Fleet hybrid: use git worktrees per probe (default: false)")
+  .option("--harness2-fleet-worktrees", "(alias) --fleet-use-worktrees")
   .option("--fleet-run <id>", "Fleet Run ID (for --fleet fan-out)")
   .option("--fleet-task <id>", "Fleet Task ID (for --fleet fan-out)")
   .option("--fanout <n>", "Fleet fan-out count (1..16, default 3)")
@@ -236,8 +239,8 @@ program
     const session = await bootstrapSession(config, providerOverride);
     const cwd = session.effectiveCwd;
 
-    // Fleet fan-out mode (arena-code --fleet --print "prompt" --fanout 3)
-    if (opts.fleet) {
+    // Fleet fan-out mode (arena-code --fleet --print "prompt" --fanout 3) — standalone, not when harness2 also enabled
+    if (opts.fleet && !opts.harness2) {
       const cwdForFleet = resolve(opts.cwd ?? process.cwd());
       const prompt = (promptArg as string) || (opts.print as string) || "";
       const fanout = Math.max(1, Math.min(16, parseInt(String(opts.fanout ?? "3"), 10) || 3));
@@ -277,7 +280,7 @@ program
       return;
     }
 
-    // Harness2 mode (arena-code --harness2 ...)
+    // Harness2 mode (arena-code --harness2 ...) + Fleet hybrid (Harness²×Fleet)
     const h2Enabled = !!opts.harness2;
     if (h2Enabled) {
       const rawK = opts.harness2K ?? opts.k ?? "1";
@@ -297,8 +300,16 @@ program
         const rawDepth = (opts.harness2Depth as string) ?? "1";
         const h2depth = Math.max(1, Math.min(5, parseInt(String(rawDepth), 10) || 1));
         const h2guard = !(opts.harness2NoGuard === true);
-        console.log("\nHarness2 run: k=" + h2k + " mode=" + h2mode + " depth=" + h2depth + " guard=" + h2guard + " dryRun=" + h2dry + " domain=" + (h2domain ?? "(none)"));
+        const h2fleet = !!(opts.fleet || opts.harness2Fleet);
+        const h2fleetWorktrees = !!(opts.fleetUseWorktrees || opts.harness2FleetWorktrees);
+        console.log("\nHarness2 run: k=" + h2k + " mode=" + h2mode + " depth=" + h2depth + " guard=" + h2guard + " dryRun=" + h2dry + " domain=" + (h2domain ?? "(none)") + " fleet=" + h2fleet + (h2fleet ? (h2fleetWorktrees ? "(worktrees)" : "(current-dir)") : ""));
         console.log("   taskId=" + taskId + " evidenceRoot=" + (h2evidenceRoot ?? ".arena/harness2/evidence"))
+        // Fleet hybrid setup — create fleet opts for engine/depth
+        const fleetProbeOpts = h2fleet ? {
+          enabled: true,
+          useWorktrees: h2fleetWorktrees,
+          workspaceRoot: cwd,
+        } as unknown as import("./harness2/fleetProbe.js").FleetProbeOptions : undefined;
         let result: any;
         if (h2depth > 1) {
           const { RecurrentDepthRunner } = await import("./harness2/depth.js");
@@ -310,6 +321,7 @@ program
             taskDomain: h2domain,
             evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
             dryRun: h2dry,
+            fleet: fleetProbeOpts,
           });
           console.log("\nHarness2 Depth done - ok=" + result.ok + " depth=" + result.executedDepth + "/" + result.depth + " bestDepth=" + result.bestDepth + " guardIssues=" + result.guardReports.filter((g: any) => !g.ok).length);
           for (const note of result.depthNotes) console.log("   * " + note);
@@ -322,9 +334,12 @@ program
             taskDomain: h2domain,
             evidenceRoot: h2evidenceRoot ? resolve(h2evidenceRoot) : undefined,
             dryRun: h2dry,
+            fleet: fleetProbeOpts,
           });
           console.log("\nHarness2 done - ok=" + result.ok + " stages=" + result.stages.length + " finals=" + result.finals.join(",") + " errors=" + result.errors.length);
         }
+        if ((result as unknown as { fleetRunId?: string }).fleetRunId) console.log("   fleetRunId: " + (result as unknown as { fleetRunId?: string }).fleetRunId + " fleetTasks=" + (((result as unknown as { fleetTasks?: string[] }).fleetTasks ?? []).length || ((result as unknown as { fleetTaskIds?: string[] }).fleetTaskIds ?? []).length) + " (Fleet hybrid)");
+        if ((result as unknown as { fleetTaskIds?: string[] }).fleetTaskIds) console.log("   fleetTaskIds: " + (result as unknown as { fleetTaskIds?: string[] }).fleetTaskIds?.join(", ").slice(0,200));
         if (result.selection) console.log("   selection: " + result.selection.chosenLabel + " - " + result.selection.reason.slice(0,120));
         if (result.guardReports) {
           for (const g of result.guardReports) if (!g.ok) console.log("   guard d" + g.depth + " issues: " + g.issues.join(" | ").slice(0,200));

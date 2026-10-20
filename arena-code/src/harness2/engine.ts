@@ -35,6 +35,7 @@ import { diffSummary } from "./harness.js";
 import { FailureStore, recordAndResearch, tryAlternativeMerge } from "./failures.js";
 import { HarnessLibrary } from "./library.js";
 import type { Provider } from "../providers/types.js";
+import type { FleetProbeOptions } from "./fleetProbe.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -65,6 +66,8 @@ export interface EngineOptions {
   dryRun?: boolean;
   /** Probe 함수 오버라이드 — 테스트에서 주입 */
   probeFn?: ProbeFn;
+  /** Fleet hybrid (Orca ADE) — probe를 Fleet Task/Dispatch로 실행 (Harness²×Fleet) */
+  fleet?: FleetProbeOptions;
 }
 
 /** Probe 함수: 하네스 하나로 queryLoop 실행 → RolloutView */
@@ -93,6 +96,8 @@ export interface EngineResult {
   ok: boolean;
   errors: string[];
   selection?: { chosenLabel: string; reason: string };
+  fleetRunId?: string;
+  fleetTasks?: string[]; // TaskIds created via Fleet
 }
 
 // ---------------------------------------------------------------------------
@@ -203,10 +208,43 @@ export class Harness2Engine {
     const rollouts: Record<string, RolloutView> = {};
     const errors: string[] = [];
 
-    // Probe 함수 결정
-    const probeFn: ProbeFn =
-      opts.probeFn ??
-      ((harness, label) => defaultProbe(harness, label, this.provider, taskPrompt, cwd));
+    // Probe 함수 결정 — Fleet hybrid 지원 (Harness²×Fleet)
+    let fleetRunId: string | undefined = opts.fleet?.runId;
+    let fleetCoordinator: unknown = opts.fleet?.coordinator;
+    let fleetTaskIds: string[] = [];
+    let probeFn: ProbeFn;
+    if (opts.fleet?.enabled) {
+      const { createFleetProbeFn } = await import("./fleetProbe.js");
+      const fleet = createFleetProbeFn({
+        provider: this.provider,
+        taskPrompt,
+        cwd,
+        fleetOpts: opts.fleet,
+        engineTaskId: taskId,
+      });
+      probeFn = fleet.probeFn;
+      fleetRunId = fleet.fleetRunId;
+      fleetCoordinator = fleet.coordinator;
+      // wrap probeFn to collect taskIds — monkey-patch via store inspection after each probe
+      const rawProbeFn = probeFn;
+      probeFn = async (harness, label) => {
+        const res = await rawProbeFn(harness, label);
+        // taskIds are stored in FleetStore — collect unique ids
+        try {
+          const c = fleet.coordinator as unknown as { store: { listTasks: (runId?: string) => Array<{id:string}> } };
+          if (c?.store?.listTasks) {
+            const ids = c.store.listTasks(fleetRunId).map(t => t.id);
+            // dedup merge
+            for (const id of ids) if (!fleetTaskIds.includes(id)) fleetTaskIds.push(id);
+          }
+        } catch {}
+        return res;
+      };
+      // allow probeFn override to take precedence if explicitly provided (test)
+      if (opts.probeFn) probeFn = opts.probeFn;
+    } else {
+      probeFn = opts.probeFn ?? ((harness, label) => defaultProbe(harness, label, this.provider, taskPrompt, cwd));
+    }
 
     // 0) Base Probe — 기준 궤적 확보 (contrast 기준점)
     const baseRollout = await probeFn(currentHarness, "base");
@@ -438,6 +476,8 @@ export class Harness2Engine {
         ok: true,
         errors,
         selection,
+        fleetRunId,
+        fleetTasks: fleetTaskIds,
       };
     } else {
       // Sequential (mode === "sequential") — 원본: carry refined harness through K steps
@@ -598,6 +638,8 @@ export class Harness2Engine {
         finalHarness: trees[finals[0]] ?? currentHarness,
         ok: true,
         errors,
+        fleetRunId,
+        fleetTasks: fleetTaskIds,
       };
     }
   }
