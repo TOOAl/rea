@@ -435,6 +435,9 @@ CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on
 ### 10.6.2 Security Gate (v2.11.0)
 - `src/harness2/guard.ts` securityGate(stage: write|commit|pr) — write: secret/AKIA/password, commit: +TODO, pr: +Spec+Standards(Fowler). Gap #11 검사 시점별 흡수
 
+### 10.6.3 WebFetch Firecrawl (v2.11.0)
+- `src/tools/webfetch.ts` — FIRECRAWL_API_KEY 있으면 `api.firecrawl.dev/v1/scrape`로 JS 렌더링·추출, 없으면 fetch fallback. Gap #12 Firecrawl vs CrawlAI 흡수
+
 ### 10.6 향후
 
 - Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
