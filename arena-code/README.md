@@ -1,4 +1,4 @@
-# Arena Code v2.10 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain
+# Arena Code v2.11 — Claude Code + Codex + Muse + Ghidra + Harness² Self-Improving Brain
 
 > **REA로 3대 코딩 에이전트를 역분석하고, Arena Agent + 무료 API로 재구현한 궁극의 코딩 에이전트**
 > **+ NSA Ghidra (Apache 2.0) + REA Bridge — 외부 패키지 + 자동 업데이트 + Harness² Self-Improving Brain (Google harness2 + GPT-6 Astra + Orca ADE REA)!**
@@ -8,7 +8,7 @@ Claude Code(52만줄), Codex CLI(Rust 95%), Muse Code(영구 에이전트+worktr
 ```
 Claude Code Loop + Codex 샌드박스 + Muse Worktree/EventLog + Ghidra 29 + REA Bridge
 + Hook/MCP/외부패키지/자동업데이트 + Harness² Self-Improving Brain (Propose-Probe-Compose)
-= Arena Code v2.10 ⭐  (H1~H5 + Fleet O1~O3 + Hybrid HF + Design+RAG: Harness Tree→Evidence+Proposer→Composer+Engine→FailureStore+Library+CLI→Guard+Depth)
+= Arena Code v2.11 ⭐  (H1~H5 + Fleet O1~O3 + Hybrid HF + Design+RAG: Harness Tree→Evidence+Proposer→Composer+Engine→FailureStore+Library+CLI→Guard+Depth)
 ```
 
 ---
