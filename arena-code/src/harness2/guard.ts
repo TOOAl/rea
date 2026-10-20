@@ -211,3 +211,50 @@ export function guardHint(report: GuardReport): string | null {
   return "single-candidate-try";
 }
 
+// --- Security stage gate (Gap #11: 검사 시점별) ---
+const SECRET_PATTERNS: Array<{ re: RegExp; msg: string }> = [
+  { re: /AKIA[0-9A-Z]{16}/, msg: "AWS Access Key 노출 의심 (AKIA...)" },
+  { re: /password\s*[:=]\s*["'][^"']{3,}["']/i, msg: "하드코딩 password 의심" },
+  { re: /api[_-]?key\s*[:=]\s*["'][^"']+["']/i, msg: "하드코딩 api_key 의심" },
+  { re: /secret\s*[:=]\s*["'][^"']{4,}["']/i, msg: "하드코딩 secret 의심" },
+  { re: /BEGIN (RSA )?PRIVATE KEY/, msg: "Private Key 노출" },
+];
+
+const WRITE_PATTERNS = [...SECRET_PATTERNS];
+const COMMIT_PATTERNS: typeof SECRET_PATTERNS = [
+  ...WRITE_PATTERNS,
+  { re: /\bTODO\b|\bFIXME\b/, msg: "커밋 단계: TODO/FIXME 잔존 — 미완성 코드" },
+];
+export type SecurityStage = "write" | "commit" | "pr";
+
+export function securityGate(tree: Tree, stage: SecurityStage, opts?: { spec?: string }): GuardReport {
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  const allText = Object.values(tree).join("\n\n");
+  let patterns: Array<{ re: RegExp; msg: string }> = [];
+  if (stage === "write") patterns = WRITE_PATTERNS;
+  else if (stage === "commit") patterns = COMMIT_PATTERNS;
+  else patterns = [...COMMIT_PATTERNS]; // pr는 commit + spec
+
+  for (const { re, msg } of patterns) {
+    if (re.test(allText)) warnings.push(`[${stage}] ${msg}`);
+  }
+
+  // pr 단계는 spec 검사 추가 (two-axis spec 로직 재사용)
+  if (stage === "pr" && opts?.spec) {
+    const specReport = checkSpecAxis(tree, opts.spec);
+    issues.push(...specReport.issues);
+    warnings.push(...specReport.warnings);
+  }
+
+  // pr 단계에서 CODING_STANDARDS 검사도 포함 (standards axis 경고 병합)
+  if (stage === "pr") {
+    const std = checkStandardsAxis(tree);
+    // standards의 issues는 이미 security 이슈로 간주하지 않고 warnings로만 병합 (기존 guard와 차별)
+    warnings.push(...std.warnings.filter(w => w.includes("Standards") || w.includes("Fowler")));
+    if (std.issues.length) issues.push(...std.issues);
+  }
+
+  return { ok: issues.length === 0, issues, warnings, checkedAt: new Date().toISOString() };
+}
+
