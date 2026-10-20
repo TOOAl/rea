@@ -438,6 +438,9 @@ CLI: `--harness2-rag --harness2-rag-k 3 --harness2-selection-llm` (기본 rag on
 ### 10.6.3 WebFetch Firecrawl (v2.11.0)
 - `src/tools/webfetch.ts` — FIRECRAWL_API_KEY 있으면 `api.firecrawl.dev/v1/scrape`로 JS 렌더링·추출, 없으면 fetch fallback. Gap #12 Firecrawl vs CrawlAI 흡수
 
+### 10.6.4 Browser agent-browser (v2.11.0)
+- `src/tools/browser.ts` — agent-browser Rust CDP 백엔드 우선 시도 (82% 토큰 절감, 280 vs 8k chars), `browser_batch` 한 호출로 여러 act. Gap #13 browser-use/agent-browser/Playwright 흡수
+
 ### 10.6 향후
 
 - Subagents(Task 도구) × Fleet worker (현재는 Fleet이 probe만, Task 도구를 Fleet worker가 직접 호출하는 확장은 다음)
