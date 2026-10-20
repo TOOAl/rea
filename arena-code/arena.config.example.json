@@ -1,0 +1,46 @@
+{
+  "$schema": "arena.config.json — Arena Code 설정 파일",
+  "$comment": "이 파일을 arena.config.json으로 복사해 사용하세요. .arena-code/config.json, .arena/config.json 도 인식됩니다.",
+  "provider": "gemini",
+  "model": "gemini-2.0-flash",
+  "maxTurns": 30,
+  "maxContextTokens": 100000,
+  "sandbox": "workspace-write",
+  "approvalMode": "on-request",
+  "disabledTools": [],
+  "plugins": [],
+  "permissionsPath": ".arena-code/settings.json",
+  "eventLogEnabled": true,
+  "externalPackages": {},
+  "updates": {
+    "enabled": true,
+    "checkIntervalHours": 24,
+    "autoCheck": true,
+    "repos": [
+      { "name": "ghidra", "repo": "NationalSecurityAgency/ghidra" },
+      { "name": "rea", "repo": "TOOAl/rea" },
+      { "name": "arena-code", "repo": "TOOAl/rea" }
+    ]
+  },
+  "agents": [
+    {
+      "id": "my-openai",
+      "description": "예시: OpenAI 호환 API (주석 해제 후 사용)",
+      "transport": "openai",
+      "baseUrl": "https://api.openai.com/v1",
+      "apiKey": "${ENV:OPENAI_API_KEY}",
+      "model": "gpt-4o-mini",
+      "enabled": false,
+      "provides": "provider"
+    },
+    {
+      "id": "my-mcp-tools",
+      "description": "예시: MCP 서버 (주석 해제 후 사용)",
+      "transport": "mcp",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "enabled": false,
+      "provides": "tools"
+    }
+  ]
+}

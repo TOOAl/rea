@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "TodoWrite(*)",
+      "WebFetch(*)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(npm test*)",
+      "Bash(npm run *)",
+      "Bash(ls*)",
+      "Bash(cat *)",
+      "Bash(pwd*)",
+      "Bash(node *)",
+      "Bash(npx *)"
+    ],
+    "ask": [
+      "Write(*)",
+      "Edit(*)",
+      "Bash(*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(sudo *)",
+      "Bash(mkfs*)",
+      "Bash(dd *)",
+      "Bash(:()*)",
+      "Read(.env)",
+      "Read(*.pem)",
+      "Read(*secret*)"
+    ]
+  }
+}

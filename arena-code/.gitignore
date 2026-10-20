@@ -1,0 +1,12 @@
+node_modules/
+dist/
+packages/*/dist/
+.env
+.env.local
+*.log
+.tmp/
+evidence/
+.ollama/
+.arena/
+.vitest-reports/
+coverage/

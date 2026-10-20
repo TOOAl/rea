@@ -24,6 +24,9 @@ env/
 
 # Local agent tooling
 .codex/
+!arena-code/.codex/
+!arena-code/.codex/skills/
+!arena-code/.codex/skills/**
 .devin/
 .factory/
 codedb.snapshot
@@ -77,3 +80,4 @@ Thumbs.db
 website/_site/
 # Temporary translation output prepared before replacing the complete site.
 website/.i18n-*/
+arena-code/.arena/

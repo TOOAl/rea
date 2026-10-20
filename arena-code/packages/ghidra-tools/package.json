@@ -1,0 +1,25 @@
+{
+  "name": "@arena-code/ghidra-tools",
+  "version": "1.0.0",
+  "description": "Ghidra 바이너리 분석 도구 29개 — Arena Code 외부 패키지 (NSA Ghidra / REA 기반)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./helpers": "./dist/helpers.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TOOAl/rea",
+    "directory": "arena-code/packages/ghidra-tools"
+  },
+  "upstream": {
+    "ghidra": "NationalSecurityAgency/ghidra",
+    "rea": "TOOAl/rea"
+  },
+  "keywords": ["ghidra", "binary-analysis", "reverse-engineering", "rea", "arena-code"],
+  "license": "MIT",
+  "engines": { "node": ">=22.19.0" },
+  "peerDependencies": {}
+}
