@@ -1,0 +1,8 @@
+node_modules/
+ts/data/lessons.jsonl
+ts/data/lessons-ab-*.jsonl
+ts/data/adjudications.jsonl
+ts/data/failure-cases.jsonl
+ts/data/conclusions.jsonl
+ts/data/reliability.json
+ts/data/strategy-stats.json
