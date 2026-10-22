@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">코스피 6거래일 3회 3% 급락 변동 차트 2026.10.15-10.22</title>
+  <desc id="desc">출처 한국거래소 종가 10/15 5554.22 -7.57% 10/20 5552 10/21 5735.66 +3.29% 10/22 5533.77 -3.52% 교육용 그래프</desc>
+  <rect width="1280" height="720" fill="#F6F9FF"/>
+  <text x="40" y="50" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="28" font-weight="900" fill="#0B1A3A">코스피 6거래일 · 3번의 3% 이상 급락은 사실, 내일 방향은 추측</text>
+  <text x="40" y="82" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="16" fill="#4A5A7A">출처: 한국거래소 종가 · 매일신문 2026.10.22 기사 인용 | 본 자료는 교육용이며 투자 조언이 아닙니다</text>
+  <!-- grid -->
+  <g stroke="#DCE6F5" stroke-width="1">
+    <line x1="80" y1="140" x2="1200" y2="140"/><line x1="80" y1="240" x2="1200" y2="240"/><line x1="80" y1="340" x2="1200" y2="340"/><line x1="80" y1="440" x2="1200" y2="440"/><line x1="80" y1="540" x2="1200" y2="540"/>
+  </g>
+  <text x="10" y="145" font-size="13" fill="#6B7A9A">5,900</text><text x="10" y="245" font-size="13" fill="#6B7A9A">5,750</text><text x="10" y="345" font-size="13" fill="#6B7A9A">5,600</text><text x="10" y="445" font-size="13" fill="#6B7A9A">5,450</text><text x="10" y="545" font-size="13" fill="#6B7A9A">5,300</text>
+  <!-- line: map 5300->540 5900->140 -->
+  <!-- 10/15 5554.22 y=340+(5600-5554.22)/(300)*? let's calc: 5554 ~ 340+ (5600-5554)/150*100 ~ 370 -->
+  <polyline fill="none" stroke="#0B6EFD" stroke-width="4" stroke-linejoin="round" points="160,370 420,372 700,210 980,395"/>
+  <circle cx="160" cy="370" r="10" fill="#D93025" stroke="#fff" stroke-width="3"/><circle cx="420" cy="372" r="10" fill="#D93025" stroke="#fff" stroke-width="3"/><circle cx="700" cy="210" r="10" fill="#0B8A3A" stroke="#fff" stroke-width="3"/><circle cx="980" cy="395" r="10" fill="#D93025" stroke="#fff" stroke-width="3"/>
+  <g font-family="Pretendard, Noto Sans KR, sans-serif" text-anchor="middle">
+    <text x="160" y="410" font-size="16" font-weight="800" fill="#D93025">10/15 -7.57%</text><text x="160" y="432" font-size="15" fill="#0B1A3A">5,554.22</text>
+    <text x="420" y="412" font-size="16" font-weight="800" fill="#D93025">10/20 -3.73%</text><text x="420" y="434" font-size="15" fill="#0B1A3A">5,552.74</text>
+    <text x="700" y="190" font-size="16" font-weight="800" fill="#0B8A3A">10/21 +3.29% ↑</text><text x="700" y="168" font-size="13" fill="#0B8A3A">매수 사이드카</text><text x="700" y="432" font-size="15" fill="#0B1A3A">5,735.66</text>
+    <text x="980" y="435" font-size="16" font-weight="800" fill="#D93025">10/22 -3.52%</text><text x="980" y="457" font-size="15" fill="#0B1A3A">5,533.77</text>
+  </g>
+  <!-- annotation -->
+  <rect x="80" y="560" rx="12" width="1120" height="70" fill="#0B1A3A"/>
+  <text x="110" y="588" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="16" font-weight="800" fill="#FFFFFF">핵심: 6일 전(5,554)과 오늘(5,533)은 거의 같다 — “계속 신저가”가 아니라 “위아래로 크게 흔들림”이 핵심</text>
+  <text x="110" y="612" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="14" fill="#AEC8FF">수익화 원칙: 이 그래프는 직접 제작 2차 가공물 · 원문 1~2문장만 인용 · 자극 문구 없음</text>
+</svg>
