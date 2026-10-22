@@ -54,6 +54,13 @@ export const HISTORY_30: HistoryGenius[] = [
   { id: "hist-bach", name: "바흐", field: "음악", period: "1685~1750", achievement: "대위·화성·성악·기악 방대, 라이프치히 교회", interpretation: "성부 독립→전체 형식, 제약 아래 일관 흐름", condition: "집안·훈련·선행·수요·연주 인력", limit: "대위·조성 최초 아님, 편곡·재작업 포함, 악보≠IQ·수학 점수" },
   { id: "hist-mozart", name: "모차르트", field: "음악", period: "1756~1791", achievement: "오페라·협주·교향·실내악, 조기 교육·여행", interpretation: "형식·극적 상황·선율·악기 조직, 조숙+성숙 구성", condition: "레오폴트 교육·난네를·도시·양식·연주자", limit: "전곡 완성 떠오르기 신화 경계, 초기 필적 부친, 수정 적음≠전곡 수정 없음" },
   { id: "hist-armstrong", name: "암스트롱", field: "음악", period: "1901~1971", achievement: "핫5·핫7 리듬·음색·즉흥 확장, 녹음 자료", interpretation: "재생 넘어 시간·음색으로 발화, 즉흥≠우연", condition: "뉴올리언스 전통·올리버·앙상블·산업", limit: "재즈 혼자 발명 아님, 합주 기여 유지, 녹음≠모든 음악 우열" },
+  // 추가 6 — 인류_역사상_천재들.md (v2.23.2)
+  { id: "hist-gauss", name: "가우스", field: "수학", period: "1777~1855", achievement: "수론 불확정·최소제곱·정규분포·측지·전자기 기초", interpretation: "추상 정리→측량·천문 계산으로 옮기기, 언어 새로 만들기", condition: "괴팅겐·천문대·측량 임무·제자 네트워크", limit: "“수학자의 왕” 별칭≠성과, 단독 기초 아님 — 오일러·르장드르 등과 연속" },
+  { id: "hist-von-neumann", name: "폰 노이만", field: "계산·정보·공학", period: "1903~1957", achievement: "프로그램 내장 구조·게임이론·양자역학 공리화·핵 계산", interpretation: "추상 수학→현실 문제 빠른 번역, 여러 분야 넘나듦", condition: "괴팅겐·프린스턴·맨해튼·연구소 네트워크", limit: "게임이론·컴퓨터 모두 단독 창시 아님 — 튜링·모겐스턴 등과 협업" },
+  { id: "hist-khwarizmi", name: "알콰리즈미", field: "수학", period: "780~850경", achievement: "대수학 체계화·알고리즘 어원·천문표·지리", interpretation: "인도·그리스 수학을 아랍어로 번역·체계화해 새 언어 만들기", condition: "바그다드 지혜의 집·번역 운동·칼리프 후원", limit: "그리스·인도 원전 선행, ‘알고리즘’ 어원은 후대 명명" },
+  { id: "hist-gutenberg", name: "구텐베르크", field: "기술·출판", period: "1398~1468", achievement: "금속활자·주조·프레스·잉크 체계 실용화, 성서 인쇄", interpretation: "복제 비용 낮춰 정보 흐름 바꾸기 — 한 발명이 사회 구조 바꿈", condition: "마인츠 인쇄소·후원·제지·유통 네트워크", limit: "중국·한국 금속활자 선행, 단일 발명 신화 금지 — 체계 실용화가 핵심" },
+  { id: "hist-beethoven", name: "베토벤", field: "음악", period: "1770~1827", achievement: "교향·소나타·현악사중주 형식·표현 확장", interpretation: "청력 상실 속에서도 추상 감정과 구조 결합, 형식 넓히기", condition: "하이든·모차르트 영향·비엔나 후원·악기 개량", limit: "낭만주의 단독 창시 아님, 고통 미화 금지 — 제약 속 성취로만" },
+  { id: "hist-jang", name: "장영실", field: "기술·천문", period: "1390년대~1450년대", achievement: "자격루·옥루·측우기·천문의기 제작", interpretation: "관측 필요→기구 설계→국가 표준화로 연결", condition: "세종 후원·천문·농정 수요·장인 조직", limit: "기록 한계로 개별 기여 범위 신중 — 원전 주의 그대로, 과장 금지" },
 ];
 
 function mkOutput(input: any, brain: any, idea: string, confidence: number, tags: string[]) {

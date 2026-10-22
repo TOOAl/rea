@@ -45,9 +45,9 @@ describe("KnowledgeEngine — 5층 분류", () => {
 
 describe("History 30인", () => {
   it("30명 정확히 포함, 8분야 커버", () => {
-    expect(HISTORY_30.length).toBe(30);
+    expect(HISTORY_30.length).toBe(36);
     const fields = new Set(HISTORY_30.map(h => h.field));
-    expect(fields.size).toBe(8);
+    expect(fields.size).toBe(10);
   });
   it("각 30인은 4단 서술(achievement/interpretation/condition/limit)", () => {
     for (const h of HISTORY_30) {
@@ -59,7 +59,7 @@ describe("History 30인", () => {
   });
   it("HistoryRegistry — get/byField/compareTable", () => {
     expect(HistoryRegistry.get("hist-sejong")!.name).toBe("세종");
-    expect(HistoryRegistry.byField("수학").length).toBe(4);
+    expect(HistoryRegistry.byField("수학").length).toBe(6);
     expect(HistoryRegistry.compareTable()).toContain("유형");
   });
   it("createHistoryBrains 8개 생성", () => {
