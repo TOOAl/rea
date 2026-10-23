@@ -13,7 +13,12 @@ describe("BrainMemory", () => {
   });
   it("recall recent lessons", () => {
     const m = new BrainMemory();
-    m.addFeedback({ targetId: "b1", reward: -1, note: "틀림", lesson: "조심해" });
+    m.addFeedback({
+      targetId: "b1",
+      reward: -1,
+      note: "틀림",
+      lesson: "조심해",
+    });
     expect(m.recall("b1")).toContain("조심해");
   });
 });
@@ -23,7 +28,7 @@ describe("BrainRegistry", () => {
     const reg = new BrainRegistry();
     const mem = reg.memory;
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(38);
+    expect(reg.all().length).toBe(39);
     const before = reg.get("genius-math")!;
     reg.swap(new GeniusBrain("genius-math", "새 수학", "새 설명", "Cooking"));
     expect(reg.get("genius-math")!.name).toBe("새 수학");
@@ -40,7 +45,7 @@ describe("BrainRegistry", () => {
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(reg.memory)) reg.register(b);
     expect(reg.byRole("creative").length).toBe(1);
-    expect(reg.byLayer(1).length).toBe(8);
+    expect(reg.byLayer(1).length).toBe(9);
     expect(reg.byLayer(5).length).toBe(1);
   });
 });
@@ -51,7 +56,10 @@ describe("Council", () => {
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
     const council = new Council(reg);
-    const { outputs, decision } = await council.deliberate("급식 메뉴 정하기", "알레르기 있음");
+    const { outputs, decision } = await council.deliberate(
+      "급식 메뉴 정하기",
+      "알레르기 있음",
+    );
     expect(outputs.length).toBeGreaterThanOrEqual(9);
     expect(decision.consensus).toContain("합의");
     expect(decision.votes.length).toBe(outputs.length);
@@ -75,20 +83,29 @@ describe("BrainsTool via Registry", () => {
   it("Brains deliberate via tool", async () => {
     const reg = buildRegistry();
     const tool = reg.get("Brains")!;
-    const out = await tool.execute({ task: "새 게임 아이디어" }, { cwd: "/tmp" });
+    const out = await tool.execute(
+      { task: "새 게임 아이디어" },
+      { cwd: "/tmp" },
+    );
     expect(out).toContain("두뇌 회의");
     expect(out).toContain("합의");
   });
   it("Brains list", async () => {
     const reg = buildRegistry();
     const tool = reg.get("Brains")!;
-    const out = await tool.execute({ task: "x", action: "list" }, { cwd: "/tmp" });
+    const out = await tool.execute(
+      { task: "x", action: "list" },
+      { cwd: "/tmp" },
+    );
     expect(out).toContain("BrainRegistry");
   });
   it("Brains swap", async () => {
     const reg = buildRegistry();
     const tool = reg.get("Brains")!;
-    const out = await tool.execute({ task: "x", action: "swap", genius: "음악" }, { cwd: "/tmp" });
+    const out = await tool.execute(
+      { task: "x", action: "swap", genius: "음악" },
+      { cwd: "/tmp" },
+    );
     expect(out).toContain("교체 완료");
   });
 });

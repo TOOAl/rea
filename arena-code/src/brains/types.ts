@@ -4,10 +4,26 @@
  */
 
 export type BrainId = string;
-export type BrainRole = "creative" | "critical" | "genius" | "error" | "design" | "memory" | "council" | "gate" | "strategist";
+export type BrainRole =
+  | "creative"
+  | "critical"
+  | "genius"
+  | "error"
+  | "design"
+  | "memory"
+  | "council"
+  | "gate"
+  | "strategist";
 export type BrainLayer = 1 | 2 | 3 | 3.5 | 4 | 5;
 
-export interface BrainInput {
+export interface ArticleInput {
+  article?: string;
+  articleUrl?: string;
+  articleTitle?: string;
+  topic?: string;
+}
+
+export interface BrainInput extends ArticleInput {
   task: string;
   context: string;
   layer: BrainLayer;
@@ -28,7 +44,7 @@ export interface Brain {
   id: BrainId;
   role: BrainRole;
   layer: BrainLayer;
-  name: string;          // 예: "창의-라이트형제"
+  name: string; // 예: "창의-라이트형제"
   description: string;
   version: string;
   think(input: BrainInput): Promise<BrainOutput>;
@@ -44,7 +60,11 @@ export interface BrainFeedback {
 
 export interface CouncilDecision {
   consensus: string;
-  votes: { brainId: BrainId; stance: "agree"|"disagree"|"abstain"; reason: string }[];
+  votes: {
+    brainId: BrainId;
+    stance: "agree" | "disagree" | "abstain";
+    reason: string;
+  }[];
   dissent: string[];
   confidence: number;
 }
