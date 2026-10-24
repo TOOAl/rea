@@ -48,7 +48,7 @@ export class PremiseErrorBrain implements Brain {
   name = "전제 오류 천재 (1층 파수꾼)";
   description =
     "입력 전제(기사/주제/요청)에 숨은 사실 오류·날짜·수치·출처 불일치를 1층에서 먼저 잡는다";
-  version = "2.25.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   constructor(private memory?: BrainMemory) {}
   async learn(f: BrainFeedback): Promise<void> {
@@ -91,7 +91,7 @@ export class PremiseErrorBrain implements Brain {
 
     return mkOutput(
       this,
-      `🚨 1층 전제 오류 스캔\n→ 입력 발췌: "${text.slice(0, 80).replace(/\n/g, " ")}"\n→ 수치: ${nums.length ? nums.join(" | ") : "없음"} / 날짜: ${dates.length ? dates.join(" | ") : "없음"}\n→ 검사:\n${checks.map((c, i) => `  ${i + 1}. ${c}`).join("\n")}\n→ 과거 실패 참고: ${recall || "없음"}\n→ 다음층 전달: ${prior ? "하위 의견 있음 — 교차검증" : "단독 — 2층에서 사실/추정 분리표로 재확인"} | 오류 있으면 계획 중단 조건 발동!`,
+      `🚨 1층 전제 오류 스캔\n→ 입력 발췌: "${text.slice(0, 80).replace(/\n/g, " ")}"\n→ 수치: ${nums.length ? nums.join(" | ") : "없음"} / 날짜: ${dates.length ? dates.join(" | ") : "없음"}\n→ 검사:\n${checks.map((c, i) => `  ${i + 1}. ${c}`).join("\n")}\n→ 과거 실패 참고: ${recall || "없음"}\nselfCheck: 내 답변 수치/주장 2개는 출처 필요? (불확실하면 [추정] 표기) → 다음층 전달: ${prior ? "하위 의견 있음 — 교차검증" : "단독 — 2층에서 사실/추정 분리표로 재확인"} | 오류 있으면 계획 중단 조건 발동!`,
       hasClaim && !hasSource ? 0.92 : 0.85,
       [
         "premise-error",
@@ -110,7 +110,7 @@ export class ContradictionBrain implements Brain {
   name = "모순 탐지기 (1층 거울)";
   description =
     "요청 자체의 자기모순·충돌 조건을 1층에서 거울처럼 비춰 계획 단계 진입 전 차단";
-  version = "2.25.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(f: BrainFeedback): Promise<void> {
     if (f.lesson) this.learned.push(f.lesson);
@@ -143,7 +143,7 @@ export class ContradictionBrain implements Brain {
 
     return mkOutput(
       this,
-      `🪞 1층 모순 스캔\n→ 요청: "${input.task.slice(0, 70)}"\n→ 발견:\n${contradictions.map((c, i) => `  ${i + 1}. ${c}`).join("\n")}\n→ 해소안: 모순 있으면 2층 설계 시 선택지 A/B/C로 분기해 사용자 선택 유도 (추정 금지)\n→ 다음층 전달: 모순 태그 ${contradictions.length}개 — Gate 3.5에서 감점 요인!`,
+      `🪞 1층 모순 스캔\n→ 요청: "${input.task.slice(0, 70)}"\n→ 발견:\n${contradictions.map((c, i) => `  ${i + 1}. ${c}`).join("\n")}\n→ 해소안: 모순 있으면 2층 설계 시 선택지 A/B/C로 분기해 사용자 선택 유도 (추정 금지)\nselfCheck: 내 답변 수치/주장 2개는 출처 필요? (불확실하면 [추정] 표기) → 다음층 전달: 모순 태그 ${contradictions.length}개 — Gate 3.5에서 감점 요인!`,
       contradictions.length > 1 ? 0.9 : 0.78,
       [
         "contradiction",
@@ -162,7 +162,7 @@ export class CriticalThinkingBrain implements Brain {
   name = "비판적 사고 천재 (1층 질문꾼)";
   description =
     "숨은 전제·생략된 주체·확증편향을 질문으로 폭로해 계획이 잘못된 길로 가지 않게 한다";
-  version = "2.25.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(f: BrainFeedback): Promise<void> {
     if (f.lesson) this.learned.push(f.lesson);

@@ -35,7 +35,7 @@ abstract class BaseMemoryGenius implements Brain {
   abstract layer: BrainLayer;
   abstract name: string;
   abstract description: string;
-  version = "2.24.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(feedback: BrainFeedback): Promise<void> {
     if (feedback.lesson) this.learned.push(feedback.lesson);

@@ -70,7 +70,7 @@ abstract class BaseBrain implements Brain {
   abstract layer: Brain["layer"];
   abstract name: string;
   abstract description: string;
-  version = "1.0.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(feedback: BrainFeedback): Promise<void> {
     if (feedback.lesson) this.learned.push(feedback.lesson);
@@ -98,7 +98,7 @@ export class MemoryBrain extends BaseBrain {
     return mkOutput(
       input,
       this,
-      `📚 기억을 뒤져봤어!\n과거 실패:\n${failures}\n내가 배운 것:\n${recall || "(아직 없음)"}\n→ 이번 작업 "${input.task.slice(0, 60)}"에서 피해야 할 것은 위 실패 패턴이야.`,
+      `📚 기억을 뒤져봤어!\n과거 실패:\n${failures}\n내가 배운 것:\n${recall || "(아직 없음)"}\n→ 이번 작업 "${input.task.slice(0, 60)}"에서 피해야 할 것은 위 실패 패턴이야.\nselfCheck: 내 답변 수치/주장 2개는 출처 필요? (불확실하면 [추정] 표기)`,
       0.85,
       ["memory", "fail-history"],
     );
@@ -119,7 +119,7 @@ export class ErrorBrain extends BaseBrain {
     return mkOutput(
       input,
       this,
-      `🔍 모순 검사!\n다른 두뇌 의견: "${prior || "아직 없음"}"\n→ 논리 구멍: ① 증거 없는 주장 있음? ② 두 의견이 서로 충돌? ③ 빠진 경우의 수 있음?\n내 결론: 충돌 있으면 “증거를 대라”고 요구한다.`,
+      `🔍 모순 검사!\n다른 두뇌 의견: "${prior || "아직 없음"}"\n→ 논리 구멍: ① 증거 없는 주장 있음? ② 두 의견이 서로 충돌? ③ 빠진 경우의 수 있음?\n내 결론: 충돌 있으면 “증거를 대라”고 요구한다.\nselfCheck: 내 답변 수치/주장 2개는 출처 필요?`,
       0.88,
       ["logic", "contradiction"],
     );

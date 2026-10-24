@@ -210,7 +210,7 @@ function mkOutput(input: BrainInput, brain: Brain, idea: string, confidence: num
 abstract class BaseKnowledgeBrain implements Brain {
   abstract id: string; abstract role: BrainRole; abstract layer: BrainLayer;
   abstract name: string; abstract description: string;
-  version = "2.22.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(feedback: BrainFeedback): Promise<void> { if (feedback.lesson) this.learned.push(feedback.lesson); }
   abstract think(input: BrainInput): Promise<BrainOutput>;
