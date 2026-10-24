@@ -40,6 +40,11 @@ import {
 } from "./strategist.js";
 import { GateBrain } from "./gate.js";
 import { ArticleInputBrain } from "./articleInput.js";
+import {
+  PremiseErrorBrain,
+  ContradictionBrain,
+  CriticalThinkingBrain,
+} from "./premiseGuard.js";
 
 function mkOutput(
   input: BrainInput,
@@ -208,16 +213,19 @@ export class GeniusBrain extends BaseBrain {
   }
 }
 
-/** 기본 5층 세트 공장 — v2.24.0: 1층 4천재(기사입력 추가) + 2층 3전략가 + 3.5층 게이트 (총 39) */
+/** 기본 5층 세트 공장 — v2.25.0: 1층 7천재(기사입력+전제3천재) + 2층 3전략가 + 3.5층 게이트 (총 42) */
 export function createDefaultBrains(memory: BrainMemory): Brain[] {
   return [
     new MemoryBrain(memory),
     new ErrorBrain(),
-    // v2.23.0 1층 3천재 — 지도·언어·맥락 + v2.24.0 기사입력
+    // v2.23.0 1층 3천재 — 지도·언어·맥락 + v2.24.0 기사입력 + v2.25.0 전제검증 3천재
     new MemoryArchivistBrain(memory),
     new LanguageInterpreterBrain(),
     new ContextSynthesizerBrain(memory),
     new ArticleInputBrain(memory),
+    new PremiseErrorBrain(memory),
+    new ContradictionBrain(),
+    new CriticalThinkingBrain(),
     new DesignBrain(),
     // v2.23.0 2층 3전략가 — 역사·경영·공학
     new HistoryStrategistBrain(),

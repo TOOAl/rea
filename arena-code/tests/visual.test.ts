@@ -99,11 +99,11 @@ describe("VisualEngine — WCAG Gate", () => {
 });
 
 describe("VisualEngine + Council 통합", () => {
-  it("Council.deliberate는 visualPacket 반환 + 39 brains", async () => {
+  it("Council.deliberate는 visualPacket 반환 + 42 brains", async () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(39);
+    expect(reg.all().length).toBe(42);
     const council = new Council(reg);
     const { outputs, decision, visualPacket, contextPacket } =
       await council.deliberate(
@@ -114,7 +114,7 @@ describe("VisualEngine + Council 통합", () => {
     expect(visualPacket.masters.length).toBeGreaterThan(0);
     expect(visualPacket.budgetTier).toBe("0원");
     expect(contextPacket).toBeDefined();
-    expect(outputs.length).toBeGreaterThanOrEqual(39);
+    expect(outputs.length).toBeGreaterThanOrEqual(42);
     expect(decision.consensus).toContain("합의");
   });
 });

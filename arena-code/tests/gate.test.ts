@@ -79,12 +79,12 @@ describe("1층 3천재 — 지도·언어·맥락", () => {
   });
 });
 
-describe("Council 1→2→3→3.5→4→5 흐름 + 게이트 로그 — 39 brains", () => {
-  it("39 brains, gateLogs 생성, 에스컬레이션 포함", async () => {
+describe("Council 1→2→3→3.5→4→5 흐름 + 게이트 로그 — 42 brains", () => {
+  it("42 brains, gateLogs 생성, 에스컬레이션 포함", async () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(39);
+    expect(reg.all().length).toBe(42);
     expect(reg.byLayer(1).length).toBeGreaterThanOrEqual(8);
     expect(reg.byLayer(2).length).toBeGreaterThanOrEqual(4);
     expect(reg.byLayer(3.5 as any).length).toBe(1);
@@ -96,6 +96,6 @@ describe("Council 1→2→3→3.5→4→5 흐름 + 게이트 로그 — 39 brain
     expect(gateLogs.length).toBeGreaterThan(0);
     expect(gateResult).toBeDefined();
     expect(gateResult!.selected.length).toBe(8);
-    expect(outputs.length).toBeGreaterThanOrEqual(39);
+    expect(outputs.length).toBeGreaterThanOrEqual(42);
   });
 });

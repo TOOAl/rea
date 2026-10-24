@@ -87,6 +87,46 @@ function classifyLength(article: string): string {
   return "장문 기사+댓글/전문";
 }
 
+function buildFactClaimBlock(article: string): string {
+  // 증거 도장 전용: 사실/추정 분리표 — 동기 임포트 실패 시 fallback
+  try {
+    // 동적 import 대신 휴리스틱 직접 — 빌드 순환 방지
+    const lines = article
+      .split("\n")
+      .filter((l) => l.trim().length > 10)
+      .slice(0, 12);
+    const facts: string[] = [];
+    const claims: string[] = [];
+    for (const l of lines) {
+      if (
+        /(따르면|발표|기록|통계|종가|마감|발생|확인|공개|보도|에 따르면)/.test(
+          l,
+        )
+      )
+        facts.push(l.trim().slice(0, 70));
+      else if (/(전망|예상|것으로 보인다|것으로 예상|할 것이다|추측)/.test(l))
+        claims.push(l.trim().slice(0, 70));
+      else if (/\d/.test(l)) facts.push(l.trim().slice(0, 70));
+    }
+    const factRatio =
+      facts.length + claims.length
+        ? Math.round((facts.length / (facts.length + claims.length)) * 100)
+        : 50;
+    const table = [
+      "| 구분 | 내용 | 출처 필요 |",
+      "|---|---|---|",
+      ...facts.slice(0, 5).map((f) => `| ✅ 사실 | ${f} | 예 |`),
+      ...claims.slice(0, 5).map((c) => `| 🔮 추정 | ${c} | 예 — [추정] |`),
+      ...(facts.length === 0 && claims.length === 0
+        ? ["| - | (분류할 문장 없음) | - |"]
+        : []),
+    ].join("\n");
+    return `사실/추정 분리표 (사실 ${factRatio}%):\n${table}`;
+  } catch {
+    return "사실/추정 분리표 생성 실패 — 원문 길이 부족";
+  }
+}
+
 export class ArticleInputBrain implements Brain {
   id = "memory-article-input";
   role = "memory" as const;
@@ -202,6 +242,8 @@ export class ArticleInputBrain implements Brain {
         `→ 키워드: ${keywords.join(" · ") || "(키워드 추출 실패 — 원문 짧음)"}\n` +
         `→ 미리보기: ${truncate(article.replace(/\s+/g, " "), 180)}\n` +
         `→ 분류: 사실 신호 ${factMarkers} vs 주장 신호 ${opinionMarkers} → 사실 비중 약 ${factRatio}% (${factRatio >= 60 ? "사실 중심" : factRatio >= 40 ? "혼합" : "주장/전망 중심"})\n` +
+        `${factBlock}\n` +
+        `→ 증거 도장 준비: ✅ 사실은 출처 필수, 🔮 추정은 [추정] 표기 — 최종 출력에 증거 도장 블록 삽입 예정\n` +
         `→ 다음층 전달 질문 ${nextQuestions.length}개: ${nextQuestions.join(" | ")}\n` +
         `→ 저장 위치: BrainMemory.errors[${charCount > 2000 ? "장문" : "단문"}] + 1층 지도에 기사 좌표 기록\n` +
         `→ 과거 실패 참고: ${recall || "없음 — 첫 기사라면 1층 오류 천재와 함께 검증 필요"}`,

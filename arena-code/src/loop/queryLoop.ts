@@ -2,16 +2,41 @@
  * Agent Loop — Claude Code queryLoop() 재구현
  * AsyncGenerator 패턴 + 9단계 파이프라인 단순화
  */
-import type { Provider, Message, ContentBlock, ToolDefinition } from "../providers/types.js";
+import type {
+  Provider,
+  Message,
+  ContentBlock,
+  ToolDefinition,
+} from "../providers/types.js";
 import type { Tool, ToolContext } from "../tools/types.js";
-import { assembleSystemPrompt, estimateTokens, compactMessages } from "./context.js";
-import { checkPermission, loadPermissionConfig, type PermissionConfig } from "./permissions.js";
+import {
+  assembleSystemPrompt,
+  estimateTokens,
+  compactMessages,
+} from "./context.js";
+import {
+  checkPermission,
+  loadPermissionConfig,
+  type PermissionConfig,
+} from "./permissions.js";
 import type { HookManager } from "../hooks/index.js";
-import { classifyIntent, isIntentClear } from "./intent.js";
+import {
+  classifyIntent,
+  isIntentClear,
+  formatIntentHintForPrompt,
+} from "./intent.js";
 import { EvidenceLedger } from "./evidenceLedger.js";
 import { qualityGate, qualityFeedback } from "./outputQuality.js";
-import { persistLedgerToTree, buildEvidencePointer } from "./evidenceTreeBridge.js";
-import { deriveDomain, retrieveLessons, formatLessonsForPrompt, recordLesson } from "./learningBridge.js";
+import {
+  persistLedgerToTree,
+  buildEvidencePointer,
+} from "./evidenceTreeBridge.js";
+import {
+  deriveDomain,
+  retrieveLessons,
+  formatLessonsForPrompt,
+  recordLesson,
+} from "./learningBridge.js";
 
 // --- Events ---
 
@@ -45,15 +70,21 @@ export interface LoopParams {
   /** Pillar 2/3: 기본 true로 기본 체력 상시 동작 — 명시적 false로만 비활성 (env REA_INTENT_GATE=0 으로도 off) */
   intentGate?: boolean;
   qualityGate?: boolean;
-  qualityOpts?: { expectedUnderlineCount?: number | null; schemaHint?: string | null };
+  qualityOpts?: {
+    expectedUnderlineCount?: number | null;
+    schemaHint?: string | null;
+  };
 }
 
 // --- Main Loop ---
 
-export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> {
+export async function* queryLoop(
+  params: LoopParams,
+): AsyncGenerator<LoopEvent> {
   const maxTurns = params.maxTurns ?? 20;
   const maxContextTokens = params.maxContextTokens ?? 100000;
-  const permissions = params.permissions ?? await loadPermissionConfig(params.cwd);
+  const permissions =
+    params.permissions ?? (await loadPermissionConfig(params.cwd));
 
   const state: { messages: Message[]; turnCount: number } = {
     messages: [...params.messages],
@@ -63,35 +94,67 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
   // Pillar 1/2: ledger + intent (opt-in, 기존 루프 영향 없음 — 기본 false라 기존 동작 보존)
   const ledger = new EvidenceLedger();
   for (const m of params.messages) {
-    const txt = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
-    if (txt.length > 500) ledger.fromUserAttach("initial", txt.slice(0, 800), txt.length > 1000);
+    const txt =
+      typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+    if (txt.length > 500)
+      ledger.fromUserAttach("initial", txt.slice(0, 800), txt.length > 1000);
   }
   // 기본 활성화: env나 파라미터로 명시적 false가 아니면 동작 (기존 opt-in에서 default-on으로 승격)
-  const intentGateOn = params.intentGate !== false && process.env.REA_INTENT_GATE !== "0";
-  const qualityGateOn = params.qualityGate !== false && process.env.REA_QUALITY_GATE !== "0";
+  const intentGateOn =
+    params.intentGate !== false && process.env.REA_INTENT_GATE !== "0";
+  const qualityGateOn =
+    params.qualityGate !== false && process.env.REA_QUALITY_GATE !== "0";
   const intent = intentGateOn ? classifyIntent(params.messages) : null;
   const intentHint = intent
-    ? `${intent.kind} (conf=${intent.confidence}) ambiguities=[${intent.ambiguities.join("; ") || "none"}] evidence=${intent.evidence.slice(0, 2).join(" | ")}`
+    ? formatIntentHintForPrompt(
+        intent,
+        params.messages
+          .map((m) =>
+            typeof m.content === "string"
+              ? m.content
+              : JSON.stringify(m.content),
+          )
+          .join("\n")
+          .slice(-2000),
+      )
     : undefined;
-  let evidenceSummary = ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
+  let evidenceSummary =
+    ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
   // Phase 2: EvidenceTree 영속화 — 잘림이 있거나 REA_EVIDENCE_TREE=1 이면 디스크 트리 구축, 포인터 주입
   let evidenceTree: ReturnType<typeof persistLedgerToTree> = null;
   if (process.env.REA_EVIDENCE_TREE === "1" && ledger.list().length > 0) {
-    const hasTruncated = ledger.list().some(e => e.truncated);
+    const hasTruncated = ledger.list().some((e) => e.truncated);
     if (hasTruncated || ledger.list().length > 3) {
-      evidenceTree = persistLedgerToTree(ledger, `task-${Date.now()}`, { cwd: params.cwd, taskPrompt: typeof params.messages[0]?.content === "string" ? params.messages[0].content as string : undefined });
+      evidenceTree = persistLedgerToTree(ledger, `task-${Date.now()}`, {
+        cwd: params.cwd,
+        taskPrompt:
+          typeof params.messages[0]?.content === "string"
+            ? (params.messages[0].content as string)
+            : undefined,
+      });
       const pointer = evidenceTree ? buildEvidencePointer(evidenceTree) : null;
-      if (pointer) evidenceSummary = `${evidenceSummary}\n\n[EvidenceTree persisted] ${pointer}`;
+      if (pointer)
+        evidenceSummary = `${evidenceSummary}\n\n[EvidenceTree persisted] ${pointer}`;
     }
   }
   // Phase 3: Library/Memory Lessons 자동 주입 — 같은 도메인 반복 시 점점 똑똑해짐
   const learningOn = process.env.REA_LEARNING !== "0";
-  const promptTextForDomain = params.messages.map(m => typeof m.content === "string" ? m.content : JSON.stringify(m.content)).join("\n");
-  const domain = learningOn ? deriveDomain(intent, promptTextForDomain) : "general";
+  const promptTextForDomain = params.messages
+    .map((m) =>
+      typeof m.content === "string" ? m.content : JSON.stringify(m.content),
+    )
+    .join("\n");
+  const domain = learningOn
+    ? deriveDomain(intent, promptTextForDomain)
+    : "general";
   let lessonsPrompt: string | null = null;
   if (learningOn) {
     try {
-      const lessons = retrieveLessons({ query: promptTextForDomain.slice(-1000) || promptTextForDomain, domain, topK: 3 });
+      const lessons = retrieveLessons({
+        query: promptTextForDomain.slice(-1000) || promptTextForDomain,
+        domain,
+        topK: 3,
+      });
       lessonsPrompt = formatLessonsForPrompt(lessons);
     } catch {}
   }
@@ -99,8 +162,11 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
   let structuralContext: string | undefined;
   if (process.env.REA_STRUCTURAL === "1") {
     try {
-      const { buildStructuralContext, formatStructuralContext } = await import("./structuralContext.js");
-      const sc = await buildStructuralContext(params.cwd, { budgetChars: 2000 });
+      const { buildStructuralContext, formatStructuralContext } =
+        await import("./structuralContext.js");
+      const sc = await buildStructuralContext(params.cwd, {
+        budgetChars: 2000,
+      });
       structuralContext = formatStructuralContext(sc);
     } catch {}
   }
@@ -109,22 +175,42 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     try {
       const { RagIndex } = await import("../rag/index.js");
       // 최소 스캐폴딩: persist된 인덱스가 있으면 검색, 없으면 빈 상태로 패스 (fail-open)
-      const idx = new RagIndex({ domain, persistDir: `${params.cwd}/.arena/rag-index` });
+      const idx = new RagIndex({
+        domain,
+        persistDir: `${params.cwd}/.arena/rag-index`,
+      });
       if (idx.load()) {
-        const hits = idx.search(promptTextForDomain.slice(-1000) || promptTextForDomain, 3);
-        if (hits.length) ragContext = hits.map(h => `[${h.chunk.source}] ${h.chunk.text.slice(0, 400)} (score=${h.score.toFixed(3)})`).join("\n\n");
+        const hits = idx.search(
+          promptTextForDomain.slice(-1000) || promptTextForDomain,
+          3,
+        );
+        if (hits.length)
+          ragContext = hits
+            .map(
+              (h) =>
+                `[${h.chunk.source}] ${h.chunk.text.slice(0, 400)} (score=${h.score.toFixed(3)})`,
+            )
+            .join("\n\n");
       }
     } catch {}
   }
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,
-    intentHint || evidenceSummary || lessonsPrompt || structuralContext || ragContext ? {
-      evidenceSummary: lessonsPrompt ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}` : evidenceSummary,
-      intentHint,
-      structuralContext,
-      ragContext,
-    } : undefined
+    intentHint ||
+      evidenceSummary ||
+      lessonsPrompt ||
+      structuralContext ||
+      ragContext
+      ? {
+          evidenceSummary: lessonsPrompt
+            ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}`
+            : evidenceSummary,
+          intentHint,
+          structuralContext,
+          ragContext,
+        }
+      : undefined,
   );
 
   // Tools → ToolDefinition for model
@@ -143,16 +229,30 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     }
 
     if (state.turnCount >= maxTurns) {
-      yield { type: "error", message: `Max turns (${maxTurns}) reached. Task may be incomplete.` };
+      yield {
+        type: "error",
+        message: `Max turns (${maxTurns}) reached. Task may be incomplete.`,
+      };
       break;
     }
 
     // --- Context management: compaction check ---
     const tokens = estimateTokens(state.messages);
     if (tokens > maxContextTokens * 0.8) {
-      if (params.hooks) await params.hooks.emit("preCompact", { cwd: params.cwd, turn: state.turnCount });
-      yield { type: "compacting", message: `Context ${tokens} tokens > 80% of ${maxContextTokens}, compacting...` };
-      state.messages = await compactMessages(state.messages, params.provider, system);
+      if (params.hooks)
+        await params.hooks.emit("preCompact", {
+          cwd: params.cwd,
+          turn: state.turnCount,
+        });
+      yield {
+        type: "compacting",
+        message: `Context ${tokens} tokens > 80% of ${maxContextTokens}, compacting...`,
+      };
+      state.messages = await compactMessages(
+        state.messages,
+        params.provider,
+        system,
+      );
     }
 
     yield { type: "turn_start", turn: state.turnCount + 1 };
@@ -185,7 +285,10 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
         }
       }
     } catch (e: unknown) {
-      yield { type: "error", message: `Model call failed: ${e instanceof Error ? e.message : String(e)}` };
+      yield {
+        type: "error",
+        message: `Model call failed: ${e instanceof Error ? e.message : String(e)}`,
+      };
       break;
     }
 
@@ -195,7 +298,10 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     for (const tc of toolCalls) assistantBlocks.push(tc);
 
     if (assistantBlocks.length === 0) {
-      yield { type: "error", message: "Empty response from model (no text or tool calls)" };
+      yield {
+        type: "error",
+        message: "Empty response from model (no text or tool calls)",
+      };
       break;
     }
 
@@ -210,9 +316,16 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
         if (!report.ok) {
           const feedback = qualityFeedback(report);
           state.messages.push({ role: "user", content: feedback });
-          yield { type: "text", text: `\n[QualityGate] ${report.issues.join("; ")}\n` };
+          yield {
+            type: "text",
+            text: `\n[QualityGate] ${report.issues.join("; ")}\n`,
+          };
           yield { type: "turn_end", turn: state.turnCount + 1 };
-          if (params.hooks) await params.hooks.emit("postTurn", { cwd: params.cwd, turn: state.turnCount + 1 });
+          if (params.hooks)
+            await params.hooks.emit("postTurn", {
+              cwd: params.cwd,
+              turn: state.turnCount + 1,
+            });
           state.turnCount++;
           // 1회 자기교정 후에도 실패하면 그대로 반환하되, issues를 결과에 첨부해 투명성 확보
           if (state.turnCount > 1) {
@@ -236,7 +349,11 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
           });
         } catch {}
       }
-      yield { type: "result", content: assistantBlocks, turns: state.turnCount + 1 };
+      yield {
+        type: "result",
+        content: assistantBlocks,
+        turns: state.turnCount + 1,
+      };
       break;
     }
 
@@ -248,17 +365,36 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
 
       // Hooks: preToolUse — input 수정/차단
       if (params.hooks) {
-        const hook = await params.hooks.runPreToolUse({ cwd: params.cwd, event: "preToolUse", toolName: block.name, input: (block.input ?? {}) as Record<string, unknown> });
+        const hook = await params.hooks.runPreToolUse({
+          cwd: params.cwd,
+          event: "preToolUse",
+          toolName: block.name,
+          input: (block.input ?? {}) as Record<string, unknown>,
+        });
         if (hook?.block) {
           const reason = hook.reason ?? `Hook blocked ${block.name}`;
           yield { type: "tool_denied", tool: block.name!, reason };
-          state.messages.push({ role: "user", content: [{ type: "tool_result", tool_use_id: block.id!, content: `⛔ Blocked by hook: ${reason}` }] });
+          state.messages.push({
+            role: "user",
+            content: [
+              {
+                type: "tool_result",
+                tool_use_id: block.id!,
+                content: `⛔ Blocked by hook: ${reason}`,
+              },
+            ],
+          });
           continue;
         }
-        if (hook?.modifiedInput) block.input = { ...(block.input ?? {}), ...hook.modifiedInput };
+        if (hook?.modifiedInput)
+          block.input = { ...block.input, ...hook.modifiedInput };
       }
 
-      yield { type: "tool_start", tool: block.name!, input: (block.input ?? {}) as Record<string, unknown> };
+      yield {
+        type: "tool_start",
+        tool: block.name!,
+        input: (block.input ?? {}) as Record<string, unknown>,
+      };
 
       // Permission check
       const decision = checkPermission(block, permissions);
@@ -267,7 +403,13 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
         yield { type: "tool_denied", tool: block.name!, reason };
         state.messages.push({
           role: "user",
-          content: [{ type: "tool_result", tool_use_id: block.id!, content: `⛔ Permission denied: ${reason}` }],
+          content: [
+            {
+              type: "tool_result",
+              tool_use_id: block.id!,
+              content: `⛔ Permission denied: ${reason}`,
+            },
+          ],
         });
         continue;
       }
@@ -275,10 +417,20 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
       if (decision === "ask" && params.onAskPermission) {
         const approved = await params.onAskPermission(block);
         if (!approved) {
-          yield { type: "tool_denied", tool: block.name!, reason: "User denied" };
+          yield {
+            type: "tool_denied",
+            tool: block.name!,
+            reason: "User denied",
+          };
           state.messages.push({
             role: "user",
-            content: [{ type: "tool_result", tool_use_id: block.id!, content: "User denied this tool call." }],
+            content: [
+              {
+                type: "tool_result",
+                tool_use_id: block.id!,
+                content: "User denied this tool call.",
+              },
+            ],
           });
           continue;
         }
@@ -291,37 +443,67 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
         yield { type: "tool_result", tool: block.name!, result: msg };
         state.messages.push({
           role: "user",
-          content: [{ type: "tool_result", tool_use_id: block.id!, content: msg }],
+          content: [
+            { type: "tool_result", tool_use_id: block.id!, content: msg },
+          ],
         });
         continue;
       }
 
       try {
-        let result = await tool.execute((block.input ?? {}) as Record<string, unknown>, toolCtx);
+        let result = await tool.execute(
+          (block.input ?? {}) as Record<string, unknown>,
+          toolCtx,
+        );
         // Hooks: postToolUse — result 수정
         if (params.hooks) {
-          const post = await params.hooks.runPostToolUse({ cwd: params.cwd, event: "postToolUse", toolName: block.name, input: (block.input ?? {}) as Record<string, unknown>, result });
+          const post = await params.hooks.runPostToolUse({
+            cwd: params.cwd,
+            event: "postToolUse",
+            toolName: block.name,
+            input: (block.input ?? {}) as Record<string, unknown>,
+            result,
+          });
           if (post?.modifiedResult != null) result = post.modifiedResult;
         }
         // Pillar 1: ledger에 증거 보존 (truncated 플래그 + provenance)
-        ledger.fromToolResult(block.name!, (block.input ?? {}) as Record<string, unknown>, result, { maxLen: 5000 });
-        yield { type: "tool_result", tool: block.name!, result: result.slice(0, 5000) + (result.length > 5000 ? "\n... (truncated)" : "") };
+        ledger.fromToolResult(
+          block.name!,
+          (block.input ?? {}) as Record<string, unknown>,
+          result,
+          { maxLen: 5000 },
+        );
+        yield {
+          type: "tool_result",
+          tool: block.name!,
+          result:
+            result.slice(0, 5000) +
+            (result.length > 5000 ? "\n... (truncated)" : ""),
+        };
         state.messages.push({
           role: "user",
-          content: [{ type: "tool_result", tool_use_id: block.id!, content: result }],
+          content: [
+            { type: "tool_result", tool_use_id: block.id!, content: result },
+          ],
         });
       } catch (e: unknown) {
         const errMsg = `Tool execution error: ${e instanceof Error ? e.message : String(e)}`;
         yield { type: "tool_result", tool: block.name!, result: errMsg };
         state.messages.push({
           role: "user",
-          content: [{ type: "tool_result", tool_use_id: block.id!, content: errMsg }],
+          content: [
+            { type: "tool_result", tool_use_id: block.id!, content: errMsg },
+          ],
         });
       }
     }
 
     yield { type: "turn_end", turn: state.turnCount + 1 };
-    if (params.hooks) await params.hooks.emit("postTurn", { cwd: params.cwd, turn: state.turnCount + 1 });
+    if (params.hooks)
+      await params.hooks.emit("postTurn", {
+        cwd: params.cwd,
+        turn: state.turnCount + 1,
+      });
     state.turnCount++;
 
     // Small delay to avoid tight loop / rate limit
