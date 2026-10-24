@@ -12,29 +12,26 @@ describe("ImageGuard — 3바퀴 룰", () => {
     expect(issues.length).toBeGreaterThan(0);
     expect(issues.join("")).toMatch(/靑|자모/);
   });
-  it("정상 한글은 PASS", () => {
+  it("정상 한글은 PASS (깨짐 없음)", async () => {
     const ok = "김정은 깜짝 방중, 청와대 면밀 주시 2026.10.24";
-    const res = verifyImageText(ok, {
+    const res = await verifyImageText(ok, {
       expectedKeywords: ["김정은", "청와대"],
       expectedPerson: "리창",
       topic: "naver-0016398151",
     });
-    // 청와대 관련 키워드는 있지만 인물 리창 누락 → 인물 이슈는 나지만 깨짐은 아님
+    // 깨짐 패턴은 없어야 함 (인물 누락은 별도 이슈지만 깨진 글자 아님)
     expect(res.issues.some((i) => /깨진/.test(i))).toBe(false);
   });
-  it("인물 불일치(리창→시진핑) 차단", () => {
+  it("인물 불일치(리창→시진핑) 차단", async () => {
     const ocr = "김정은 방중 시진핑 만남 APEC";
-    const res = verifyImageText(ocr, { expectedPerson: "리창" });
+    const res = await verifyImageText(ocr, { expectedPerson: "리창" });
     expect(res.blocked).toBe(true);
     expect(res.issues.join("")).toMatch(/인물 불일치/);
   });
   it("guardedGenerate — 깨진 첫 시도는 재시도, 두번째 PASS", async () => {
-    let call = 0;
     const { finalResult, attempts, logs } = await guardedGenerate(
       async (attempt) => {
-        call++;
-        if (attempt === 1)
-          return { imagePath: "images/broken.jpg", ocrText: "靑 ㄱㄴ" }; // 깨짐
+        if (attempt === 1) return { imagePath: "images/broken.jpg", ocrText: "靑 ㄱㄴ" };
         return {
           imagePath: "images/fixed.jpg",
           ocrText: "김정은 방중 리창 만남 청와대 APEC 신압록강 라오닝 단둥",
@@ -58,5 +55,11 @@ describe("ImageGuard — 3바퀴 룰", () => {
     );
     expect(attempts).toBe(3);
     expect(finalResult.blocked).toBe(true);
+  });
+  it("외부엔진 흡수 — 숫자 팩트 불일치 탐지", async () => {
+    const ocr = "새마을금고 누적적자 5조 연체율 9.99% 292곳";
+    const res = await verifyImageText(ocr, { topic: "naver-123-0002392509" });
+    // 3.6조가 5조로 잘못 표기되면 숫자 팩트 이슈 발생
+    expect(res.issues.join("")).toMatch(/숫자 팩트/);
   });
 });

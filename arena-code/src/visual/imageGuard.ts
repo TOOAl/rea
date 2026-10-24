@@ -28,15 +28,9 @@ const BROKEN_PATTERNS: Array<{ re: RegExp; msg: string }> = [
 ];
 
 const REQUIRED_KEYWORDS_BY_TOPIC: Record<string, string[]> = {
-  "naver-0016398151": [
-    "김정은",
-    "방중",
-    "청와대",
-    "라오닝",
-    "단둥",
-    "신압록강",
-    "APEC",
-  ],
+  "naver-0016398151": ["김정은", "방중", "청와대", "라오닝", "단둥", "신압록강", "APEC"],
+  "naver-123-0002392509": ["새마을금고", "누적", "3.6조", "292곳", "연체율", "부실채권"],
+  "naver-374-0000539594": ["SK하이닉스", "솔리다임", "중복상장", "127만", "4.42%"],
 };
 
 export function checkBrokenHangul(text: string): string[] {
@@ -85,14 +79,14 @@ export function checkPersonMismatch(
  * @param opts.expectedKeywords — 기사에서 반드시 보여야 할 단어
  * @param opts.expectedPerson — 기사 속 핵심 인물 (사실 체크용)
  */
-export function verifyImageText(
+export async function verifyImageText(
   ocrText: string,
   opts: {
     expectedKeywords?: string[];
     expectedPerson?: string;
     topic?: string;
   } = {},
-): ImageGuardResult {
+): Promise<ImageGuardResult> {
   const issues: string[] = [];
   const expected =
     opts.expectedKeywords ??
@@ -108,7 +102,17 @@ export function verifyImageText(
   if (opts.expectedPerson)
     issues.push(...checkPersonMismatch(opts.expectedPerson, ocrText));
 
-  // 4) 너무 짧으면 OCR 실패로 간주
+  // 4) 외부 엔진: 맞춤법/숫자 검증 흡수 (부산대 검사기 + 팩트체크 엔진)
+  try {
+    // 동적 흡수 — 외부 엔진 없으면 조용히 스킵
+    const ext = await import("./externalEngines.js");
+    issues.push(...ext.checkKoreanTypos(ocrText));
+    if (opts.topic) issues.push(...ext.checkNumericFacts(ocrText, opts.topic));
+  } catch {
+    // 외부 엔진 미설치 시 휴리스틱만 유지
+  }
+
+  // 5) 너무 짧으면 OCR 실패로 간주
   if (ocrText.trim().length < 10)
     issues.push("OCR 텍스트 10자 미만 — 이미지 품질 낮거나 OCR 실패");
 
@@ -168,7 +172,7 @@ export async function guardedGenerate(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const { imagePath, ocrText } = await generateFn(attempt);
     lastPath = imagePath;
-    const result = verifyImageText(ocrText, {
+    const result = await verifyImageText(ocrText, {
       expectedKeywords: opts.expectedKeywords,
       expectedPerson: opts.expectedPerson,
       topic: opts.topic,
