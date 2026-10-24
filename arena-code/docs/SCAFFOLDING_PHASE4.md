@@ -1,17 +1,17 @@
 # Phase 4 Scaffolding — 사용 가이드 (2026-10-24)
 
-이 문서는 `arena/44525c12-rea`에 추가된 **맥락 이해 + 자료 찾기** 스캐폴딩을 바로 쓰는 법을 12살도 따라 할 수 있게 적었다.
+이 문서는 `arena/44525c12-rea → arena/6e90cbe4-rea`에 추가된 **맥락 이해 + 자료 찾기** 스캐폴딩을 바로 쓰는 법을 12살도 따라 할 수 있게 적었다. (main `d85bb76` 머지 완료, 현재 브랜치 `arena/6e90cbe4-rea`에서 S/M/L 개선 진행)
 
 ## 1. 새로 생긴 파일
 
-| 파일 | 역할 | 기본 상태 |
-|------|------|-----------|
-| `src/tools/webSearch.ts` | 웹 검색 — **API 없이 rea 흡수**: 키 없으면 로컬 RagIndex/docs/.memory-bank TF-IDF로 즉시 fallback, 키 있으면 Tavily/Serper/Brave/Bing 자동 선택 | 항상 등록, 외부 호출 0으로도 동작 (fail-open) |
-| `src/rag/chunker.ts` | 긴 문서를 1600자 청크로 자르기 (겹침 200) | 로컬 RAG 기초 |
-| `src/rag/index.ts` | RagIndex — TF-IDF 하이브리드 + vector 슬롯 + persist | 메모리, `.arena/rag-index/<domain>.json` 저장 |
-| `src/loop/structuralContext.ts` | import 그래프 + top-level 스캔 → 구조 목차 | `REA_STRUCTURAL=1` 시 자동 주입 |
-| `src/loop/tokenizer.ts` | 정확한 토큰 측정 + 예산 검사 | `js-tiktoken` 있으면 정확, 없으면 CJK 보정 |
-| `src/loop/research.ts` + `src/rag/index.ts#fromWorkspace` | 고정 연구 루프 `Research` — `WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, `RagIndex.fromWorkspace()`로 `.memory-bank + harness2/library + docs` 자동 색인 | `Research` 도구로 등록, API 0으로도 동작 |
+| 파일                                                      | 역할                                                                                                                                                                  | 기본 상태                                     |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `src/tools/webSearch.ts`                                  | 웹 검색 — **API 없이 rea 흡수**: 키 없으면 로컬 RagIndex/docs/.memory-bank TF-IDF로 즉시 fallback, 키 있으면 Tavily/Serper/Brave/Bing 자동 선택                       | 항상 등록, 외부 호출 0으로도 동작 (fail-open) |
+| `src/rag/chunker.ts`                                      | 긴 문서를 1600자 청크로 자르기 (겹침 200)                                                                                                                             | 로컬 RAG 기초                                 |
+| `src/rag/index.ts`                                        | RagIndex — TF-IDF 하이브리드 + vector 슬롯 + persist                                                                                                                  | 메모리, `.arena/rag-index/<domain>.json` 저장 |
+| `src/loop/structuralContext.ts`                           | import 그래프 + top-level 스캔 → 구조 목차                                                                                                                            | `REA_STRUCTURAL=1` 시 자동 주입               |
+| `src/loop/tokenizer.ts`                                   | 정확한 토큰 측정 + 예산 검사                                                                                                                                          | `js-tiktoken` 있으면 정확, 없으면 CJK 보정    |
+| `src/loop/research.ts` + `src/rag/index.ts#fromWorkspace` | 고정 연구 루프 `Research` — `WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, `RagIndex.fromWorkspace()`로 `.memory-bank + harness2/library + docs` 자동 색인 | `Research` 도구로 등록, API 0으로도 동작      |
 
 `src/loop/context.ts`는 두 컨텍스트를 `RichContextOptions.structuralContext / ragContext`로 받도록 확장,
 `src/loop/queryLoop.ts`는 두 env가 1일 때만 자동 수집한다 (기존 동작 보존).
@@ -49,7 +49,10 @@ import { RagIndex } from "./src/rag/index.js";
 
 const idx = new RagIndex({ domain: "exam", persistDir: "./.arena/rag-index" });
 idx.addDocuments([
-  { source: "docs/exam-29.md", text: await readFile("docs/exam-29.md", "utf-8") },
+  {
+    source: "docs/exam-29.md",
+    text: await readFile("docs/exam-29.md", "utf-8"),
+  },
   { source: "docs/policy.md", text: "영농형 태양광 ..." },
 ]);
 idx.persist(); // .arena/rag-index/exam.json 저장
@@ -129,6 +132,7 @@ npm test -- tests/pillar.test.ts tests/phase2.test.ts tests/phase3.test.ts  # 31
 - `src/loop/tokenizer.ts` — `js-tiktoken` 설치 후 `encodingForModel("gpt-4o")` 정확 카운트, `estimateTokensAccurate()`가 fallback과 다른 값 검증됨
 
 사용:
+
 ```ts
 const idx = new RagIndex({ domain: "exam", persistDir: "./.arena/rag-index" });
 idx.addDocuments([{ source: "docs/a.md", text: "..." }]);
@@ -137,4 +141,7 @@ idx.persist();
 const hits = await idx.searchHybrid("코스피 외국인 순매도", 3); // 0.5:0.5 하이브리드
 await estimateTokensAccurate(messages); // js-tiktoken 정확도
 ```
+
+```
+
 ```
