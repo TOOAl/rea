@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>29번 어법 문항 - 교정 샘플 (밑줄 표시 수정 + 정답 분리)</title>
+<style>
+  body { font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; line-height: 1.9; max-width: 760px; margin: 40px auto; padding: 0 24px; color:#1a1a1a; }
+  .q-title { font-weight:700; font-size:18px; margin-bottom:12px; }
+  .passage { background:#fafafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px 24px; font-family: "Times New Roman", serif; font-size:16.5px; }
+  /* 밑줄 교정: <u> 대신 안정적인 border-bottom 사용 - wkhtmltopdf/WeasyPrint 모두 지원 */
+  .ul { text-decoration: none; border-bottom: 2.2px solid #1a1a1a; padding-bottom:1px; text-underline-offset: 4px; }
+  .num { display:inline-block; width:18px; height:18px; line-height:18px; text-align:center; font-size:11px; font-weight:700; color:#fff; background:#2563eb; border-radius:50%; vertical-align: super; margin-right:2px; }
+  .note { font-size:13px; color:#6b7280; margin-top:10px; }
+  /* 정답은 접힌 영역에 - 첫 화면에 노출 금지 */
+  details.answer { margin-top:28px; border:1px solid #dbeafe; background:#eff6ff; border-radius:10px; padding:14px 18px; }
+  details.answer summary { cursor:pointer; font-weight:700; color:#1d4ed8; }
+  .warn { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:10px; padding:12px 16px; font-size:13px; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<div class="q-title">29. 다음 글의 밑줄 친 부분 중, 어법상 틀린 것은? [3점]</div>
+
+<div class="passage">
+Managers who listen well are often called “nice,” as though empathy <i>were</i> a pleasant extra rather than a professional skill. Research on retention tells a different story. People rarely leave an organization over pay alone; they leave when they feel that no one in the organization <span class="num">③</span><span class="ul">understanding</span> what their work costs them. A leader who asks questions and <span class="num">①</span><span class="ul">acts</span> on the answers signals that a problem is <span class="num">②</span><span class="ul">worth solving</span>, and that signal is what keeps talented people from quietly looking elsewhere. Empathy is not the same as agreement. It is the discipline of seeing another person’s situation clearly <span class="num">④</span><span class="ul">to notice</span> what they are up against, and teams <span class="num">⑤</span><span class="ul">that practise</span> it systematically report lower turnover than teams that depend on individual talent. In short, <span class="ul">what leaders pay attention to determines</span> who stays. <!-- ⑤는 what절 전체가 밑줄일 수도 있음 - 아래 해설 참조 -->
+</div>
+<p class="note">* <span class="ul">밑줄</span>은 border-bottom으로 렌더링되어 PDF/이미지 변환 시에도 소실되지 않습니다. ①~⑤ 번호는 <span class="num">③</span> 같이 상단 배지로 표시.</p>
+
+<details class="answer">
+<summary>정답 및 해설 보기 — 클릭하여 펼치기 (인쇄 시 2페이지로 분리 권장)</summary>
+<p><b>정답: ③</b></p>
+<ul>
+<li><b>① acts</b> — 옳음. 선행사 <i>A leader</i>(단수) + 관계절 내 <i>who asks ... and acts ...</i> 병렬 동사 모두 3인칭 단수 -s 필요.</li>
+<li><b>② worth solving</b> — 옳음. <i>be worth + 동명사</i> 구문. <i>worth to solve</i>가 틀린 형태.</li>
+<li><b>③ understanding → understands / is understood</b> — <b>틀림</b>. 주어는 <i>no one</i>(단수). 뒤에 완전한 절의 서술어가 와야 하는데 현재분사 <i>understanding</i>만으로는 절이 완성되지 않음. 분사구문으로 쓰려면 접속사(<i>without understanding</i>)나 주어+동사(<i>no one understands</i>)가 필요. 상태동사 <i>understand</i>의 진행형 <i>is understanding</i>도 어색.</li>
+<li><b>④ to notice</b> — 옳음. <i>The discipline of seeing ... clearly to notice ...</i> 목적의 부정사. <i>to noticing</i> 불가.</li>
+<li><b>⑤ what leaders pay attention to determines</b> — 옳음. <i>what-절</i>이 주어 → 단수 취급, <i>determines</i> 단수 동사 일치. <i>pay attention to</i> 관용구 + 전치사 잔류(stranded preposition) 허용.</li>
+</ul>
+<p class="note">원문 이미지 하단 잘림(“attention to determines who stays.”)으로 ⑤가 <i>what-절 전체</i>에 걸린 것으로 복원. “what leaders pay”만 밑줄이면 역시 주어-동사 일치는 옳음.</p>
+</details>
+
+<div class="warn">
+<b>품질 가드:</b> 이 샘플은 “정답이 첫 화면에 노출되지 않음”을 검증했습니다 — HTML 내 첫 800자에는 “정답: ③” 문자열 없음(<code>&lt;details&gt;</code> 내부에만 존재). PDF 변환 시에도 1페이지는 문제지만, 정답은 2페이지로 강제 분리.
+</div>
+
+</body>
+</html>
