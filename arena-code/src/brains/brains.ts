@@ -46,6 +46,7 @@ import {
   CriticalThinkingBrain,
 } from "./premiseGuard.js";
 import { NOBEL_BRAINS } from "./nobel.js";
+import { PHD_BRAINS } from "./phd.js";
 
 function mkOutput(
   input: BrainInput,
@@ -214,7 +215,7 @@ export class GeniusBrain extends BaseBrain {
   }
 }
 
-/** 기본 5층 세트 공장 — v5 Nobel: 47명 (42 + 노벨 5) — 1층 7천재 + 2층 3전략가 + 4층 노벨5 + 3.5층 게이트 */
+/** 기본 5층 세트 공장 — v6 PhD+Nobel: 54명 (47 + 박사 7) — 1층 7천재 + 2층 3전략가 + 4층 노벨5·박사7 + 3.5층 게이트 */
 export function createDefaultBrains(memory: BrainMemory): Brain[] {
   return [
     new MemoryBrain(memory),
@@ -271,6 +272,8 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     ...createHistoryBrains(),
     // v5 Nobel 5 — 물리·의학·경제·문학·평화 (Nobel Upgrade)
     ...NOBEL_BRAINS,
+    // v6 PhD 7 — 박사급 엄밀함 + 노벨급 독창성
+    ...PHD_BRAINS,
     // v2.23.0 3.5층 게이트
     new GateBrain(),
     new CouncilBrain(),

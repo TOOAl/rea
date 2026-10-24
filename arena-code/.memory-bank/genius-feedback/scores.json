@@ -2,38 +2,65 @@
   "scores": {
     "premise-error-guardian": [
       93,
+      93,
       93
     ],
     "memory-article-input": [
+      92,
       92,
       92
     ],
     "premise-critical-thinker": [
       92,
+      92,
       92
     ],
     "council-chair": [
       95,
+      95,
       95
     ],
     "genius-medicine-nobel": [
+      93,
       93
     ],
     "genius-economics-nobel": [
+      88,
       88
     ],
     "genius-literature-nobel": [
+      94,
       94
     ],
     "genius-peace-nobel": [
+      91,
       91
     ],
     "genius-physics-nobel": [
+      92,
       92
+    ],
+    "genius-phd-method": [
+      95
+    ],
+    "genius-phd-stats": [
+      90
+    ],
+    "genius-phd-review": [
+      94
+    ],
+    "genius-phd-ethics": [
+      88
+    ],
+    "genius-phd-innovation": [
+      93
+    ],
+    "genius-phd-writing": [
+      89
     ]
   },
   "swapHistory": [],
-  "at": "2026-10-24T16:51:30.765Z",
+  "at": "2026-10-24T17:11:19.018Z",
   "versions": [
     {
       "id": "memory-keeper",
@@ -216,6 +243,34 @@
       "v": "5.0.0"
     },
     {
+      "id": "genius-phd-method",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-proof",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-stats",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-review",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-ethics",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-writing",
+      "v": "6.0.0"
+    },
+    {
+      "id": "genius-phd-innovation",
+      "v": "6.0.0"
+    },
+    {
       "id": "gate-35",
       "v": "4.0.0"
     },
@@ -230,12 +285,26 @@
       "name": "의회 의장",
       "layer": 5,
       "avg": 95,
-      "count": 2
+      "count": 3
+    },
+    {
+      "id": "genius-phd-method",
+      "name": "방법론 박사",
+      "layer": 4,
+      "avg": 95,
+      "count": 1
     },
     {
       "id": "genius-literature-nobel",
       "name": "문학 노벨 천재",
       "layer": 4,
+      "avg": 94,
+      "count": 2
+    },
+    {
+      "id": "genius-phd-review",
+      "name": "피어리뷰 박사",
+      "layer": 3,
       "avg": 94,
       "count": 1
     },
@@ -244,21 +313,7 @@
       "name": "전제 오류 천재 (1층 파수꾼)",
       "layer": 1,
       "avg": 93,
-      "count": 2
-    },
-    {
-      "id": "genius-medicine-nobel",
-      "name": "의학 노벨 천재",
-      "layer": 4,
-      "avg": 93,
-      "count": 1
-    },
-    {
-      "id": "memory-article-input",
-      "name": "기사·주제 입력 천재 (1층 안내데스크)",
-      "layer": 1,
-      "avg": 92,
-      "count": 2
+      "count": 3
     }
   ]
 }

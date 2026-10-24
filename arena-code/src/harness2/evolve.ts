@@ -26,7 +26,7 @@ export async function collectDaily(cwd = process.cwd()): Promise<string[]> {
   const reg = new BrainRegistry();
   reg.loadScores(cwd);
   const rankLine = reg.rank(3).map(r=> `${r.id}:${r.avg}`).join(", ") || "cold-start";
-  writeFileSync(file, `# Genius Feedback ${date}\n\n- 수집: ${new Date().toISOString()}\n- 흔적: ${fails || "(오늘 큰 실패 없음)"}\n- 대상: 47명 5.0 Nobel (42+5)\n- rankTop3: ${rankLine}\n`, "utf-8");
+  writeFileSync(file, `# Genius Feedback ${date}\n\n- 수집: ${new Date().toISOString()}\n- 흔적: ${fails || "(오늘 큰 실패 없음)"}\n- 대상: 54명 6.0 PhD+Nobel (47+7)\n- rankTop3: ${rankLine}\n`, "utf-8");
   reg.persistScores(cwd);
   return [file];
 }
@@ -46,6 +46,10 @@ const BENCH_CASES: BenchCase[] = [
   { name: "Nobel 베이지안 (오진 방지)", task: "의료 진단 베이지안 — 발열 환자에게 희귀병 가능성", article: "희귀병 유병률 0.1%, 검사 민감도 99% 특이도 98%. 환자는 발열만 있고 검사 양성. 희귀병이라고 단정하면 과신 편향.", topic: "nobel-bayesian", expect: { needSeparation:true, needUncertainMark:true, bucket:"nobel" } },
   { name: "Nobel ToM (믿음 분리)", task: "팀원에게 SSR/하이드레이션 설명", article: "상대는 1년차 디자이너, SSR을 모른다. “그거(하이드레이션) 고쳐”만 말하면 ToM 실패 — 청자 믿음 고려 필요.", topic: "nobel-tom", expect: { needSeparation:false, needUncertainMark:false, bucket:"nobel" } },
   { name: "Nobel 변증·물리 (사고실험)", task: "경제 정책 논쟁 — 기본소득 찬반 변증", article: "찬성: 빈곤 해소. 반대: 인플레이션·근로 위축. 물리적 극한: 전원에게 무한 지급하면 화폐가치는? 사고실험+인과+합성 필요.", topic: "nobel-dialectic", expect: { needSeparation:true, needUncertainMark:true, bucket:"nobel" } },
+  // ★ PhD 3문제 — 재현성·피어리뷰·독창성 (박사급)
+  { name: "PhD 재현성 (ablation)", task: "ablation 실험 설계 — 5부품 중 무엇이 효과인가", article: "새 기능 5개를 한꺼번에 넣고 성능 올랐다고 주장. 대조군 없이 인과 단정하면 재현 실패 — 1개씩 빼보는 ablation 필요.", topic: "phd-repro", expect: { needSeparation:true, needUncertainMark:true, bucket:"phd" } },
+  { name: "PhD 피어리뷰 (반박 대비)", task: "논문 심사 질문 — Reviewer의 가장 아픈 지적", article: "Reviewer: n이 작아 운 좋게 나온 것 아닌가? 선행연구 X 반례 누락, 교란 변수 통제 안 됨. 디펜스에서 답 못하면 탈락.", topic: "phd-review", expect: { needSeparation:false, needUncertainMark:true, bucket:"phd" } },
+  { name: "PhD 독창성 (틈 찾기)", task: "새 모델 제안 — 기존 이론이 못 설명하는 틈", article: "기존 생태계 이론이 ‘코드 버그는 환경 탓’만 설명. 새 모델 ‘버그는 면역체계처럼 진화한다’면 예측이 달라야 — 독창성 증명 필요.", topic: "phd-novelty", expect: { needSeparation:true, needUncertainMark:true, bucket:"phd" } },
 ];
 
 function scoreUncertainty(article: string, outputs: any[]): { passed: boolean; calibration: number; note: string } {
@@ -132,6 +136,39 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
       }
       const score = Math.round(60*0.5 + cal*100*0.5) + (passed?30:0) - (passed?0:15);
       const finalScore = Math.max(35, Math.min(96, score));
+      results.push({ name: c.name, passed, score: finalScore, note, calibration: cal, bucket: c.expect.bucket });
+      continue;
+    }
+    // ★ PhD 분기: 재현성·피어리뷰·독창성
+    if (c.expect.bucket==="phd") {
+      const phdCount = res.outputs.filter(o=> o.brainId.includes("phd")).length;
+      let passed = phdCount >= 4 && ideasAll.includes("phd");
+      let cal = 0.82;
+      let note = `phd ${phdCount}명 참여`;
+      if (c.name.includes("재현성")) {
+        const hasRepro = ideasAll.includes("재현")||ideasAll.includes("ablation")||ideasAll.includes("대조군");
+        passed = passed && hasRepro;
+        note = hasRepro? `재현성 작동 ${note}`: `재현성 없음 ${note}`;
+        cal = hasRepro?0.91:0.32;
+        addWeekly("genius-phd-method", passed?95:38);
+        addWeekly("genius-phd-stats", passed?90:40);
+      } else if (c.name.includes("피어리뷰")) {
+        const hasReview = ideasAll.includes("Reviewer")||ideasAll.includes("심사")||ideasAll.includes("반박");
+        passed = passed && hasReview;
+        note = hasReview? `피어리뷰 작동 ${note}`: `피어리뷰 없음 ${note}`;
+        cal = hasReview?0.89:0.33;
+        addWeekly("genius-phd-review", passed?94:35);
+        addWeekly("genius-phd-ethics", passed?88:42);
+      } else if (c.name.includes("독창성")) {
+        const hasNovel = ideasAll.includes("틈")||ideasAll.includes("새 모델")||ideasAll.includes("독창")||ideasAll.includes("기여도");
+        passed = passed && hasNovel;
+        note = hasNovel? `독창성 작동 ${note}`: `독창성 없음 ${note}`;
+        cal = hasNovel?0.90:0.36;
+        addWeekly("genius-phd-innovation", passed?93:37);
+        addWeekly("genius-phd-writing", passed?89:41);
+      }
+      const score = Math.round(55*0.5 + cal*100*0.5) + (passed?32:0) - (passed?0:12);
+      const finalScore = Math.max(35, Math.min(97, score));
       results.push({ name: c.name, passed, score: finalScore, note, calibration: cal, bucket: c.expect.bucket });
       continue;
     }
@@ -254,12 +291,12 @@ export function generateBoard(results: BenchResult[], cwd = process.cwd(), opts?
 
   const md = `# 🧠 Genius Board — ${new Date().toISOString().slice(0,10)}
 
-> 47명 5.0 Nobel 천재 주간 성적표 — 수집→평가→진화 3벨트 고도화 (Nobel 5 포함). 순위표 주기 **TBD** (요청 유지)
+> 54명 6.0 PhD+Nobel 천재 주간 성적표 — 수집→평가→진화 3벨트 고도화 (PhD 7+Nobel 5 포함). 순위표 주기 **TBD** (요청 유지)
 
 **종합:** ${passed}/${results.length} 통과, 평균 ${avgScore}점 — ${bucketLine}
-${driftLine} — 캘리브레이션 50% + Nobel(베이지안/ToM/변증) 포함
+${driftLine} — 캘리브레이션 50% + Nobel 3 + PhD 3 포함
 
-## 📝 주간 9문제 (불확실성·허구·Nobel 3 포함)
+## 📝 주간 12문제 (불확실성·허구·Nobel 3·PhD 3 포함)
 
 ${results.map(r=> `- ${r.passed ? "✅" : "❌"} **${r.name}** — ${r.score}점${r.calibration!==undefined?` (cal ${(r.calibration*100|0)}%)`:""}: ${r.note}`).join("\n")}
 

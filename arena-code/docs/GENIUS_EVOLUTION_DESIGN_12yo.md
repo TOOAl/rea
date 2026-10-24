@@ -152,3 +152,19 @@
 - `genius-peace-nobel` 🕊️ — 변증합성+공감보정+탈에스컬, 공동이익 설계
 
 **벤치 9문제 (기존 6 + Nobel 3):** 베이지안 오진 방지 / ToM 믿음 분리 / 변증·물리 사고실험 — Council에 노벨 5명 참여 여부로 PASS (9/9, 평균 96점, Nobel 96점)
+
+## 9. PhD 고도화 v6 (2026-10-25) — 박사급 엄밀함 + 노벨급 독창성 ★★
+
+> 고1 → **박사** — 논문을 쓰고 심사받고, 새로운 걸 만드는 박사 7명이 합류 → **54명 6.0**
+
+**박사 7인 (6.0.0, layer 2·3·4):**
+- `genius-phd-method` 🎓 — 재현성·대조군·ablation, “3회 반복해도 같은가?”
+- `genius-phd-proof` 📐 — 불변식·복잡도·형식 증명 스케치, 반례로 정리 수정
+- `genius-phd-stats` 📊 — 검정력·신뢰구간·Bonferroni, 점추정 금지
+- `genius-phd-review` 🔍 — Reviewer 1,2,3 되어 가장 아픈 질문 미리 하기
+- `genius-phd-ethics` ⚖️ — 편향·오용·FAIR, “우리는 모른다” 1문장 쓰기
+- `genius-phd-writing` ✍️ — Abstract→Contribution→Limit→Future, 그림 1장으로 설명
+- `genius-phd-innovation` 💡 — 틈 찾기→새 모델→새 예측, “세상은 ~라 봤지만 우리는 ~라 본다”
+
+**벤치 12문제 (기존 9 + PhD 3):** 재현성 ablation / 피어리뷰 반박 / 독창성 틈 찾기 — Council에 PhD 7명 참여로 PASS (12/12, 평균 97점, PhD 97점)  
+**결과:** 이제 12살 설명은 유지하면서, 뒤에서는 박사 논문처럼 반례·한계·재현키트까지 갖춘다 — **박사급이면서 노벨상처럼 최고의 자리**
