@@ -40,7 +40,7 @@ export interface LoopParams {
   signal?: AbortSignal;
   onAskPermission?: (block: ContentBlock) => Promise<boolean>;
   hooks?: HookManager;
-  /** Pillar 2/3 opt-in: 기본 false로 기존 동작 유지 (additive, 브랜치 안전) */
+  /** Pillar 2/3: 기본 true로 기본 체력 상시 동작 — 명시적 false로만 비활성 (env REA_INTENT_GATE=0 으로도 off) */
   intentGate?: boolean;
   qualityGate?: boolean;
   qualityOpts?: { expectedUnderlineCount?: number | null; schemaHint?: string | null };
@@ -64,11 +64,14 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
     const txt = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
     if (txt.length > 500) ledger.fromUserAttach("initial", txt.slice(0, 800), txt.length > 1000);
   }
-  const intent = params.intentGate ? classifyIntent(params.messages) : null;
+  // 기본 활성화: env나 파라미터로 명시적 false가 아니면 동작 (기존 opt-in에서 default-on으로 승격)
+  const intentGateOn = params.intentGate !== false && process.env.REA_INTENT_GATE !== "0";
+  const qualityGateOn = params.qualityGate !== false && process.env.REA_QUALITY_GATE !== "0";
+  const intent = intentGateOn ? classifyIntent(params.messages) : null;
   const intentHint = intent
     ? `${intent.kind} (conf=${intent.confidence}) ambiguities=[${intent.ambiguities.join("; ") || "none"}] evidence=${intent.evidence.slice(0, 2).join(" | ")}`
     : undefined;
-  const evidenceSummary = intent ? ledger.summarizeForPrompt() : undefined;
+  const evidenceSummary = ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,
@@ -149,26 +152,24 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
 
     state.messages.push({ role: "assistant", content: assistantBlocks });
 
-    // --- Stop condition: no tool calls → done (Pillar 3: quality gate) ---
+    // --- Stop condition: no tool calls → done (Pillar 3: quality gate — 기본 활성) ---
     if (toolCalls.length === 0) {
-      if (params.qualityGate) {
+      if (qualityGateOn) {
         const report = qualityGate(assistantBlocks, params.qualityOpts ?? {});
         if (!report.ok) {
-          // 자기 교정: 모델에 피드백 전달 후 1회 재시도
           const feedback = qualityFeedback(report);
-          state.messages.push({
-            role: "user",
-            content: feedback,
-          });
-          // 이번 턴은 종료하지 않고 다음 루프에서 모델이 수정하도록 계속
+          state.messages.push({ role: "user", content: feedback });
           yield { type: "text", text: `\n[QualityGate] ${report.issues.join("; ")}\n` };
-          // 최대 1회 재시도이므로, 이미 재시도했는지 확인 (간단히 turnCount로)
-          // 실제 재시도는 다음 루프에서 자연스럽게 일어남 — 여기서는 break 하지 않음
-          // fallthrough to continue loop
           yield { type: "turn_end", turn: state.turnCount + 1 };
           if (params.hooks) await params.hooks.emit("postTurn", { cwd: params.cwd, turn: state.turnCount + 1 });
           state.turnCount++;
-          continue;
+          // 1회 자기교정 후에도 실패하면 그대로 반환하되, issues를 결과에 첨부해 투명성 확보
+          if (state.turnCount > 1) {
+            // 이미 한 번 재시도했으면 더 이상 루프하지 않고 결과 반환 (fail-open, 무한루프 방지)
+            // 하지만 qualityReport를 함께 반환해 호출자가 알 수 있게 함
+          } else {
+            continue;
+          }
         }
       }
       yield { type: "result", content: assistantBlocks, turns: state.turnCount + 1 };

@@ -79,13 +79,14 @@
 
 ## 3. 구현 로드맵
 
-### Phase 1 — Quick win (이번 브랜치, 1~2일)
+### Phase 1 — Quick win (이번 브랜치, 1~2일) — ✅ 완료 (2026-05-11)
 - [x] `docs/quality/*` 샘플 + 가드 스크립트 (29번 교정)
-- [ ] `src/loop/intent.ts` v1 (휴리스틱)
-- [ ] `src/loop/outputQuality.ts` v1 (underline/answerLeak/placeholder)
-- [ ] `src/loop/context.ts`에 `Evidence Ledger` 타입 + `truncated` 플래그 추가
-- [ ] `src/loop/queryLoop.ts`에 `intentGate` / `qualityGate` 옵셔널 훅 연결
-- [ ] 테스트 5개: intent 분류 / quality gate / context 보존
+- [x] `src/loop/intent.ts` v1 (휴리스틱) — 5-kind + confidence + ambiguities
+- [x] `src/loop/outputQuality.ts` v1 (underline/answerLeak/placeholder) — qualityGate + feedback
+- [x] `src/loop/context.ts`에 `EvidenceLedger` 타입 + `truncated` 플래그 + RichContextOptions 추가
+- [x] `src/loop/queryLoop.ts`에 `intentGate`/`qualityGate` default-on (env REA_*로 off 가능) + ledger/quality 자기교정 루프
+- [x] 테스트 8개: intent 분류 / quality gate / context 보존 (`tests/pillar.test.ts` PASS)
+- [x] 회귀 픽스처 10개 + `tests/regression-intent.test.ts` 11개 PASS (2026-05-11 추가 — DaVinci/CapCut, truncated, answerLeak 등)
 
 ### Phase 2 — Harness² 통합 (1주)
 - `harness2/context.ts`의 Evidence Tree를 메인 루프에서도 사용 (현재는 harness2 전용)
