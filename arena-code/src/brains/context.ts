@@ -142,6 +142,65 @@ export class ContextEngine {
     return packet;
   }
 
+  // ── ★ Nobel Upgrade v5 — Theory of Mind·함축·관련성·공감·문화지시 (2026-10-25) ──
+  /** ⑨ Theory of Mind: 화자 믿음 vs 청자 믿음 분리 (Premack/Wellman) — 오해 예측 */
+  theoryOfMind(siteText: string, scriptLine: string): { speakerBelief: string; listenerBelief: string; mismatch: string; repair: string; falseBeliefRisk: string } {
+    const hasJargon = /프론트엔드|SSR|하이드레이션|양자|블록체인|도함수|PDDL/.test(scriptLine);
+    const hasSharedRef = /우리|지난번|아까 말한|그거|저번/.test(scriptLine);
+    return {
+      speakerBelief: `화자 믿음: “청자는 ${hasJargon? "전문용어를 안다":"배경을 공유한다"}”`,
+      listenerBelief: hasJargon && !hasSharedRef ? "청자 실제: 모른다/다르게 안다 — 믿음 불일치" : "청자 실제: 대략 공유됨",
+      mismatch: hasJargon ? "전문가 저주 — 화자는 쉽게, 청자는 어렵게 느낌" : hasSharedRef ? "공유 가정 위험 — “그거”가 서로 다른 것 가리킴" : "믿음 비교: 일치 여부 점검 필요",
+      repair: hasJargon ? "수리: 용어 뒤에 12살 예시 1줄 덧붙임, “즉, …”" : "수리: “그거 = …”로 지시 대상 명시",
+      falseBeliefRisk: "Sally-Anne 틀: 청자가 모르는 정보를 안다고 착각하면 설명 실패 → ToM 테스트로 사전 탐지",
+    };
+  }
+  /** ⑩ 함축(Conversational Implicature, Grice): 말한 것 vs 의도한 것 — 협조 원리 4대격률 위배 탐지 */
+  implicature(scriptLine: string): { literal: string; implicated: string; maxim: string; trigger: string } {
+    const lower = scriptLine.toLowerCase();
+    const hasIrony = /그래.*잘했|대단.*하네|ㅋㅋ.*진짜/.test(scriptLine);
+    const hasHedge = /아마|아마도|것 같다|추정|아닌가/.test(scriptLine);
+    const isBald = /빨리|지금 당장|무조건|반드시/.test(scriptLine);
+    return {
+      literal: `문자적: “${scriptLine.slice(0,40)}”`,
+      implicated: hasIrony ? "함축: 비꼬는 칭찬 → 실제는 비판" : hasHedge ? "함축: 확신 없음 신호 → 청자는 추가 근거 기대" : isBald ? "함축: 직접 명령 → 권력 관계 드러냄" : "함축: 협조적 — 문자 그대로 이해해도 무해",
+      maxim: hasIrony ? "질 격률 위배 — 거짓을 말해 진짜 뜻 전달 (Grice 비유)”" : hasHedge ? "태도 격률 — 불확실성 명시로 신뢰 보존" : isBald ? "예의 격률 — 직접성=효율 vs 관계 비용 트레이드" : "4격률 대체로 준수",
+      trigger: "단서: 억양·표정·맥락이 함축을 결정 — 글만으론 30% 오독, 표정 동반 시 해소",
+    };
+  }
+  /** ⑪ 관련성(Relevance, Sperber&Wilson): 처리노력 대비 인지효과 — 12살 필터 */
+  relevanceScore(siteText: string, scriptLine: string): { effort: number; effect: number; score: number; filter12: string } {
+    const len = scriptLine.length;
+    const effort = Math.min(1, len/120 + (/전문|보고서|가설/.test(scriptLine)?0.3:0));
+    const effect = /왜|어떻게|그래서|따라서|예를 들어/.test(scriptLine) ? 0.85 : /그냥|그런데|아무튼/.test(scriptLine) ? 0.35 : 0.55;
+    return {
+      effort,
+      effect,
+      score: Math.round((effect/(effort+0.2))*100)/100,
+      filter12: effect < 0.5 ? "12살 필터 FAIL — 새 정보/이익 없으면 채널 이탈 → 비유·놀라움 1개 추가" : "12살 필터 PASS — 인지효과가 노력보다 큼",
+    };
+  }
+  /** ⑫ 공감 보정: 정서를 과장·억제 없이, 청자 정서와 조율 (Decety/공감 신경과학) */
+  empathyCalibrate(scriptLine: string, packet: ContextPacket): { speakerEmotion: string; listenerEmotion: string; calibrate: string; overUnder: string } {
+    const emo = packet.cognitive.emotion;
+    return {
+      speakerEmotion: `${emo} ${packet.cognitive.intensity}`,
+      listenerEmotion: /미안|슬프|힘들|걱정/.test(scriptLine) ? "청자도 긴장/슬픔 공명 가능 — Mirror" : "청자 중립 — 과한 공감은 부담",
+      calibrate: emo==="anger" ? "보정: 분노는 20% 낮춰 표현, 해결책 1개와 함께" : emo==="joy" ? "보정: 기쁨은 공유하되 자랑 금지, “우리” 주어" : "보정: 현재 톤 유지, 속도를 청자에 맞춤",
+      overUnder: "과공감(울음 따라 울기) vs 저공감(무시) — 중간(인지적 공감+행동 제안)이 노벨 평화상 방식",
+    };
+  }
+  /** Nobel 통합: 기존 analyze + ToM·함축·관련성·공감 */
+  nobelAnalyze(siteText: string, scriptLine: string): ContextPacket & { nobel: { tom: ReturnType<ContextEngine["theoryOfMind"]>; impl: ReturnType<ContextEngine["implicature"]>; relevance: ReturnType<ContextEngine["relevanceScore"]>; empathy: ReturnType<ContextEngine["empathyCalibrate"]>; deixis: string } } {
+    const base = this.analyze(siteText, scriptLine);
+    const tom = this.theoryOfMind(siteText, scriptLine);
+    const impl = this.implicature(scriptLine);
+    const relevance = this.relevanceScore(siteText, scriptLine);
+    const empathy = this.empathyCalibrate(scriptLine, base);
+    const deixis = /여기|이것|저것|지난주|우리 동네/.test(scriptLine) ? "문화 지시: 한국 고맥락 — “여기/우리”가 장소+집단을 동시에 가리킴, 외국인엔 명시 필요" : "문화 지시: 중립 — 추가 맥락 없이도 이해됨";
+    return { ...base, tom, impl, relevance, empathy, deixis, nobelSummary: `ToM→함축→관련성 ${relevance.score}→공감 보정 (Nobel 문학/평화)` } as any;
+  }
+
   /** ④⑤⑦⑧ 불일치 경고 — “문서가 자신에게 검증 절차 적용” (감수보고서) */
   validate(p: ContextPacket, scriptLine: string): string[] {
     const w: string[] = [];

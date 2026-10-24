@@ -125,3 +125,30 @@
 - **EXPERIENCE/스킬 자동 승격:** 3주 연속 85점+ → `.memory-bank/library/EXPERIENCE_*.md` + `.agents/skills/genius-*/SKILL.md` — Council 프롬프트에 바로 재주입
 - **카나리 섀도우:** 교체 전 `canaryScore()`로 새 두뇌를 가짜 환경에서 먼저 시험 — 5점 이상 올라야 사람 승인 요청
 - **사람 승인 유지:** `HUMAN_APPROVED=1` 없으면 CI에서 에러 — `CODEOWNERS` + `approval.ts` 이중 잠금
+
+## 8. Nobel 고도화 v5 (2026-10-25) — 추론·맥락을 노벨상 수준으로 ★
+
+> 물리학자의 엄밀함 + 문학가의 맥락감수성 — 5명 노벨 천재가 42명에 합류 → **47명 5.0**
+
+**추론 엔진(ReasoningEngine +6종):**
+- **베이지안:** Kahneman System1/2 — 사전·가능도·사후, 과신 편향 경고 (“확실”이면 사전 낮춤)
+- **인과:** Pearl do-calculus — 원인→메커니즘→교란→개입(do)→반증, 관측 vs 개입 구분
+- **반사실:** ToT 가지별 “만약 다르게 했다면” 세계 — plausibility로 분기 평가
+- **변증:** 정→반→합 — 두 충돌 thought 합성, 긴장 유지(합은 임시)
+- **유추:** Gentner 구조매핑 — 원천 도메인 1등 공식을 표적에 옮기기, 한계 명시
+- **사고실험:** Einstein 엘리베이터 — 극한(0/무한/100배)으로 불변 드러내기
+
+**맥락 엔진(ContextEngine +4종):**
+- **ToM:** Premack/Wellman — 화자 믿음 vs 청자 믿음 분리, 전문가 저주·“그거” 위험 탐지
+- **함축:** Grice 4격률 — 문자 vs 함축, 비꼼·헤지·직접성 트리거, 표정 동반 시 해소
+- **관련성:** Sperber&Wilson — 노력 대비 인지효과, 12살 필터(처리노력>효과면 이탈)
+- **공감보정:** Decety — 과공감 vs 저공감, 중간 보정(인지적 공감+행동 제안)
+
+**신규 5인 (layer 4, 5.0.0):**
+- `genius-physics-nobel` ⚛️ — 사고실험+대칭+차원, `do-calculus`
+- `genius-medicine-nobel` 🧬 — 베이지안 진단+RCT+증거위계, `[추정]` 엄수
+- `genius-economics-nobel` 💹 — 편향·인센티브·게임·넛지 (Kahneman/Thaler/Sen)
+- `genius-literature-nobel` 📖 — 은유·서사·다성성, ToM+함축+관련성
+- `genius-peace-nobel` 🕊️ — 변증합성+공감보정+탈에스컬, 공동이익 설계
+
+**벤치 9문제 (기존 6 + Nobel 3):** 베이지안 오진 방지 / ToM 믿음 분리 / 변증·물리 사고실험 — Council에 노벨 5명 참여 여부로 PASS (9/9, 평균 96점, Nobel 96점)

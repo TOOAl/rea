@@ -103,7 +103,7 @@ describe("VisualEngine + Council 통합", () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(42);
+    expect(reg.all().length).toBe(47);
     const council = new Council(reg);
     const { outputs, decision, visualPacket, contextPacket } =
       await council.deliberate(
@@ -114,7 +114,7 @@ describe("VisualEngine + Council 통합", () => {
     expect(visualPacket.masters.length).toBeGreaterThan(0);
     expect(visualPacket.budgetTier).toBe("0원");
     expect(contextPacket).toBeDefined();
-    expect(outputs.length).toBeGreaterThanOrEqual(42);
+    expect(outputs.length).toBeGreaterThanOrEqual(47);
     expect(decision.consensus).toContain("합의");
   });
 });

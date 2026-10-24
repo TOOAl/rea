@@ -214,6 +214,82 @@ export class ReasoningEngine {
     };
   }
 
+  // ── ★ Nobel Upgrade v5 — 베이지안·인과·반사실·변증·유추 (2026-10-25, arena/1cad6a63-rea) ──
+  /** Kahneman System2 베이지안: 가설별 사전→증거→사후 갱신, 편향 보정 */
+  bayesianUpdate(task: string, evidence: string): { id: string; hyp: string; prior: number; likelihood: number; posterior: number; biasWarn?: string }[] {
+    const hyps = [
+      `H1: ${task.slice(0,30)} — 주효과 가설`,
+      `H2: ${task.slice(0,30)} — 대안/교란 가설`,
+      `H3: 귀무가설 — 효과 없음/우연`,
+    ];
+    const biasTriggers = /항상|완벽|확실|반드시|모두/.test(task) ? "과신 편향 — 사전확률 낮춰야" : undefined;
+    const eStrength = /출처|데이터|실험|검증|통계|보고서/.test(evidence) ? 0.85 : /전망|추측|예상|것이다/.test(evidence) ? 0.35 : 0.55;
+    return hyps.map((h, i) => {
+      const prior = i === 0 ? 0.45 : i === 1 ? 0.30 : 0.25;
+      const likelihood = i === 0 ? eStrength : i === 1 ? 1 - eStrength*0.6 : 0.5;
+      const unnorm = prior * likelihood;
+      return { id: `H${i+1}`, hyp: h, prior, likelihood, posterior: Math.round(unnorm*100)/100, biasWarn: i===0? biasTriggers: undefined };
+    }).map(r => ({ ...r, posterior: Math.round(r.posterior / (hyps.map((_,j)=> (j===0?0.45: j===1?0.30:0.25)*(j===0?eStrength: j===1?1-eStrength*0.6:0.5)).reduce((a,b)=>a+b,0))*100)/100 }));
+  }
+  /** Pearl 인과 분해: 원인→메커니즘→교란→개입→반증 */
+  causalDecompose(task: string, context=""): { cause: string; mechanism: string; confounder: string; intervention: string; falsifier: string; doCue: string } {
+    const isSci = /왜|원인|효과|영향|증가|감소|실험|치료|경제/.test(task+context);
+    return {
+      cause: `원인 가설: ${task.slice(0,40)} — ${isSci? "조작 가능한 변수 X":"주체/의도 X"}`,
+      mechanism: `메커니즘: X→M→Y 체인 — 매개 과정 단계분해 (M1→M2)`,
+      confounder: `교란(Z): 시간·장소·선택편향 — Z가 X와 Y 동시 유발 가능성 점검`,
+      intervention: `개입(do(X)): “만약 X를 바꾸면 Y가?\" — 반사실 시뮬, 무작위화 사고실험`,
+      falsifier: `반증: Y가 안 변하는 관찰을 찾으면 가설 기각 — Popper 엄격성`,
+      doCue: "Pearl do-calculus 심볼 시뮬 — 관측 vs 개입 구분",
+    };
+  }
+  /** 반사실 가지: ToT bestPath의 각 분기에서 “만약 다르게 했다면” 세계 생성 */
+  counterfactualBranch(tot: ToTTree): { branchId: string; alt: string; plausibility: number }[] {
+    return tot.nodes.filter(n=> n.depth===1).map(n=> ({
+      branchId: n.id,
+      alt: `반사실: 만약 ${n.text.slice(0,30)} 대신 “대안 선택” 했다면 — 결과 분기, 비용/위험 재평가`,
+      plausibility: Math.round(n.score*100)/100,
+    }));
+  }
+  /** 변증법: 정→반→합 (Hegel/도덕철학) — 두 충돌 thought를 합성 */
+  dialectic(theses: string[]): { thesis: string; antithesis: string; synthesis: string; tension: string } {
+    const t = theses[0] ?? "정: 기존 합의";
+    const at = theses[1] ?? "반: 비판/모순 지적";
+    return {
+      thesis: t,
+      antithesis: at,
+      synthesis: `합: ${t.slice(0,20)} 와 ${at.slice(0,20)} 를 모두 살리는 제3안 — 조건부 통합, 맥락 의존 해석`,
+      tension: "긴장 유지: 합은 임시 — 새 반례로 재변증 가능 (열린 결론)",
+    };
+  }
+  /** 유추 매핑: 원천 도메인 1등 공식 → 표적 도메인 (Gentner 구조매핑) */
+  analogicalBridge(task: string): { source: string; target: string; mapping: string; limit: string } {
+    const src = /코드|버그|테스트/.test(task) ? "의학: 면역체계 — 버그는 병원체, 테스트는 백신" :
+                /수학|증명/.test(task) ? "물리: 대칭성 — 불변량 찾기" :
+                /글|서사|홍보|카드뉴스/.test(task) ? "영화: 편집 — 컷이 전환이면 글은 문단 전환" : "생태계: 먹이사슬 — 역할 간 균형";
+    return {
+      source: src.split(" — ")[0],
+      target: task.slice(0,40),
+      mapping: `${src} — 관계 구조를 그대로 옮김 (객체보다 관계가 중요)`,
+      limit: "유추 한계: 표면 유사≠인과 동일 — 반례로 한계 명시",
+    };
+  }
+  /** Einstein 사고실험: 극한/무중력/무한대 상상으로 원리 드러내기 */
+  thoughtExperiment(task: string): string {
+    return `사고실험: “${task.slice(0,30)}을 극단으로 — 크기 100배/속도 0/시간 무한” → 어떤 불변/붕괴가 보이는가? (Einstein 엘리베이터 방식)`;
+  }
+  /** Nobel 통합: 기존 analyze + 6종 추론을 한 번에 묶어 ReasoningPacket 확장 */
+  nobelAnalyze(task: string, context="", evidence="", failureHistory: string[]=[]): ReasoningPacket & { nobel: { bayesian: ReturnType<ReasoningEngine["bayesianUpdate"]>; causal: ReturnType<ReasoningEngine["causalDecompose"]>; counterfactual: ReturnType<ReasoningEngine["counterfactualBranch"]>; dialectic: ReturnType<ReasoningEngine["dialectic"]>; analogy: ReturnType<ReasoningEngine["analogicalBridge"]>; gedanken: string } } {
+    const base = this.analyze(task, context, failureHistory);
+    const bayesian = this.bayesianUpdate(task, evidence || context);
+    const causal = this.causalDecompose(task, context);
+    const counterfactual = this.counterfactualBranch(base.tot);
+    const dialectic = this.dialectic(base.tot.nodes.slice(0,2).map(n=> n.text));
+    const analogy = this.analogicalBridge(task);
+    const gedanken = this.thoughtExperiment(task);
+    return { ...base, nobel: { bayesian, causal, counterfactual, dialectic, analogy, gedanken } };
+  }
+
   /** 검증 — 탐색 비용·검증 오류·무한루프 등 */
   validate(state: { tot: ToTTree; validatorVotes: ValidatorVote[]; eco: EcoFix[]; sisr: SisrPlan; task: string }, raw: string): string[] {
     const w: string[] = [];
