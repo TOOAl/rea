@@ -6,7 +6,7 @@
 
 | 파일 | 역할 | 기본 상태 |
 |------|------|-----------|
-| `src/tools/webSearch.ts` | 웹 검색 — Tavily/Serper/Brave/Bing 중 키 자동 선택 | 항상 등록, 키 없으면 안내만 반환 (fail-open) |
+| `src/tools/webSearch.ts` | 웹 검색 — **API 없이 rea 흡수**: 키 없으면 로컬 RagIndex/docs/.memory-bank TF-IDF로 즉시 fallback, 키 있으면 Tavily/Serper/Brave/Bing 자동 선택 | 항상 등록, 외부 호출 0으로도 동작 (fail-open) |
 | `src/rag/chunker.ts` | 긴 문서를 1600자 청크로 자르기 (겹침 200) | 로컬 RAG 기초 |
 | `src/rag/index.ts` | RagIndex — TF-IDF 하이브리드 + vector 슬롯 + persist | 메모리, `.arena/rag-index/<domain>.json` 저장 |
 | `src/loop/structuralContext.ts` | import 그래프 + top-level 스캔 → 구조 목차 | `REA_STRUCTURAL=1` 시 자동 주입 |
@@ -26,17 +26,20 @@
 { name: "WebSearch", input: { query: "코스피 2024-10-23 반등 원인", count: 5 } }
 ```
 
-환경변수 중 하나만 설정하면 된다:
+**API 없이도 동작 — rea로 흡수:** 키가 하나도 없어도 `arena-code/docs/*.md + docs/*.md + .memory-bank/*.md + .arena/rag-index`를 즉석에서 `RagIndex`로 스캔해 `file://` 결과 반환 (외부 호출 0). 예: `BASE_CAPABILITY_IMPROVEMENT 문맥 의도 품질` → `file://arena-code/docs/BASE_CAPABILITY_IMPROVEMENT.md` (local, score 0.42).
+
+환경변수 중 하나를 설정하면 라이브 웹으로 자동 승격 (선택):
 
 ```
-TAVILY_API_KEY=tvly-...     # 권장 (AI 검색)
+TAVILY_API_KEY=tvly-...     # 권장 (AI 검색) — 있으면 외부 우선, 실패 시 local로 재흡수
 SERPER_API_KEY=...          # Google SERP
 BRAVE_API_KEY=...           # Brave Search
 BING_API_KEY=...            # Azure Bing
+# REA_WEBSEARCH_LOCAL=0 로 로컬 fallback 비활성화 가능 (기본 1)
 ```
 
-키가 없으면 `set TAVILY_API_KEY ...` 안내를 반환하고 블록하지 않는다.
-검색 → 각 URL을 `WebFetch`로 본문 확보 → 답변에 `출처: URL (날짜)` 인용.
+키가 없으면 로컬 문서에서 먼저 찾고, 정말 없으면 `TAVILY_API_KEY ...` 안내만 반환 — 블록하지 않음.
+검색 → 각 URL을 `WebFetch`로 본문 확보 → 답변에 `출처: URL (날짜)` 인용. 로컬은 `file://` 경로를 `Read`로 전문 확인.
 
 ### 로컬 RAG — 내 문서 찾기
 

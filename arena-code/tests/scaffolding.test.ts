@@ -53,12 +53,28 @@ describe("Scaffolding — RagIndex", () => {
 });
 
 describe("Scaffolding — WebSearch", () => {
-  it("키 없이도 fail-open으로 빈 결과 + 안내 메시지", async () => {
-    const results = await webSearch("test query without keys", { count: 3 });
-    expect(results).toEqual([]); // 기본은 키 없으면 빈 배열
+  it("API 없이도 rea 흡수 — 키 없으면 로컬 fallback, 없으면 안내 (fail-open)", async () => {
+    const results = await webSearch("test query without keys qwerty_no_match_12345", { count: 3 });
+    // nonsense query → 로컬에서도 매치 0 → 빈 배열이지만 죽지 않음 (API 없이 흡수 철학)
+    expect(Array.isArray(results)).toBe(true);
     const msg = formatResultsForPrompt(results, "test query without keys");
-    expect(msg).toContain("TAVILY_API_KEY");
-    expect(msg).toContain("no results");
+    // 빈 결과면 키 힌트, 로컬이면 local 태그 — 둘 다 API 없이 흡수된 경로
+    if (results.length === 0) {
+      expect(msg).toContain("TAVILY_API_KEY");
+      expect(msg).toContain("no results");
+    } else {
+      expect(results[0].source).toMatch(/local/);
+      expect(msg).toContain("local");
+    }
+  });
+  it("API 없이 로컬 문서 검색 — rea 내부 흡수 경로", async () => {
+    // BASE_CAPABILITY_IMPROVEMENT.md 같은 로컬 문서는 반드시 있으므로 이 쿼리는 local hit이 있어야 함
+    const results = await webSearch("BASE_CAPABILITY_IMPROVEMENT 문맥 의도 품질", { count: 3 });
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0].source).toMatch(/local/);
+    expect(results[0].url).toContain("file://");
+    const msg = formatResultsForPrompt(results, "BASE_CAPABILITY_IMPROVEMENT");
+    expect(msg).toContain("local");
   });
 
   it("ToolRegistry에 WebSearch 포함", () => {

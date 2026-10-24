@@ -101,13 +101,13 @@
 - [x] 테스트 7개 PASS (`tests/phase3.test.ts` — deriveDomain 4 + retrieve/record 축적·격리·포맷 3)
 
 ### Phase 4 — 맥락·자료 찾기 스캐폴딩 (2026-10-24) — ✅ 스캐폴딩 완료, 기본 OFF (env로 ON)
-- [x] `src/tools/webSearch.ts` 신설 — WebSearch 도구 (Tavily>Serper>Brave>Bing env 자동 선택, 키 없으면 fail-open 안내) + `src/tools/index.ts`에 CORE_TOOLS 등록 — WebFetch와 체인으로 검색→전문 확보 가능, provenance 인용 강제
+- [x] `src/tools/webSearch.ts` 신설 — WebSearch 도구 **API 없이 rea 흡수** (Tavily>Serper>Brave>Bing env 자동 선택, 키 없으면 RagIndex+docs/.memory-bank/.arena/rag-index 즉석 TF-IDF 스캔으로 file:// 결과 반환 — 외부 호출 0) + `src/tools/index.ts`에 CORE_TOOLS 등록 — WebFetch/Browser와 체인으로 검색→전문 확보, provenance 인용 강제
 - [x] `src/rag/chunker.ts` + `src/rag/index.ts` 신설 — 1600자 chunk(overlap 200, 문장 경계 보정) + RagIndex(TF-IDF 하이브리드, recency/vector 슬롯 예약, .arena/rag-index persist/load) — 로컬 문서·메모리·라이브러리에 대한 시맨틱 검색 기반
 - [x] `src/loop/structuralContext.ts` 신설 — `buildStructuralContext()` import 그래프(rg) + top-level 스캔 + `formatStructuralContext()` tiered budget(2.5k) — AGENTS.md만 보던 context에 코드 구조 목차/색인 추가, `provenanceTag()` 출처 표기 헬퍼
 - [x] `src/loop/tokenizer.ts` 신설 — `estimateTokensAccurate`(js-tiktoken 동적 로드, 없으면 CJK 보정 fallback) + `checkBudget(6000, 80%)` — 4-char 근사→정확 카운트로 토큰 효율 측정 고도화
 - [x] `src/loop/context.ts` 확장 — `RichContextOptions.structuralContext/ragContext` + `TieredBudget`, system prompt에 RAG 출처 인용 규칙 주입, estimateTokens CJK 보정 + tokenizer re-export
 - [x] `src/loop/queryLoop.ts`에 Phase 4 opt-in Hook — `REA_STRUCTURAL=1` 시 structuralContext 자동 수집, `REA_RAG=1` 시 RagIndex persist 검색→프롬프트 주입 (기본 OFF로 기존 32테스트 보존, fail-open)
-- [x] 테스트 9개 PASS (`tests/scaffolding.test.ts` — chunker 2 + RagIndex 2 + WebSearch 2 + Tokenizer 2 + Structural 1) + 전체 typecheck PASS
+- [x] 테스트 10개 PASS (`tests/scaffolding.test.ts` — chunker 2 + RagIndex 2 + WebSearch 3(API 없는 rea 흡수 포함) + Tokenizer 2 + Structural 1) + 전체 typecheck PASS
 
 ## 4. 기여 범위·제약 준수
 

@@ -1,10 +1,10 @@
 /**
  * WebSearch — 자료 찾는 능력의 핵심: URL을 모를 때 검색으로 찾는 도구
  * 설계: Provider 어댑터 패턴 — Tavily > Serper > Brave > Bing 순으로 env 키에 따라 자동 선택
- * Fallback: 키가 없으면 DuckDuckGo html scrape (제한적) + 명확한 안내 메시지
+ *        + API 없이 rea로 흡수: 키가 없으면 RagIndex(로컬 문서/.memory-bank/.arena/rag-index) TF-IDF로 즉시 fallback — 외부 호출 0
  *
- * 이전: WebFetch는 URL을 알아야 했음. 이제: 질문 → 검색 → fetch 체인 가능
- * 12살 설명: 도서관 사서 — 책 제목을 모르면 키워드로 목록을 먼저 찾아줌
+ * 이전: WebFetch는 URL을 알아야 했음. 이제: 질문 → 검색 → fetch 체인 가능 (API 유무와 무관)
+ * 12살 설명: 도서관 사서 — 책 제목을 모르면 키워드로 목록을 먼저 찾아줌 (인터넷 안 되면 책장에서 먼저 찾기)
  */
 
 import type { Tool, ToolContext } from "./types.js";
@@ -114,6 +114,89 @@ function pickProvider(): SearchProvider | null {
   return null;
 }
 
+// --- API 없이 rea 내부만으로 흡수 — Local fallback (RagIndex + 파일 스캔) ---
+// 외부 API 키가 없을 때, workspace 내부 문서/메모리/라이브러리를 TF-IDF 하이브리드로 검색해 SearchResult로 변환
+// 12살 설명: 인터넷이 안 되면 도서관 책장에서 먼저 찾아주는 사서
+let localCache: { mtime: number; results: Map<string, SearchResult[]> } | null = null;
+
+async function localFallbackSearch(query: string, count: number): Promise<SearchResult[]> {
+  if (process.env.REA_WEBSEARCH_LOCAL === "0") return [];
+  try {
+    const { RagIndex } = await import("../rag/index.js");
+    const { readFile } = await import("node:fs/promises");
+    const { existsSync } = await import("node:fs");
+    const fg = (await import("fast-glob")).default;
+
+    // 캐시된 .arena/rag-index가 있으면 우선 사용 (REА_RAG와 공유)
+    const cwd = process.cwd();
+    const persistCandidates = [
+      `${cwd}/.arena/rag-index`,
+      `${cwd}/arena-code/.arena/rag-index`,
+      `${cwd}/.memory-bank`,
+    ];
+    for (const dir of persistCandidates) {
+      try {
+        const idx = new RagIndex({ domain: "default", persistDir: dir });
+        if (idx.load() && idx.size > 0) {
+          const hits = idx.search(query, count);
+          if (hits.length > 0) {
+            return hits.map(h => ({
+              title: h.chunk.source,
+              url: `file://${h.chunk.source}`,
+              snippet: h.chunk.text.slice(0, 500),
+              score: h.score,
+              source: "local-rag",
+            }));
+          }
+        }
+      } catch {}
+    }
+
+    // persist가 없으면 즉석 스캔: docs/*.md + arena-code/docs/**/*.md + .memory-bank (최대 80파일, 15000자/파일 제한)
+    const patterns = [
+      "arena-code/docs/**/*.md",
+      "docs/**/*.md",
+      "arena-code/.memory-bank/**/*.md",
+      ".memory-bank/**/*.md",
+      "arena-code/docs/BASE_CAPABILITY_IMPROVEMENT.md",
+    ];
+    const files: string[] = [];
+    for (const pat of patterns) {
+      try {
+        const found = await fg(pat, { cwd, absolute: false, ignore: ["**/node_modules/**", "**/.git/**", "**/dist/**"], dot: false });
+        files.push(...found);
+      } catch {}
+    }
+    const uniq = [...new Set(files)].slice(0, 80);
+    if (uniq.length === 0) return [];
+
+    const docs: Array<{ source: string; text: string }> = [];
+    for (const rel of uniq) {
+      const abs = `${cwd}/${rel}`;
+      if (!existsSync(abs)) continue;
+      try {
+        const text = await readFile(abs, "utf-8");
+        if (text.trim().length < 100) continue;
+        docs.push({ source: rel, text: text.slice(0, 15000) });
+      } catch {}
+    }
+    if (docs.length === 0) return [];
+
+    const idx = new RagIndex({ domain: "websearch-local" });
+    idx.addDocuments(docs);
+    const hits = idx.search(query, count);
+    return hits.map(h => ({
+      title: h.chunk.source,
+      url: `file://${h.chunk.source}`,
+      snippet: h.chunk.text.slice(0, 500),
+      score: h.score,
+      source: "local",
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function webSearch(query: string, opts: { count?: number; provider?: string } = {}): Promise<SearchResult[]> {
   const count = Math.min(opts.count ?? 5, 10);
 
@@ -123,46 +206,58 @@ export async function webSearch(query: string, opts: { count?: number; provider?
       tavily: new TavilyProvider(), serper: new SerperProvider(), brave: new BraveProvider(), bing: new BingProvider(),
     };
     const p = map[opts.provider];
-    if (p) return p.search(query, { count });
+    if (p) {
+      try { return await p.search(query, { count }); } catch { /* fallthrough to local */ }
+    }
   }
 
   const provider = pickProvider();
   if (provider) {
     try { return await provider.search(query, { count }); }
-    catch (e) { /* fallback below, but surface error for observability */
+    catch (e) {
       if (process.env.DEBUG) console.warn(`[WebSearch] ${provider.name} failed:`, e);
+      // 외부 API 실패 시 local fallback으로 흡수 (API 없이 rea 내부로 기능 전환)
     }
   }
 
-  // Fallback: env 키가 없으면 안내 + 빈 결과 (fail-open, 블록하지 않음)
-  // DuckDuckGo html scrape는 ToS/안정성 이슈로 스캐폴딩에서 제외 — 키 발급 안내로 대체
+  // API 없이 rea로 흡수: 로컬 RAG + 파일 스캔 fallback (외부 호출 0)
+  const local = await localFallbackSearch(query, count);
+  if (local.length > 0) return local;
+
+  // 정말 아무 것도 없으면 빈 결과 대신 안내 — but WebSearchTool은 formatResultsForPrompt에서 더 친절한 메시지로 포장
+  // 빈 배열을 반환하되, formatResultsForPrompt에서 local 힌트를 추가
   return [];
 }
 
 export function formatResultsForPrompt(results: SearchResult[], query: string): string {
   if (results.length === 0) {
-    return `WebSearch: no results for "${query}". Hint: set TAVILY_API_KEY or SERPER_API_KEY or BRAVE_API_KEY to enable live search. You can still use Read/Grep/Glob for local files and WebFetch for known URLs.`;
+    return `WebSearch: no results for "${query}".\n- API 없이 rea 흡수 모드: 로컬 문서(RagIndex/docs/.memory-bank)에서 TF-IDF로 재검색했지만 매치가 없음.\n- 팁: TAVILY_API_KEY/SERPER_API_KEY/BRAVE_API_KEY 중 하나를 설정하면 라이브 웹 검색이 활성화됨 (선택).\n- 그래도 가능: Read/Grep/Glob으로 로컬 파일 직접 읽기, WebFetch로 알려진 URL 읽기, Browser로 네이버/구글 직접 크롤 (API 없이).`;
   }
-  const lines = [`WebSearch results for "${query}" (${results.length} hits):`];
+  const isLocal = results.some(r => r.source === "local" || r.source === "local-rag");
+  const lines = [`WebSearch results for "${query}" (${results.length} hits${isLocal ? " — local(rea 흡수, API 없음)" : ""}):`];
   results.forEach((r, i) => {
     lines.push(`${i + 1}. [${r.source ?? "web"}] ${r.title}`);
     lines.push(`   URL: ${r.url}${r.publishedDate ? ` | date: ${r.publishedDate}` : ""}`);
     lines.push(`   ${r.snippet.slice(0, 300)}`);
   });
-  lines.push(`Tip: Use WebFetch to read full pages, then cite sources with URL + date (fail-closed provenance).`);
+  if (isLocal) {
+    lines.push(`Note: API 키 없이 rea 내부 RagIndex(로컬 문서)로 흡수된 결과 — file:// 경로는 Read로 전문 확인 가능. 외부 웹이 필요하면 TAVILY_API_KEY 설정 후 재검색.`);
+  } else {
+    lines.push(`Tip: Use WebFetch to read full pages, then cite sources with URL + date (fail-closed provenance).`);
+  }
   return lines.join("\n");
 }
 
 // --- Tool definition (arena-code Tool 인터페이스) ---
 export const WebSearchTool: Tool = {
   name: "WebSearch",
-  description: "웹에서 자료를 검색 — 질문/키워드로 관련 URL 목록을 반환 (Tavily/Serper/Brave/Bing 중 env 키 자동 선택). WebFetch와 체인해서 전문을 읽을 수 있음. 로컬 파일은 Grep/Glob 사용.",
+  description: "웹에서 자료를 검색 — API 없이 rea 내부 RagIndex(로컬 문서) 우선, 키 있으면 Tavily/Serper/Brave/Bing 자동 선택. WebFetch/Browser와 체인 가능. 로컬 파일은 Grep/Glob으로도 가능하지만 WebSearch가 local-rag로 통합 검색.",
   inputSchema: {
     type: "object",
     properties: {
-      query: { type: "string", description: "검색 질의 (예: 코스피 2024-10-23 반등 원인)" },
+      query: { type: "string", description: "검색 질의 (예: 코스피 2024-10-23 반등 원인 — API 없어도 로컬 문서에서 먼저 찾음)" },
       count: { type: "number", description: "반환 개수 (기본 5, 최대 10)" },
-      provider: { type: "string", description: "강제 프로바이더 (tavily|serper|brave|bing, 선택)" },
+      provider: { type: "string", description: "강제 프로바이더 (tavily|serper|brave|bing, 선택 — 없어도 local로 흡수)" },
     },
     required: ["query"],
   },
