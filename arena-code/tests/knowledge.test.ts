@@ -83,7 +83,7 @@ describe("Council 4중 패킷 (Context+Visual+Reasoning+Knowledge) + 42 brains",
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(42);
+    expect(reg.all().length).toBe(47);
     const c = new Council(reg);
     const {
       outputs,
@@ -92,7 +92,7 @@ describe("Council 4중 패킷 (Context+Visual+Reasoning+Knowledge) + 42 brains",
       visualPacket,
       reasoningPacket,
     } = await c.deliberate("문서 정리와 학습 계획", "맥락");
-    expect(outputs.length).toBeGreaterThanOrEqual(42);
+    expect(outputs.length).toBeGreaterThanOrEqual(47);
     expect(knowledgePacket.factChecks.length).toBeGreaterThan(0);
     expect(knowledgePacket.fiveLayerMap).toContain("1층");
     expect(contextPacket.frame.primary.length).toBeGreaterThan(0);

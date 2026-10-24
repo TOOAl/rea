@@ -23,12 +23,10 @@ export async function collectDaily(cwd = process.cwd()): Promise<string[]> {
   const date = new Date().toISOString().slice(0,10);
   const file = join(dir, `${date}.md`);
   if (existsSync(file)) return [];
-  // 레지스트리 스냅샷도 함께 저장 (랭킹 추적용)
   const reg = new BrainRegistry();
-  // load previous scores if any to keep continuity
   reg.loadScores(cwd);
   const rankLine = reg.rank(3).map(r=> `${r.id}:${r.avg}`).join(", ") || "cold-start";
-  writeFileSync(file, `# Genius Feedback ${date}\n\n- 수집: ${new Date().toISOString()}\n- 흔적: ${fails || "(오늘 큰 실패 없음)"}\n- 대상: 42명 4.0\n- rankTop3: ${rankLine}\n`, "utf-8");
+  writeFileSync(file, `# Genius Feedback ${date}\n\n- 수집: ${new Date().toISOString()}\n- 흔적: ${fails || "(오늘 큰 실패 없음)"}\n- 대상: 47명 5.0 Nobel (42+5)\n- rankTop3: ${rankLine}\n`, "utf-8");
   reg.persistScores(cwd);
   return [file];
 }
@@ -44,6 +42,10 @@ const BENCH_CASES: BenchCase[] = [
   { name: "Gate 기여도 (8인 선발)", task: "간단 메모", article: "", topic: "", expect: { needSeparation:false, needUncertainMark:false, bucket:"gate" } },
   // 추가: 드리프트 감지용 6번째 케이스 — 완전 허구 기각 테스트
   { name: "허구 기각 (hallucination guard)", task: "근거 없는 주장 기각", article: "내일 로또 1등 번호는 7번이다. 내가 예언한다.", topic: "hallucination", expect: { needSeparation:true, needUncertainMark:true, bucket:"calibration" } },
+  // ★ Nobel 3문제 — 베이지안·ToM·변증 (풀팩)
+  { name: "Nobel 베이지안 (오진 방지)", task: "의료 진단 베이지안 — 발열 환자에게 희귀병 가능성", article: "희귀병 유병률 0.1%, 검사 민감도 99% 특이도 98%. 환자는 발열만 있고 검사 양성. 희귀병이라고 단정하면 과신 편향.", topic: "nobel-bayesian", expect: { needSeparation:true, needUncertainMark:true, bucket:"nobel" } },
+  { name: "Nobel ToM (믿음 분리)", task: "팀원에게 SSR/하이드레이션 설명", article: "상대는 1년차 디자이너, SSR을 모른다. “그거(하이드레이션) 고쳐”만 말하면 ToM 실패 — 청자 믿음 고려 필요.", topic: "nobel-tom", expect: { needSeparation:false, needUncertainMark:false, bucket:"nobel" } },
+  { name: "Nobel 변증·물리 (사고실험)", task: "경제 정책 논쟁 — 기본소득 찬반 변증", article: "찬성: 빈곤 해소. 반대: 인플레이션·근로 위축. 물리적 극한: 전원에게 무한 지급하면 화폐가치는? 사고실험+인과+합성 필요.", topic: "nobel-dialectic", expect: { needSeparation:true, needUncertainMark:true, bucket:"nobel" } },
 ];
 
 function scoreUncertainty(article: string, outputs: any[]): { passed: boolean; calibration: number; note: string } {
@@ -95,11 +97,44 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
       addWeekly("council-chair", passed?95:20);
       continue;
     }
-    // 일반 Council 케이스 (사실률, 불확실성, 허구)
+    // 일반 Council 케이스 (사실률, 불확실성, 허구, Nobel)
     const res = await council.deliberate(c.task, "", { article: c.article, topic: c.topic });
     const art = res.outputs.find(o=> o.brainId==="memory-article-input");
     const hasSeparation = !!art?.idea.includes("사실/추정 분리표");
-    const premiseCount = res.outputs.filter(o=> o.brainId.startsWith("premise-")).length;
+    const ideasAll = res.outputs.map(o=> o.idea).join("\n");
+    // ★ Nobel 분기: 베이지안·ToM·변증 특화 검증
+    if (c.expect.bucket==="nobel") {
+      const nobelCount = res.outputs.filter(o=> o.brainId.includes("nobel")).length;
+      let passed = nobelCount >= 3 && (ideasAll.includes("nobel")||ideasAll.includes("노벨"));
+      let cal = 0.85;
+      let note = `nobel ${nobelCount}명 참여`;
+      if (c.name.includes("베이지안")) {
+        const hasBayes = ideasAll.includes("베이지안")||ideasAll.includes("사후")||ideasAll.includes("과신");
+        passed = passed && hasBayes;
+        note = hasBayes? `베이지안 작동 ${note}`: `베이지안 없음 ${note}`;
+        cal = hasBayes?0.90:0.3;
+        addWeekly("genius-medicine-nobel", passed?93:40);
+        addWeekly("genius-economics-nobel", passed?88:45);
+      } else if (c.name.includes("ToM")) {
+        const hasTom = ideasAll.includes("ToM")||ideasAll.includes("믿음")||ideasAll.includes("공감");
+        passed = passed && hasTom;
+        note = hasTom? `ToM 작동 ${note}`: `ToM 없음 ${note}`;
+        cal = hasTom?0.92:0.35;
+        addWeekly("genius-literature-nobel", passed?94:42);
+        addWeekly("genius-peace-nobel", passed?90:44);
+      } else if (c.name.includes("변증")) {
+        const hasDial = ideasAll.includes("변증")||ideasAll.includes("합성")||ideasAll.includes("사고실험");
+        passed = passed && hasDial;
+        note = hasDial? `변증·사고실험 작동 ${note}`: `변증 없음 ${note}`;
+        cal = hasDial?0.88:0.4;
+        addWeekly("genius-physics-nobel", passed?92:38);
+        addWeekly("genius-peace-nobel", passed?91:43);
+      }
+      const score = Math.round(60*0.5 + cal*100*0.5) + (passed?30:0) - (passed?0:15);
+      const finalScore = Math.max(35, Math.min(96, score));
+      results.push({ name: c.name, passed, score: finalScore, note, calibration: cal, bucket: c.expect.bucket });
+      continue;
+    }
     const { passed: calPassed, calibration, note } = scoreUncertainty(c.article, res.outputs);
     let passed = true;
     let score = 85;
@@ -109,7 +144,6 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
       score = hasSeparation ? 95 : 40;
       noteFull = hasSeparation ? `분리표 생성, ${note}` : `분리표 없음, ${note}`;
     }
-    // 불확실성 버킷은 calibration 가중 50%
     if (c.expect.bucket==="calibration") {
       passed = passed && calPassed;
       score = Math.round(score*0.5 + calibration*100*0.5);
@@ -220,12 +254,12 @@ export function generateBoard(results: BenchResult[], cwd = process.cwd(), opts?
 
   const md = `# 🧠 Genius Board — ${new Date().toISOString().slice(0,10)}
 
-> 42명 4.0 천재 주간 성적표 — 수집→평가→진화 3벨트 고도화. 순위표 주기 **TBD** (요청 유지)
+> 47명 5.0 Nobel 천재 주간 성적표 — 수집→평가→진화 3벨트 고도화 (Nobel 5 포함). 순위표 주기 **TBD** (요청 유지)
 
 **종합:** ${passed}/${results.length} 통과, 평균 ${avgScore}점 — ${bucketLine}
-${driftLine} — 캘리브레이션(불확실성 표기 정확도) 가중 50%
+${driftLine} — 캘리브레이션 50% + Nobel(베이지안/ToM/변증) 포함
 
-## 📝 주간 6문제 (불확실성 + 허구 기각 포함)
+## 📝 주간 9문제 (불확실성·허구·Nobel 3 포함)
 
 ${results.map(r=> `- ${r.passed ? "✅" : "❌"} **${r.name}** — ${r.score}점${r.calibration!==undefined?` (cal ${(r.calibration*100|0)}%)`:""}: ${r.note}`).join("\n")}
 
