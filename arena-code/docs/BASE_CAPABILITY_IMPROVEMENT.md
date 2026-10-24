@@ -111,6 +111,11 @@
 - [x] `src/loop/research.ts` 신설 — 고정 연구 루프 `Research` 도구 (`WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, file://는 Read로 API 0 흡수, 웹은 WebFetch) + `decomposeQuery()` 확장, CORE_TOOLS 등록
 - [x] `src/rag/index.ts`에 `RagIndex.fromWorkspace()` 추가 — .memory-bank + harness2/library + docs 120파일 자동 색인 (API 0, rea 흡수)
 - [x] 테스트 6개 PASS (`tests/research.test.ts` — decompose 2 + research API-free 2 + Research 도구 등록 1 + fromWorkspace 1)
+- [x] `src/rag/embedder.ts` 신설 — HashEmbedder(128차원, FNV+2-gram, L2 정규화, 결정적, API 0) + `getEmbedder()/setEmbedder()` 교체 슬롯 (Xenova/OpenAI 호환)
+- [x] `src/rag/store.ts` 신설 — VectorStore(.arena/rag-index/<domain>.vectors.json) + JsonVssAdapter(sqlite-vss 교체 가능한 인터페이스, 현재 JSON 기반, 외부 의존 0)
+- [x] `src/rag/index.ts` 확장 — `buildVectors()/loadVectors()/searchHybrid(0.5:0.5)` 하이브리드 (TF-IDF 0.5 + dense 0.5), persist 시 vectors.json 함께 저장, `js-tiktoken` 정확 카운트 연동
+- [x] `src/loop/tokenizer.ts` js-tiktoken 연동 — `encodingForModel("gpt-4o")` 설치 확인, `estimateTokensAccurate()`가 fallback과 다른 값으로 정확도 검증
+- [x] 테스트 5개 PASS (`tests/hybrid.test.ts` — js-tiktoken 정확도 1 + HashEmbedder 1 + buildVectors/searchHybrid 1 + persist/vectors.json 1 + getEmbedder 슬롯 1) + 42 tests PASS
 
 ## 4. 기여 범위·제약 준수
 

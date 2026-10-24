@@ -109,14 +109,32 @@ checkBudget(messages, 6000); // { tokens, budget, ratio, ok, message }
 - [x] `RagIndex.fromWorkspace()`로 `harness2/library + .memory-bank + docs` 자동 색인 연결 (API 0)
 - [x] Research Loop: `WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록` 고정 루프 `src/loop/research.ts` + `Research` 도구 등록 (API 없이도 `file://` → `Read`로 흡수)
 
-## 4. 테스트
+## 4. 테스트 + Hybrid (2026-10-24 추가: js-tiktoken + 벡터 하이브리드)
 
 ```
 npm test -- tests/scaffolding.test.ts          # 10 tests (API-free 흡수 포함)
 npm test -- tests/research.test.ts             # 6 tests (Research Loop + fromWorkspace)
+npm test -- tests/hybrid.test.ts               # 5 tests (js-tiktoken 정확도 + HashEmbedder + buildVectors/searchHybrid + persist/vectors.json)
 npm test -- tests/pillar.test.ts tests/phase2.test.ts tests/phase3.test.ts  # 31 tests (기존 보존)
 ./node_modules/.bin/tsc --noEmit               # typecheck
 ```
 
-모두 PASS (2026-10-24) — Research 6 + Scaffolding 10 + Pillar 8 + Phase2 6 + Phase3 7 = 37.
+모두 PASS (2026-10-24) — Hybrid 5 + Research 6 + Scaffolding 10 + Pillar 8 + Phase2 6 + Phase3 7 = 42.
+
+### Hybrid — js-tiktoken + 벡터 (API-free)
+
+- `src/rag/embedder.ts` — `HashEmbedder(128)` FNV + 2-gram 해시, L2 정규화, 결정적 (API 0). `setEmbedder()`로 Xenova/OpenAI 교체 슬롯
+- `src/rag/store.ts` — `VectorStore(.arena/rag-index/<domain>.vectors.json)` + `JsonVssAdapter` — sqlite-vss 없이도 동작, 나중에 better-sqlite3로 교체 시 인터페이스만 변경
+- `src/rag/index.ts` — `buildVectors()/loadVectors()/searchHybrid()` : TF-IDF 0.5 + dense 0.5 하이브리드, `persist()` 시 `.vectors.json` 함께 저장
+- `src/loop/tokenizer.ts` — `js-tiktoken` 설치 후 `encodingForModel("gpt-4o")` 정확 카운트, `estimateTokensAccurate()`가 fallback과 다른 값 검증됨
+
+사용:
+```ts
+const idx = new RagIndex({ domain: "exam", persistDir: "./.arena/rag-index" });
+idx.addDocuments([{ source: "docs/a.md", text: "..." }]);
+await idx.buildVectors(); // API 0 해시 임베딩 생성 + .vectors.json 저장
+idx.persist();
+const hits = await idx.searchHybrid("코스피 외국인 순매도", 3); // 0.5:0.5 하이브리드
+await estimateTokensAccurate(messages); // js-tiktoken 정확도
+```
 ```

@@ -10,6 +10,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chunkText, type Chunk } from "./chunker.js";
+import { getEmbedder, type Embedder } from "./embedder.js";
+import { VectorStore } from "./store.js";
 
 // MemoryBank와 동일한 토크나이저 재사용 철학 (영문/숫자 중심)
 const STOP = new Set([
@@ -57,19 +59,38 @@ export interface RagSearchHit {
 export interface RagIndexOptions {
   domain?: string;
   persistDir?: string; // 예: .arena/rag-index
+  embedder?: Embedder;
+  vectorStoreDir?: string; // .vectors.json 저장 위치 — 없으면 persistDir 사용
 }
 
 export class RagIndex {
   private chunks: Chunk[] = [];
+  private vectors: Map<string, number[]> = new Map(); // chunkId -> vector (하이브리드용)
   private domain: string;
   private persistDir: string | null;
+  private embedder: Embedder | null;
+  private vectorStore: VectorStore | null;
 
   constructor(opts: RagIndexOptions = {}) {
     this.domain = opts.domain ?? "default";
     this.persistDir = opts.persistDir ? resolve(opts.persistDir) : null;
+    this.embedder = opts.embedder ?? null; // null이면 getEmbedder() lazy 사용 (API 0 HashEmbedder)
+    this.vectorStore = this.persistDir ? new VectorStore(opts.vectorStoreDir ?? this.persistDir) : null;
   }
 
   get size(): number { return this.chunks.length; }
+  get hasVectors(): boolean { return this.vectors.size > 0; }
+
+  /** 청크 추가 시 벡터도 함께 생성 (API 0 — 해시 임베딩) */
+  private ensureVector(chunk: Chunk): void {
+    if (!this.embedder && !this.vectors.has(chunk.id)) {
+      // lazy: 기본 임베더 사용하지만 벡터는 buildVectors()에서 일괄 생성하는 것이 효율적
+      return;
+    }
+    if (this.embedder && !this.vectors.has(chunk.id)) {
+      this.vectors.set(chunk.id, this.embedder.embed(chunk.text));
+    }
+  }
 
   addDocuments(docs: RagDocument[]): number {
     let added = 0;
@@ -78,6 +99,7 @@ export class RagIndex {
       for (const c of cs) {
         if (doc.metadata) c.metadata = { ...c.metadata, ...doc.metadata };
         this.chunks.push(c);
+        this.ensureVector(c);
         added++;
       }
     }
@@ -86,15 +108,54 @@ export class RagIndex {
 
   addChunks(chunks: Chunk[]): void {
     this.chunks.push(...chunks);
+    for (const c of chunks) this.ensureVector(c);
   }
 
-  clear(): void { this.chunks = []; }
+  clear(): void { this.chunks = []; this.vectors.clear(); }
+
+  /** 벡터 일괄 구축 + 영속화 — js-tiktoken 하이브리드의 핵심 (외부 API 0) */
+  async buildVectors(embedder?: Embedder): Promise<number> {
+    const emb = embedder ?? this.embedder ?? getEmbedder();
+    let count = 0;
+    for (const c of this.chunks) {
+      if (!this.vectors.has(c.id)) {
+        this.vectors.set(c.id, emb.embed(`${c.source} ${c.text}`));
+        count++;
+      }
+    }
+    if (this.vectorStore) this.vectorStore.save(this.domain, this.vectors);
+    return count;
+  }
+
+  /** 벡터 로드 (persist된 .vectors.json) */
+  loadVectors(): boolean {
+    if (!this.vectorStore) return false;
+    const loaded = this.vectorStore.load(this.domain);
+    if (!loaded) return false;
+    this.vectors = loaded;
+    return true;
+  }
+
+  /** 하이브리드 검색: TF-IDF + dense vector(해시 임베딩, API 0) 자동 합성 */
+  async searchHybrid(query: string, topK = 5, opts?: { recencyBoost?: Map<string, number>; wSparse?: number; wDense?: number }): Promise<RagSearchHit[]> {
+    // 벡터가 있으면 자동 하이브리드, 없으면 sparse만
+    if (this.vectors.size === 0 && this.vectorStore) this.loadVectors();
+    if (this.vectors.size > 0) {
+      const emb = getEmbedder();
+      const qVec = emb.embed(query);
+      const vectorScores = new Map<string, number>();
+      for (const [id, vec] of this.vectors) {
+        vectorScores.set(id, emb.similarity(qVec, vec));
+      }
+      return this.search(query, topK, { vectorScores, recencyBoost: opts?.recencyBoost, wSparse: opts?.wSparse, wDense: opts?.wDense } as any);
+    }
+    return this.search(query, topK, opts);
+  }
 
   /**
-   * 하이브리드 검색: TF-IDF cosine + source cue bonus + recency bonus(선택)
-   * 현재는 sparse만, dense vector는 opts.vectorSearch로 주입 가능 (미래 슬롯)
+   * 하이브리드 검색: TF-IDF cosine + dense vector(0.5:0.5) + source cue bonus
    */
-  search(query: string, topK = 5, opts?: { vectorScores?: Map<string, number>; recencyBoost?: Map<string, number> }): RagSearchHit[] {
+  search(query: string, topK = 5, opts?: { vectorScores?: Map<string, number>; recencyBoost?: Map<string, number>; wSparse?: number; wDense?: number }): RagSearchHit[] {
     if (this.chunks.length === 0 || !query.trim()) return [];
     const qTokens = tokenize(query);
     if (qTokens.length === 0) return [];
@@ -129,9 +190,12 @@ export class RagIndex {
       const sourceTokens = new Set(tokenize(d.chunk.source));
       for (const qt of qTokens) if (sourceTokens.has(qt)) score += 0.08;
 
-      // 미래 슬롯: dense vector 점수 합성 (0.5 가중)
+      // 하이브리드: dense vector 점수 합성 (wSparse:wDense 기본 0.5:0.5 — 외부 API 0 해시 임베딩)
+      const wSparse = opts?.wSparse ?? 0.5;
+      const wDense = opts?.wDense ?? 0.5;
       if (opts?.vectorScores?.has(d.chunk.id)) {
-        score = score * 0.5 + (opts.vectorScores.get(d.chunk.id)! * 0.5);
+        const vScore = opts.vectorScores.get(d.chunk.id)!;
+        score = score * wSparse + vScore * wDense;
       }
       // recency boost
       if (opts?.recencyBoost?.has(d.chunk.id)) {
@@ -145,13 +209,14 @@ export class RagIndex {
     return scored.slice(0, topK);
   }
 
-  // --- Persist (선택) ---
+  // --- Persist (청크 + 벡터 함께 영속화 — 벡터는 .vectors.json) ---
   persist(): string | null {
     if (!this.persistDir) return null;
     try {
       mkdirSync(this.persistDir, { recursive: true });
       const p = join(this.persistDir, `${this.domain}.json`);
       writeFileSync(p, JSON.stringify(this.chunks, null, 2), "utf-8");
+      if (this.vectors.size > 0 && this.vectorStore) this.vectorStore.save(this.domain, this.vectors);
       return p;
     } catch { return null; }
   }
@@ -164,6 +229,7 @@ export class RagIndex {
       const raw = readFileSync(p, "utf-8");
       const arr = JSON.parse(raw) as Chunk[];
       this.chunks = arr;
+      if (this.vectorStore) this.loadVectors();
       return true;
     } catch { return false; }
   }

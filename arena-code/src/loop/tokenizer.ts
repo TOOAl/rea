@@ -14,12 +14,13 @@ async function ensureEncoder(): Promise<void> {
   if (enc || encReady) return encReady ?? Promise.resolve();
   encReady = (async () => {
     try {
-      // @ts-ignore — optional dep
-      const mod = await import("js-tiktoken");
-      // cl100k_base가 gpt-4 계열 근사 — Claude와도 대략 유사
-      enc = mod.encodingForModel("gpt-4o") ?? mod.getEncoding("cl100k_base");
+      // js-tiktoken 0.8+ — 이제 설치됨 (npm install js-tiktoken)
+      const mod: any = await import("js-tiktoken");
+      // API 호환: getEncoding / encodingForModel 둘 다 시도
+      if (mod.encodingForModel) enc = mod.encodingForModel("gpt-4o") ?? mod.getEncoding("cl100k_base");
+      else if (mod.getEncoding) enc = mod.getEncoding("cl100k_base");
+      else if (mod.Tiktoken) { const { Tiktoken } = mod; enc = new Tiktoken(mod.cl100k_base); }
     } catch {
-      // 미설치면 fallback 유지 — 설치 안내만
       enc = null;
     }
   })();
