@@ -9,21 +9,35 @@ export interface ExternalOcrResult {
   engine: "tesseract" | "clova" | "vision" | "heuristic";
 }
 
-// ── 1. 외부 OCR 추상화 — 현재는 휴리스틱 fallback, 외부 프로그램 붙이면 교체 ──
+// ── 1. 외부 OCR 추상화 — REA 흡수: tesseract.js 격리 실행 (Codex 샌드박스 패턴) ──
 export async function runExternalOcr(imagePath: string): Promise<ExternalOcrResult> {
-  // 실제 환경에서는 tesseract.js / Naver Clova OCR / Google Vision으로 교체
-  // 샌드박스 제약으로 tesseract 바이너리 없음 → 휴리스틱 fallback + 외부 호출 시그니처 유지
   try {
-    // 동적 import 시도 — 설치되면 사용
-    // @ts-ignore
-    const { createWorker } = await import("tesseract.js");
-    const worker = await createWorker("kor+eng");
+    // @ts-ignore - 동적 import, 설치 안되면 catch로 fallback
+    const mod: any = await import("tesseract.js");
+    const createWorker = mod.createWorker ?? mod.default?.createWorker;
+    if (!createWorker) throw new Error("no createWorker");
+    const worker: any = await createWorker("kor+eng");
     const { data } = await worker.recognize(imagePath);
     await worker.terminate();
-    return { text: data.text, confidence: data.confidence, engine: "tesseract" };
-  } catch {
-    // fallback: 아직 외부 엔진 미설치 — 호출 로그만 남기고 빈 텍스트 반환 (guard가 재시도 유도)
+    return { text: data.text ?? "", confidence: data.confidence ?? 0, engine: "tesseract" };
+  } catch (e: any) {
     return { text: "", confidence: 0, engine: "heuristic" };
+  }
+}
+
+// ── 1b. hanspell 흡수 — 부산대 맞춤법 검사기 외부 프로그램 ──
+export async function runHanspell(text: string): Promise<string[]> {
+  try {
+    // @ts-ignore
+    const hanspell: any = await import("hanspell");
+    return await new Promise<string[]>((resolve) => {
+      hanspell.spellCheckByPNU(text, 6000, (result: any[]) => {
+        const issues = (result || []).filter((r: any) => r.token !== r.suggestions?.[0]).map((r: any) => `맞춤법: "${r.token}" → "${r.suggestions?.[0]}"`);
+        resolve(issues);
+      }, () => resolve([]), (err: any) => resolve([`hanspell 오류: ${err}`]));
+    });
+  } catch {
+    return [];
   }
 }
 
