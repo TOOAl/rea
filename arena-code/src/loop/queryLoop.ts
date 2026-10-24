@@ -95,10 +95,36 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
       lessonsPrompt = formatLessonsForPrompt(lessons);
     } catch {}
   }
+  // Scaffolding Phase 4: Structural + RAG (opt-in via env, 기본 OFF로 기존 테스트 보존)
+  let structuralContext: string | undefined;
+  if (process.env.REA_STRUCTURAL === "1") {
+    try {
+      const { buildStructuralContext, formatStructuralContext } = await import("./structuralContext.js");
+      const sc = await buildStructuralContext(params.cwd, { budgetChars: 2000 });
+      structuralContext = formatStructuralContext(sc);
+    } catch {}
+  }
+  let ragContext: string | undefined;
+  if (process.env.REA_RAG === "1") {
+    try {
+      const { RagIndex } = await import("../rag/index.js");
+      // 최소 스캐폴딩: persist된 인덱스가 있으면 검색, 없으면 빈 상태로 패스 (fail-open)
+      const idx = new RagIndex({ domain, persistDir: `${params.cwd}/.arena/rag-index` });
+      if (idx.load()) {
+        const hits = idx.search(promptTextForDomain.slice(-1000) || promptTextForDomain, 3);
+        if (hits.length) ragContext = hits.map(h => `[${h.chunk.source}] ${h.chunk.text.slice(0, 400)} (score=${h.score.toFixed(3)})`).join("\n\n");
+      }
+    } catch {}
+  }
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,
-    intentHint || evidenceSummary || lessonsPrompt ? { evidenceSummary: lessonsPrompt ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}` : evidenceSummary, intentHint } : undefined
+    intentHint || evidenceSummary || lessonsPrompt || structuralContext || ragContext ? {
+      evidenceSummary: lessonsPrompt ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}` : evidenceSummary,
+      intentHint,
+      structuralContext,
+      ragContext,
+    } : undefined
   );
 
   // Tools → ToolDefinition for model

@@ -11,6 +11,7 @@ import { GlobTool } from "./glob.js";
 import { GrepTool } from "./grep.js";
 import { TodoWriteTool } from "./todo.js";
 import { WebFetchTool } from "./webfetch.js";
+import { WebSearchTool } from "./webSearch.js";
 import { BROWSER_TOOLS } from "./browser.js";
 import { SERENA_TOOLS } from "./serena.js";
 import { ATLASSIAN_TOOLS } from "./atlassian.js";
@@ -39,7 +40,7 @@ async function loadReaTools(): Promise<Tool[]> {
   } catch { return []; }
 }
 
-export const CORE_TOOLS_LIST: Tool[] = [ReadTool, WriteTool, EditTool, BashTool, GlobTool, GrepTool, TodoWriteTool, WebFetchTool, ...BROWSER_TOOLS, ...SERENA_TOOLS, ...ATLASSIAN_TOOLS];
+export const CORE_TOOLS_LIST: Tool[] = [ReadTool, WriteTool, EditTool, BashTool, GlobTool, GrepTool, TodoWriteTool, WebFetchTool, WebSearchTool, ...BROWSER_TOOLS, ...SERENA_TOOLS, ...ATLASSIAN_TOOLS];
 
 // 동기 버전 — 내부 패키지만 (기존 호환, 외부 없이 빌드 가능)
 let _syncGhidraTools: Tool[] | null = null;
