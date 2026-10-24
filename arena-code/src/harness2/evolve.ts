@@ -149,12 +149,15 @@ ${((globalThis as any).__lastReg?.getSwapHistory?.() ?? []).slice(-3).map((h:any
 }
 
 export async function evolveOneStep(cwd = process.cwd(), reason = "주간 진화 — 하위 교체 검토"): Promise<{ swapped: boolean; board: string }> {
+  // 사람 승인 가드 — 교체는 도장 없으면 금지
+  const { requireApproval } = await import("./approval.js");
   // 평가부터
   const results = await evaluateWeekly(cwd);
   const reg: BrainRegistry = (globalThis as any).__lastReg;
   const bottom = reg?.bottomDecile?.() ?? [];
   let swapped = false;
   if (bottom.length && results.filter(r=>!r.passed).length >= 2) {
+    requireApproval(`evolveOneStep: ${reason} — 하위 ${bottom[0]?.id}`);
     // 예: 최하위 1명을 더 나은 버전으로 스왑 (데모: 버전만 올림)
     const target = bottom[0];
     const old = reg.get(target.id);
