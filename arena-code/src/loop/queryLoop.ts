@@ -11,6 +11,7 @@ import { classifyIntent, isIntentClear } from "./intent.js";
 import { EvidenceLedger } from "./evidenceLedger.js";
 import { qualityGate, qualityFeedback } from "./outputQuality.js";
 import { persistLedgerToTree, buildEvidencePointer } from "./evidenceTreeBridge.js";
+import { deriveDomain, retrieveLessons, formatLessonsForPrompt, recordLesson } from "./learningBridge.js";
 
 // --- Events ---
 
@@ -83,10 +84,21 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
       if (pointer) evidenceSummary = `${evidenceSummary}\n\n[EvidenceTree persisted] ${pointer}`;
     }
   }
+  // Phase 3: Library/Memory Lessons 자동 주입 — 같은 도메인 반복 시 점점 똑똑해짐
+  const learningOn = process.env.REA_LEARNING !== "0";
+  const promptTextForDomain = params.messages.map(m => typeof m.content === "string" ? m.content : JSON.stringify(m.content)).join("\n");
+  const domain = learningOn ? deriveDomain(intent, promptTextForDomain) : "general";
+  let lessonsPrompt: string | null = null;
+  if (learningOn) {
+    try {
+      const lessons = retrieveLessons({ query: promptTextForDomain.slice(-1000) || promptTextForDomain, domain, topK: 3 });
+      lessonsPrompt = formatLessonsForPrompt(lessons);
+    } catch {}
+  }
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,
-    intentHint || evidenceSummary ? { evidenceSummary, intentHint } : undefined
+    intentHint || evidenceSummary || lessonsPrompt ? { evidenceSummary: lessonsPrompt ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}` : evidenceSummary, intentHint } : undefined
   );
 
   // Tools → ToolDefinition for model
@@ -165,8 +177,10 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
 
     // --- Stop condition: no tool calls → done (Pillar 3: quality gate — 기본 활성) ---
     if (toolCalls.length === 0) {
+      let finalQualityReport: ReturnType<typeof qualityGate> | null = null;
       if (qualityGateOn) {
         const report = qualityGate(assistantBlocks, params.qualityOpts ?? {});
+        finalQualityReport = report;
         if (!report.ok) {
           const feedback = qualityFeedback(report);
           state.messages.push({ role: "user", content: feedback });
@@ -182,6 +196,19 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
             continue;
           }
         }
+      }
+      // Phase 3: 결과 직전 Lesson 기록 — 다음 동일 도메인 작업에 자동 주입 (학습 축적)
+      if (learningOn) {
+        try {
+          const taskIdForLearning = `task-${Date.now()}-${domain}`;
+          recordLesson({
+            taskId: taskIdForLearning,
+            domain,
+            intent,
+            qualityReport: finalQualityReport,
+            ledger,
+          });
+        } catch {}
       }
       yield { type: "result", content: assistantBlocks, turns: state.turnCount + 1 };
       break;

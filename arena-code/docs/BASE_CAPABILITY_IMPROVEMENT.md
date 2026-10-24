@@ -95,8 +95,10 @@
 - [x] `src/loop/queryLoop.ts`에 EvidenceTree 영속화 Hook 추가 — `truncated || ledger>3` 일 때 자동 디스크 저장, 다음 턴부터 포인터 기반 컨텍스트
 - [x] 테스트 6개 PASS (`tests/phase2.test.ts` — EvidenceTree persist, invariant/domain 분기, 2후보 선택)
 
-### Phase 3 — 학습 축적 (2주+)
-- `MemoryBank` + `HarnessLibrary`를 intent/quality 피드백 루프에 연결 — 같은 도메인 반복 시 Library 교훈 자동 주입
+### Phase 3 — 학습 축적 (2주+) — ✅ 완료 (2026-05-11)
+- [x] `src/loop/learningBridge.ts` 신설 — `deriveDomain()` 도메인 자동 분류(exam/video/ghidra/youtube/qa) + `retrieveLessons()` (MemoryBank 빠른일기 + HarnessLibrary 깊은도서관) + `recordLesson()` (Memory 항상 / Library는 PASS·의미 교훈 시) 축적, `formatLessonsForPrompt()`로 증거 일치 시에만 적용하도록 가드
+- [x] `src/loop/queryLoop.ts`에 자동 Lessons 주입/기록 Hook — 작업 시작 전 `retrieveLessons()→assembleSystemPrompt` 주입, 결과 반환 직전 `recordLesson()`으로 교훈 적립 (환경 `REA_LEARNING=0`으로 off 가능, 기본 ON) — 도메인 격리로 다른 도메인 교훈 오염 방지
+- [x] 테스트 7개 PASS (`tests/phase3.test.ts` — deriveDomain 4 + retrieve/record 축적·격리·포맷 3)
 
 ## 4. 기여 범위·제약 준수
 
