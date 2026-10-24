@@ -230,6 +230,7 @@ export class ArticleInputBrain implements Brain {
         "사실/추정 분리표 + 12살 설명 + 다음 영상 연결점 1개 생성",
       );
 
+    const factBlock = buildFactClaimBlock(article);
     const recall = this.memory
       ? this.memory.commonFailures(1).split("\n")[0]
       : "";
