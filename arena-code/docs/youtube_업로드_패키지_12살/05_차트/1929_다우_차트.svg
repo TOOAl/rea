@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">다우존스 1929 6거래일 비교 차트 10.23-10.29 vs 코스피 2026 6거래일</title>
+  <desc id="desc">출처 NYSE 다우존스 1929.10.23-29 -13.47% 10/28 -11.73% 10/29 와 코스피 2026.10.15-22 비교 교육용 그래프</desc>
+  <rect width="1280" height="720" fill="#F6F9FF"/>
+  <text x="40" y="50" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="26" font-weight="900" fill="#0B1A3A">1929 다우 -13.47%/-11.73% 이틀 연속 10% 폭락은 역사에 단 두 번</text>
+  <text x="40" y="82" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="15" fill="#4A5A7A">출처: NYSE 기록 1929.10.24-29 · 코스피 한국거래소 2026.10.22 · 교육용 재구성 · 투자 조언 아님</text>
+  <!-- Left: 1929 -->
+  <g>
+    <rect x="40" y="110" width="580" height="420" rx="16" fill="#FFFFFF" stroke="#DCE6F5"/>
+    <text x="60" y="145" font-size="16" font-weight="800" fill="#7A4A2E">1929 다우존스 (10/23-10/29)</text>
+    <text x="60" y="165" font-size="12" fill="#8A8A8A">10/26 -3% 수준 → 10/28 -13.47% → 10/29 -11.73%</text>
+    <!-- grid -->
+    <line x1="60" y1="200" x2="600" y2="200" stroke="#EEE" />
+    <line x1="60" y1="280" x2="600" y2="280" stroke="#EEE" />
+    <line x1="60" y1="360" x2="600" y2="360" stroke="#EEE" />
+    <line x1="60" y1="440" x2="600" y2="440" stroke="#EEE" />
+    <text x="60" y="210" font-size="11" fill="#999">350</text><text x="60" y="290" font-size="11" fill="#999">300</text><text x="60" y="370" font-size="11" fill="#999">250</text><text x="60" y="450" font-size="11" fill="#999">200</text>
+    <!-- polyline 1929: approx 326-> 230 -->
+    <polyline fill="none" stroke="#B86B2E" stroke-width="3.5" points="80,260 150,255 230,270 310,280 400,340 500,400 580,410"/>
+    <circle cx="400" cy="340" r="8" fill="#D93025" stroke="#fff" stroke-width="2"/>
+    <circle cx="500" cy="400" r="8" fill="#D93025" stroke="#fff" stroke-width="2"/>
+    <text x="380" y="330" font-size="12" font-weight="700" fill="#D93025">10/28 -13.47%</text>
+    <text x="480" y="390" font-size="12" font-weight="700" fill="#D93025">10/29 -11.73%</text>
+    <text x="80" y="485" font-size="11" fill="#5A5A5A">브로커론 15% · 거래량 3배 · Fed 금리↑ — 용량 과부하 신호</text>
+  </g>
+  <!-- Right: 2026 KOSPI -->
+  <g>
+    <rect x="660" y="110" width="580" height="420" rx="16" fill="#FFFFFF" stroke="#DCE6F5"/>
+    <text x="680" y="145" font-size="16" font-weight="800" fill="#0B1A3A">2026 코스피 (10/15-10/22)</text>
+    <text x="680" y="165" font-size="12" fill="#8A8A8A">10/15 -7.57% → 10/21 +3.29% → 10/22 -3.52%</text>
+    <line x1="680" y1="200" x2="1220" y2="200" stroke="#EEE" />
+    <line x1="680" y1="280" x2="1220" y2="280" stroke="#EEE" />
+    <line x1="680" y1="360" x2="1220" y2="360" stroke="#EEE" />
+    <line x1="680" y1="440" x2="1220" y2="440" stroke="#EEE" />
+    <text x="680" y="210" font-size="11" fill="#999">5,900</text><text x="680" y="290" font-size="11" fill="#999">5,750</text><text x="680" y="370" font-size="11" fill="#999">5,600</text><text x="680" y="450" font-size="11" fill="#999">5,300</text>
+    <polyline fill="none" stroke="#0B6EFD" stroke-width="3.5" points="700,340 780,342 860,240 960,360 1080,370"/>
+    <circle cx="780" cy="342" r="7" fill="#D93025" stroke="#fff" stroke-width="2"/>
+    <circle cx="860" cy="240" r="7" fill="#0B8A3A" stroke="#fff" stroke-width="2"/>
+    <circle cx="960" cy="360" r="7" fill="#D93025" stroke="#fff" stroke-width="2"/>
+    <text x="760" y="365" font-size="11" font-weight="700" fill="#D93025">10/20 -3.73%</text>
+    <text x="840" y="230" font-size="11" font-weight="700" fill="#0B8A3A">10/21 +3.29%</text>
+    <text x="940" y="380" font-size="11" font-weight="700" fill="#D93025">10/22 -3.52%</text>
+    <text x="700" y="485" font-size="11" fill="#5A5A5A">6일 3회 3% 변동 — 시스템 과부하 신호, 중단 기준 필요</text>
+  </g>
+  <rect x="40" y="560" rx="12" width="1200" height="70" fill="#0B1A3A"/>
+  <text x="70" y="588" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="15" font-weight="800" fill="#FFFFFF">공통 패턴: 3일 전엔 ‘설마’ — 마지막 2일이 전체 낙폭의 70% · 추측에 빚/전액 배팅 금지</text>
+  <text x="70" y="612" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="13" fill="#AEC8FF">수익화 원칙: 두 그래프 모두 직접 제작 2차 가공물 · 원문 1~2문장 인용 · 가격 단정 없음 · 5단계 워크시트는 REA 5층 기반</text>
+</svg>

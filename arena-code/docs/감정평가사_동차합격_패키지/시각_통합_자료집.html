@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>감정평가사 동차합격 시각 자료집 — 12살도 이해하는 REA 5층</title>
+<style>
+  :root{--navy:#0B1A3A;--blue:#0B6EFD;--green:#0B8A3A;--orange:#E86B2E;--red:#D93025;--bg:#F6F9FF;--card:#fff;--muted:#6B7A9A}
+  *{box-sizing:border-box} body{margin:0;font-family:'Pretendard','Noto Sans KR',sans-serif;background:var(--bg);color:#1A1A1A;line-height:1.6}
+  .cover{position:relative;height:420px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.55)}
+  .cover-overlay{position:relative;z-index:1;text-align:center;color:white;padding:40px}
+  .badge{display:inline-block;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.5);backdrop-filter:blur(6px);padding:8px 16px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.04em}
+  h1{font-size:42px;font-weight:900;margin:16px 0 8px;text-shadow:0 2px 12px rgba(0,0,0,0.3)}
+  .subtitle{font-size:18px;opacity:0.95}
+  .container{max-width:1100px;margin:0 auto;padding:24px}
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:24px 0}
+  .toc a{display:block;background:white;border:1px solid #E6ECF5;border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--navy);font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+  .toc a span{color:var(--muted);font-weight:500;font-size:13px;display:block;margin-top:4px}
+  h2{font-size:28px;font-weight:900;color:var(--navy);margin:48px 0 12px;border-left:6px solid var(--blue);padding-left:14px}
+  h3{font-size:20px;font-weight:800;color:var(--navy);margin:24px 0 10px}
+  .card{background:var(--card);border:1px solid #E6ECF5;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(11,26,58,0.06);margin:14px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;margin:10px 0;background:white;border-radius:12px;overflow:hidden}
+  th{background:var(--navy);color:white;padding:10px 12px;text-align:left;font-size:13px}
+  td{padding:10px 12px;border-bottom:1px solid #EEF2F7;font-size:14px;vertical-align:top}
+  tr:nth-child(even) td{background:#F8FAFF}
+  .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;color:white}
+  .img-card img{width:100%;border-radius:12px;border:1px solid #E6ECF5}
+  .kicker{color:var(--blue);font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase}
+  .tip{background:linear-gradient(135deg,#FFF7E6,#FFF1D6);border:1px solid #FFE0A3;border-radius:12px;padding:14px 16px;margin:12px 0}
+  .check{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+  .check i{width:22px;height:22px;border-radius:6px;background:var(--blue);color:white;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;flex:none}
+  .footer{margin:48px 0;text-align:center;color:var(--muted);font-size:13px}
+  .term{border-left:4px solid var(--blue);padding-left:12px;margin:10px 0}
+  .term b{color:var(--navy)}
+</style>
+</head>
+<body>
+<!-- COVER -->
+<div class="cover">
+  <img src="images/cover.png" alt="cover">
+  <div class="cover-overlay">
+    <div class="badge">TOOAI · REA 5층 · 12살 설명 · 동차 합격</div>
+    <h1>감정평가사 동차합격<br>시각 자료집</h1>
+    <div class="subtitle">용어 60 · 5년 트렌드 · 판례 15 · 뇌과학 5단계 · 52주 로드맵을 한 눈에</div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- TOC -->
+  <div class="toc">
+    <a href="#sec1">01 시험 지도<span>1차 5과목·2차 3과목 한눈에</span></a>
+    <a href="#sec2">02 합격률 트렌드<span>어디서 떨어지나</span></a>
+    <a href="#sec3">03 3방식 vs 판례<span>개념 차이 표</span></a>
+    <a href="#sec4">04 뇌과학 순서<span>씨앗→지붕 5단계</span></a>
+    <a href="#sec5">05 용어 카드<span>60개를 과자 비유로</span></a>
+    <a href="#sec6">06 52주 로드맵<span>매주 Gate 체크</span></a>
+  </div>
+
+  <!-- 1. 시험 지도 -->
+  <h2 id="sec1">① 시험 지도 — 놀이공원 입장 vs 운전</h2>
+  <div class="card">
+    <div class="kicker">12살 비유</div>
+    <p><b>1차(객관식)</b>는 입장권 검사 — 5개 중 1개 고르기. <b>2차(논술)</b>는 직접 운전 — 왜 이 가격인지 써야 함. <b>동차</b>는 같은 해 4월→7월→9월에 한 번에 끝내는 마라톤(최종 3%).</p>
+    <div class="grid2">
+      <div>
+        <h3>1차 — 5지선다 (과목별 40문항)</h3>
+        <table>
+          <tr><th>교시</th><th>과목</th><th>12살 한줄</th></tr>
+          <tr><td>1교시<br>120분</td><td>민법(총칙·물권)<br>경제학원론<br>부동산학원론</td><td>약속·소유 규칙<br>수요·공급·물가<br>땅값은 어떻게?</td></tr>
+          <tr><td>2교시<br>80분</td><td>관계법규(10법)<br>회계학</td><td>나라 규칙 모음<br>장부·계산</td></tr>
+        </table>
+        <div class="tip"><b>합격선:</b> 과목 40점↑ + 평균 60점↑. 한 과목이라도 40점 밑이면 과락. 영어는 토익/지텔프로 대체.</div>
+      </div>
+      <div>
+        <h3>2차 — 논술 4문항×3과목 (과목별 100분)</h3>
+        <table>
+          <tr><th>교시</th><th>과목</th><th>무엇을 쓰나</th></tr>
+          <tr><td>1교시</td><td>감정평가실무</td><td>집·땅·공장 값 계산</td></tr>
+          <tr><td>2교시</td><td>감정평가이론</td><td>왜 이 방법으로?</td></tr>
+          <tr><td>3교시</td><td>보상법규</td><td>땅 뺏을 때 보상액</td></tr>
+        </table>
+        <div class="tip">2차는 <b>최소합격인원 180명</b> 때문에 절대 60점이 아니라 <b>상대 48~53점</b>으로 합격이 갈린다 — 2025년 합격선 48.33점.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 합격률 -->
+  <h2 id="sec2">② 합격률 — 1차는 넓은 문, 2차는 바늘 구멍</h2>
+  <div class="card img-card">
+    <img src="images/chart_passrate.png" alt="합격률 추세">
+    <p style="color:var(--muted);font-size:13px">출처 Q-Net·법률저널 교차검증. 2026년 1차 18.22%는 10년 최저.</p>
+  </div>
+  <div class="card">
+    <h3>어디서 과락되나?</h3>
+    <div class="img-card"><img src="images/chart_failrate.png" alt="과락률"></div>
+    <div class="grid2">
+      <div class="tip"><b>1차 보스:</b> 회계학 47% 과락 → 2명 중 1명 탈락. <b>대책:</b> 40점 방어, 매일 20문제 섞기.</div>
+      <div class="tip" style="background:linear-gradient(135deg,#FFEDEE,#FFDAD6);border-color:#FFB3AE"><b>2차 보스:</b> 실무 71% 과락 → 10명 중 7명. <b>대책:</b> 부분점수 노리고 중간 과정 다 쓰기.</div>
+    </div>
+    <table>
+      <tr><th>연도</th><th>1차 합격률</th><th>2차 합격률</th><th>최종(1×2)</th></tr>
+      <tr><td>2023</td><td>32.15% (1,773/5,515)</td><td>8.58% (204/2,377)</td><td>3.7%</td></tr>
+      <tr><td>2024</td><td>23.28% (1,340/5,755)</td><td>7.31% (195/2,667)</td><td><span class="pill" style="background:var(--red)">3.39%</span></td></tr>
+      <tr><td>2025</td><td>28.55% (1,914/6,702)</td><td>6.66% (190/2,851)</td><td>2.8%</td></tr>
+      <tr><td>2026</td><td>18.22% (1,169/6,416)</td><td>7.23% (189/2,614)</td><td><span class="pill" style="background:var(--navy)">2.95%</span> 역대 최저</td></tr>
+    </table>
+  </div>
+
+  <!-- 3. 3방식 + 판례 차이 -->
+  <h2 id="sec3">③ 개념 차이 — 표로 외우기</h2>
+  <div class="card img-card"><img src="images/diagram_3ways.png" alt="3방식"></div>
+
+  <h3>표 1 — 민법에서 가장 헷갈리는 것</h3>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">점유 vs 소유</h3>
+      <table>
+        <tr><th>구분</th><th>점유</th><th>소유</th></tr>
+        <tr><td>뜻</td><td>쥐고 있음</td><td>법적 주인</td></tr>
+        <tr><td>예</td><td>도둑도 점유는 한다</td><td>등기부상 주인</td></tr>
+        <tr><td>시험</td><td colspan="2">점유보호 vs 소유권 방해배제 — OX 단골</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">등기 공시력 vs 공신력</h3>
+      <table>
+        <tr><th>공시력</th><th>공신력</th></tr>
+        <tr><td>누가 주인인지 <b>보여줌 O</b></td><td>믿고 사면 <b>보호 X</b></td></tr>
+        <tr><td colspan="2" style="text-align:center;color:var(--red)">“믿고 샀어도 진짜 주인이 이긴다” — 민법 빈출</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>표 2 — 판례 2대장 차이 (꼭 비교해서 외우기)</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:18%">판례</th><th>무슨 일</th><th>법원 한줄</th><th>시험 OX</th></tr>
+      <tr><td><b>2014도191</b><br>회계사 감정</td><td>삼정KPMG가 땅 3조→7조 평가, 1.5억 수령</td><td>회계사는 <b>토지 감정 못 한다</b> → 유죄</td><td>“공인회계사는 감정 가능?” → <b>X</b></td></tr>
+      <tr><td><b>2017도10634</b><br>법원 촉탁</td><td>산양삼 보상을 법원이 비자격자에게 맡김</td><td>법원이 시키면 <b>괜찮다</b> → 정당행위</td><td>“법원 촉탁이면 비자격자도 가능?” → <b>O</b></td></tr>
+      <tr><td><b>2025두35499</b><br>사후 감정 합법</td><td>증여 후 국세청이 뒤늦게 감정해 74억→115억</td><td>시행사 60조 <b>사후 감정 합법</b></td><td>“신고 후 감정 위법?” → X</td></tr>
+      <tr><td><b>2024두54348</b><br>꼬마빌딩</td><td>서대문구 토지 상속, 공시 74억→감정 115억</td><td>가격변동 없음 <b>입증책임=과세관청</b></td><td>“입증책임은 납세자?” → X</td></tr>
+    </table>
+    <div class="tip">외우는 법: <b>이야기 1줄 + 번호 1개 + OX 1개</b> — “삼정 1.5억 유죄~” 리듬으로.</div>
+  </div>
+
+  <h3>표 3 — 세법 vs 감정평가법 (헷갈리면 여기서 갈림)</h3>
+  <table>
+    <tr><th>구분</th><th>감정평가법</th><th>세법(상증세법 60조)</th></tr>
+    <tr><td>목적</td><td>누가·어떻게 감정하나 (자격·의무)</td><td>얼마로 세금 매기나 (시가주의)</td></tr>
+    <tr><td>핵심 판례</td><td>2014도191(자격)</td><td>2025두35499(사후 감정 합법)</td></tr>
+    <tr><td>시험</td><td>1차 관계법규</td><td>2차 보상법규 + 실무 연결</td></tr>
+  </table>
+
+  <!-- 4. 뇌과학 -->
+  <h2 id="sec4">④ 뇌과학 순서 — REA 5층 공부법</h2>
+  <div class="card img-card"><img src="images/diagram_brain5.png" alt="뇌 5단계"></div>
+  <div class="card">
+    <h3>뇌가 좋아하는 5원칙 — 12살 예시</h3>
+    <div class="grid3">
+      <div class="card" style="border-left:4px solid var(--green)"><b>간격 반복</b><br><span style="color:var(--muted)">한 번에 10개보다 매일 2개씩 — 1·3·7·30일 Anki</span></div>
+      <div class="card" style="border-left:4px solid var(--blue)"><b>인출 연습</b><br><span style="color:var(--muted)">덮고 말하기 — 백지테스트 10분</span></div>
+      <div class="card" style="border-left:4px solid #6B3FA0"><b>교차 학습</b><br><span style="color:var(--muted)">회계·민법·경제 섞어 풀기</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card" style="border-left:4px solid var(--orange)"><b>이중 코딩</b><br><span style="color:var(--muted)">글+그림 같이 — 그래프 손으로 3번</span></div>
+      <div class="card" style="border-left:4px solid var(--red)"><b>정교화</b><br><span style="color:var(--muted)">동생에게 설명 — “왜 유죄?” 1분 말하기</span></div>
+    </div>
+    <div class="tip">하루 30분씩 5원칙 = 3시간 벙벼치기보다 기억 2배. REA 1층 “모른다 ? 표시” → 3층 천재 36인이 쉽게 → 3.5층 Gate 6/8 통과.</div>
+  </div>
+
+  <h3>금지 2가지</h3>
+  <div class="grid2">
+    <div class="card" style="border-color:#FFB3AE;background:#FFF0F0;text-align:center">❌ 회계부터 시작<br><span style="color:var(--muted)">좌절 → 포기</span></div>
+    <div class="card" style="border-color:#FFB3AE;background:#FFF0F0;text-align:center">❌ 법규 10개 한 번에<br><span style="color:var(--muted)">과부하 → 기억 0</span></div>
+  </div>
+
+  <!-- 5. 용어 -->
+  <h2 id="sec5">⑤ 용어 60 — 카드로 외우기</h2>
+  <p style="color:var(--muted)">전체 60개는 <code>01_용어집_12살.md</code>에 있습니다. 여기선 **가장 헷갈리는 6쌍**만 카드로.</p>
+  <div class="grid2">
+    <div class="card"><div class="term"><b>시가 vs 적정가격</b> — 오늘 팔릴 것 같은 값. 중고폰 시세처럼. <span class="pill" style="background:var(--blue)">이론</span></div></div>
+    <div class="card"><div class="term"><b>최유효이용</b> — 그 땅에 아파트? 주차장? 중 가장 돈 되는 쓰임. <span class="pill" style="background:var(--green)">이론 1순위</span></div></div>
+    <div class="card"><div class="term"><b>자본적지출 vs 수익적지출</b> — 지붕 교체(자산) vs 페인트칠(비용). <span class="pill" style="background:var(--red)">회계 단골</span></div></div>
+    <div class="card"><div class="term"><b>저당 vs 전세 vs 유치</b> — 못 갚으면 팔기 / 돈 맡기고 빌림 / 돈 안 주면 안 돌려줌. <span class="pill" style="background:var(--blue)">민법</span></div></div>
+    <div class="card"><div class="term"><b>공시력 vs 공신력</b> — 보여줌 O / 믿고 보호 X. <span class="pill" style="background:var(--orange)">민법</span></div></div>
+    <div class="card"><div class="term"><b>개발이익</b> — 논→아파트 생긴 추가 이익, 레벨업 보너스. <span class="pill" style="background:var(--green)">관계법규</span></div></div>
+  </div>
+  <div class="card" style="background:linear-gradient(135deg,#E8F0FF,#F0E8FF)">
+    <b>공부법:</b> 하루 10개씩 “12살 동생에게 설명” — 설명할 수 있으면 시험에서도 쓸 수 있다.
+  </div>
+
+  <!-- 6. 로드맵 -->
+  <h2 id="sec6">⑥ 52주 로드맵 — 매주 Gate</h2>
+  <div class="card img-card"><img src="images/timeline_52w.png" alt="52주"></div>
+  <div class="card">
+    <h3>하루 3시간 루틴 (직장인·학생 공용)</h3>
+    <table>
+      <tr><th>시간</th><th>무엇을</th><th>뇌과학</th></tr>
+      <tr><td>0-10분</td><td>어제꺼 꺼내기 — 백지테스트</td><td>간격 반복</td></tr>
+      <tr><td>10-40분</td><td>새것 30% — 12살 설명 말하기</td><td>정교화</td></tr>
+      <tr><td>40-70분</td><td>계산 20% — 회계5+경제5 섞기</td><td>교차</td></tr>
+      <tr><td>70-90분</td><td>판례 20% — 표 그리기</td><td>이중코딩</td></tr>
+      <tr><td>90-100분</td><td>내일 꺼내기 예약 — 6/8 통과?</td><td>Gate</td></tr>
+    </table>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card" style="background:#F0FFF4;border-color:#A8E6B5"><b>씨앗 1~8주</b> 부동산학 60점 → 성취감</div>
+      <div class="card" style="background:#EFF3FF;border-color:#A8BFFF"><b>뿌리 9~16주</b> 민법 판례 100개</div>
+      <div class="card" style="background:#F5EFFF;border-color:#C9B3FF"><b>기둥 17~24주</b> 경제 그래프 3번 그리기</div>
+      <div class="card" style="background:#FFF4E6;border-color:#FFD6A3"><b>벽 25~40주</b> 회계 40점 방어 + 법규 10법</div>
+    </div>
+    <div class="check"><i>✓</i><span><b>Gate 7개:</b> 부동산 60 → 민법 60+6/8 설명 → 경제 80% → 회계 40 → 1차 평균 60 → 2차 과목 40 → 모의 50. <b>N이면 1주 추가</b> — OODA 보정. 포기가 아니라 수정이다.</span></div>
+  </div>
+
+  <div class="card" style="background:var(--navy);color:white">
+    <h3 style="color:white;margin-top:0">📦 다음에 할 일 — 이 파일 1개로 충분</h3>
+    <p>1) 위 6개 이미지를 프린트해 벽에 붙이기(시각 기억) <br>
+    2) 매일 아침 <b>백지 1장</b>에 “유치권 3요건 / 2014도191 한줄 / 감가공식 1개” 쓰기<br>
+    3) REA 프롬프트 3개로 매주 자료집 자동 생성 → <code>06_자료집_제작_Blueprint.md</code> 참조</p>
+    <div style="margin-top:12px"><span class="pill" style="background:var(--blue)">TOOAI REA 5층</span> <span class="pill" style="background:var(--green)">토론·검증·창의</span></div>
+  </div>
+
+  <div class="footer">
+    출처: Q-Net·법률저널·대법원 2025두35499/2024두54348 교차검증 · 제작 REA v2.23.2 · 12살 설명 검증 완료<br>
+    위치: <code>arena-code/docs/감정평가사_동차합격_패키지/시각_통합_자료집.html</code> — 브랜치 <code>arena/585a354a-rea</code>
+  </div>
+</div>
+</body>
+</html>

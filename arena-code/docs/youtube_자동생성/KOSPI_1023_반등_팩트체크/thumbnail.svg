@@ -1,0 +1,27 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="1280" height="86" fill="#1E40AF"/>
+  <text x="32" y="56" font-family="Noto Sans KR, sans-serif" font-size="36" font-weight="800" fill="white">[팩트체크] 10.23 코스피 4% 급락→0.3% 반등</text>
+  <rect x="32" y="120" width="760" height="420" rx="24" fill="white" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="64" y="168" font-family="Noto Sans KR" font-size="22" font-weight="700" fill="#64748B">KOSPI 2026.10.23 장중</text>
+  <text x="64" y="248" font-family="Noto Sans KR" font-size="84" font-weight="900" fill="#DC2626">5305</text>
+  <text x="360" y="248" font-family="Noto Sans KR" font-size="64" fill="#64748B">→</text>
+  <text x="440" y="248" font-family="Noto Sans KR" font-size="84" font-weight="900" fill="#1E40AF">5550</text>
+  <text x="64" y="300" font-family="Noto Sans KR" font-size="28" font-weight="700" fill="#475569">-4%대 추락 후 +0.30% 마감</text>
+  <path d="M 64 380 Q 180 420 280 360 T 520 340 T 720 280" fill="none" stroke="#1E40AF" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="64" cy="380" r="10" fill="#DC2626"/><circle cx="720" cy="280" r="10" fill="#16A34A"/>
+  <text x="64" y="450" font-family="Noto Sans KR" font-size="20" fill="#64748B">외국인 -9,934억 매도 / 기관 +8,726억 매수 [한국거래소]</text>
+  <rect x="830" y="120" width="418" height="420" rx="24" fill="#1E40AF"/>
+  <text x="862" y="168" font-family="Noto Sans KR" font-size="20" font-weight="700" fill="#BFDBFE">SK하이닉스</text>
+  <text x="862" y="230" font-family="Noto Sans KR" font-size="52" font-weight="900" fill="white">+4.42%</text>
+  <text x="862" y="270" font-family="Noto Sans KR" font-size="22" fill="#DBEAFE">1,277,000원 마감</text>
+  <rect x="862" y="300" width="354" height="56" rx="12" fill="white" opacity="0.14"/>
+  <text x="880" y="334" font-family="Noto Sans KR" font-size="18" font-weight="700" fill="white">솔리다임 상장 철회</text>
+  <text x="862" y="400" font-family="Noto Sans KR" font-size="18" fill="#BFDBFE">코스닥은 -1.62% 엇갈림</text>
+  <text x="862" y="430" font-family="Noto Sans KR" font-size="18" fill="#BFDBFE">나스닥 -2.6% SOX -6.7%</text>
+  <rect x="32" y="580" width="560" height="84" rx="16" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+  <text x="64" y="630" font-family="Noto Sans KR" font-size="32" font-weight="800" fill="#92400E">5단계 점검으로 확인</text>
+  <rect x="620" y="580" width="280" height="84" rx="16" fill="white" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="650" y="630" font-family="Noto Sans KR" font-size="24" font-weight="800" fill="#475569">투자 권유 아님</text>
+  <text x="32" y="700" font-family="Noto Sans KR" font-size="14" fill="#94A3B8">출처: 한국거래소 2026.10.23 / 연합인포맥스 / Reuters — 교육용 재구성</text>
+</svg>
