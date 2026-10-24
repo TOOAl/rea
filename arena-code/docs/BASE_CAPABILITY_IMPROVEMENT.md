@@ -100,6 +100,23 @@
 - [x] `src/loop/queryLoop.ts`에 자동 Lessons 주입/기록 Hook — 작업 시작 전 `retrieveLessons()→assembleSystemPrompt` 주입, 결과 반환 직전 `recordLesson()`으로 교훈 적립 (환경 `REA_LEARNING=0`으로 off 가능, 기본 ON) — 도메인 격리로 다른 도메인 교훈 오염 방지
 - [x] 테스트 7개 PASS (`tests/phase3.test.ts` — deriveDomain 4 + retrieve/record 축적·격리·포맷 3)
 
+### Phase 4 — 맥락·자료 찾기 스캐폴딩 (2026-10-24) — ✅ 스캐폴딩 완료, 기본 OFF (env로 ON)
+- [x] `src/tools/webSearch.ts` 신설 — WebSearch 도구 **API 없이 rea 흡수** (Tavily>Serper>Brave>Bing env 자동 선택, 키 없으면 RagIndex+docs/.memory-bank/.arena/rag-index 즉석 TF-IDF 스캔으로 file:// 결과 반환 — 외부 호출 0) + `src/tools/index.ts`에 CORE_TOOLS 등록 — WebFetch/Browser와 체인으로 검색→전문 확보, provenance 인용 강제
+- [x] `src/rag/chunker.ts` + `src/rag/index.ts` 신설 — 1600자 chunk(overlap 200, 문장 경계 보정) + RagIndex(TF-IDF 하이브리드, recency/vector 슬롯 예약, .arena/rag-index persist/load) — 로컬 문서·메모리·라이브러리에 대한 시맨틱 검색 기반
+- [x] `src/loop/structuralContext.ts` 신설 — `buildStructuralContext()` import 그래프(rg) + top-level 스캔 + `formatStructuralContext()` tiered budget(2.5k) — AGENTS.md만 보던 context에 코드 구조 목차/색인 추가, `provenanceTag()` 출처 표기 헬퍼
+- [x] `src/loop/tokenizer.ts` 신설 — `estimateTokensAccurate`(js-tiktoken 동적 로드, 없으면 CJK 보정 fallback) + `checkBudget(6000, 80%)` — 4-char 근사→정확 카운트로 토큰 효율 측정 고도화
+- [x] `src/loop/context.ts` 확장 — `RichContextOptions.structuralContext/ragContext` + `TieredBudget`, system prompt에 RAG 출처 인용 규칙 주입, estimateTokens CJK 보정 + tokenizer re-export
+- [x] `src/loop/queryLoop.ts`에 Phase 4 opt-in Hook — `REA_STRUCTURAL=1` 시 structuralContext 자동 수집, `REA_RAG=1` 시 RagIndex persist 검색→프롬프트 주입 (기본 OFF로 기존 32테스트 보존, fail-open)
+- [x] 테스트 10개 PASS (`tests/scaffolding.test.ts` — chunker 2 + RagIndex 2 + WebSearch 3(API 없는 rea 흡수 포함) + Tokenizer 2 + Structural 1) + 전체 typecheck PASS
+- [x] `src/loop/research.ts` 신설 — 고정 연구 루프 `Research` 도구 (`WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, file://는 Read로 API 0 흡수, 웹은 WebFetch) + `decomposeQuery()` 확장, CORE_TOOLS 등록
+- [x] `src/rag/index.ts`에 `RagIndex.fromWorkspace()` 추가 — .memory-bank + harness2/library + docs 120파일 자동 색인 (API 0, rea 흡수)
+- [x] 테스트 6개 PASS (`tests/research.test.ts` — decompose 2 + research API-free 2 + Research 도구 등록 1 + fromWorkspace 1)
+- [x] `src/rag/embedder.ts` 신설 — HashEmbedder(128차원, FNV+2-gram, L2 정규화, 결정적, API 0) + `getEmbedder()/setEmbedder()` 교체 슬롯 (Xenova/OpenAI 호환)
+- [x] `src/rag/store.ts` 신설 — VectorStore(.arena/rag-index/<domain>.vectors.json) + JsonVssAdapter(sqlite-vss 교체 가능한 인터페이스, 현재 JSON 기반, 외부 의존 0)
+- [x] `src/rag/index.ts` 확장 — `buildVectors()/loadVectors()/searchHybrid(0.5:0.5)` 하이브리드 (TF-IDF 0.5 + dense 0.5), persist 시 vectors.json 함께 저장, `js-tiktoken` 정확 카운트 연동
+- [x] `src/loop/tokenizer.ts` js-tiktoken 연동 — `encodingForModel("gpt-4o")` 설치 확인, `estimateTokensAccurate()`가 fallback과 다른 값으로 정확도 검증
+- [x] 테스트 5개 PASS (`tests/hybrid.test.ts` — js-tiktoken 정확도 1 + HashEmbedder 1 + buildVectors/searchHybrid 1 + persist/vectors.json 1 + getEmbedder 슬롯 1) + 42 tests PASS
+
 ## 4. 기여 범위·제약 준수
 
 - 본 개선은 **도메인/어플리케이션 레이어** 내부 변경 — Provider/프로세스 경계 밖 실행·주입·변조 없음. `CONTRIBUTING.md`의 fail-closed 룰에 따라 maintainer scope 결정 없이도 통합 가능.

@@ -61,6 +61,14 @@ async function loadAgentMd(cwd: string): Promise<string> {
 export interface RichContextOptions {
   evidenceSummary?: string; // EvidenceLedger.summarizeForPrompt() 결과
   intentHint?: string; // IntentAnalyzer 결과 요약 (kind/confidence)
+  structuralContext?: string; // StructuralContext 포맷 문자열 (Pillar 1.1)
+  ragContext?: string; // RagIndex 검색 결과 요약
+}
+
+export interface TieredBudget {
+  alwaysOn: number; // 6k 권고
+  structural: number; // 2.5k
+  rag: number; // 2k
 }
 
 async function getGitStatus(cwd: string): Promise<string> {
@@ -93,23 +101,38 @@ export async function assembleSystemPrompt(cwd: string, extra?: string, rich?: R
   if (rich?.intentHint) {
     prompt += `\n\n## Intent Hint (from Intent Analyzer)\n${rich.intentHint}\n- If confidence < 0.5, prefer asking one clarifying question over guessing.`;
   }
+  // Scaffolding Phase 4: Structural + RAG tiered context (budget 내 주입)
+  if (rich?.structuralContext) {
+    prompt += `\n\n${rich.structuralContext}`;
+  }
+  if (rich?.ragContext) {
+    prompt += `\n\n## Retrieved Context (RAG — verify provenance before citing)\n${rich.ragContext}\n- Rule: Cite source path + date when using retrieved text; do not present unverified retrieval as fact.`;
+  }
 
   if (extra) prompt += `\n\n## Additional Instructions\n${extra}`;
 
   return prompt;
 }
 
-// --- Compaction ---
-
+// --- Token estimation — re-export from tokenizer.ts (scaffolding Phase 4)
+// Fallback inline 유지 (순환 참조 방지): tokenizer가 js-tiktoken 없으면 이 로직과 동일
 export function estimateTokens(messages: Message[]): number {
-  // Rough: 1 token ≈ 4 chars (Claude Code도 근사치 사용)
   let chars = 0;
   for (const m of messages) {
     if (typeof m.content === "string") chars += m.content.length;
     else for (const b of m.content) chars += (b.text?.length ?? 0) + (b.content?.length ?? 0) + JSON.stringify(b.input ?? "").length;
   }
-  return Math.ceil(chars / 4);
+  // CJK 보정: 한글 비중
+  let nonAscii = 0;
+  for (const m of messages) {
+    const s = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+    for (const ch of s) if (ch.charCodeAt(0) > 127) nonAscii++;
+  }
+  return Math.ceil((chars + nonAscii * 0.5) / 4);
 }
+export { estimateTokensAccurate, checkBudget } from "./tokenizer.js";
+
+// --- Compaction ---
 
 export async function compactMessages(
   messages: Message[],
