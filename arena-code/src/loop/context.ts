@@ -53,6 +53,16 @@ async function loadAgentMd(cwd: string): Promise<string> {
   }
 }
 
+/**
+ * Pillar 1 enhancement — Evidence Ledger integration
+ * 기존 assembleSystemPrompt는 증거 출처/잘림을 보존하지 못했음 → EvidenceLedger 요약 주입으로 보완
+ * 사용: queryLoop가 ledger.summarizeForPrompt()를 systemExtra에 추가
+ */
+export interface RichContextOptions {
+  evidenceSummary?: string; // EvidenceLedger.summarizeForPrompt() 결과
+  intentHint?: string; // IntentAnalyzer 결과 요약 (kind/confidence)
+}
+
 async function getGitStatus(cwd: string): Promise<string> {
   try {
     const { exec } = await import("node:child_process");
@@ -65,7 +75,7 @@ async function getGitStatus(cwd: string): Promise<string> {
   }
 }
 
-export async function assembleSystemPrompt(cwd: string, extra?: string): Promise<string> {
+export async function assembleSystemPrompt(cwd: string, extra?: string, rich?: RichContextOptions): Promise<string> {
   let prompt = BASE_SYSTEM_PROMPT;
 
   // AGENT.md hierarchy
@@ -75,6 +85,14 @@ export async function assembleSystemPrompt(cwd: string, extra?: string): Promise
   // Environment info (DYNAMIC zone)
   const gitStatus = await getGitStatus(cwd);
   prompt += `\n\n## Environment\n- Working directory: ${cwd}\n- Git status:\n${gitStatus}\n- Date: ${new Date().toISOString().slice(0, 10)}\n- Platform: ${process.platform} ${process.arch} | Node ${process.version}`;
+
+  // Pillar 1: Evidence Ledger summary (well-grounded context)
+  if (rich?.evidenceSummary) {
+    prompt += `\n\n## Evidence Ledger (provenance-preserved, do not hallucinate beyond this)\n${rich.evidenceSummary}\n- Rule: Distinguish observations (direct tool output) vs derivations vs inferences. If truncated flag is present, acknowledge uncertainty and do not invent missing parts.`;
+  }
+  if (rich?.intentHint) {
+    prompt += `\n\n## Intent Hint (from Intent Analyzer)\n${rich.intentHint}\n- If confidence < 0.5, prefer asking one clarifying question over guessing.`;
+  }
 
   if (extra) prompt += `\n\n## Additional Instructions\n${extra}`;
 
@@ -111,17 +129,20 @@ export async function compactMessages(
   const middle = messages.slice(keepHead, -keepTail);
   const tail = messages.slice(-keepTail);
 
-  // Middle을 간단히 요약 (문자 잘라내기)
+  // Middle을 간단히 요약하되, 파일경로/결정/미결은 보존 (Pillar 1)
+  const keepPatterns = [/[a-zA-Z0-9_-]+\.[a-z]+:\d+/, /decision|pending|TODO|EvidenceLedger/i];
   const middleText = middle
     .map((m) => {
-      if (typeof m.content === "string") return `${m.role}: ${m.content.slice(0, 500)}`;
-      return `${m.role}: ${m.content.map((b) => b.text ?? b.content ?? JSON.stringify(b.input ?? "")).join(" ").slice(0, 500)}`;
+      const raw = typeof m.content === "string" ? m.content : m.content.map((b) => b.text ?? b.content ?? JSON.stringify(b.input ?? "")).join(" ");
+      const keepLines = raw.split("\n").filter((l) => keepPatterns.some((re) => re.test(l)));
+      const base = raw.slice(0, 500);
+      return `${m.role}: ${base}${keepLines.length ? `\n[keep] ${keepLines.slice(0, 3).join(" | ")}` : ""}`;
     })
     .join("\n");
 
   const summaryMsg: Message = {
     role: "user",
-    content: `[Context compacted: ${middle.length} messages summarized]\n${middleText.slice(0, 3000)}`,
+    content: `[Context compacted: ${middle.length} messages summarized — filePaths/decisions/pendingTasks preserved]\n${middleText.slice(0, 3000)}`,
   };
 
   return [...head, summaryMsg, ...tail];

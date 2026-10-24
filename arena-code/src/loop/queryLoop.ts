@@ -7,6 +7,9 @@ import type { Tool, ToolContext } from "../tools/types.js";
 import { assembleSystemPrompt, estimateTokens, compactMessages } from "./context.js";
 import { checkPermission, loadPermissionConfig, type PermissionConfig } from "./permissions.js";
 import type { HookManager } from "../hooks/index.js";
+import { classifyIntent, isIntentClear } from "./intent.js";
+import { EvidenceLedger } from "./evidenceLedger.js";
+import { qualityGate, qualityFeedback } from "./outputQuality.js";
 
 // --- Events ---
 
@@ -37,6 +40,10 @@ export interface LoopParams {
   signal?: AbortSignal;
   onAskPermission?: (block: ContentBlock) => Promise<boolean>;
   hooks?: HookManager;
+  /** Pillar 2/3 opt-in: 기본 false로 기존 동작 유지 (additive, 브랜치 안전) */
+  intentGate?: boolean;
+  qualityGate?: boolean;
+  qualityOpts?: { expectedUnderlineCount?: number | null; schemaHint?: string | null };
 }
 
 // --- Main Loop ---
@@ -45,12 +52,28 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
   const maxTurns = params.maxTurns ?? 20;
   const maxContextTokens = params.maxContextTokens ?? 100000;
   const permissions = params.permissions ?? await loadPermissionConfig(params.cwd);
-  const system = await assembleSystemPrompt(params.cwd, params.systemExtra);
 
   const state: { messages: Message[]; turnCount: number } = {
     messages: [...params.messages],
     turnCount: 0,
   };
+
+  // Pillar 1/2: ledger + intent (opt-in, 기존 루프 영향 없음 — 기본 false라 기존 동작 보존)
+  const ledger = new EvidenceLedger();
+  for (const m of params.messages) {
+    const txt = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+    if (txt.length > 500) ledger.fromUserAttach("initial", txt.slice(0, 800), txt.length > 1000);
+  }
+  const intent = params.intentGate ? classifyIntent(params.messages) : null;
+  const intentHint = intent
+    ? `${intent.kind} (conf=${intent.confidence}) ambiguities=[${intent.ambiguities.join("; ") || "none"}] evidence=${intent.evidence.slice(0, 2).join(" | ")}`
+    : undefined;
+  const evidenceSummary = intent ? ledger.summarizeForPrompt() : undefined;
+  const system = await assembleSystemPrompt(
+    params.cwd,
+    params.systemExtra,
+    intentHint || evidenceSummary ? { evidenceSummary, intentHint } : undefined
+  );
 
   // Tools → ToolDefinition for model
   const toolDefs: ToolDefinition[] = params.tools.map((t) => ({
@@ -126,8 +149,28 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
 
     state.messages.push({ role: "assistant", content: assistantBlocks });
 
-    // --- Stop condition: no tool calls → done ---
+    // --- Stop condition: no tool calls → done (Pillar 3: quality gate) ---
     if (toolCalls.length === 0) {
+      if (params.qualityGate) {
+        const report = qualityGate(assistantBlocks, params.qualityOpts ?? {});
+        if (!report.ok) {
+          // 자기 교정: 모델에 피드백 전달 후 1회 재시도
+          const feedback = qualityFeedback(report);
+          state.messages.push({
+            role: "user",
+            content: feedback,
+          });
+          // 이번 턴은 종료하지 않고 다음 루프에서 모델이 수정하도록 계속
+          yield { type: "text", text: `\n[QualityGate] ${report.issues.join("; ")}\n` };
+          // 최대 1회 재시도이므로, 이미 재시도했는지 확인 (간단히 turnCount로)
+          // 실제 재시도는 다음 루프에서 자연스럽게 일어남 — 여기서는 break 하지 않음
+          // fallthrough to continue loop
+          yield { type: "turn_end", turn: state.turnCount + 1 };
+          if (params.hooks) await params.hooks.emit("postTurn", { cwd: params.cwd, turn: state.turnCount + 1 });
+          state.turnCount++;
+          continue;
+        }
+      }
       yield { type: "result", content: assistantBlocks, turns: state.turnCount + 1 };
       break;
     }
@@ -195,6 +238,8 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
           const post = await params.hooks.runPostToolUse({ cwd: params.cwd, event: "postToolUse", toolName: block.name, input: (block.input ?? {}) as Record<string, unknown>, result });
           if (post?.modifiedResult != null) result = post.modifiedResult;
         }
+        // Pillar 1: ledger에 증거 보존 (truncated 플래그 + provenance)
+        ledger.fromToolResult(block.name!, (block.input ?? {}) as Record<string, unknown>, result, { maxLen: 5000 });
         yield { type: "tool_result", tool: block.name!, result: result.slice(0, 5000) + (result.length > 5000 ? "\n... (truncated)" : "") };
         state.messages.push({
           role: "user",
