@@ -14,6 +14,8 @@ import { WebFetchTool } from "./webfetch.js";
 import { WebSearchTool } from "./webSearch.js";
 import { ResearchTool } from "../loop/research.js";
 import { BrainsTool } from "./brains.js";
+import { VisualRepairTool } from "./visualRepair.js";
+import { StyleSearchTool } from "./styleRag.js";
 import { BROWSER_TOOLS } from "./browser.js";
 import { SERENA_TOOLS } from "./serena.js";
 import { ATLASSIAN_TOOLS } from "./atlassian.js";
@@ -64,6 +66,8 @@ export const CORE_TOOLS_LIST: Tool[] = [
   WebSearchTool,
   ResearchTool,
   BrainsTool,
+  VisualRepairTool,
+  StyleSearchTool,
   ...BROWSER_TOOLS,
   ...SERENA_TOOLS,
   ...ATLASSIAN_TOOLS,
