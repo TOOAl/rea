@@ -1,0 +1,225 @@
+{
+  "scores": {
+    "premise-error-guardian": [
+      93
+    ],
+    "memory-article-input": [
+      92
+    ],
+    "premise-critical-thinker": [
+      92
+    ],
+    "council-chair": [
+      95
+    ]
+  },
+  "swapHistory": [],
+  "at": "2026-10-24T16:33:42.374Z",
+  "versions": [
+    {
+      "id": "memory-keeper",
+      "v": "4.0.0"
+    },
+    {
+      "id": "error-analyzer",
+      "v": "4.0.0"
+    },
+    {
+      "id": "memory-archivist",
+      "v": "4.0.0"
+    },
+    {
+      "id": "memory-language",
+      "v": "4.0.0"
+    },
+    {
+      "id": "memory-context",
+      "v": "4.0.0"
+    },
+    {
+      "id": "memory-article-input",
+      "v": "4.0.0"
+    },
+    {
+      "id": "premise-error-guardian",
+      "v": "4.0.0"
+    },
+    {
+      "id": "premise-contradiction-scanner",
+      "v": "4.0.0"
+    },
+    {
+      "id": "premise-critical-thinker",
+      "v": "4.0.0"
+    },
+    {
+      "id": "design-architect",
+      "v": "4.0.0"
+    },
+    {
+      "id": "strategist-history",
+      "v": "4.0.0"
+    },
+    {
+      "id": "strategist-management",
+      "v": "4.0.0"
+    },
+    {
+      "id": "strategist-engineering",
+      "v": "4.0.0"
+    },
+    {
+      "id": "creative-dreamer",
+      "v": "4.0.0"
+    },
+    {
+      "id": "critical-judge",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-code",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-math",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-art",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-cinematic",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-visual",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-audio",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-generator",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-verifier",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-refiner",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-tot",
+      "v": "4.0.0"
+    },
+    {
+      "id": "critical-validator",
+      "v": "4.0.0"
+    },
+    {
+      "id": "error-eco",
+      "v": "4.0.0"
+    },
+    {
+      "id": "design-sisr",
+      "v": "4.0.0"
+    },
+    {
+      "id": "memory-history",
+      "v": "4.0.0"
+    },
+    {
+      "id": "design-knowledge",
+      "v": "4.0.0"
+    },
+    {
+      "id": "error-factcheck",
+      "v": "4.0.0"
+    },
+    {
+      "id": "critical-stats",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-수학",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-물리·화학·광학",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-생물·의학",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-계산·정보·공학",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-철학·사회사상",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-문자·문학",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-미술·건축",
+      "v": "4.0.0"
+    },
+    {
+      "id": "genius-history-음악",
+      "v": "4.0.0"
+    },
+    {
+      "id": "gate-35",
+      "v": "4.0.0"
+    },
+    {
+      "id": "council-chair",
+      "v": "4.0.0"
+    }
+  ],
+  "rankSnapshot": [
+    {
+      "id": "council-chair",
+      "name": "의회 의장",
+      "layer": 5,
+      "avg": 95,
+      "count": 1
+    },
+    {
+      "id": "premise-error-guardian",
+      "name": "전제 오류 천재 (1층 파수꾼)",
+      "layer": 1,
+      "avg": 93,
+      "count": 1
+    },
+    {
+      "id": "memory-article-input",
+      "name": "기사·주제 입력 천재 (1층 안내데스크)",
+      "layer": 1,
+      "avg": 92,
+      "count": 1
+    },
+    {
+      "id": "premise-critical-thinker",
+      "name": "비판적 사고 천재 (1층 질문꾼)",
+      "layer": 1,
+      "avg": 92,
+      "count": 1
+    },
+    {
+      "id": "memory-keeper",
+      "name": "기억 도서관 사서",
+      "layer": 1,
+      "avg": 50,
+      "count": 0
+    }
+  ]
+}

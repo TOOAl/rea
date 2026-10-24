@@ -3,30 +3,45 @@
     "name": "사실률 (코스피 분리표)",
     "passed": true,
     "score": 95,
-    "note": "분리표 생성"
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "acc"
   },
   {
     "name": "수능 밑줄 5개",
     "passed": true,
     "score": 100,
-    "note": "밑줄 PASS"
+    "note": "밑줄 PASS",
+    "bucket": "beauty"
   },
   {
     "name": "불확실성 3단계 (AI 50%/시세 10%)",
     "passed": true,
-    "score": 92,
-    "note": "premise 3명 + [추정] 표기"
+    "score": 94,
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "calibration"
   },
   {
-    "name": "VisualQA 90+",
+    "name": "VisualQA 90+ (깨짐 없음)",
     "passed": true,
     "score": 100,
-    "note": "score 100"
+    "note": "score 100",
+    "bucket": "beauty"
   },
   {
-    "name": "Gate 기여도",
+    "name": "Gate 기여도 (8인 선발)",
     "passed": true,
     "score": 90,
-    "note": "Gate 1건"
+    "note": "Gate 1건",
+    "bucket": "gate"
+  },
+  {
+    "name": "허구 기각 (hallucination guard)",
+    "passed": true,
+    "score": 94,
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "calibration"
   }
 ]

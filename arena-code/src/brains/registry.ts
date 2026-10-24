@@ -4,6 +4,8 @@
  */
 import { Brain, BrainId, BrainLayer, BrainRole } from "./types.js";
 import { BrainMemory } from "./memory.js";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 
 export class BrainRegistry {
   private brains = new Map<BrainId, Brain>();
@@ -128,5 +130,62 @@ export class BrainRegistry {
     const ranked = this.rank();
     const n = Math.max(1, Math.floor(ranked.length * 0.1));
     return ranked.slice(-n).map(r => ({ id: r.id, avg: r.avg }));
+  }
+
+  // ── 고도화 M/L: 지속성 + 트렌드 + 카나리 ──
+  /** persist scores to file */
+  persistScores(root = process.cwd()): string {
+    try {
+      const dir = resolve(join(root, ".memory-bank/genius-feedback"));
+      mkdirSync(dir, { recursive: true });
+      const p = join(dir, "scores.json");
+      const data = {
+        scores: Object.fromEntries(this.scores),
+        swapHistory: this.swapHistory,
+        at: new Date().toISOString(),
+        versions: this.all().map(b=> ({id:b.id, v:b.version})),
+        rankSnapshot: this.rank(5).map(r=> ({...r})),
+      };
+      writeFileSync(p, JSON.stringify(data, null, 2), "utf-8");
+      return p;
+    } catch { return ""; }
+  }
+  loadScores(root = process.cwd()): boolean {
+    try {
+      const p = resolve(join(root, ".memory-bank/genius-feedback/scores.json"));
+      if (!existsSync(p)) return false;
+      const j = JSON.parse(readFileSync(p, "utf-8"));
+      if (j.scores) {
+        for (const [k,v] of Object.entries(j.scores)) this.scores.set(k as BrainId, v as number[]);
+      }
+      if (Array.isArray(j.swapHistory)) this.swapHistory = j.swapHistory;
+      return true;
+    } catch { return false; }
+  }
+  /** 트렌드: 최근 5개 평균 vs 이전 5개 */
+  trend(id: BrainId): { delta: number; direction: "up"|"down"|"flat" } {
+    const arr = this.scores.get(id) ?? [];
+    if (arr.length < 6) return { delta: 0, direction: "flat" };
+    const recent = arr.slice(-3).reduce((a,b)=>a+b,0)/3;
+    const prev = arr.slice(-6,-3).reduce((a,b)=>a+b,0)/3;
+    const delta = Math.round(recent-prev);
+    return { delta, direction: delta>3 ? "up" : delta<-3 ? "down" : "flat" };
+  }
+  /** 섀도우(카나리) 평가: 새 두뇌를 실제 교체 없이 점수 비교 */
+  async canaryScore(newBrain: Brain, bench: (reg: BrainRegistry)=>Promise<number>): Promise<{ oldScore:number; newScore:number; shouldSwap:boolean }> {
+    const oldScore = this.score(newBrain.id as BrainId);
+    // 임시 레지스트리 복제
+    const shadow = new BrainRegistry();
+    for (const b of this.all()) shadow.register(b.id===newBrain.id ? newBrain : b);
+    // scores 복제 (얕게)
+    (shadow as any).scores = new Map(this.scores);
+    const newScore = await bench(shadow);
+    return { oldScore, newScore, shouldSwap: newScore > oldScore + 5 };
+  }
+  /** 자동 승격 조건: 3주 연속 85+ & 참여 3회+ */
+  isPromotionCandidate(id: BrainId, weeks=3, threshold=85): boolean {
+    const arr = this.scores.get(id) ?? [];
+    if (arr.length < weeks) return false;
+    return arr.slice(-weeks).every(s=> s>=threshold);
   }
 }
