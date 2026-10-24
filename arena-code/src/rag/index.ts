@@ -173,6 +173,40 @@ export class RagIndex {
     idx.addDocuments(files.map(f => ({ source: f.path, text: f.content })));
     return idx;
   }
+
+  /** workspace 자동 색인: .memory-bank + .arena/harness2/library + docs — API 0으로 rea 흡수 */
+  static async fromWorkspace(cwd: string, opts?: RagIndexOptions): Promise<RagIndex> {
+    const { readFile } = await import("node:fs/promises");
+    const { existsSync, readdirSync, statSync } = await import("node:fs");
+    const fg = (await import("fast-glob")).default;
+    const idx = new RagIndex(opts);
+    const patterns = [
+      ".memory-bank/**/*.md",
+      ".arena/harness2/library/**/EXPERIENCE.md",
+      ".arena/harness2/library/**/INDEX.md",
+      "arena-code/.memory-bank/**/*.md",
+      "arena-code/docs/**/*.md",
+      "docs/**/*.md",
+    ];
+    const files: string[] = [];
+    for (const pat of patterns) {
+      try {
+        const found = await fg(pat, { cwd, absolute: false, ignore: ["**/node_modules/**", "**/.git/**", "**/dist/**"], dot: false });
+        files.push(...found);
+      } catch {}
+    }
+    const uniq = [...new Set(files)].slice(0, 120);
+    for (const rel of uniq) {
+      try {
+        const abs = `${cwd}/${rel}`;
+        if (!existsSync(abs) || statSync(abs).isDirectory()) continue;
+        const text = await readFile(abs, "utf-8");
+        if (text.trim().length < 80) continue;
+        idx.addDocuments([{ source: rel, text: text.slice(0, 12000) }]);
+      } catch {}
+    }
+    return idx;
+  }
 }
 
 export { chunkText } from "./chunker.js";

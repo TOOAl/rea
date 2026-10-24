@@ -108,6 +108,9 @@
 - [x] `src/loop/context.ts` 확장 — `RichContextOptions.structuralContext/ragContext` + `TieredBudget`, system prompt에 RAG 출처 인용 규칙 주입, estimateTokens CJK 보정 + tokenizer re-export
 - [x] `src/loop/queryLoop.ts`에 Phase 4 opt-in Hook — `REA_STRUCTURAL=1` 시 structuralContext 자동 수집, `REA_RAG=1` 시 RagIndex persist 검색→프롬프트 주입 (기본 OFF로 기존 32테스트 보존, fail-open)
 - [x] 테스트 10개 PASS (`tests/scaffolding.test.ts` — chunker 2 + RagIndex 2 + WebSearch 3(API 없는 rea 흡수 포함) + Tokenizer 2 + Structural 1) + 전체 typecheck PASS
+- [x] `src/loop/research.ts` 신설 — 고정 연구 루프 `Research` 도구 (`WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, file://는 Read로 API 0 흡수, 웹은 WebFetch) + `decomposeQuery()` 확장, CORE_TOOLS 등록
+- [x] `src/rag/index.ts`에 `RagIndex.fromWorkspace()` 추가 — .memory-bank + harness2/library + docs 120파일 자동 색인 (API 0, rea 흡수)
+- [x] 테스트 6개 PASS (`tests/research.test.ts` — decompose 2 + research API-free 2 + Research 도구 등록 1 + fromWorkspace 1)
 
 ## 4. 기여 범위·제약 준수
 

@@ -11,6 +11,7 @@
 | `src/rag/index.ts` | RagIndex — TF-IDF 하이브리드 + vector 슬롯 + persist | 메모리, `.arena/rag-index/<domain>.json` 저장 |
 | `src/loop/structuralContext.ts` | import 그래프 + top-level 스캔 → 구조 목차 | `REA_STRUCTURAL=1` 시 자동 주입 |
 | `src/loop/tokenizer.ts` | 정확한 토큰 측정 + 예산 검사 | `js-tiktoken` 있으면 정확, 없으면 CJK 보정 |
+| `src/loop/research.ts` + `src/rag/index.ts#fromWorkspace` | 고정 연구 루프 `Research` — `WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록`, `RagIndex.fromWorkspace()`로 `.memory-bank + harness2/library + docs` 자동 색인 | `Research` 도구로 등록, API 0으로도 동작 |
 
 `src/loop/context.ts`는 두 컨텍스트를 `RichContextOptions.structuralContext / ragContext`로 받도록 확장,
 `src/loop/queryLoop.ts`는 두 env가 1일 때만 자동 수집한다 (기존 동작 보존).
@@ -62,6 +63,23 @@ const hits = idx.search("어법 밑줄 5개", 3);
 `queryLoop`에서 `REA_RAG=1`로 켜면 `domain`별 persist 인덱스를 자동 검색해 프롬프트에 주입한다.
 아직 dense vector가 없으므로 TF-IDF만 동작 — 나중에 `vectorScores` 맵을 넘기면 하이브리드(0.5:0.5)로 합성된다.
 
+### Research Loop — 고정 연구 (2번에서 추가)
+
+```ts
+{ name: "Research", input: { query: "코스피 2024-10-23 반등 원인 비교", count: 5, fetchCount: 5 } }
+// 또는 코드에서
+import { research } from "./src/loop/research.js";
+const report = await research("코스피 반등 원인", { cwd: process.cwd() });
+// report.comparisonTable (markdown) + report.sourcesBlock (인용 필수) + report.summary
+// report.hits[].content는 WebFetch/Read로 병렬 확보, file://는 Read로 API 0 흡수
+decomposeQuery("코스피 반등") // → ["코스피 반등", "코스피 반등 원인 분석", "코스피 반등 비교 전망"]
+
+// 전체 workspace를 한 번에 색인
+import { RagIndex } from "./src/rag/index.js";
+const idx = await RagIndex.fromWorkspace(process.cwd(), { domain: "default" }); // API 0
+idx.search("BASE_CAPABILITY_IMPROVEMENT", 3);
+```
+
 ### Structural Context — 맥락 이해
 
 ```bash
@@ -88,15 +106,17 @@ checkBudget(messages, 6000); // { tokens, budget, ratio, ok, message }
 
 - [ ] `js-tiktoken` + `sqlite-vss` 또는 `chromadb` 설치 후 `RagIndex.vectorScores` 연결
 - [ ] `BRAVE_API_KEY` 발급 후 `WebSearch` E2E 테스트 (현재는 mock)
-- [ ] `RagIndex`를 `harness2/library` + `.memory-bank` 자동 색인에 연결
-- [ ] Research Loop: `WebSearch 5개 → 병렬 WebFetch → 비교표 → 출처 블록` 고정 루프를 `src/loop/research.ts`로 승격
+- [x] `RagIndex.fromWorkspace()`로 `harness2/library + .memory-bank + docs` 자동 색인 연결 (API 0)
+- [x] Research Loop: `WebSearch 5개 → 병렬 WebFetch 5개 → 비교표 → 출처 블록` 고정 루프 `src/loop/research.ts` + `Research` 도구 등록 (API 없이도 `file://` → `Read`로 흡수)
 
 ## 4. 테스트
 
 ```
-npm test -- tests/scaffolding.test.ts          # 9 tests
-npm test -- tests/pillar.test.ts tests/phase2.test.ts tests/phase3.test.ts  # 32 tests (기존 보존)
+npm test -- tests/scaffolding.test.ts          # 10 tests (API-free 흡수 포함)
+npm test -- tests/research.test.ts             # 6 tests (Research Loop + fromWorkspace)
+npm test -- tests/pillar.test.ts tests/phase2.test.ts tests/phase3.test.ts  # 31 tests (기존 보존)
 ./node_modules/.bin/tsc --noEmit               # typecheck
 ```
 
-모두 PASS 확인 (2026-10-24).
+모두 PASS (2026-10-24) — Research 6 + Scaffolding 10 + Pillar 8 + Phase2 6 + Phase3 7 = 37.
+```
