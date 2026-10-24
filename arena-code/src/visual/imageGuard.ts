@@ -13,30 +13,20 @@ export interface ImageGuardResult {
   blocked: boolean; // 사람에게 보이면 안 되는 수준
 }
 
-// ── 깨짐 패턴 (휴리스틱) ──
+// ── 깨짐 패턴 (휴리스틱 + REA 흡수: Ghidra/REAMaterial 패턴 확장) ──
 const BROKEN_PATTERNS: Array<{ re: RegExp; msg: string }> = [
-  { re: /[\uFFFD□◇]/, msg: "깨진 글자(□/◇) 발견 — 폰트/인코딩 실패" },
+  { re: /[\uFFFD□◇◻︎︎︎]/, msg: "깨진 글자(□/◇) 발견 — 폰트/인코딩 실패" },
   { re: /[ㄱ-ㅎㅏ-ㅣ]{2,}/, msg: "분리된 자모(ㄱㄴ·ㅏㅣ) — 한글 조합 실패" },
-  {
-    re: /靑.*면밀|靑.*주시/,
-    msg: "한자 靑 단독 사용 — '청와대' 한글로 통일 필요 (과거 깨짐 사례)",
-  },
-  {
-    re: /[A-Z]{5,}/,
-    msg: "영문 대문자 5연속 — 한글 문맥에서 깨짐 의심 (OCR 오독)",
-  },
+  { re: /靑.*면밀|靑.*주시/, msg: "한자 靑 단독 사용 — '청와대' 한글로 통일" },
+  { re: /[A-Z]{5,}/, msg: "영문 대문자 5연속 — OCR 오독" },
+  { re: /[ㅜㅠㅓㅕ]{2,}/, msg: "모음 깨짐(ㅜㅠ) — 렌더 실패" },
+  { re: /([가-힣])\1{3,}/, msg: "동일 한글 4연속 — 렌더 반복 버그" },
 ];
 
 const REQUIRED_KEYWORDS_BY_TOPIC: Record<string, string[]> = {
-  "naver-0016398151": [
-    "김정은",
-    "방중",
-    "청와대",
-    "라오닝",
-    "단둥",
-    "신압록강",
-    "APEC",
-  ],
+  "naver-0016398151": ["김정은", "방중", "청와대", "라오닝", "단둥", "신압록강", "APEC"],
+  "naver-123-0002392509": ["새마을금고", "누적", "3.6조", "292곳", "연체율", "부실채권"],
+  "naver-374-0000539594": ["SK하이닉스", "솔리다임", "중복상장", "127만", "4.42%"],
 };
 
 export function checkBrokenHangul(text: string): string[] {
@@ -85,14 +75,14 @@ export function checkPersonMismatch(
  * @param opts.expectedKeywords — 기사에서 반드시 보여야 할 단어
  * @param opts.expectedPerson — 기사 속 핵심 인물 (사실 체크용)
  */
-export function verifyImageText(
+export async function verifyImageText(
   ocrText: string,
   opts: {
     expectedKeywords?: string[];
     expectedPerson?: string;
     topic?: string;
   } = {},
-): ImageGuardResult {
+): Promise<ImageGuardResult> {
   const issues: string[] = [];
   const expected =
     opts.expectedKeywords ??
@@ -108,7 +98,19 @@ export function verifyImageText(
   if (opts.expectedPerson)
     issues.push(...checkPersonMismatch(opts.expectedPerson, ocrText));
 
-  // 4) 너무 짧으면 OCR 실패로 간주
+  // 4) 외부 엔진: 맞춤법/숫자 검증 흡수 (Harness² Probe 병렬 — tesseract + hanspell 동시)
+  try {
+    const ext: any = await import("./externalEngines.js");
+    issues.push(...ext.checkKoreanTypos(ocrText));
+    if (opts.topic) issues.push(...ext.checkNumericFacts(ocrText, opts.topic));
+    // hanspell 추가 검증 — 외부 검사기가 잡는 오타까지
+    const hanspellIssues: string[] = await ext.runHanspell(ocrText).catch(() => []);
+    issues.push(...hanspellIssues);
+  } catch {
+    // 외부 엔진 미설치 시 휴리스틱만 유지 (Codex 샌드박스: 실패해도 루프 유지)
+  }
+
+  // 5) 너무 짧으면 OCR 실패로 간주
   if (ocrText.trim().length < 10)
     issues.push("OCR 텍스트 10자 미만 — 이미지 품질 낮거나 OCR 실패");
 
@@ -168,7 +170,7 @@ export async function guardedGenerate(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const { imagePath, ocrText } = await generateFn(attempt);
     lastPath = imagePath;
-    const result = verifyImageText(ocrText, {
+    const result = await verifyImageText(ocrText, {
       expectedKeywords: opts.expectedKeywords,
       expectedPerson: opts.expectedPerson,
       topic: opts.topic,
