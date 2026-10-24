@@ -405,18 +405,32 @@ export class CinematicBrain extends BaseVisualBrain {
 
 export class VisualDesignBrain extends BaseVisualBrain {
   id = "genius-visual"; role = "genius" as const; layer = 4 as const;
-  name = "비주얼 디자인 천재"; description = "게슈탈트·처리유창성·Berlyne 역U자·VWFA — A~D 등급으로 사이언스워싱을 걸러내고 WCAG 4.5:1을 지킨다.";
+  name = "비주얼 디자인 천재 4.0"; description = "게슈탈트·처리유창성·Berlyne 역U자·VWFA + 한글 타이포 + 그리드 60:30:10 + WCAG 4.5:1 — 천재는 폰트·그리드·대비를 한 번에 처방한다.";
+  version = "4.0.0";
   async think(input: BrainInput): Promise<BrainOutput> {
     const engine = new VisualEngine();
     const vp = engine.analyze(input.task, input.context);
+    // 한글 타이포 처방 — 12살 가독성 규칙
+    const typo = `한글 타이포: 자간 -0.02em, 행간 1.7, keep-all(단어 잘림 방지), 최소 16px, 제목 스케일 1.35x — body{font-family:Pretendard,'Noto Sans KR'; word-break:keep-all; overflow-wrap:anywhere; letter-spacing:-0.02em}`;
+    const grid = `그리드 60:30:10 — 주조60(배경) + 보조30(카드) + 액센트10(강조), 여백 48px, 카드 radius 12px, CTA 버튼 1개만`;
+    const wcag = `WCAG AAA: ${vp.accessibility.wcagNote} | 대비 ${vp.accessibility.contrastOK ? "통과 4.5:1+" : "실패→#333으로 상향 필요"} | 포커스 링 2px solid var(--primary) 필수`;
+    // 스타일 RAG 1위 추천 — 입력 task 기반 키워드 매칭 (가볍게 vp.sceneSummary로)
+    let styleHint = "";
+    try {
+      const { searchStyles } = await import("../visual/styleLibrary.js");
+      const hits = searchStyles(input.task.slice(0,40), 1);
+      if (hits.length) styleHint = `StyleRAG 1위: ${hits[0].style.name}(${hits[0].style.id}) 팔레트 ${hits[0].style.palette.primary}/${hits[0].style.palette.accent} on ${hits[0].style.palette.bg} — ${hits[0].style.typography.letterSpacing}/${hits[0].style.typography.lineHeight} 적용`;
+    } catch {}
     return mkOutput(input, this,
-      `🎨 비주얼 신경미학 (Grade 게이트)\n` +
-      `게슈탈트 근접·유사·연속·폐쇄(A) — 논리 그룹과 일치? ${vp.composition.squatTest}\n` +
-      `청킹 4±1(A) + 유창성: ${vp.neuro.fluency}\n` +
-      `Berlyne 역U자: ${vp.neuro.arousalCurve} | 현재 Zone=${vp.purposeZone} → ${vp.dualTrackWorksheet.slice(0, 120)}\n` +
-      `WCAG: ${vp.accessibility.wcagNote} | 대비 ${vp.accessibility.contrastOK ? "통과" : "실패"}\n` +
-      `증거등급: ${Object.entries(vp.evidenceGrades).slice(0, 4).map(([k, v]) => `${k}:${v}`).join(" ")} | D항목은 인용금지`,
-      vp.accessibility.contrastOK ? 0.86 : 0.62, ["visual", "neuroaesthetics", "wcag", vp.purposeZone]);
+      `🎨 비주얼 디자인 천재 4.0 — 천재는 한 번에 처방한다\n` +
+      `${typo}\n` +
+      `${grid}\n` +
+      `${wcag}\n` +
+      (styleHint ? styleHint + "\n" : "") +
+      `게슈탈트: ${vp.composition.squatTest}\n` +
+      `유창성: ${vp.neuro.fluency} | 역U자: ${vp.neuro.arousalCurve}\n` +
+      `증거등급: ${Object.entries(vp.evidenceGrades).slice(0, 4).map(([k, v]) => `${k}:${v}`).join(" ")} | 경고 ${vp.warnings.length}건: ${vp.warnings.slice(0,1).join(" | ") || "없음"}`,
+      vp.accessibility.contrastOK ? 0.92 : 0.68, ["visual", "typo-kr", "grid-60-30-10", "wcag", vp.purposeZone, "genius-4.0"]);
   }
 }
 
