@@ -88,7 +88,7 @@ export function selectNeededGeniuses(task: string, context=""): { selected: Hist
 export class GateBrain implements Brain {
   id = "gate-35"; role = "gate" as const; layer = 3.5 as const;
   name = "3.5층 게이트 — 천재 검증 문"; description = "30명 중 7+1 선발, 6/8 통과 시 4층으로, 아니면 반려 (최대2회)";
-  version = "2.23.0";
+  version = "4.0.0";
   private retryCount = 0;
   async learn(feedback: BrainFeedback): Promise<void> { if (feedback.lesson) this.retryCount=0; }
   async think(input: BrainInput): Promise<BrainOutput> {

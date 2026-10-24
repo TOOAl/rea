@@ -40,6 +40,11 @@ import {
 } from "./strategist.js";
 import { GateBrain } from "./gate.js";
 import { ArticleInputBrain } from "./articleInput.js";
+import {
+  PremiseErrorBrain,
+  ContradictionBrain,
+  CriticalThinkingBrain,
+} from "./premiseGuard.js";
 
 function mkOutput(
   input: BrainInput,
@@ -65,7 +70,7 @@ abstract class BaseBrain implements Brain {
   abstract layer: Brain["layer"];
   abstract name: string;
   abstract description: string;
-  version = "1.0.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(feedback: BrainFeedback): Promise<void> {
     if (feedback.lesson) this.learned.push(feedback.lesson);
@@ -93,7 +98,7 @@ export class MemoryBrain extends BaseBrain {
     return mkOutput(
       input,
       this,
-      `📚 기억을 뒤져봤어!\n과거 실패:\n${failures}\n내가 배운 것:\n${recall || "(아직 없음)"}\n→ 이번 작업 "${input.task.slice(0, 60)}"에서 피해야 할 것은 위 실패 패턴이야.`,
+      `📚 기억을 뒤져봤어!\n과거 실패:\n${failures}\n내가 배운 것:\n${recall || "(아직 없음)"}\n→ 이번 작업 "${input.task.slice(0, 60)}"에서 피해야 할 것은 위 실패 패턴이야.\nselfCheck: 내 답변 수치/주장 2개는 출처 필요? (불확실하면 [추정] 표기)`,
       0.85,
       ["memory", "fail-history"],
     );
@@ -114,7 +119,7 @@ export class ErrorBrain extends BaseBrain {
     return mkOutput(
       input,
       this,
-      `🔍 모순 검사!\n다른 두뇌 의견: "${prior || "아직 없음"}"\n→ 논리 구멍: ① 증거 없는 주장 있음? ② 두 의견이 서로 충돌? ③ 빠진 경우의 수 있음?\n내 결론: 충돌 있으면 “증거를 대라”고 요구한다.`,
+      `🔍 모순 검사!\n다른 두뇌 의견: "${prior || "아직 없음"}"\n→ 논리 구멍: ① 증거 없는 주장 있음? ② 두 의견이 서로 충돌? ③ 빠진 경우의 수 있음?\n내 결론: 충돌 있으면 “증거를 대라”고 요구한다.\nselfCheck: 내 답변 수치/주장 2개는 출처 필요?`,
       0.88,
       ["logic", "contradiction"],
     );
@@ -208,16 +213,19 @@ export class GeniusBrain extends BaseBrain {
   }
 }
 
-/** 기본 5층 세트 공장 — v2.24.0: 1층 4천재(기사입력 추가) + 2층 3전략가 + 3.5층 게이트 (총 39) */
+/** 기본 5층 세트 공장 — v2.25.0: 1층 7천재(기사입력+전제3천재) + 2층 3전략가 + 3.5층 게이트 (총 42) */
 export function createDefaultBrains(memory: BrainMemory): Brain[] {
   return [
     new MemoryBrain(memory),
     new ErrorBrain(),
-    // v2.23.0 1층 3천재 — 지도·언어·맥락 + v2.24.0 기사입력
+    // v2.23.0 1층 3천재 — 지도·언어·맥락 + v2.24.0 기사입력 + v2.25.0 전제검증 3천재
     new MemoryArchivistBrain(memory),
     new LanguageInterpreterBrain(),
     new ContextSynthesizerBrain(memory),
     new ArticleInputBrain(memory),
+    new PremiseErrorBrain(memory),
+    new ContradictionBrain(),
+    new CriticalThinkingBrain(),
     new DesignBrain(),
     // v2.23.0 2층 3전략가 — 역사·경영·공학
     new HistoryStrategistBrain(),

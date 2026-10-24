@@ -12,37 +12,7 @@ import { join, resolve } from "node:path";
 import { chunkText, type Chunk } from "./chunker.js";
 import { getEmbedder, type Embedder } from "./embedder.js";
 import { VectorStore } from "./store.js";
-
-// MemoryBank와 동일한 토크나이저 재사용 철학 (영문/숫자 중심)
-const STOP = new Set([
-  "the","a","an","and","or","but","in","on","at","to","for","of","with","is","are","was","were","be","been","this","that","it","as","by","from","has","have","had","will","would","can","should","could","may","you","your","our","we","us","they","them","their","its","if","then","else","when","what","which","how","why","not","no","yes","do","does","did","done","about","into","over","under","after","before","up","down","out","so","such","than","too","very","는","이","가","을","를","의","에","에서","으로","와","과","도","은","는","다","요","까","네"
-]);
-
-function tokenize(text: string): string[] {
-  // 한글은 2자 이상 연속 한글도 토큰으로 인정 (한국어 로그 지원)
-  const tokens: string[] = [];
-  // 영문/숫자
-  for (const w of text.toLowerCase().split(/[^a-z0-9가-힣]+/g)) {
-    if (w.length >= 2 && w.length <= 24 && !STOP.has(w)) tokens.push(w);
-  }
-  return tokens;
-}
-
-function tf(tokens: string[]): Map<string, number> {
-  const m = new Map<string, number>();
-  for (const t of tokens) m.set(t, (m.get(t) ?? 0) + 1);
-  const len = tokens.length || 1;
-  for (const [k, v] of m) m.set(k, v / len);
-  return m;
-}
-
-function cosine(a: Map<string, number>, b: Map<string, number>): number {
-  let dot = 0, na = 0, nb = 0;
-  for (const [k, va] of a) { dot += va * (b.get(k) ?? 0); na += va * va; }
-  for (const [, vb] of b) nb += vb * vb;
-  const denom = Math.sqrt(na) * Math.sqrt(nb) || 1;
-  return dot / denom;
-}
+import { tokenize, tf, cosine } from "./text.js";
 
 export interface RagDocument {
   source: string;
@@ -63,6 +33,16 @@ export interface RagIndexOptions {
   vectorStoreDir?: string; // .vectors.json 저장 위치 — 없으면 persistDir 사용
 }
 
+export function domainSlug(d: string): string {
+  return (
+    d
+      .replace(/\s*[/\\]\s*/g, "__")
+      .trim()
+      .replace(/[^a-zA-Z0-9._-]/g, "_")
+      .slice(0, 80) || "default"
+  );
+}
+
 export class RagIndex {
   private chunks: Chunk[] = [];
   private vectors: Map<string, number[]> = new Map(); // chunkId -> vector (하이브리드용)
@@ -72,14 +52,34 @@ export class RagIndex {
   private vectorStore: VectorStore | null;
 
   constructor(opts: RagIndexOptions = {}) {
-    this.domain = opts.domain ?? "default";
+    this.domain = domainSlug(opts.domain ?? "default");
+    // persistDir는 항상 절대경로로 고정 — 호출 시점 cwd와 무관하게 일관 (이전: 상대경로 시 cwd 불일치로 load 실패)
     this.persistDir = opts.persistDir ? resolve(opts.persistDir) : null;
     this.embedder = opts.embedder ?? null; // null이면 getEmbedder() lazy 사용 (API 0 HashEmbedder)
-    this.vectorStore = this.persistDir ? new VectorStore(opts.vectorStoreDir ?? this.persistDir) : null;
+    // vectorStoreDir이 없으면 persistDir과 동일한 절대경로 사용 — .json과 .vectors.json이 같은 폴더에 공존
+    const vecRoot = opts.vectorStoreDir
+      ? resolve(opts.vectorStoreDir)
+      : this.persistDir;
+    this.vectorStore = vecRoot ? new VectorStore(vecRoot) : null;
   }
 
-  get size(): number { return this.chunks.length; }
-  get hasVectors(): boolean { return this.vectors.size > 0; }
+  get persistPath(): string | null {
+    return this.persistDir
+      ? join(this.persistDir, `${this.domain}.json`)
+      : null;
+  }
+  get vectorsPath(): string | null {
+    return this.persistDir
+      ? join(this.persistDir, `${this.domain}.vectors.json`)
+      : null;
+  }
+
+  get size(): number {
+    return this.chunks.length;
+  }
+  get hasVectors(): boolean {
+    return this.vectors.size > 0;
+  }
 
   /** 청크 추가 시 벡터도 함께 생성 (API 0 — 해시 임베딩) */
   private ensureVector(chunk: Chunk): void {
@@ -111,7 +111,10 @@ export class RagIndex {
     for (const c of chunks) this.ensureVector(c);
   }
 
-  clear(): void { this.chunks = []; this.vectors.clear(); }
+  clear(): void {
+    this.chunks = [];
+    this.vectors.clear();
+  }
 
   /** 벡터 일괄 구축 + 영속화 — js-tiktoken 하이브리드의 핵심 (외부 API 0) */
   async buildVectors(embedder?: Embedder): Promise<number> {
@@ -137,7 +140,15 @@ export class RagIndex {
   }
 
   /** 하이브리드 검색: TF-IDF + dense vector(해시 임베딩, API 0) 자동 합성 */
-  async searchHybrid(query: string, topK = 5, opts?: { recencyBoost?: Map<string, number>; wSparse?: number; wDense?: number }): Promise<RagSearchHit[]> {
+  async searchHybrid(
+    query: string,
+    topK = 5,
+    opts?: {
+      recencyBoost?: Map<string, number>;
+      wSparse?: number;
+      wDense?: number;
+    },
+  ): Promise<RagSearchHit[]> {
     // 벡터가 있으면 자동 하이브리드, 없으면 sparse만
     if (this.vectors.size === 0 && this.vectorStore) this.loadVectors();
     if (this.vectors.size > 0) {
@@ -147,7 +158,12 @@ export class RagIndex {
       for (const [id, vec] of this.vectors) {
         vectorScores.set(id, emb.similarity(qVec, vec));
       }
-      return this.search(query, topK, { vectorScores, recencyBoost: opts?.recencyBoost, wSparse: opts?.wSparse, wDense: opts?.wDense } as any);
+      return this.search(query, topK, {
+        vectorScores,
+        recencyBoost: opts?.recencyBoost,
+        wSparse: opts?.wSparse,
+        wDense: opts?.wDense,
+      } as any);
     }
     return this.search(query, topK, opts);
   }
@@ -155,7 +171,16 @@ export class RagIndex {
   /**
    * 하이브리드 검색: TF-IDF cosine + dense vector(0.5:0.5) + source cue bonus
    */
-  search(query: string, topK = 5, opts?: { vectorScores?: Map<string, number>; recencyBoost?: Map<string, number>; wSparse?: number; wDense?: number }): RagSearchHit[] {
+  search(
+    query: string,
+    topK = 5,
+    opts?: {
+      vectorScores?: Map<string, number>;
+      recencyBoost?: Map<string, number>;
+      wSparse?: number;
+      wDense?: number;
+    },
+  ): RagSearchHit[] {
     if (this.chunks.length === 0 || !query.trim()) return [];
     const qTokens = tokenize(query);
     if (qTokens.length === 0) return [];
@@ -163,7 +188,7 @@ export class RagIndex {
 
     // IDF 계산
     const df = new Map<string, number>();
-    const docInfos = this.chunks.map(c => {
+    const docInfos = this.chunks.map((c) => {
       const text = `${c.source} ${c.text}`;
       const tokens = tokenize(text);
       const uniq = new Set(tokens);
@@ -182,7 +207,7 @@ export class RagIndex {
     };
 
     const qVec = weigh(qTf);
-    const scored = docInfos.map(d => {
+    const scored = docInfos.map((d) => {
       const dVec = weigh(d.tf);
       let score = cosine(qVec, dVec);
 
@@ -209,39 +234,60 @@ export class RagIndex {
     return scored.slice(0, topK);
   }
 
-  // --- Persist (청크 + 벡터 함께 영속화 — 벡터는 .vectors.json) ---
+  // --- Persist (청크 + 벡터 함께 영속화 — 벡터는 .vectors.json, 독립 파일로 분리) ---
   persist(): string | null {
     if (!this.persistDir) return null;
     try {
       mkdirSync(this.persistDir, { recursive: true });
-      const p = join(this.persistDir, `${this.domain}.json`);
+      const p = this.persistPath!;
+      // 청크는 항상 저장 (벡터 유무와 무관 — 이전 coupling 제거: vectors.json 없어도 chunks는 복구 가능)
       writeFileSync(p, JSON.stringify(this.chunks, null, 2), "utf-8");
-      if (this.vectors.size > 0 && this.vectorStore) this.vectorStore.save(this.domain, this.vectors);
+      // 벡터는 별도 파일 — size>0일 때만, 실패해도 청크 저장은 성공으로 처리
+      if (this.vectors.size > 0 && this.vectorStore) {
+        try {
+          this.vectorStore.save(this.domain, this.vectors);
+        } catch {}
+      }
       return p;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 
   load(): boolean {
     if (!this.persistDir) return false;
-    const p = join(this.persistDir, `${this.domain}.json`);
+    const p = this.persistPath!;
     if (!existsSync(p)) return false;
     try {
       const raw = readFileSync(p, "utf-8");
       const arr = JSON.parse(raw) as Chunk[];
       this.chunks = arr;
-      if (this.vectorStore) this.loadVectors();
+      // vectors는 선택적 — 없어도 chunks 복구는 성공 (coupling 제거)
+      if (this.vectorStore) {
+        try {
+          this.loadVectors();
+        } catch {}
+      }
       return true;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   }
 
-  static async fromFiles(files: Array<{ path: string; content: string }>, opts?: RagIndexOptions): Promise<RagIndex> {
+  static async fromFiles(
+    files: Array<{ path: string; content: string }>,
+    opts?: RagIndexOptions,
+  ): Promise<RagIndex> {
     const idx = new RagIndex(opts);
-    idx.addDocuments(files.map(f => ({ source: f.path, text: f.content })));
+    idx.addDocuments(files.map((f) => ({ source: f.path, text: f.content })));
     return idx;
   }
 
   /** workspace 자동 색인: .memory-bank + .arena/harness2/library + docs — API 0으로 rea 흡수 */
-  static async fromWorkspace(cwd: string, opts?: RagIndexOptions): Promise<RagIndex> {
+  static async fromWorkspace(
+    cwd: string,
+    opts?: RagIndexOptions,
+  ): Promise<RagIndex> {
     const { readFile } = await import("node:fs/promises");
     const { existsSync, readdirSync, statSync } = await import("node:fs");
     const fg = (await import("fast-glob")).default;
@@ -257,7 +303,12 @@ export class RagIndex {
     const files: string[] = [];
     for (const pat of patterns) {
       try {
-        const found = await fg(pat, { cwd, absolute: false, ignore: ["**/node_modules/**", "**/.git/**", "**/dist/**"], dot: false });
+        const found = await fg(pat, {
+          cwd,
+          absolute: false,
+          ignore: ["**/node_modules/**", "**/.git/**", "**/dist/**"],
+          dot: false,
+        });
         files.push(...found);
       } catch {}
     }

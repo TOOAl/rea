@@ -8,7 +8,11 @@
  * 참조: docs/HARNESS2_REA_ANALYSIS.md §5 (Evidence Tree), AGENTS.md Product and Authority
  */
 
-export type EvidenceKind = "observation" | "derivation" | "inference" | "unknown";
+export type EvidenceKind =
+  | "observation"
+  | "derivation"
+  | "inference"
+  | "unknown";
 
 export interface EvidenceEntry {
   id: string; // e.g. "tool:Bash:3", "user:attach:image-1.png"
@@ -25,7 +29,12 @@ export class EvidenceLedger {
   private entries: EvidenceEntry[] = [];
   private counter = 0;
 
-  add(entry: Omit<EvidenceEntry, "id" | "capturedAt"> & { id?: string; capturedAt?: string }): EvidenceEntry {
+  add(
+    entry: Omit<EvidenceEntry, "id" | "capturedAt"> & {
+      id?: string;
+      capturedAt?: string;
+    },
+  ): EvidenceEntry {
     const e: EvidenceEntry = {
       id: entry.id ?? `ev-${++this.counter}`,
       kind: entry.kind,
@@ -41,7 +50,12 @@ export class EvidenceLedger {
   }
 
   /** tool_result에서 자동 생성 — 잘림 감지 포함 */
-  fromToolResult(toolName: string, input: Record<string, unknown>, result: string, opts?: { maxLen?: number }): EvidenceEntry {
+  fromToolResult(
+    toolName: string,
+    input: Record<string, unknown>,
+    result: string,
+    opts?: { maxLen?: number },
+  ): EvidenceEntry {
     const maxLen = opts?.maxLen ?? 5000;
     const truncated = result.length >= maxLen;
     const inputStr = JSON.stringify(input).slice(0, 300);
@@ -55,7 +69,11 @@ export class EvidenceLedger {
     });
   }
 
-  fromUserAttach(filename: string, contentHint: string, truncated = false): EvidenceEntry {
+  fromUserAttach(
+    filename: string,
+    contentHint: string,
+    truncated = false,
+  ): EvidenceEntry {
     return this.add({
       kind: "observation",
       source: `UserAttach(${filename})`,
@@ -68,13 +86,17 @@ export class EvidenceLedger {
   /** 프롬프트에 넣을 요약 포인터 — 긴 내용은 파일로, 짧은 포인터만 프롬프트에 */
   summarizeForPrompt(maxChars = 3000): string {
     if (this.entries.length === 0) return "(no evidence yet)";
-    const lines = this.entries.slice(-8).map(e => {
-      const flag = e.truncated ? " [TRUNCATED — 원문 일부 유실, 추측 금지]" : "";
+    const lines = this.entries.slice(-8).map((e) => {
+      const flag = e.truncated
+        ? " [TRUNCATED — 원문 일부 유실, 추측 금지]"
+        : "";
       const preview = e.content.replace(/\s+/g, " ").slice(0, 200);
       return `- [${e.kind}/${e.confidence}] ${e.source}${flag}: ${preview}${e.content.length > 200 ? "…" : ""}`;
     });
     const summary = lines.join("\n");
-    return summary.length > maxChars ? summary.slice(0, maxChars) + "\n… (more evidence truncated)" : summary;
+    return summary.length > maxChars
+      ? summary.slice(0, maxChars) + "\n… (more evidence truncated)"
+      : summary;
   }
 
   list(): EvidenceEntry[] {
@@ -84,5 +106,86 @@ export class EvidenceLedger {
   clear(): void {
     this.entries = [];
     this.counter = 0;
+  }
+
+  /**
+   * 증거 도장 — 정확한 것 Pillar: 최종 출력에 붙일 출처 블록 생성
+   * 1층 전제 3천재가 만든 fact/claim 분류를 포함, 누락 시 Gate에서 FAIL
+   */
+  renderStamp(opts?: {
+    title?: string;
+    includeFacts?: Array<{ claim: string; source: string; date?: string }>;
+  }): string {
+    const title = opts?.title ?? "📎 증거 도장 (출처 블록)";
+    const lines: string[] = [
+      `\n---\n### ${title}\n> 이 답변은 아래 관찰(observation)에만 근거합니다. 추측은 [추정]으로 표시.\n`,
+    ];
+    if (opts?.includeFacts && opts.includeFacts.length) {
+      lines.push("| 구분 | 주장 | 출처 | 날짜 |");
+      lines.push("|---|---|---|---|");
+      for (const f of opts.includeFacts) {
+        lines.push(
+          `| 사실 | ${f.claim.slice(0, 40)} | ${f.source} | ${f.date ?? "-"} |`,
+        );
+      }
+    }
+    if (this.entries.length) {
+      lines.push("\n**근거 목록:**");
+      for (const e of this.entries.slice(-6)) {
+        const flag = e.truncated ? " [일부 잘림]" : "";
+        lines.push(
+          `- \`${e.source}\` (${e.kind}/${e.confidence})${flag}: ${e.content.replace(/\s+/g, " ").slice(0, 120)}…`,
+        );
+      }
+    } else {
+      lines.push(
+        "\n- (근거: 사용자의 직접 입력 — 별도 외부 출처 없음, 재확인 권장)",
+      );
+    }
+    lines.push(
+      "\n> ⚠️ [추정] 표시 없는 수치는 모두 위 출처에서 확인됨. 출처 없으면 답에 포함하지 않음.\n",
+    );
+    return lines.join("\n");
+  }
+
+  /**
+   * 사실/주장 분리표 — 1층 ArticleInputBrain이 생성한 factRatio를 구조화
+   * 2층 설계실에서 바로 쓰도록 markdown 표 반환
+   */
+  static buildFactClaimTable(article: string): {
+    table: string;
+    factRatio: number;
+    facts: string[];
+    claims: string[];
+  } {
+    const lines = article
+      .split("\n")
+      .filter((l) => l.trim().length > 10)
+      .slice(0, 12);
+    const facts: string[] = [];
+    const claims: string[] = [];
+    const factMarkers =
+      /(따르면|발표|기록|통계|종가|마감|발생|확인|공개|보도|에 따르면|자료에 따르면)/;
+    const claimMarkers =
+      /(전망|예상|것으로 보인다|것으로 예상|할 것이다|것이다\.?$|추측|관측)/;
+    for (const l of lines) {
+      if (factMarkers.test(l)) facts.push(l.trim().slice(0, 80));
+      else if (claimMarkers.test(l)) claims.push(l.trim().slice(0, 80));
+      else if (/\d/.test(l)) facts.push(l.trim().slice(0, 80)); // 숫자 있으면 일단 사실 후보
+    }
+    const factRatio =
+      facts.length + claims.length
+        ? Math.round((facts.length / (facts.length + claims.length)) * 100)
+        : 50;
+    const table = [
+      "| 구분 | 내용 | 출처 필요 |",
+      "|---|---|---|",
+      ...facts.slice(0, 5).map((f) => `| ✅ 사실 | ${f} | 예 |`),
+      ...claims.slice(0, 5).map((c) => `| 🔮 추정 | ${c} | 예 — [추정] 표기 |`),
+      ...(facts.length === 0 && claims.length === 0
+        ? ["| - | (분류할 문장 없음 — 원문 짧음) | - |"]
+        : []),
+    ].join("\n");
+    return { table, factRatio, facts, claims };
   }
 }

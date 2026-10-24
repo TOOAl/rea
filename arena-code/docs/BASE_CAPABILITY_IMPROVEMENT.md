@@ -1,22 +1,23 @@
 # TOOAI-rea 기본 능력 향상 계획 — 문맥·의도·품질
 
 > 목표: 역공학 도구가 아니라 **문맥을 정확히 파악하고 의도를 정확히 짚어 고품질 결과물을 내는 에이전트**로 기본 체력 올리기  
-> 작성: 2026-05-11 / 브랜치 `arena/585a354a-rea` / 작성자: Arena Agent + 분석가
+> 작성: 2026-05-11 / 브랜치 `arena/6e90cbe4-rea` (main `d85bb76` 기반) / 작성자: Arena Agent + 분석가
+> 업데이트: 2026-10-25 — 7가지 오류 모순 점검 + 우선순위 3단계 착수
 
 ## 0. 왜 지금인가 — 관찰된 3대 취약점
 
 최근 두 작업에서 같은 패턴이 반복됨:
 
-1. **문맥 이해 부족**  
-   - 예: 영어 어법 문항(29번) 이미지 하단이 잘려 `what leaders pay attention to determines who stays`가 유실됐는데, 모델이 잘림을 인지하지 못하고 ④/⑤ 번호를 중복 해석.  
+1. **문맥 이해 부족**
+   - 예: 영어 어법 문항(29번) 이미지 하단이 잘려 `what leaders pay attention to determines who stays`가 유실됐는데, 모델이 잘림을 인지하지 못하고 ④/⑤ 번호를 중복 해석.
    - `context.ts`가 `AGENTS.md + git status + 4-char≈1-token` 근사만으로 프롬프트를 조립 — 증거 출처, 잘림, 불확실성을 구조로 보존하지 못함.
 
-2. **의도 파악 실패**  
-   - 예: “DaVinci Resolve로 편집” 요청에 기존 `CapCut` 가이드를 그대로 반환, `DaVinci 21.3.7 / ENG` 설치 정보(548MB)를 무시.  
+2. **의도 파악 실패**
+   - 예: “DaVinci Resolve로 편집” 요청에 기존 `CapCut` 가이드를 그대로 반환, `DaVinci 21.3.7 / ENG` 설치 정보(548MB)를 무시.
    - `queryLoop`는 사용자 메시지를 구분 없이 `provider.streamChat`으로 패스 — “질문 vs 수행 vs 생성” 의도 분류, 신뢰도, 추가 질문 필요 여부가 없음.
 
-3. **결과물 품질 편차**  
-   - 예: 밑줄이 `<u>` 하나에만 의존해 PDF 변환 시 소실, 정답 `③`이 문서 최상단에 노출되는 스포일러.  
+3. **결과물 품질 편차**
+   - 예: 밑줄이 `<u>` 하나에만 의존해 PDF 변환 시 소실, 정답 `③`이 문서 최상단에 노출되는 스포일러.
    - `guard.ts`는 하네스(harness) 파일만 검사, 최종 답변/아티팩트의 품질 게이트가 없음. `outputQuality` 모듈 없음.
 
 이 3개는 독립이 아니라 **파이프라인**: 문맥(입력) → 의도(판단) → 품질(출력).
@@ -46,11 +47,11 @@
     ambiguities: string[]; // e.g. ["DaVinci 버전 미지정", "이미지 하단 잘림"]
     requiredSlots: string[]; // e.g. ["outputFormat: html|pdf"]
     suggestedClarification?: string;
-  }
+  };
   ```
-- **분류 규칙 (휴리스틱 + LLM 이중)**: 
+- **분류 규칙 (휴리스틱 + LLM 이중)**:
   - 휴리스틱 1차: 키워드/파일 첨부/동사 패턴으로 0.6 이상이면 바로 진행, 0.4~0.6이면 LLM judge 1회 호출, 0.4 미만이면 질문 생성.
-  - 예: “다음 글의 밑줄 친 부분 중” + 이미지 첨부 → `question` 0.9, ambiguities=[] → 바로 풀이.  
+  - 예: “다음 글의 밑줄 친 부분 중” + 이미지 첨부 → `question` 0.9, ambiguities=[] → 바로 풀이.
   - 예: “DaVinci Resolve 속성” + “편집할 수 있도록” → `generation` 0.85, ambiguities=[“언어 ENG”, “타임라인 해상도”] → `suggestedClarification` 생성 대신 기본값(1920x1080 HD)으로 진행하되 근거 명시.
 - **queryLoop 통합**: `turn_start` 전에 `analyzeIntent(messages)` 실행, `confidence < 0.5`면 `yield {type:"text", text: clarification}` 후 `break` 대신 대기. 기존 동작과 호환을 위해 `LoopParams.intentGate?: boolean` 플래그로 opt-in.
 
@@ -70,16 +71,17 @@
 
 ## 2. 측정 지표 (Before/After)
 
-| 지표 | 현재 | 목표 | 측정 방법 |
-|---|---|---|---|
-| 문맥 보존율 | 잘림 인지 0% | 90%+ | truncated 이미지 10세트에서 “잘림을 언급했는가” |
-| 의도 정확도 | 수동 판단 | 85%+ | 50개 프롬프트 분류 vs 사람 라벨 |
-| 결과물 PASS율 | 밑줄 소실 30% / 정답누출 40% | <5% | `validate_exam_output.py` + `outputQuality` CI |
-| 토큰 효율 | always-on 8k+ | <6k (Harness² 권고) | `estimateTokens` vs `ALWAYS_ON_BUDGET_RATIO` |
+| 지표          | 현재                         | 목표                | 측정 방법                                       |
+| ------------- | ---------------------------- | ------------------- | ----------------------------------------------- |
+| 문맥 보존율   | 잘림 인지 0%                 | 90%+                | truncated 이미지 10세트에서 “잘림을 언급했는가” |
+| 의도 정확도   | 수동 판단                    | 85%+                | 50개 프롬프트 분류 vs 사람 라벨                 |
+| 결과물 PASS율 | 밑줄 소실 30% / 정답누출 40% | <5%                 | `validate_exam_output.py` + `outputQuality` CI  |
+| 토큰 효율     | always-on 8k+                | <6k (Harness² 권고) | `estimateTokens` vs `ALWAYS_ON_BUDGET_RATIO`    |
 
 ## 3. 구현 로드맵
 
 ### Phase 1 — Quick win (이번 브랜치, 1~2일) — ✅ 완료 (2026-05-11)
+
 - [x] `docs/quality/*` 샘플 + 가드 스크립트 (29번 교정)
 - [x] `src/loop/intent.ts` v1 (휴리스틱) — 5-kind + confidence + ambiguities
 - [x] `src/loop/outputQuality.ts` v1 (underline/answerLeak/placeholder) — qualityGate + feedback
@@ -89,6 +91,7 @@
 - [x] 회귀 픽스처 10개 + `tests/regression-intent.test.ts` 11개 PASS (2026-05-11 추가 — DaVinci/CapCut, truncated, answerLeak 등)
 
 ### Phase 2 — Harness² 통합 (1주) — ✅ 완료 (2026-05-11)
+
 - [x] `src/loop/evidenceTreeBridge.ts` 신설 — Ledger → EvidenceTree 영속화, `REA_EVIDENCE_TREE=1` 시 `.arena/evidence/<taskId>`에 전체 궤적 저장, `buildEvidencePointer()`로 MISSION 포인터 주입 (토큰 절감 + 잘림 전체 복구)
 - [x] `src/loop/intent.ts`에 `proposeIntentVariants()` 추가 — 하나의 의도를 `invariant`(공통 절차) / `domain`(DaVinci 21.3.7, 수능 어법, Ghidra 등) 두 후보로 분기 (Harness² proposer 재사용)
 - [x] `src/loop/outputQuality.ts`에 `scoreCandidate()` / `selectBestCandidate()` 추가 — 2개 출력을 qualityGate 점수로 비교해 정답지 없이 “행동 차이”로 최적 선택 (composer behavioral contrast)
@@ -96,11 +99,13 @@
 - [x] 테스트 6개 PASS (`tests/phase2.test.ts` — EvidenceTree persist, invariant/domain 분기, 2후보 선택)
 
 ### Phase 3 — 학습 축적 (2주+) — ✅ 완료 (2026-05-11)
+
 - [x] `src/loop/learningBridge.ts` 신설 — `deriveDomain()` 도메인 자동 분류(exam/video/ghidra/youtube/qa) + `retrieveLessons()` (MemoryBank 빠른일기 + HarnessLibrary 깊은도서관) + `recordLesson()` (Memory 항상 / Library는 PASS·의미 교훈 시) 축적, `formatLessonsForPrompt()`로 증거 일치 시에만 적용하도록 가드
 - [x] `src/loop/queryLoop.ts`에 자동 Lessons 주입/기록 Hook — 작업 시작 전 `retrieveLessons()→assembleSystemPrompt` 주입, 결과 반환 직전 `recordLesson()`으로 교훈 적립 (환경 `REA_LEARNING=0`으로 off 가능, 기본 ON) — 도메인 격리로 다른 도메인 교훈 오염 방지
 - [x] 테스트 7개 PASS (`tests/phase3.test.ts` — deriveDomain 4 + retrieve/record 축적·격리·포맷 3)
 
 ### Phase 4 — 맥락·자료 찾기 스캐폴딩 (2026-10-24) — ✅ 스캐폴딩 완료, 기본 OFF (env로 ON)
+
 - [x] `src/tools/webSearch.ts` 신설 — WebSearch 도구 **API 없이 rea 흡수** (Tavily>Serper>Brave>Bing env 자동 선택, 키 없으면 RagIndex+docs/.memory-bank/.arena/rag-index 즉석 TF-IDF 스캔으로 file:// 결과 반환 — 외부 호출 0) + `src/tools/index.ts`에 CORE_TOOLS 등록 — WebFetch/Browser와 체인으로 검색→전문 확보, provenance 인용 강제
 - [x] `src/rag/chunker.ts` + `src/rag/index.ts` 신설 — 1600자 chunk(overlap 200, 문장 경계 보정) + RagIndex(TF-IDF 하이브리드, recency/vector 슬롯 예약, .arena/rag-index persist/load) — 로컬 문서·메모리·라이브러리에 대한 시맨틱 검색 기반
 - [x] `src/loop/structuralContext.ts` 신설 — `buildStructuralContext()` import 그래프(rg) + top-level 스캔 + `formatStructuralContext()` tiered budget(2.5k) — AGENTS.md만 보던 context에 코드 구조 목차/색인 추가, `provenanceTag()` 출처 표기 헬퍼
@@ -130,4 +135,5 @@
 3. 매주 `HarnessLibrary`에 “문맥·의도·품질” 교훈 1개씩 축적.
 
 ---
-*이 문서는 Harness² 논문 §3(8 components)과 AGENTS.md의 “observations/derivations/inferences 구분” 원칙을 REA 기본 체력으로 옮긴 것임.*
+
+_이 문서는 Harness² 논문 §3(8 components)과 AGENTS.md의 “observations/derivations/inferences 구분” 원칙을 REA 기본 체력으로 옮긴 것임._

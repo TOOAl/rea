@@ -79,4 +79,54 @@ export class BrainRegistry {
     );
     return `BrainRegistry — ${this.brains.size}개 두뇌\n` + lines.join("\n");
   }
+
+  // ── M: 성적표 — 기여도 점수 + 랭킹 + 교체 이력 ──
+  private scores = new Map<BrainId, number[]>(); // id → 최근 점수들 (0~100)
+  private swapHistory: Array<{ from: string; to: string; at: string; reason: string }> = [];
+
+  /** 한 천재의 최근 Council 기여 점수 기록 (accuracy + beauty + gate) */
+  recordScore(id: BrainId, score: number): void {
+    if (!this.brains.has(id)) return;
+    const arr = this.scores.get(id) ?? [];
+    arr.push(Math.max(0, Math.min(100, score)));
+    if (arr.length > 20) arr.shift(); // 최근 20회만
+    this.scores.set(id, arr);
+  }
+  /** 여러 천재 점수를 한 번에 기록 — Council.deliberate 후 호출 */
+  recordScores(scores: Record<string, number>): void {
+    for (const [id, s] of Object.entries(scores)) this.recordScore(id as BrainId, s);
+  }
+  score(id: BrainId): number {
+    const arr = this.scores.get(id);
+    if (!arr || arr.length === 0) return 50; // 미참여는 50점 (중립)
+    return Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+  }
+  /** 전체 랭킹 — 평균 점수 + 참여 횟수 가중 */
+  rank(limit?: number): Array<{ id: BrainId; name: string; layer: BrainLayer; avg: number; count: number }> {
+    const rows = this.all().map(b => ({
+      id: b.id as BrainId,
+      name: b.name,
+      layer: b.layer,
+      avg: this.score(b.id as BrainId),
+      count: this.scores.get(b.id as BrainId)?.length ?? 0,
+    }));
+    rows.sort((a, b) => b.avg - a.avg || b.count - a.count);
+    return limit ? rows.slice(0, limit) : rows;
+  }
+  /** 레고 교체 + 이력 남기기 — L에서 자동 진화 시 사람 승인 전 로그 */
+  swapWithHistory(newBrain: Brain, reason = ""): void {
+    const old = this.brains.get(newBrain.id);
+    if (!old) throw new Error(`No brain to swap: ${newBrain.id}`);
+    this.brains.set(newBrain.id, newBrain);
+    this.swapHistory.push({ from: `${old.name} v${old.version}`, to: `${newBrain.name} v${newBrain.version}`, at: new Date().toISOString(), reason });
+  }
+  getSwapHistory(): typeof this.swapHistory {
+    return [...this.swapHistory];
+  }
+  /** 하위 10% 경고 대상 */
+  bottomDecile(): Array<{ id: BrainId; avg: number }> {
+    const ranked = this.rank();
+    const n = Math.max(1, Math.floor(ranked.length * 0.1));
+    return ranked.slice(-n).map(r => ({ id: r.id, avg: r.avg }));
+  }
 }

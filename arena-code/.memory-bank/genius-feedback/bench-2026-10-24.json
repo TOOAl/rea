@@ -1,0 +1,32 @@
+[
+  {
+    "name": "사실률 (코스피 분리표)",
+    "passed": true,
+    "score": 95,
+    "note": "분리표 생성"
+  },
+  {
+    "name": "수능 밑줄 5개",
+    "passed": true,
+    "score": 100,
+    "note": "밑줄 PASS"
+  },
+  {
+    "name": "불확실성 3단계 (AI 50%/시세 10%)",
+    "passed": true,
+    "score": 92,
+    "note": "premise 3명 + [추정] 표기"
+  },
+  {
+    "name": "VisualQA 90+",
+    "passed": true,
+    "score": 100,
+    "note": "score 100"
+  },
+  {
+    "name": "Gate 기여도",
+    "passed": true,
+    "score": 90,
+    "note": "Gate 1건"
+  }
+]

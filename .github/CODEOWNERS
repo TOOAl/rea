@@ -1,0 +1,12 @@
+# Human approval — 천재 교체/진화는 CODEOWNERS 도장 필수
+# PR #7: 사람이 마지막에 OK해야 칠판(Main)에 붙음
+
+# 진화 엔진 + 두뇌는 TOOAl 승인 필요
+arena-code/src/brains/** @TOOAl
+arena-code/src/harness2/evolve.ts @TOOAl
+arena-code/src/harness2/approval.ts @TOOAl
+arena-code/docs/HUMAN_APPROVAL_RULE.md @TOOAl
+arena-code/docs/GENIUS_EVOLUTION_DESIGN_12yo.md @TOOAl
+
+# 기본은 모두 승인 필요 (draft 제외)
+* @TOOAl

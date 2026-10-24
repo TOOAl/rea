@@ -82,7 +82,9 @@ describe("VisualEngine — 🎧 Audio", () => {
     const e = new VisualEngine();
     const p = e.analyze("논문 작성", "가사 있는 팝송 결제 화면");
     // purposeZone A + 가사 → 경고
-    expect(p.warnings.some(w => w.includes("음운루프") || w.includes("가사"))).toBe(true);
+    expect(
+      p.warnings.some((w) => w.includes("음운루프") || w.includes("가사")),
+    ).toBe(true);
   });
 });
 
@@ -91,24 +93,28 @@ describe("VisualEngine — WCAG Gate", () => {
     const e = new VisualEngine();
     const p = e.analyze("뉴모피즘 저대비 카드", "브랜드 랜딩");
     expect(p.accessibility.contrastOK).toBe(false);
-    expect(p.warnings.some(w => w.includes("WCAG"))).toBe(true);
+    expect(p.warnings.some((w) => w.includes("WCAG"))).toBe(true);
     expect(p.evidenceGrades.neumorphism).toBe("D");
   });
 });
 
 describe("VisualEngine + Council 통합", () => {
-  it("Council.deliberate는 visualPacket 반환 + 31 brains", async () => {
+  it("Council.deliberate는 visualPacket 반환 + 42 brains", async () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(38);
+    expect(reg.all().length).toBe(42);
     const council = new Council(reg);
-    const { outputs, decision, visualPacket, contextPacket } = await council.deliberate("창문광 네온 드론으로 브랜드 랜딩 영상", "0원 스마트폰");
+    const { outputs, decision, visualPacket, contextPacket } =
+      await council.deliberate(
+        "창문광 네온 드론으로 브랜드 랜딩 영상",
+        "0원 스마트폰",
+      );
     expect(visualPacket).toBeDefined();
     expect(visualPacket.masters.length).toBeGreaterThan(0);
     expect(visualPacket.budgetTier).toBe("0원");
     expect(contextPacket).toBeDefined();
-    expect(outputs.length).toBeGreaterThanOrEqual(38);
+    expect(outputs.length).toBeGreaterThanOrEqual(42);
     expect(decision.consensus).toContain("합의");
   });
 });

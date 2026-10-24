@@ -6,3 +6,16 @@
 
 # Preserve whitespace in original upstream licensing texts.
 licenses/npm-runtime-notices.txt whitespace=-blank-at-eol
+
+# Large binaries — Git LFS (이전: 13M eval_*.zip이 히스토리에 바로 커밋되어 클론 느려짐)
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.wasm filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.eval.zip filter=lfs diff=lfs merge=lfs -text
+.arena/** filter=lfs diff=lfs merge=lfs -text
+.cache/** filter=lfs diff=lfs merge=lfs -text

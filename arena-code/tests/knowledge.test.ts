@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { KnowledgeEngine } from "../src/brains/knowledge.js";
-import { HISTORY_30, HistoryRegistry, createHistoryBrains } from "../src/brains/geniusHistory.js";
+import {
+  HISTORY_30,
+  HistoryRegistry,
+  createHistoryBrains,
+} from "../src/brains/geniusHistory.js";
 import { BrainMemory } from "../src/brains/memory.js";
 import { BrainRegistry } from "../src/brains/registry.js";
 import { createDefaultBrains } from "../src/brains/brains.js";
@@ -12,7 +16,9 @@ describe("KnowledgeEngine — 5층 분류", () => {
     const p = e.analyze("AI 요약으로 세종이 혼자 한글 만들었다고 알려주기");
     expect(p.factChecks.length).toBeGreaterThanOrEqual(1);
     expect(p.warnings.join(" ")).toContain("AI 검증");
-    expect(p.factChecks.some(f => f.level === "추측" || f.level === "사실")).toBe(true);
+    expect(
+      p.factChecks.some((f) => f.level === "추측" || f.level === "사실"),
+    ).toBe(true);
   });
   it("4층 체계·PARA·GTD·이름짓기·FAIR 포함", () => {
     const p = new KnowledgeEngine().analyze("문서 정리", "");
@@ -35,10 +41,15 @@ describe("KnowledgeEngine — 5층 분류", () => {
     const p = new KnowledgeEngine().analyze("창의", "");
     expect(p.creativeSeeds.length).toBe(6);
     expect(p.critical.length).toBe(10);
-    expect(p.critical.find(c => c.topic === "의도적 연습")!.correctSentence).toContain("개인 성공");
+    expect(
+      p.critical.find((c) => c.topic === "의도적 연습")!.correctSentence,
+    ).toContain("개인 성공");
   });
   it("통계 과장 입력에 경고 발생", () => {
-    const p = new KnowledgeEngine().analyze("손글씨가 항상 타이핑보다 좋다", "");
+    const p = new KnowledgeEngine().analyze(
+      "손글씨가 항상 타이핑보다 좋다",
+      "",
+    );
     expect(p.warnings.join("")).toContain("매체 과장");
   });
 });
@@ -46,7 +57,7 @@ describe("KnowledgeEngine — 5층 분류", () => {
 describe("History 30인", () => {
   it("30명 정확히 포함, 8분야 커버", () => {
     expect(HISTORY_30.length).toBe(36);
-    const fields = new Set(HISTORY_30.map(h => h.field));
+    const fields = new Set(HISTORY_30.map((h) => h.field));
     expect(fields.size).toBe(10);
   });
   it("각 30인은 4단 서술(achievement/interpretation/condition/limit)", () => {
@@ -67,15 +78,21 @@ describe("History 30인", () => {
   });
 });
 
-describe("Council 4중 패킷 (Context+Visual+Reasoning+Knowledge) + 31 brains", () => {
-  it("deliberate가 knowledgePacket 반환, 31 brains 보고", async () => {
+describe("Council 4중 패킷 (Context+Visual+Reasoning+Knowledge) + 42 brains", () => {
+  it("deliberate가 knowledgePacket 반환, 42 brains 보고", async () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(38);
+    expect(reg.all().length).toBe(42);
     const c = new Council(reg);
-    const { outputs, knowledgePacket, contextPacket, visualPacket, reasoningPacket } = await c.deliberate("문서 정리와 학습 계획", "맥락");
-    expect(outputs.length).toBeGreaterThanOrEqual(38);
+    const {
+      outputs,
+      knowledgePacket,
+      contextPacket,
+      visualPacket,
+      reasoningPacket,
+    } = await c.deliberate("문서 정리와 학습 계획", "맥락");
+    expect(outputs.length).toBeGreaterThanOrEqual(42);
     expect(knowledgePacket.factChecks.length).toBeGreaterThan(0);
     expect(knowledgePacket.fiveLayerMap).toContain("1층");
     expect(contextPacket.frame.primary.length).toBeGreaterThan(0);

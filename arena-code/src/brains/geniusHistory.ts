@@ -69,7 +69,7 @@ function mkOutput(input: any, brain: any, idea: string, confidence: number, tags
 abstract class BaseHistBrain implements Brain {
   abstract id: string; abstract role: BrainRole; abstract layer: BrainLayer;
   abstract name: string; abstract description: string;
-  version = "2.22.0";
+  version = "4.0.0";
   protected learned: string[] = [];
   async learn(feedback: BrainFeedback): Promise<void> { if (feedback.lesson) this.learned.push(feedback.lesson); }
   abstract think(input: BrainInput): Promise<BrainOutput>;
