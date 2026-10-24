@@ -67,5 +67,29 @@
     "note": "변증·사고실험 작동 nobel 5명 참여",
     "calibration": 0.88,
     "bucket": "nobel"
+  },
+  {
+    "name": "PhD 재현성 (ablation)",
+    "passed": true,
+    "score": 97,
+    "note": "재현성 작동 phd 7명 참여",
+    "calibration": 0.91,
+    "bucket": "phd"
+  },
+  {
+    "name": "PhD 피어리뷰 (반박 대비)",
+    "passed": true,
+    "score": 97,
+    "note": "피어리뷰 작동 phd 7명 참여",
+    "calibration": 0.89,
+    "bucket": "phd"
+  },
+  {
+    "name": "PhD 독창성 (틈 찾기)",
+    "passed": true,
+    "score": 97,
+    "note": "독창성 작동 phd 7명 참여",
+    "calibration": 0.9,
+    "bucket": "phd"
   }
 ]

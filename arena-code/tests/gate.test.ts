@@ -84,7 +84,7 @@ describe("Council 1→2→3→3.5→4→5 흐름 + 게이트 로그 — 42 brain
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(47);
+    expect(reg.all().length).toBe(54);
     expect(reg.byLayer(1).length).toBeGreaterThanOrEqual(8);
     expect(reg.byLayer(2).length).toBeGreaterThanOrEqual(4);
     expect(reg.byLayer(3.5 as any).length).toBe(1);
@@ -96,6 +96,6 @@ describe("Council 1→2→3→3.5→4→5 흐름 + 게이트 로그 — 42 brain
     expect(gateLogs.length).toBeGreaterThan(0);
     expect(gateResult).toBeDefined();
     expect(gateResult!.selected.length).toBe(8);
-    expect(outputs.length).toBeGreaterThanOrEqual(47);
+    expect(outputs.length).toBeGreaterThanOrEqual(54);
   });
 });
