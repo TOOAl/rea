@@ -10,6 +10,7 @@ import type { HookManager } from "../hooks/index.js";
 import { classifyIntent, isIntentClear } from "./intent.js";
 import { EvidenceLedger } from "./evidenceLedger.js";
 import { qualityGate, qualityFeedback } from "./outputQuality.js";
+import { persistLedgerToTree, buildEvidencePointer } from "./evidenceTreeBridge.js";
 
 // --- Events ---
 
@@ -71,7 +72,17 @@ export async function* queryLoop(params: LoopParams): AsyncGenerator<LoopEvent> 
   const intentHint = intent
     ? `${intent.kind} (conf=${intent.confidence}) ambiguities=[${intent.ambiguities.join("; ") || "none"}] evidence=${intent.evidence.slice(0, 2).join(" | ")}`
     : undefined;
-  const evidenceSummary = ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
+  let evidenceSummary = ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
+  // Phase 2: EvidenceTree 영속화 — 잘림이 있거나 REA_EVIDENCE_TREE=1 이면 디스크 트리 구축, 포인터 주입
+  let evidenceTree: ReturnType<typeof persistLedgerToTree> = null;
+  if (process.env.REA_EVIDENCE_TREE === "1" && ledger.list().length > 0) {
+    const hasTruncated = ledger.list().some(e => e.truncated);
+    if (hasTruncated || ledger.list().length > 3) {
+      evidenceTree = persistLedgerToTree(ledger, `task-${Date.now()}`, { cwd: params.cwd, taskPrompt: typeof params.messages[0]?.content === "string" ? params.messages[0].content as string : undefined });
+      const pointer = evidenceTree ? buildEvidencePointer(evidenceTree) : null;
+      if (pointer) evidenceSummary = `${evidenceSummary}\n\n[EvidenceTree persisted] ${pointer}`;
+    }
+  }
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,

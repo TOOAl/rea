@@ -136,3 +136,42 @@ export function qualityFeedback(report: QualityReport): string {
   lines.push("위 항목을 수정하여 다시 출력하세요. 특히 answerLeak/underlineCount는 반드시 PASS여야 합니다.");
   return lines.join("\n");
 }
+
+// ---------------------------------------------------------------------------
+// Phase 2: composer.ts behavioral contrast 확장 — 2후보 중 택1
+// ---------------------------------------------------------------------------
+
+export interface CandidateScore {
+  label: string;
+  report: QualityReport;
+  // 점수: fail 0점, warn -0.5, pass +1. 단순 가중치지만 Harness² composer처럼 “행동 차이”로 선택
+  score: number;
+}
+
+export function scoreCandidate(label: string, blocks: ContentBlock[], opts: QualityOptions = {}): CandidateScore {
+  const report = qualityGate(blocks, opts);
+  let score = 0;
+  for (const c of report.checks) {
+    if (c.severity === "fail") score += c.passed ? 1 : -2;
+    else if (c.severity === "warn") score += c.passed ? 0.5 : -0.5;
+  }
+  return { label, report, score };
+}
+
+/**
+ * 두 후보 중 더 나은 것을 선택 — composer.ts의 selectAnonymous와 동일 철학
+ * “정답지 없이도 행동 차이로 선택” — 더 높은 qualityGate 점수를 가진 후보를 택함
+ */
+export function selectBestCandidate(candidates: CandidateScore[]): CandidateScore | null {
+  if (candidates.length === 0) return null;
+  if (candidates.length === 1) return candidates[0];
+  // 점수 내림차순, 동점이면 fail 적은 순, 그 다음 warn 적은 순
+  const sorted = [...candidates].sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    const aFails = a.report.issues.length;
+    const bFails = b.report.issues.length;
+    if (aFails !== bFails) return aFails - bFails;
+    return a.report.warnings.length - b.report.warnings.length;
+  });
+  return sorted[0];
+}

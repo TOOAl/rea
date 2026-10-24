@@ -88,10 +88,12 @@
 - [x] 테스트 8개: intent 분류 / quality gate / context 보존 (`tests/pillar.test.ts` PASS)
 - [x] 회귀 픽스처 10개 + `tests/regression-intent.test.ts` 11개 PASS (2026-05-11 추가 — DaVinci/CapCut, truncated, answerLeak 등)
 
-### Phase 2 — Harness² 통합 (1주)
-- `harness2/context.ts`의 Evidence Tree를 메인 루프에서도 사용 (현재는 harness2 전용)
-- `proposer.ts`의 invariant/domain 분기를 intent 분류에 재사용
-- `composer.ts`의 behavioral contrast를 outputQuality의 “2후보 중 택1”로 확장
+### Phase 2 — Harness² 통합 (1주) — ✅ 완료 (2026-05-11)
+- [x] `src/loop/evidenceTreeBridge.ts` 신설 — Ledger → EvidenceTree 영속화, `REA_EVIDENCE_TREE=1` 시 `.arena/evidence/<taskId>`에 전체 궤적 저장, `buildEvidencePointer()`로 MISSION 포인터 주입 (토큰 절감 + 잘림 전체 복구)
+- [x] `src/loop/intent.ts`에 `proposeIntentVariants()` 추가 — 하나의 의도를 `invariant`(공통 절차) / `domain`(DaVinci 21.3.7, 수능 어법, Ghidra 등) 두 후보로 분기 (Harness² proposer 재사용)
+- [x] `src/loop/outputQuality.ts`에 `scoreCandidate()` / `selectBestCandidate()` 추가 — 2개 출력을 qualityGate 점수로 비교해 정답지 없이 “행동 차이”로 최적 선택 (composer behavioral contrast)
+- [x] `src/loop/queryLoop.ts`에 EvidenceTree 영속화 Hook 추가 — `truncated || ledger>3` 일 때 자동 디스크 저장, 다음 턴부터 포인터 기반 컨텍스트
+- [x] 테스트 6개 PASS (`tests/phase2.test.ts` — EvidenceTree persist, invariant/domain 분기, 2후보 선택)
 
 ### Phase 3 — 학습 축적 (2주+)
 - `MemoryBank` + `HarnessLibrary`를 intent/quality 피드백 루프에 연결 — 같은 도메인 반복 시 Library 교훈 자동 주입

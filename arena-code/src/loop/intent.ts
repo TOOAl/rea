@@ -138,3 +138,48 @@ export function classifyIntent(messages: Message[], opts: IntentOptions = {}): I
 export function isIntentClear(intent: Intent, threshold = 0.5): boolean {
   return intent.confidence >= threshold && intent.ambiguities.length <= 1;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 2: proposer.ts invariant/domain 분기 재사용 — Harness² H2
+// ---------------------------------------------------------------------------
+
+export interface IntentVariant {
+  dim: "invariant" | "domain";
+  hint: string; // system prompt에 주입할 추가 지시
+  focusSlots: string[]; // 이 variant가 집중할 슬롯
+}
+
+const DOMAIN_HINTS: Record<string, { dim: "domain"; hint: string; slots: string[] }> = {
+  video: { dim: "domain", hint: "도메인 지식: DaVinci Resolve 21.3.7 타임라인 1920x1080, Fairlight, Deliver 페이지. CapCut 용어 혼동 금지.", slots: ["outputFormat", "toolVersion"] },
+  exam: { dim: "domain", hint: "도메인 지식: 수능 어법 5지선다, 밑줄 어법, <span class=\"ul\">+border-bottom 이중 보장, 정답은 <details>로 800자 이후에만.", slots: ["underlineRange", "truncation"] },
+  ghidra: { dim: "domain", hint: "도메인 지식: Ghidra Headless, ReaGhidraBridge, ephemeral DB, P-Code.", slots: ["context"] },
+  youtube: { dim: "domain", hint: "도메인 지식: 유튜브 수익화 8분, 자막·썸네일·챕터, 15% 인용 제한.", slots: ["outputFormat"] },
+};
+
+const INVARIANT_HINT: IntentVariant = {
+  dim: "invariant",
+  hint: "공통 절차: 계획→도구사용→검증 3단계, TodoWrite로 분해, Read→Edit→Verify, 증거 출처 보존.",
+  focusSlots: ["context", "truncation"],
+};
+
+/**
+ * 하나의 Intent를 invariant/domain 두 후보로 분기 — proposer.ts의 2-proposal과 동일
+ * queryLoop나 harness2 engine이 두 후보를 probe/compose 할 수 있게 힌트 제공
+ */
+export function proposeIntentVariants(text: string, base: Intent): { invariant: IntentVariant; domain: IntentVariant } {
+  // domain 결정: 텍스트 키워드로 매핑, 없으면 base.kind 기반 fallback
+  const lower = text.toLowerCase();
+  let domainKey = "generic";
+  if (/davinci|resolve|캡컷|capcut|영상.*편집/i.test(text)) domainKey = "video";
+  else if (/밑줄|어법|수능|모의고사|exam/i.test(text)) domainKey = "exam";
+  else if (/ghidra|바이너리|리버스|p-code/i.test(text)) domainKey = "ghidra";
+  else if (/유튜브|썸네일|구독|조회수/i.test(text)) domainKey = "youtube";
+  else if (base.kind === "implementation") domainKey = "generic-impl";
+  else if (base.kind === "analysis") domainKey = "generic-analysis";
+
+  const domainVariant: IntentVariant = DOMAIN_HINTS[domainKey]
+    ? { dim: "domain", hint: DOMAIN_HINTS[domainKey].hint, focusSlots: DOMAIN_HINTS[domainKey].slots }
+    : { dim: "domain", hint: `도메인 지식: ${base.kind} 도메인, ${base.evidence.slice(0, 1).join("")} 기반 절차`, focusSlots: base.requiredSlots.slice(0, 2) };
+
+  return { invariant: INVARIANT_HINT, domain: domainVariant };
+}
