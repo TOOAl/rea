@@ -1,7 +1,7 @@
-# 코로나 시점 차단 추론 실험 — Time Capsule Reasoning (2026-10-25 v2.24.0)
+# 코로나 시점 차단 추론 실험 — Time Capsule Reasoning (2026-10-25 v2.24.1)
 
 > 차단점: `2019-12-31T23:59:59Z` — 이후 정보 완전 차단 후 추론 능력 측정
-> 브랜치: `arena/150fa191-rea` (main `40169a6` 기반) / 하네스: `src/rag/timeCapsule.ts` + `benchmarks/covidTimeCapsule.benchmark.ts`
+> 브랜치: `arena/150fa191-rea` (main `40169a6` 기반) / 하네스: `src/rag/timeCapsule.ts` + `benchmarks/covidTimeCapsule.benchmark.ts` + `src/loop/queryLoop.ts:timeCapsule`
 
 ## 1. 왜 이 실험인가?
 
@@ -15,6 +15,7 @@
 * **RAG 하네스 필터** — `filterByCutoff(entries, cutoffTs)`가 `metadata.date`/`capturedAt`을 기준으로 `kept/blocked` 분리. `isBeforeCutoff()`는 날짜 문자열 미기재 시 보수 통과하되 출처 누락으로 추후 감점
 * **System Prompt 타임캡슐** — `You are at 2019-12-31, you do NOT know anything after this date. Any post-cutoff claim must be marked [추정].` 를 `assembleSystemPrompt`에 `todoEnforceHint`처럼 주입
 * **누출 탐지** — `POST_CUTOFF_LEAK_PATTERNS` 6종(오미크론/2가백신/확진 억명/팬데믹 선언일 등)으로 사후 기억 인용을 `fail/warn`으로 즉시 차단
+* **queryLoop 통합 (v2.24.1)** — `LoopParams.timeCapsule{cutoff,enforceLeakCheck,maxLeakRetries}` + `REA_TIMECAPSULE=1` env. EvidenceLedger는 `kept`만 프롬프트에 노출하고 `blocked`는 `[TimeCapsule] N blocked`로 감사 추적. 모델 출력 후 `evaluateTimeCapsuleOutput()`이 선행 게이트로 동작해 `qualityGate` 전에 미래 정보 누출을 먼저 교정 (최대 2회 재시도, BAD→GOOD 검증 완료)
 
 ## 3. 과제 데이터셋 (8개, 4카테고리)
 
@@ -47,6 +48,7 @@
 [3] 미래정보 누출 탐지: 4/4 = 100% — GOOD/PASS는 leak 없음, BAD_환각은 leak 탐지
 [4] 차단 맥락 의도 분류: 3/3 = 100%
 종합: ✅ PASS — 시간 차단 추론 하네스 정상 (cutoff 2019-12-31T23:59:59Z)
+queryLoop 데모: BAD→GOOD 재시도 2회 PASS (TimeCapsule Gate가 가로채 교정)
 ```
 
 * 기존 3-pillar 벤치마크도 유지: 의도 50/50=100% / 문맥 100% / 품질 100%
@@ -54,23 +56,28 @@
 ## 6. 실제 추론 실험 실행법
 
 ```ts
-// 1) RAG 인덱스에 cutoff 적용
+// 1) 코드로 직접 — LoopParams에 타임캡슐 옵션
+for await (const e of queryLoop({
+  provider, tools, cwd,
+  messages: [{ role: "user", content: "2019-12-31 우한 41명 R0를 SARS와 비교해 추정하세요." }],
+  timeCapsule: { cutoff: "2019-12-31", enforceLeakCheck: true, maxLeakRetries: 2 },
+})) { ... }
+
+// 1-b) env로 — 기존 코드 변경 없이
+REA_TIMECAPSULE=1 npx tsx arena-code/scripts/timeCapsuleDemo.ts
+
+// 2) 수동 필터 — RAG 인덱스에 cutoff 적용
 const { kept, blocked } = filterByCutoff(ledger.list(), COVID_CUTOFF_TS);
-const allowedRag = await RagIndex.fromDocuments(kept.map(toDoc));
 
-// 2) 시스템 프롬프트에 시간캡슐 주입
-const system = await assembleSystemPrompt(cwd, 
-  `You are at ${COVID_CUTOFF}. Post-cutoff knowledge is FORBIDDEN. Mark all predictions as [추정].`, 
-  { evidenceSummary: keptSummary, intentHint });
-
-// 3) 모델 출력 후 하네스 검증
+// 3) 출력 검증 — 누출 탐지
 const report = evaluateTimeCapsuleOutput(modelOutput);
-if (!report.ok) // 누출 탐지 → 재시도 또는 감점
+if (!report.ok) // fail 6종 / warn 2종
 ```
 
-이 설계는 `queryLoop`의 `ReasoningLedger(thinking→Evidence)`와 `3회 self-correct`와 직결된다 — 차단 이후 정보로 답하면 `temporalClean` FAIL로 1회 교정, 그래도 누출하면 하네스가 최종 반려한다.
+이 설계는 `queryLoop`의 `ReasoningLedger(thinking→Evidence)`와 `3회 self-correct`와 일체로 동작한다. 차단 이후 정보로 답하면 `TimeCapsule Gate`가 `qualityGate`보다 먼저 FAIL을 발생시켜 1회 교정하고, 그래도 누출하면 하네스가 최종 반려한다 — 데모에서 BAD(오미크론/6억확진) → GOOD(가정·R0·시나리오·검증)으로 자동 교정됨을 검증했다.
 
 ## 7. 다음 단계
 
-* `mRNA 백신 타임라인` 과제를 LLM에 실제 투입해 두뇌가 SARS 선례만으로 12개월 vs 18개월을 어떻게 추정하는지 관찰
-* 오판 케이스를 `learningBridge`에 `recordLesson()`으로 축적 — 같은 cutoff 실험 반복 시 점점 정확해짐 (Phase 3 학습 축적)
+* 8개 과제 중 `mRNA 백신 타임라인`·`변이 예측` 2개를 실제 LLM(Claude/Anthropic)에 투입해 SARS 선례만으로 12개월 vs 18개월을 어떻게 추정하는지 실측 — `scripts/timeCapsuleDemo.ts`를 provider만 교체하면 즉시 실행 가능
+* 오판 케이스를 `learningBridge`에 `recordLesson()`으로 축적 — 같은 cutoff 실험 반복 시 `domain = "covid-timecapsule"` 교훈이 자동 주입되어 점점 정확해짐 (Phase 3 학습 축적)
+* `docs/.memory-bank/qa/task-*.md` 같은 러닝 로그는 `.gitignore`로 제외하고 `.arena/harness2/library/`에만 장기 축적 — 현재 qa 샘플 1건은 정상 동작 검증용
