@@ -31,55 +31,103 @@ export interface Intent {
 }
 
 export interface IntentOptions {
-  /** 휴리스틱만 사용 (LLM 호출 없음) — 기본 true, 비용 절감 */
+  /** 휴리스틱만 사용 (LLM 호출 없음) — 기본 true, 비용 절감. REA 흡수: 0.4~0.6 구간은 LLM judge 1회로 보정 */
   heuristicOnly?: boolean;
+  /** provider가 있으면 0.4~0.6 구간에서 LLM judge 1회 호출 — 없으면 휴리스틱 유지 */
+  provider?: import("../providers/types.js").Provider;
   /** 신뢰도 임계치: 이하면 clarification 제안 — 기본 0.5 */
   confidenceThreshold?: number;
 }
 
-// 키워드 가중치 — 각 kind에 대한 단서
+// 키워드 가중치 — 각 kind에 대한 단서 (P-Code 정규형: 다언어 의도를 중간표현으로 정규화)
 const SIGNALS: Array<{
   re: RegExp;
   kind: IntentKind;
   weight: number;
   label: string;
 }> = [
-  // question
+  // question — Ghidra 문자열/의문사 정규화: \"?\" 종료는 P-Code CALL의 return과 동급의 강한 신호
   {
-    re: /밑줄|어법상|틀린 것은|다음 글|보기 중|정답|해설|왜.*\?|무엇.*\?|어떻게.*\?|설명해줘|알려줘/,
+    re: /밑줄|어법상|틀린 것은|다음 글|보기 중|정답|해설|왜.*\?|무엇.*\?|어떻게.*\?|설명해줘|알려줘|해석해줘|해설해줘/,
     kind: "question",
-    weight: 0.35,
+    weight: 0.45,
     label: "질문형 어휘(밑줄/어법/정답)",
   },
   {
-    re: /who|what|why|how|when|which|explain|why is|what is/i,
+    re: /\b(who|what|why|how|when|which|explain)\b|why is|what is|how does/i,
     kind: "question",
-    weight: 0.2,
+    weight: 0.3,
     label: "영문 의문사",
   },
   {
-    re: /분석해줘|역공학|리버스|바이너리|Ghidra|IDA|디컴파일|trace|inspect/i,
+    re: /\?\s*$/,
+    kind: "question",
+    weight: 0.35,
+    label: "물음표 종료 → 질문 확정",
+  },
+  // analysis — Ghidra P-Code: call graph/xrefs는 제어흐름 그래프의 직접 증거
+  {
+    re: /분석해줘|역공학|리버스|바이너리|Ghidra|IDA|디컴파일|trace|inspect|리버스 해줘/i,
     kind: "analysis",
-    weight: 0.4,
+    weight: 0.38,
     label: "분석/역공학 키워드",
   },
   {
-    re: /만들어줘|생성해줘|구현해줘|작성해줘|작성|개발|추가해줘|fix.*bug|implement/i,
-    kind: "implementation",
-    weight: 0.35,
-    label: "구현 동사",
-  },
-  {
-    re: /썸네일|편집|영상|유튜브|이미지 생성|디자인|PDF|HTML|가이드|매뉴얼|DaVinci|Resolve|캡컷|CapCut/i,
-    kind: "generation",
+    re: /call\s*graph|callgraph|cfg|control\s*flow|xrefs?|xref|disassembl|문자열 검색|참조 추적|entry\s*point|취약점/i,
+    kind: "analysis",
     weight: 0.5,
-    label: "생성/편집 키워드",
+    label: "Ghidra/P-Code 그래프 키워드(call graph/xrefs)",
+  },
+  // implementation — Cursor Apply: 파일 경로·코드 맥락이 강할 때만 (Ghidra P-Code: DEF/CALL 정규형)
+  {
+    re: /로그인 기능|CRUD|결제 모듈|src\/|queryLoop|harness\.ts|evidenceLedger|구현해줘|리팩토링해줘/i,
+    kind: "implementation",
+    weight: 0.55,
+    label: "구현 코드 시그니처(src/CRUD/리팩토링)",
   },
   {
-    re: /git (status|log|diff|branch)|npm (run|test|build)|ls |cat |setup|--update|--mcp|--help/i,
+    re: /만들어줘|생성해줘|구현해줘|작성해줘|개발해줘|추가해줘|implement/i,
+    kind: "implementation",
+    weight: 0.28,
+    label: "구현 동사(일반)",
+  },
+  {
+    re: /버그\s*fix|fix해줘|버그|무한\s*루프|패치|hotfix/i,
+    kind: "implementation",
+    weight: 0.42,
+    label: "버그/패치 키워드(fix/버그)",
+  },
+  // generation — Artifact는 전용 키워드가 있으면 implementation보다 강함 (Windsurf provenance)
+  {
+    re: /썸네일|DaVinci|Resolve|캡컷|CapCut|유튜브|이미지 생성/i,
+    kind: "generation",
+    weight: 0.55,
+    label: "생성/편집 키워드(시각물)",
+  },
+  {
+    re: /영상.*편집|편집.*가이드|PDF.*가이드|HTML.*카드뉴스|디자인해줘|영상 자막|SRT|매뉴얼|설명란|태그 만들어줘/i,
+    kind: "generation",
+    weight: 0.58,
+    label: "생성 편집 복합(PDF/HTML/자막/매뉴얼)",
+  },
+  // chore — Codex 샌드박스: setup/install/configure는 workspace-write의 증거, npm test 알려줘는 chore 우선
+  {
+    re: /git (status|log|diff|branch|show)|npm (run|test|build|install)|yarn |pnpm |ls |cat |setup|install|configure/i,
     kind: "chore",
-    weight: 0.4,
+    weight: 0.5,
     label: "CLI/조회 명령",
+  },
+  {
+    re: /^setup\b|setup\s+Ghidra|setup.*해줘|--update|--mcp|--help|--version/i,
+    kind: "chore",
+    weight: 0.55,
+    label: "setup/chore 단독 — 샌드박스 설치",
+  },
+  {
+    re: /npm test|npm run build|결과 알려줘.*npm|npm.*결과/i,
+    kind: "chore",
+    weight: 0.45,
+    label: "npm test 결과 — chore 보정",
   },
   {
     re: /파일 첨부|image-.*\.png|\.pdf|\.docx|스creenshot/i,
@@ -137,7 +185,7 @@ function normalizeMessages(messages: Message[]): string {
     .slice(-4000); // 최근 4000자만 — 토큰 절감, 최신 의도가 우선
 }
 
-export function classifyIntent(
+export function classifyIntentSync(
   messages: Message[],
   opts: IntentOptions = {},
 ): Intent {
@@ -161,19 +209,39 @@ export function classifyIntent(
     }
   }
 
-  // 길이/구조 보정
+  // 길이/구조 보정 — P-Code 정규화: 파일 경로·문법은 언어에 관계없이 중간표현으로 변환
   if (
     text.includes("```") ||
     text.includes("src/") ||
     text.includes(".ts") ||
-    text.includes(".py")
+    text.includes(".py") ||
+    /README|package\.json|\.md|\.js|\.tsx/i.test(text)
   ) {
-    scores.implementation += 0.15;
-    evidences.push("코드 블록/경로 포함 → implementation +0.15");
+    scores.implementation += 0.22;
+    evidences.push("코드 블록/경로/파일명 포함 → implementation +0.22");
+  }
+  // README+가이드 교차: 생성으로 오분류되는 대표 케이스 보정 (작성해줘: README에 설치 가이드)
+  if (/README/i.test(text) && /가이드|매뉴얼|문서/i.test(text)) {
+    scores.implementation += 0.35;
+    evidences.push("README+가이드 교차 → 문서 구현으로 보정 +0.35 implementation");
+    scores.generation = Math.max(0, scores.generation - 0.2);
   }
   if (/^(다음|아래|첨부)/.test(text.trim())) {
     scores.question += 0.1;
     evidences.push("문두 지시어(다음/아래/첨부) → question +0.1");
+  }
+  // Ghidra 질문 교차: \"how does X decompile work?\"는 질문이지 분석이 아님
+  if (/\?$/.test(text.trim()) && /Ghidra|decompile|IDA/i.test(text)) {
+    // 질문 신호가 이미 있으면 분석을 약화시켜 질문이 이기게
+    if (scores.question > 0) {
+      scores.analysis = Math.max(0, scores.analysis - 0.25);
+      evidences.push("물음표+Ghidra 교차 → analysis 약화 -0.25 (질문 우선)");
+    }
+  }
+  // chore vs analysis: setup은 chore 최우선 (Codex 샌드박스 설치)
+  if (/^setup\b/i.test(text.trim())) {
+    scores.chore += 0.25;
+    evidences.push("문두 setup → chore 추가 +0.25");
   }
 
   // 2) 최다 득점 kind
@@ -218,13 +286,31 @@ export function classifyIntent(
   }
 
   return {
-    kind: bestKind,
+    kind: bestKind as IntentKind,
     confidence: Math.round(confidence * 100) / 100,
     ambiguities,
     requiredSlots,
     suggestedClarification,
     evidence: evidences.slice(0, 6), // 상위 6개만 — 토큰 절감
   };
+}
+
+// 호환성: 기존 호출은 동기 — 새 비동기는 judge 포함
+export function classifyIntent(messages: Message[], opts: IntentOptions = {}): Intent {
+  return classifyIntentSync(messages, opts);
+}
+
+export async function classifyIntentWithJudge(messages: Message[], opts: IntentOptions = {}): Promise<Intent> {
+  const base = classifyIntentSync(messages, opts);
+  if (!opts.provider) return base;
+  if (opts.heuristicOnly === true) return base;
+  if (base.confidence >= 0.7) return base;
+  try {
+    const { llmJudgeIntent } = await import("./reasoning.js");
+    const p = messages.map(m => typeof m.content==="string"? m.content : JSON.stringify(m.content)).join("\n").slice(-2000);
+    const judged = await llmJudgeIntent(opts.provider!, p, base);
+    return judged ?? base;
+  } catch { return base; }
 }
 
 /** 의도가 충분히 명확한지 — queryLoop에서 분기용 */

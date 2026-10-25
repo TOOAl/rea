@@ -183,6 +183,29 @@ export function qualityFeedback(report: QualityReport): string {
 }
 
 // ---------------------------------------------------------------------------
+// Reasoning L3: self-correct 3회 확장 — 기존 1회 → 3회 (Harness² Depth earlyStop 재사용)
+// ---------------------------------------------------------------------------
+export interface SelfCorrectState {
+  attempts: number;
+  lastReport: QualityReport | null;
+  history: QualityReport[];
+}
+
+/** 3회까지 재시도, 2회 연속 개선 없으면 중단 — Depth earlyStop과 동일 철학 */
+export function shouldContinueSelfCorrectEx(state: SelfCorrectState): boolean {
+  if (state.attempts >= 3) return false;
+  if (!state.lastReport || state.lastReport.ok) return false;
+  if (state.history.length >= 2) {
+    const a = state.history[state.history.length - 2];
+    const b = state.history[state.history.length - 1];
+    const noGain = b.issues.length >= a.issues.length;
+    if (noGain && state.attempts === 2) return true; // 마지막 1회 더 시도
+    if (noGain) return false;
+  }
+  return state.attempts < 3;
+}
+
+// ---------------------------------------------------------------------------
 // Phase 2: composer.ts behavioral contrast 확장 — 2후보 중 택1
 // ---------------------------------------------------------------------------
 

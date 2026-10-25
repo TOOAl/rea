@@ -56,7 +56,7 @@ export async function prepareContextUnderstanding(
     intentHint,
     structuralContext: structuralText,
   };
-  const systemPrompt = await assembleSystemPrompt(opts.cwd, rich);
+  const systemPrompt = await assembleSystemPrompt(opts.cwd, undefined, rich);
 
   const shouldClarify = !!(opts.enableIntentGate && intent.confidence < 0.5 && intent.suggestedClarification);
   return {
