@@ -80,10 +80,10 @@ const SIGNALS: Array<{
   },
   // implementation — Cursor Apply: 파일 경로·코드 맥락이 강할 때만 (Ghidra P-Code: DEF/CALL 정규형)
   {
-    re: /로그인 기능|CRUD|결제 모듈|src\/|queryLoop|harness\.ts|evidenceLedger|구현해줘|리팩토링해줘/i,
+    re: /로그인 기능|CRUD|결제 모듈|src\/|queryLoop|harness\.ts|evidenceLedger|구현해줘|리팩토링해줘|리팩터[:\s]|정규화|fallback 추가/i,
     kind: "implementation",
     weight: 0.55,
-    label: "구현 코드 시그니처(src/CRUD/리팩토링)",
+    label: "구현 코드 시그니처(src/CRUD/리팩토링/fallback)",
   },
   {
     re: /만들어줘|생성해줘|구현해줘|작성해줘|개발해줘|추가해줘|implement/i,
@@ -96,6 +96,12 @@ const SIGNALS: Array<{
     kind: "implementation",
     weight: 0.42,
     label: "버그/패치 키워드(fix/버그)",
+  },
+  {
+    re: /어디야|어디인가|어느 부분이|어느 부분이 틀렸/i,
+    kind: "question",
+    weight: 0.5,
+    label: "질문 위치어(어디야) — 코딩 질문 구분",
   },
   // generation — Artifact는 전용 키워드가 있으면 implementation보다 강함 (Windsurf provenance)
   {
@@ -210,15 +216,15 @@ export function classifyIntentSync(
   }
 
   // 길이/구조 보정 — P-Code 정규화: 파일 경로·문법은 언어에 관계없이 중간표현으로 변환
-  if (
-    text.includes("```") ||
-    text.includes("src/") ||
-    text.includes(".ts") ||
-    text.includes(".py") ||
-    /README|package\.json|\.md|\.js|\.tsx/i.test(text)
-  ) {
-    scores.implementation += 0.22;
-    evidences.push("코드 블록/경로/파일명 포함 → implementation +0.22");
+  // 단, 질문이 우세할 때는 코드블록 보너스 축소 — “버그가 어디야? ```”가 구현으로 오분류 방지
+  {
+    const hasCodeHint = text.includes("```") || text.includes("src/") || text.includes(".ts") || text.includes(".py") || /README|package\.json|\.md|\.js|\.tsx/i.test(text);
+    if (hasCodeHint) {
+      const questionBias = scores.question > 0.35 || /\?\s*$/.test(text.trim()) || /어디야|알려줘|왜.*틀렸/i.test(text);
+      const bonus = questionBias ? 0.06 : 0.22;
+      scores.implementation += bonus;
+      evidences.push(`코드 블록/경로/파일명 포함 → implementation +${bonus}${questionBias ? " (질문 우세로 축소)" : ""}`);
+    }
   }
   // README+가이드 교차: 생성으로 오분류되는 대표 케이스 보정 (작성해줘: README에 설치 가이드)
   if (/README/i.test(text) && /가이드|매뉴얼|문서/i.test(text)) {
