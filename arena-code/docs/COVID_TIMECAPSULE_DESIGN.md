@@ -76,7 +76,15 @@ if (!report.ok) // fail 6종 / warn 2종
 
 이 설계는 `queryLoop`의 `ReasoningLedger(thinking→Evidence)`와 `3회 self-correct`와 일체로 동작한다. 차단 이후 정보로 답하면 `TimeCapsule Gate`가 `qualityGate`보다 먼저 FAIL을 발생시켜 1회 교정하고, 그래도 누출하면 하네스가 최종 반려한다 — 데모에서 BAD(오미크론/6억확진) → GOOD(가정·R0·시나리오·검증)으로 자동 교정됨을 검증했다.
 
-## 7. 다음 단계
+## 7. 주의 — 100점은 하네스 자가검증이며 과신 금지
+
+> **100% PASS는 하네스가 스스로 만든 차단 필터/누출 탐지/샘플 답안이 잘 동작하는지를 검증한 것이지, LLM이 코로나를 100점짜리로 추론한다는 증명이 아닙니다.**
+
+* `8/8 PASS` 중 8개 과제는 아직 실제 LLM에 투입되지 않았고, mock 예시 답안의 형식(가정·시나리오·확률·검증·모름)만 채점했습니다.
+* 실제 LLM 실측(`scripts/timeCapsuleLive.ts`)은 샌드박스 네트워크 제한으로 `mock-live 8/8`만 완료했으며, Gemini/OpenRouter 등 외부 모델에서의 성적은 별도 로컬 실행이 필요합니다.
+* 좋은 추론 점수표(7개 체크리스트)를 만족해도 사후 예측이 맞았다는 뜻이 아니며, 불확실성 범위와 검증 계획의 질을 별도로 평가해야 합니다. 이 문서는 **추론의 과정**을 측정하는 틀을 제공한 것이지 결과를 보증하지 않습니다.
+
+## 8. 다음 단계
 
 * 8개 과제 중 `mRNA 백신 타임라인`·`변이 예측` 2개를 실제 LLM(Claude/Anthropic)에 투입해 SARS 선례만으로 12개월 vs 18개월을 어떻게 추정하는지 실측 — `scripts/timeCapsuleDemo.ts`를 provider만 교체하면 즉시 실행 가능
 * 오판 케이스를 `learningBridge`에 `recordLesson()`으로 축적 — 같은 cutoff 실험 반복 시 `domain = "covid-timecapsule"` 교훈이 자동 주입되어 점점 정확해짐 (Phase 3 학습 축적)
