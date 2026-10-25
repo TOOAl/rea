@@ -31,8 +31,10 @@ export interface Intent {
 }
 
 export interface IntentOptions {
-  /** 휴리스틱만 사용 (LLM 호출 없음) — 기본 true, 비용 절감 */
+  /** 휴리스틱만 사용 (LLM 호출 없음) — 기본 true, 비용 절감. REA 흡수: 0.4~0.6 구간은 LLM judge 1회로 보정 */
   heuristicOnly?: boolean;
+  /** provider가 있으면 0.4~0.6 구간에서 LLM judge 1회 호출 — 없으면 휴리스틱 유지 */
+  provider?: import("../providers/types.js").Provider;
   /** 신뢰도 임계치: 이하면 clarification 제안 — 기본 0.5 */
   confidenceThreshold?: number;
 }
@@ -137,7 +139,7 @@ function normalizeMessages(messages: Message[]): string {
     .slice(-4000); // 최근 4000자만 — 토큰 절감, 최신 의도가 우선
 }
 
-export function classifyIntent(
+export function classifyIntentSync(
   messages: Message[],
   opts: IntentOptions = {},
 ): Intent {
@@ -218,13 +220,31 @@ export function classifyIntent(
   }
 
   return {
-    kind: bestKind,
+    kind: bestKind as IntentKind,
     confidence: Math.round(confidence * 100) / 100,
     ambiguities,
     requiredSlots,
     suggestedClarification,
     evidence: evidences.slice(0, 6), // 상위 6개만 — 토큰 절감
   };
+}
+
+// 호환성: 기존 호출은 동기 — 새 비동기는 judge 포함
+export function classifyIntent(messages: Message[], opts: IntentOptions = {}): Intent {
+  return classifyIntentSync(messages, opts);
+}
+
+export async function classifyIntentWithJudge(messages: Message[], opts: IntentOptions = {}): Promise<Intent> {
+  const base = classifyIntentSync(messages, opts);
+  if (opts.heuristicOnly !== false && !opts.provider) return base;
+  if (base.confidence < 0.4 || base.confidence >= 0.62) return base;
+  if ((base.confidence >= 0.4 && base.confidence < 0.62) && base.ambiguities.length === 0) return base;
+  try {
+    const { llmJudgeIntent } = await import("./reasoning.js");
+    const prompt = messages.map(m => typeof m.content==="string"? m.content : JSON.stringify(m.content)).join("\n").slice(-2000);
+    const judged = await llmJudgeIntent(opts.provider!, prompt, base);
+    return judged ?? base;
+  } catch { return base; }
 }
 
 /** 의도가 충분히 명확한지 — queryLoop에서 분기용 */
