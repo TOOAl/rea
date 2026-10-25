@@ -1,0 +1,107 @@
+{
+  "cutoff": "2019-12-31",
+  "provider": "mock-live",
+  "model": "mock",
+  "mockMode": true,
+  "results": [
+    {
+      "id": "epi-r0",
+      "category": "역학 추론",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 616,
+      "turns": 1
+    },
+    {
+      "id": "epi-cfr",
+      "category": "역학 추론",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 610,
+      "turns": 1
+    },
+    {
+      "id": "policy-lockdown",
+      "category": "정책 시나리오",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 620,
+      "turns": 1
+    },
+    {
+      "id": "policy-school",
+      "category": "정책 시나리오",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 614,
+      "turns": 1
+    },
+    {
+      "id": "science-vaccine",
+      "category": "과학 추론",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 621,
+      "turns": 1
+    },
+    {
+      "id": "science-variant",
+      "category": "과학 추론",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 618,
+      "turns": 1
+    },
+    {
+      "id": "econ-supply",
+      "category": "2차 효과",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 614,
+      "turns": 1
+    },
+    {
+      "id": "society-mental",
+      "category": "2차 효과",
+      "ok": true,
+      "issues": [],
+      "warnings": [],
+      "leakOk": true,
+      "structureScore": 4,
+      "evidenceScore": 3,
+      "textLen": 600,
+      "turns": 1
+    }
+  ],
+  "passCount": 8,
+  "total": 8,
+  "at": "2026-10-25T14:21:45.545Z"
+}
