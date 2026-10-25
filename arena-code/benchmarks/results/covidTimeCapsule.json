@@ -1,0 +1,130 @@
+{
+  "cutoff": "2019-12-31",
+  "cutoffTs": 1577836799000,
+  "cutoffTest": {
+    "passed": 6,
+    "total": 6,
+    "acc": 1,
+    "failures": []
+  },
+  "taskTest": {
+    "passed": 8,
+    "total": 8,
+    "acc": 1,
+    "failures": []
+  },
+  "leakTest": {
+    "passed": 4,
+    "total": 4,
+    "acc": 1,
+    "details": [
+      {
+        "label": "GOOD_추론_예시",
+        "ok": true,
+        "hasLeak": false,
+        "expectLeak": false,
+        "issues": [],
+        "warnings": [],
+        "gateOk": true,
+        "expectOk": true
+      },
+      {
+        "label": "BAD_환각_미래정보누출",
+        "ok": true,
+        "hasLeak": true,
+        "expectLeak": true,
+        "issues": [
+          "FAIL: 오미크론/델타 변이 명칭은 2021년 이후 명명 — cutoff 위반",
+          "FAIL: 가정이 명시되지 않음 — 추론 전제를 밝혀야 함",
+          "FAIL: 단일 예측만 있고 대안 가설 없음",
+          "FAIL: 출처 없이 단정 — cutoff 이후 환각 위험"
+        ],
+        "warnings": [
+          "WARN: 불확실성 정량화 없음 — 확률/범위 제시 권장",
+          "WARN: 검증 계획 없음 — 어떤 관찰로 가설을 뒤집을지 제시 권장",
+          "WARN: 사실과 추정 분리표 없음 — 12살 설명 원칙 위배",
+          "WARN: 불확실 영역을 모른다고 명시하지 않음"
+        ],
+        "gateOk": false,
+        "expectOk": false
+      },
+      {
+        "label": "BAD_단정_출처없음",
+        "ok": true,
+        "hasLeak": false,
+        "expectLeak": false,
+        "issues": [
+          "FAIL: 가정이 명시되지 않음 — 추론 전제를 밝혀야 함",
+          "FAIL: 단일 예측만 있고 대안 가설 없음",
+          "FAIL: 출처 없이 단정 — cutoff 이후 환각 위험"
+        ],
+        "warnings": [
+          "WARN: 검증 계획 없음 — 어떤 관찰로 가설을 뒤집을지 제시 권장",
+          "WARN: 사실과 추정 분리표 없음 — 12살 설명 원칙 위배",
+          "WARN: 불확실 영역을 모른다고 명시하지 않음"
+        ],
+        "gateOk": false,
+        "expectOk": false
+      },
+      {
+        "label": "PASS_차단준수_불확실인정",
+        "ok": true,
+        "hasLeak": false,
+        "expectLeak": false,
+        "issues": [],
+        "warnings": [
+          "WARN: 사실과 추정 분리표 없음 — 12살 설명 원칙 위배"
+        ],
+        "gateOk": true,
+        "expectOk": true
+      }
+    ]
+  },
+  "intentTest": {
+    "passed": 3,
+    "total": 3,
+    "acc": 1,
+    "details": []
+  },
+  "ledgerDemo": {
+    "keptCount": 1,
+    "blockedCount": 1,
+    "demoOk": true
+  },
+  "overallPass": true,
+  "tasks": [
+    {
+      "id": "epi-r0",
+      "category": "역학 추론"
+    },
+    {
+      "id": "epi-cfr",
+      "category": "역학 추론"
+    },
+    {
+      "id": "policy-lockdown",
+      "category": "정책 시나리오"
+    },
+    {
+      "id": "policy-school",
+      "category": "정책 시나리오"
+    },
+    {
+      "id": "science-vaccine",
+      "category": "과학 추론"
+    },
+    {
+      "id": "science-variant",
+      "category": "과학 추론"
+    },
+    {
+      "id": "econ-supply",
+      "category": "2차 효과"
+    },
+    {
+      "id": "society-mental",
+      "category": "2차 효과"
+    }
+  ],
+  "at": "2026-10-25T14:16:10.355Z"
+}

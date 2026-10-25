@@ -105,10 +105,10 @@ const SIGNALS: Array<{
     label: "생성/편집 키워드(시각물)",
   },
   {
-    re: /영상.*편집|편집.*가이드|PDF.*가이드|HTML.*카드뉴스|디자인해줘|영상 자막|SRT|매뉴얼|설명란|태그 만들어줘/i,
+    re: /영상.*편집|편집.*가이드|PDF.*가이드|HTML.*카드뉴스|디자인해줘|영상 자막|SRT|매뉴얼|설명란|태그 만들어줘|시나리오|정책.*시나리오/i,
     kind: "generation",
     weight: 0.58,
-    label: "생성 편집 복합(PDF/HTML/자막/매뉴얼)",
+    label: "생성 편집 복합(PDF/HTML/자막/매뉴얼/시나리오)",
   },
   // chore — Codex 샌드박스: setup/install/configure는 workspace-write의 증거, npm test 알려줘는 chore 우선
   {

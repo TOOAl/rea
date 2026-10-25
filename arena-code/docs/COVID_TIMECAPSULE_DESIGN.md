@@ -1,0 +1,91 @@
+# 코로나 시점 차단 추론 실험 — Time Capsule Reasoning (2026-10-25 v2.24.1)
+
+> 차단점: `2019-12-31T23:59:59Z` — 이후 정보 완전 차단 후 추론 능력 측정
+> 브랜치: `arena/150fa191-rea` (main `40169a6` 기반) / 하네스: `src/rag/timeCapsule.ts` + `benchmarks/covidTimeCapsule.benchmark.ts` + `src/loop/queryLoop.ts:timeCapsule`
+
+## 1. 왜 이 실험인가?
+
+일반 벤치마크는 “정답을 외운 것인가, 추론한 것인가”를 구분하지 못한다. 코로나처럼 **전세계가 사후에 알게 된 사실**을 차단하고, 차단 시점의 제한된 관찰만으로 미래를 예측하게 하면 두뇌가 **기억이 아니라 사고**를 하는지 검증할 수 있다.
+
+이는 REA·Ghidra 흡수로 달성한 100% 의도 정확도가 **진짜 추론 능력**인지, 아니면 데이터 암기인지 가르는 2차 검증이다.
+
+## 2. 설계 (Ghidra P-Code 철학: 시간도 데이터다)
+
+* **모든 증거에 `capturedAt` 강제** — `EvidenceLedger.add()`는 ISO 날짜를 필수로 보존, 없으면 provenance 누락으로 `qualityGate`에서 감점
+* **RAG 하네스 필터** — `filterByCutoff(entries, cutoffTs)`가 `metadata.date`/`capturedAt`을 기준으로 `kept/blocked` 분리. `isBeforeCutoff()`는 날짜 문자열 미기재 시 보수 통과하되 출처 누락으로 추후 감점
+* **System Prompt 타임캡슐** — `You are at 2019-12-31, you do NOT know anything after this date. Any post-cutoff claim must be marked [추정].` 를 `assembleSystemPrompt`에 `todoEnforceHint`처럼 주입
+* **누출 탐지** — `POST_CUTOFF_LEAK_PATTERNS` 6종(오미크론/2가백신/확진 억명/팬데믹 선언일 등)으로 사후 기억 인용을 `fail/warn`으로 즉시 차단
+* **queryLoop 통합 (v2.24.1)** — `LoopParams.timeCapsule{cutoff,enforceLeakCheck,maxLeakRetries}` + `REA_TIMECAPSULE=1` env. EvidenceLedger는 `kept`만 프롬프트에 노출하고 `blocked`는 `[TimeCapsule] N blocked`로 감사 추적. 모델 출력 후 `evaluateTimeCapsuleOutput()`이 선행 게이트로 동작해 `qualityGate` 전에 미래 정보 누출을 먼저 교정 (최대 2회 재시도, BAD→GOOD 검증 완료)
+
+## 3. 과제 데이터셋 (8개, 4카테고리)
+
+| 카테고리 | 과제 | cutoff까지 허용된 증거 예시 |
+|---|---|---|
+| 역학 추론 | epi-r0: 41명 가족전파 1건 → R0 추정, epi-cfr: 초기 CFR 편향 | SARS R0 2-3/치명 9.6%, MERS R0 0.7/치명 35%, 1918 플루 R0 1.4-1.8 |
+| 정책 시나리오 | policy-lockdown: best/middle/worst 3시나리오, policy-school: 휴교 2차효과 | 사스 격리·마스크, 1918 조기봉쇄 사망 50%↓, 2009 아동 전파 주도 |
+| 과학 추론 | science-vaccine: mRNA 타임라인, science-variant: 변이 예측 | mRNA 1990 발견·2015 MERS 마우스 3주 설계, 코로나 교정효소로 인플루 변이보다 느림 |
+| 2차 효과 | econ-supply: 우한 봉쇄 공급망, society-mental: 격리 정신건강 | 2011 지진 자동차 6개월 차질, 사스 격리 불안 28%↑ |
+
+각 과제는 `prompt`(2019-12-31 시점 질문) + `allowedEvidence`(SARS/MERS/1918 등 차단 이전만) + `expectedElements`(가정/시나리오/R0/검증 등)로 구성되어, 정답 없이도 **사고 구조**를 채점한다.
+
+## 4. 채점 루브릭 (정답 없이 행동 차이로 선택 — Harness² behavioral contrast)
+
+1. **Temporal Leak** — 오미크론/델타 명칭, 2020 확진 억명, 팬데믹 선언일 정확 인용 등 차단 이후 고유명사 사용 시 `fail`
+2. **추론 구조 4요소** — 가정 명시 / 다중 가설(시나리오) / 불확실성 정량(R0·%·범위) / 검증 계획(trigger·중간지표·추가데이터) 각각 `pass/fail`
+3. **증거 규율 3요소** — 출처 언급 / 사실-추정 분리표 / 모름 인정
+
+**좋은 추론 예시 (PASS):**
+> 가정: 2019-12-31까지 인간간 전파 미확정 [추정]. 사실: SARS R0 2-3 (WHO_SARS_2003.md). 시나리오 Best/Middle/Worst, R0 1.5-3.5 범위, 검증 지표 2차감염·의료진감염 모니터링, 모름: 변이·백신 성공은 1년 후 관찰로만 검증 가능.
+
+**나쁜 추론 예시 (FAIL):**
+> 2020년 3월 11일 팬데믹 선언, 2021년 델타, 6억 확진 — 미래 정보 누출 + 가정·출처·불확실성 없음.
+
+## 5. 검증 결과 (harness 자체 검증 — LLM 없이도 실행)
+
+```
+[1] 차단 필터 정확도: 6/6 = 100% — SARS 2003 통과, 우한 2019-12-31 경계 통과, WHO 팬데믹 2020-03-11 차단
+[2] 추론 과제 무결성: 8/8 = 100% — 4카테고리 균형
+[3] 미래정보 누출 탐지: 4/4 = 100% — GOOD/PASS는 leak 없음, BAD_환각은 leak 탐지
+[4] 차단 맥락 의도 분류: 3/3 = 100%
+종합: ✅ PASS — 시간 차단 추론 하네스 정상 (cutoff 2019-12-31T23:59:59Z)
+queryLoop 데모: BAD→GOOD 재시도 2회 PASS (TimeCapsule Gate가 가로채 교정)
+```
+
+* 기존 3-pillar 벤치마크도 유지: 의도 50/50=100% / 문맥 100% / 품질 100%
+
+## 6. 실제 추론 실험 실행법
+
+```ts
+// 1) 코드로 직접 — LoopParams에 타임캡슐 옵션
+for await (const e of queryLoop({
+  provider, tools, cwd,
+  messages: [{ role: "user", content: "2019-12-31 우한 41명 R0를 SARS와 비교해 추정하세요." }],
+  timeCapsule: { cutoff: "2019-12-31", enforceLeakCheck: true, maxLeakRetries: 2 },
+})) { ... }
+
+// 1-b) env로 — 기존 코드 변경 없이
+REA_TIMECAPSULE=1 npx tsx arena-code/scripts/timeCapsuleDemo.ts
+
+// 2) 수동 필터 — RAG 인덱스에 cutoff 적용
+const { kept, blocked } = filterByCutoff(ledger.list(), COVID_CUTOFF_TS);
+
+// 3) 출력 검증 — 누출 탐지
+const report = evaluateTimeCapsuleOutput(modelOutput);
+if (!report.ok) // fail 6종 / warn 2종
+```
+
+이 설계는 `queryLoop`의 `ReasoningLedger(thinking→Evidence)`와 `3회 self-correct`와 일체로 동작한다. 차단 이후 정보로 답하면 `TimeCapsule Gate`가 `qualityGate`보다 먼저 FAIL을 발생시켜 1회 교정하고, 그래도 누출하면 하네스가 최종 반려한다 — 데모에서 BAD(오미크론/6억확진) → GOOD(가정·R0·시나리오·검증)으로 자동 교정됨을 검증했다.
+
+## 7. 주의 — 100점은 하네스 자가검증이며 과신 금지
+
+> **100% PASS는 하네스가 스스로 만든 차단 필터/누출 탐지/샘플 답안이 잘 동작하는지를 검증한 것이지, LLM이 코로나를 100점짜리로 추론한다는 증명이 아닙니다.**
+
+* `8/8 PASS` 중 8개 과제는 아직 실제 LLM에 투입되지 않았고, mock 예시 답안의 형식(가정·시나리오·확률·검증·모름)만 채점했습니다.
+* 실제 LLM 실측(`scripts/timeCapsuleLive.ts`)은 샌드박스 네트워크 제한으로 `mock-live 8/8`만 완료했으며, Gemini/OpenRouter 등 외부 모델에서의 성적은 별도 로컬 실행이 필요합니다.
+* 좋은 추론 점수표(7개 체크리스트)를 만족해도 사후 예측이 맞았다는 뜻이 아니며, 불확실성 범위와 검증 계획의 질을 별도로 평가해야 합니다. 이 문서는 **추론의 과정**을 측정하는 틀을 제공한 것이지 결과를 보증하지 않습니다.
+
+## 8. 다음 단계
+
+* 8개 과제 중 `mRNA 백신 타임라인`·`변이 예측` 2개를 실제 LLM(Claude/Anthropic)에 투입해 SARS 선례만으로 12개월 vs 18개월을 어떻게 추정하는지 실측 — `scripts/timeCapsuleDemo.ts`를 provider만 교체하면 즉시 실행 가능
+* 오판 케이스를 `learningBridge`에 `recordLesson()`으로 축적 — 같은 cutoff 실험 반복 시 `domain = "covid-timecapsule"` 교훈이 자동 주입되어 점점 정확해짐 (Phase 3 학습 축적)
+* `docs/.memory-bank/qa/task-*.md` 같은 러닝 로그는 `.gitignore`로 제외하고 `.arena/harness2/library/`에만 장기 축적 — 현재 qa 샘플 1건은 정상 동작 검증용
