@@ -22,11 +22,22 @@ import {
 import type { HookManager } from "../hooks/index.js";
 import {
   classifyIntent,
-  isIntentClear,
+  classifyIntentSync,
+  classifyIntentWithJudge,
   formatIntentHintForPrompt,
 } from "./intent.js";
 import { EvidenceLedger } from "./evidenceLedger.js";
-import { qualityGate, qualityFeedback } from "./outputQuality.js";
+import {
+  qualityGate,
+  qualityFeedback,
+  type QualityReport,
+} from "./outputQuality.js";
+import {
+  ReasoningLedger,
+  shouldForceTodoWrite,
+  buildTodoPrompt,
+  scoreReasoningTrace,
+} from "./reasoning.js";
 import {
   persistLedgerToTree,
   buildEvidencePointer,
@@ -91,20 +102,30 @@ export async function* queryLoop(
     turnCount: 0,
   };
 
-  // Pillar 1/2: ledger + intent (opt-in, 기존 루프 영향 없음 — 기본 false라 기존 동작 보존)
-  const ledger = new EvidenceLedger();
+  // Pillar 1/2: ledger + intent — REA 흡수: ReasoningLedger로 승격 (thinking 보존) + LLM judge 1회
+  const ledger = new ReasoningLedger();
   for (const m of params.messages) {
     const txt =
       typeof m.content === "string" ? m.content : JSON.stringify(m.content);
     if (txt.length > 500)
       ledger.fromUserAttach("initial", txt.slice(0, 800), txt.length > 1000);
   }
-  // 기본 활성화: env나 파라미터로 명시적 false가 아니면 동작 (기존 opt-in에서 default-on으로 승격)
   const intentGateOn =
     params.intentGate !== false && process.env.REA_INTENT_GATE !== "0";
   const qualityGateOn =
     params.qualityGate !== false && process.env.REA_QUALITY_GATE !== "0";
-  const intent = intentGateOn ? classifyIntent(params.messages) : null;
+  let intent: ReturnType<typeof classifyIntentSync> | null = null;
+  if (intentGateOn) {
+    const base = classifyIntentSync(params.messages);
+    // P-Code 정규화 후 LLM judge 1회 (0.2~0.69 구간) — Cursor Apply처럼 필요할 때만 호출
+    if (params.provider && base.confidence < 0.7 && base.confidence >= 0.2) {
+      try {
+        intent = await classifyIntentWithJudge(params.messages, { provider: params.provider, heuristicOnly: false });
+      } catch { intent = base; }
+    } else {
+      intent = base;
+    }
+  }
   const intentHint = intent
     ? formatIntentHintForPrompt(
         intent,
@@ -118,6 +139,11 @@ export async function* queryLoop(
           .slice(-2000),
       )
     : undefined;
+  // REA Cline plan/act: confidence 낮고 모호점 2개 이상이면 TodoWrite 강제 힌트 주입
+  let todoEnforceHint: string | undefined;
+  if (intent && shouldForceTodoWrite(intent)) {
+    todoEnforceHint = buildTodoPrompt(intent, intentHint ?? "");
+  }
   let evidenceSummary =
     ledger.list().length > 0 ? ledger.summarizeForPrompt() : undefined;
   // Phase 2: EvidenceTree 영속화 — 잘림이 있거나 REA_EVIDENCE_TREE=1 이면 디스크 트리 구축, 포인터 주입
@@ -201,11 +227,12 @@ export async function* queryLoop(
       evidenceSummary ||
       lessonsPrompt ||
       structuralContext ||
-      ragContext
+      ragContext ||
+      todoEnforceHint
       ? {
           evidenceSummary: lessonsPrompt
-            ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}`
-            : evidenceSummary,
+            ? `${evidenceSummary ?? ""}\n\n${lessonsPrompt}` + (todoEnforceHint ? `\n\n${todoEnforceHint}` : "")
+            : evidenceSummary ? evidenceSummary + (todoEnforceHint ? `\n\n${todoEnforceHint}` : "") : todoEnforceHint,
           intentHint,
           structuralContext,
           ragContext,
@@ -221,6 +248,10 @@ export async function* queryLoop(
   }));
 
   const toolMap = new Map(params.tools.map((t) => [t.name, t]));
+
+  // REA P3: self-correct 3회 상태 + Depth earlyStop 패턴 재사용
+  let selfCorrectAttempts = 0;
+  const selfCorrectHistory: QualityReport[] = [];
 
   while (true) {
     if (params.signal?.aborted) {
@@ -257,9 +288,10 @@ export async function* queryLoop(
 
     yield { type: "turn_start", turn: state.turnCount + 1 };
 
-    // --- Model call (streaming) ---
+    // --- Model call (streaming) --- L1 투명 추론: thinking 버퍼를 ReasoningLedger로 승격 (Claude Code thinking 채널)
     const toolCalls: ContentBlock[] = [];
     let textBuffer = "";
+    let thinkingBuffer = "";
 
     try {
       const stream = params.provider.streamChat({
@@ -275,14 +307,29 @@ export async function* queryLoop(
         if (event.type === "text_delta" && event.text) {
           textBuffer += event.text;
           yield { type: "text", text: event.text };
+        } else if ((event.type as string) === "thinking" || (event.type as string) === "thinking_delta") {
+          if (event.text) {
+            thinkingBuffer += event.text;
+            yield { type: "thinking", text: event.text };
+          }
+          if ((event as any).block?.type === "thinking" && (event as any).block?.text) {
+            thinkingBuffer += (event as any).block.text;
+          }
         } else if (event.type === "tool_use" && event.block) {
-          toolCalls.push(event.block);
+          if ((event.block as any).type === "thinking") {
+            thinkingBuffer += (event.block as any).text ?? "";
+            yield { type: "thinking", text: (event.block as any).text ?? "" };
+          } else {
+            toolCalls.push(event.block);
+          }
         } else if (event.type === "error" && event.error) {
           yield { type: "error", message: event.error };
-          // 에러 시 중단하지 않고, 사용자에게 에러를 tool_result처럼 전달하여 모델이 복구 시도하도록 할 수도 있음
-          // 여기서는 중단
           return;
         }
+      }
+      // turn 종료 시 thinking을 EvidenceLedger에 영구 보존 (Ghidra provenance처럼)
+      if (thinkingBuffer) {
+        try { (ledger as ReasoningLedger).addThinking(state.turnCount + 1, thinkingBuffer); } catch {}
       }
     } catch (e: unknown) {
       yield {
@@ -307,18 +354,26 @@ export async function* queryLoop(
 
     state.messages.push({ role: "assistant", content: assistantBlocks });
 
-    // --- Stop condition: no tool calls → done (Pillar 3: quality gate — 기본 활성) ---
+    // --- Stop condition: no tool calls → done (Pillar 3: quality gate — REA 3회 self-correct, Depth earlyStop) ---
     if (toolCalls.length === 0) {
       let finalQualityReport: ReturnType<typeof qualityGate> | null = null;
       if (qualityGateOn) {
         const report = qualityGate(assistantBlocks, params.qualityOpts ?? {});
         finalQualityReport = report;
+        // ReasoningLedger에 품질 체크 흔적 기록 (L3 계획-검증)
+        try { (ledger as ReasoningLedger).addQualityCheck(state.turnCount + 1, report.ok, report.issues); } catch {}
         if (!report.ok) {
+          selfCorrectHistory.push(report);
+          selfCorrectAttempts++;
+          // 3회까지 재시도, 이전보다 개선 없으면 조기 중단 (Harness² Depth earlyStop과 동일 철학)
+          const prev = selfCorrectHistory.length >= 2 ? selfCorrectHistory[selfCorrectHistory.length - 2] : null;
+          const improving = prev ? report.issues.length < prev.issues.length : true;
+          const shouldRetry = selfCorrectAttempts < 3 && (improving || selfCorrectAttempts === 1);
           const feedback = qualityFeedback(report);
           state.messages.push({ role: "user", content: feedback });
           yield {
             type: "text",
-            text: `\n[QualityGate] ${report.issues.join("; ")}\n`,
+            text: `\n[QualityGate attempt ${selfCorrectAttempts}/3] ${report.issues.join("; ")}\n`,
           };
           yield { type: "turn_end", turn: state.turnCount + 1 };
           if (params.hooks)
@@ -327,13 +382,10 @@ export async function* queryLoop(
               turn: state.turnCount + 1,
             });
           state.turnCount++;
-          // 1회 자기교정 후에도 실패하면 그대로 반환하되, issues를 결과에 첨부해 투명성 확보
-          if (state.turnCount > 1) {
-            // 이미 한 번 재시도했으면 더 이상 루프하지 않고 결과 반환 (fail-open, 무한루프 방지)
-            // 하지만 qualityReport를 함께 반환해 호출자가 알 수 있게 함
-          } else {
+          if (shouldRetry) {
             continue;
           }
+          // 3회 후에도 실패하면 fail-open으로 결과 반환하되 issues 투명 공개
         }
       }
       // Phase 3: 결과 직전 Lesson 기록 — 다음 동일 도메인 작업에 자동 주입 (학습 축적)

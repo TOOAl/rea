@@ -1,16 +1,9 @@
 {
   "intent": {
-    "acc": 0.88,
-    "passed": 44,
+    "acc": 1,
+    "passed": 50,
     "total": 50,
-    "failures": [
-      "\"how does Ghidra decompile work…\" → got analysis, want question (conf 0.72)",
-      "\"버그 fix해줘: 무한 루프 수정…\" → got question, want implementation (conf 0.2)",
-      "\"작성해줘: README에 설치 가이드…\" → got generation, want implementation (conf 0.77)",
-      "\"call graph 그려줘…\" → got question, want analysis (conf 0.2)",
-      "\"xrefs로 참조 추적해줘…\" → got question, want analysis (conf 0.2)",
-      "\"setup Ghidra 해줘…\" → got analysis, want chore (conf 0.62)"
-    ]
+    "failures": []
   },
   "context": {
     "rate": 1,
@@ -216,5 +209,5 @@
     true
   ],
   "allPass": true,
-  "at": "2026-10-25T10:15:54.749Z"
+  "at": "2026-10-25T10:32:48.527Z"
 }

@@ -40,7 +40,7 @@ export interface ChatRequest {
 }
 
 export interface StreamEvent {
-  type: "text_delta" | "tool_use_delta" | "tool_use" | "done" | "error";
+  type: "text_delta" | "tool_use_delta" | "tool_use" | "thinking" | "thinking_delta" | "done" | "error";
   text?: string;
   block?: ContentBlock;
   error?: string;
