@@ -28,7 +28,7 @@ describe("BrainRegistry", () => {
     const reg = new BrainRegistry();
     const mem = reg.memory;
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(54);
+    expect(reg.all().length).toBe(55);
     const before = reg.get("genius-math")!;
     reg.swap(new GeniusBrain("genius-math", "새 수학", "새 설명", "Cooking"));
     expect(reg.get("genius-math")!.name).toBe("새 수학");
@@ -45,7 +45,7 @@ describe("BrainRegistry", () => {
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(reg.memory)) reg.register(b);
     expect(reg.byRole("creative").length).toBe(1);
-    expect(reg.byLayer(1).length).toBe(12);
+    expect(reg.byLayer(1).length).toBe(13);
     expect(reg.byLayer(5).length).toBe(1);
   });
 });

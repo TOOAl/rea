@@ -52,10 +52,10 @@ describe("Hybrid — js-tiktoken tokenizer 정확도", () => {
 
 describe("Hybrid — HashEmbedder + RagIndex 하이브리드", () => {
   it("HashEmbedder는 결정적 128차원 정규화 벡터", () => {
-    const emb = new HashEmbedder(128);
+    const emb = new HashEmbedder(256);
     const v1 = emb.embed("코스피 반등");
     const v2 = emb.embed("코스피 반등");
-    expect(v1.length).toBe(128);
+    expect(v1.length).toBe(256);
     expect(v1).toEqual(v2); // 결정적
     const v3 = emb.embed("영농형 태양광");
     expect(emb.similarity(v1, v3)).toBeLessThan(0.9); // 다른 문서는 유사도 낮음
@@ -113,7 +113,7 @@ describe("Hybrid — HashEmbedder + RagIndex 하이브리드", () => {
 
   it("getEmbedder 싱글톤 교체 가능 (OpenAI/Xenova 슬롯)", () => {
     const emb = getEmbedder();
-    expect(emb.dim).toBe(128);
-    expect(emb.embed("test").length).toBe(128);
+    expect(emb.dim).toBe(256);
+    expect(emb.embed("test").length).toBe(256);
   });
 });

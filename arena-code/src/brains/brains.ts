@@ -33,6 +33,7 @@ import {
   LanguageInterpreterBrain,
   ContextSynthesizerBrain,
 } from "./memoryGenius.js";
+import { SmartMemoryArchivistBrain } from "./memoryGeniusV2.js";
 import {
   HistoryStrategistBrain,
   ManagementStrategistBrain,
@@ -224,6 +225,7 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     new MemoryArchivistBrain(memory),
     new LanguageInterpreterBrain(),
     new ContextSynthesizerBrain(memory),
+    new SmartMemoryArchivistBrain(memory),
     new ArticleInputBrain(memory),
     new PremiseErrorBrain(memory),
     new ContradictionBrain(),
