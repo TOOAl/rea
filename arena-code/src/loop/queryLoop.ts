@@ -54,6 +54,11 @@ import {
   formatLessonsForPrompt,
   recordLesson,
 } from "./learningBridge.js";
+import {
+  deriveCodingPlan,
+  buildCodingScaffoldBlock,
+  isCodingIntent,
+} from "./codingScaffold.js";
 
 // --- Events ---
 
@@ -267,23 +272,46 @@ export async function* queryLoop(
       }
     } catch {}
   }
+  // Coding Scaffold: Plan→Act→Verify 자동 주입 (REA 6에이전트 흡수, 기본 ON, REA_CODING=0으로 off)
+  let codingScaffoldHint: string | undefined;
+  if (process.env.REA_CODING !== "0" && intent && isCodingIntent(intent, promptTextForDomain)) {
+    try {
+      // structuralContext가 이미 있으면 재사용, 없으면 즉시 수집 시도 (fail-open 2초)
+      let scForCoding: import("./structuralContext.js").StructuralContext | undefined;
+      if (process.env.REA_STRUCTURAL === "1" && structuralContext) {
+        // 이미 문자열로 수집됨 — 간단 P-Code 힌트로 대체, 객체 재수집은 생략
+        scForCoding = undefined;
+      } else {
+        try {
+          const { buildStructuralContext } = await import("./structuralContext.js");
+          scForCoding = await Promise.race([
+            buildStructuralContext(params.cwd, { budgetChars: 2000 }),
+            new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 1800)),
+          ]) as typeof scForCoding;
+        } catch {}
+      }
+      const plan = deriveCodingPlan(promptTextForDomain, intent, scForCoding);
+      codingScaffoldHint = buildCodingScaffoldBlock(scForCoding, plan, intent);
+    } catch {}
+  }
   // Time Capsule 힌트는 evidenceSummary와 병합하여 STATIC/DYNAMIC 캐시 분리 유지
   const tcSummaryForSystem = tcEnabled && timeCapsuleHint
     ? `${evidenceSummary ?? ""}\n\n${timeCapsuleHint}${tcBlockedCount ? `\n[Blocked post-cutoff: ${tcBlockedCount}]` : ""}`
     : evidenceSummary;
+  // codingScaffold는 evidenceSummary 꼬리에 합쳐 프롬프트 캐시 분리 유지
+  const evidenceWithCoding = codingScaffoldHint
+    ? `${tcSummaryForSystem ?? ""}${tcSummaryForSystem ? "\n\n" : ""}${codingScaffoldHint}`
+    : tcSummaryForSystem;
+  const evidenceCombinedForSystem = evidenceWithCoding
+    ? (lessonsPrompt ? `${evidenceWithCoding}\n\n${lessonsPrompt}` : evidenceWithCoding) + (todoEnforceHint ? `\n\n${todoEnforceHint}` : "")
+    : (lessonsPrompt ?? todoEnforceHint);
+  const hasRichContext = !!(intentHint || evidenceCombinedForSystem || lessonsPrompt || structuralContext || ragContext || todoEnforceHint || codingScaffoldHint);
   const system = await assembleSystemPrompt(
     params.cwd,
     params.systemExtra,
-    intentHint ||
-      tcSummaryForSystem ||
-      lessonsPrompt ||
-      structuralContext ||
-      ragContext ||
-      todoEnforceHint
+    hasRichContext
       ? {
-          evidenceSummary: lessonsPrompt
-            ? `${tcSummaryForSystem ?? ""}\n\n${lessonsPrompt}` + (todoEnforceHint ? `\n\n${todoEnforceHint}` : "")
-            : tcSummaryForSystem ? tcSummaryForSystem + (todoEnforceHint ? `\n\n${todoEnforceHint}` : "") : todoEnforceHint,
+          evidenceSummary: evidenceCombinedForSystem ?? undefined,
           intentHint,
           structuralContext,
           ragContext,

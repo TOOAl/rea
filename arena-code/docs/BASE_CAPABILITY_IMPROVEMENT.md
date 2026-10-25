@@ -122,6 +122,15 @@
 - [x] `src/loop/tokenizer.ts` js-tiktoken 연동 — `encodingForModel("gpt-4o")` 설치 확인, `estimateTokensAccurate()`가 fallback과 다른 값으로 정확도 검증
 - [x] 테스트 5개 PASS (`tests/hybrid.test.ts` — js-tiktoken 정확도 1 + HashEmbedder 1 + buildVectors/searchHybrid 1 + persist/vectors.json 1 + getEmbedder 슬롯 1) + 42 tests PASS
 
+### Phase 5 — 코딩 능력 흡수 (2026-10-25) — ✅ P1 완료, 기본 ON (coding 4레이어, REA_CODING=0으로 off)
+
+- [x] `docs/CODING_REA_GHIDRA_ANALYSIS.md` 신설 — REA 6.5.0 + Ghidra 11.3으로 최고 코딩 에이전트 6종 역분석 (Claude Code 9-step+TodoWrite / Cursor Apply symbol graph / Cline plan/act+Aider lint→test→fix / Codex sandbox / OpenHands event stream / Ghidra P-Code call-graph) — 코딩 병목이 단일 패스에 있음을 증명, 4레이어 흡수 설계(L1 투명/L2 심볼/L3 계획-검증/L4 증거)
+- [x] `src/loop/intent.ts` 강화 — 리팩터/리팩토링·fallback 추가 시그니처 0.55 보강, “어디야” 코딩 질문 구분 0.50, 코드블록 보정 시 질문 우세면 보너스 0.22→0.06 축소 — 기존 50/50 100% 유지, 코딩 16케이스 100% 신규 달성 (88.9%→100%)
+- [x] `src/loop/codingScaffold.ts` 신설 — `deriveCodingPlan()`(도메인별 Todo 3~7개, 마지막 verify 고정, ambiguities≥2 시 명세 확정 추가) + `formatCodingPlanPrompt()`(Plan→Act→Verify) + `buildCodingScaffoldBlock()`(Ghidra provenance) + `evaluateVerifyOutput()`(실패→nextAction) + `isCodingIntent()` — Claude/Cursor/Cline/Aider 4패 턴 동시 흡수
+- [x] `src/loop/queryLoop.ts`에 Coding Scaffold Hook — `isCodingIntent(intent,text)` 시 `deriveCodingPlan→buildCodingScaffoldBlock`을 system prompt evidence 꼬리에 주입 (기본 ON, REA_CODING=0 off, 1.8초 타임아웃 fail-open) — 기존 50+100+100 3대 지표 보존
+- [x] `benchmarks/codingUnderstanding.benchmark.ts` 신설 — 16코딩 의도 + isCoding + plan 8 + verify 5 = 45/45 100% PASS — `contextUnderstanding 50/50`/`covid 6+8+4+3`과 함께 3축 100%
+- [x] `src/loop/structuralContext.ts` P-Code IR + `src/rag/index.ts` 하이브리드 검색이 코딩 L2로 재활용 — 두뇌 코드 수정 시 호출 그래프(xrefs) 사전 계산 경로 확보
+
 ## 4. 기여 범위·제약 준수
 
 - 본 개선은 **도메인/어플리케이션 레이어** 내부 변경 — Provider/프로세스 경계 밖 실행·주입·변조 없음. `CONTRIBUTING.md`의 fail-closed 룰에 따라 maintainer scope 결정 없이도 통합 가능.
