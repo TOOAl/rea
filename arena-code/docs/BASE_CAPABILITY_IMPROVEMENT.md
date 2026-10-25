@@ -131,6 +131,14 @@
 - [x] `benchmarks/codingUnderstanding.benchmark.ts` 신설 — 16코딩 의도 + isCoding + plan 8 + verify 5 = 45/45 100% PASS — `contextUnderstanding 50/50`/`covid 6+8+4+3`과 함께 3축 100%
 - [x] `src/loop/structuralContext.ts` P-Code IR + `src/rag/index.ts` 하이브리드 검색이 코딩 L2로 재활용 — 두뇌 코드 수정 시 호출 그래프(xrefs) 사전 계산 경로 확보
 
+### Phase 6 — Pocock 3대 스킬 흡수 (2026-10-25) — ✅ P2 완료 (code-review 2축 + pr danger + retro, v2.25.0)
+
+- [x] `src/loop/codeReview.ts` 신설 — `runStandardsReview` 12종 Fowler smell baseline + repo 문서 규칙 / `runSpecReview` spec 누락·scope creep / `codeReview(diff,{fixedPoint,spec})` 2축 병렬 — Pocock `code-review` 완전 흡수 (fixedPoint 고정·빈 diff throw, Standards/Spec 분리 리랭킹 금지, worst per axis 요약)
+- [x] `src/loop/prTemplate.ts` 신설 — `buildPrBody({summaryVisual,door,blastRadius})`로 Summary 시각(pseudocode/call-tree/file-tree/mermaid/diff 중 최소 뷰) + Evidence Before/After + Merge Danger(Door one-way/two-way + Blast Radius) — Humanlayer show-me 크레딧, `validatePrBody`로 3섹션 강제
+- [x] `src/loop/retro.ts` 신설 — `runRetro(session)` 6카테고리(Navigation/Automated checks/Coding standards/Global AGENTS.md/Tool economy/Information access) 심각도 정렬 — Pocock `retro` 흡수, `AGENTS.md→CODING_STANDARDS.md` 이동·guardrail 부재 자체를 finding으로 처리
+- [x] `.github/pull_request_template.md` 교체 — Pocock `pr` 템플릿 흡수 (Summary 시각 + Evidence + Merge Danger), 모든 PR에 Door/Blast Radius 강제
+- [x] `benchmarks/pocock.benchmark.ts` 신설 — 21/21 100% PASS (codeReview 9 + pr 6 + retro 6) — `coding 45/45`/`context 50/50`/`covid 6+8+4+3`과 함께 4축 100% — REA 6.5.0+Ghidra 11.3 + Pocock skills 546커밋 기준 흡수 완료
+
 ## 4. 기여 범위·제약 준수
 
 - 본 개선은 **도메인/어플리케이션 레이어** 내부 변경 — Provider/프로세스 경계 밖 실행·주입·변조 없음. `CONTRIBUTING.md`의 fail-closed 룰에 따라 maintainer scope 결정 없이도 통합 가능.
