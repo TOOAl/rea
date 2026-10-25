@@ -1,0 +1,220 @@
+{
+  "intent": {
+    "acc": 0.88,
+    "passed": 44,
+    "total": 50,
+    "failures": [
+      "\"how does Ghidra decompile work…\" → got analysis, want question (conf 0.72)",
+      "\"버그 fix해줘: 무한 루프 수정…\" → got question, want implementation (conf 0.2)",
+      "\"작성해줘: README에 설치 가이드…\" → got generation, want implementation (conf 0.77)",
+      "\"call graph 그려줘…\" → got question, want analysis (conf 0.2)",
+      "\"xrefs로 참조 추적해줘…\" → got question, want analysis (conf 0.2)",
+      "\"setup Ghidra 해줘…\" → got analysis, want chore (conf 0.62)"
+    ]
+  },
+  "context": {
+    "rate": 1,
+    "detail": [
+      "entries: 20, truncated: 20, flags in summary: 8",
+      "summary preview: - [observation/0.8] Read:file6.txt({\"file_path\":\"Read:file6.txt\"}) [TRUNCATED — 원문 일부 유실, 추측 금지]: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa… | - [observation/0.7] UserAttach(image-Read:file6.txt.png) [TRUNCATED — 원문 일부 유실, 추측 금지]: image-6.png …"
+    ]
+  },
+  "quality": {
+    "passRate": 1,
+    "results": [
+      {
+        "label": "PASS_완벽",
+        "ok": true,
+        "expectOk": true,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "fail",
+            "passed": true,
+            "message": "밑줄 개수: 실제 5 / 예상 5 — PASS"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": true,
+            "message": "정답 누출 없음 (첫 800자 검사 PASS)"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": true,
+            "message": "미완성 흔적 없음"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "warn",
+            "passed": true,
+            "message": "출처 표기 PASS"
+          }
+        ]
+      },
+      {
+        "label": "FAIL_정답노출",
+        "ok": false,
+        "expectOk": false,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "fail",
+            "passed": true,
+            "message": "밑줄 개수: 실제 5 / 예상 5 — PASS"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": false,
+            "message": "FAIL: 첫 800자에 정답 패턴 노출 — 정답은\\s*[①-⑤]"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": true,
+            "message": "미완성 흔적 없음"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "warn",
+            "passed": true,
+            "message": "출처 표기 PASS"
+          }
+        ]
+      },
+      {
+        "label": "FAIL_밑줄부족",
+        "ok": false,
+        "expectOk": false,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "fail",
+            "passed": false,
+            "message": "밑줄 개수: 실제 1 / 예상 5 — FAIL: 5개 필요"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": true,
+            "message": "정답 누출 없음 (첫 800자 검사 PASS)"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": true,
+            "message": "미완성 흔적 없음"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "warn",
+            "passed": true,
+            "message": "출처 표기 PASS"
+          }
+        ]
+      },
+      {
+        "label": "FAIL_TODO",
+        "ok": false,
+        "expectOk": false,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "fail",
+            "passed": true,
+            "message": "밑줄 개수: 실제 5 / 예상 5 — PASS"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": true,
+            "message": "정답 누출 없음 (첫 800자 검사 PASS)"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": false,
+            "message": "FAIL: 미완성 흔적 발견 — TODO"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "warn",
+            "passed": true,
+            "message": "출처 표기 PASS"
+          }
+        ]
+      },
+      {
+        "label": "FAIL_출처없음",
+        "ok": false,
+        "expectOk": false,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "fail",
+            "passed": true,
+            "message": "밑줄 개수: 실제 5 / 예상 5 — PASS"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": true,
+            "message": "정답 누출 없음 (첫 800자 검사 PASS)"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": true,
+            "message": "미완성 흔적 없음"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "fail",
+            "passed": false,
+            "message": "FAIL: 수치/통계가 있으나 출처 블록(증거 도장/근거 목록) 없음 — Gate 반려 조건. 1층 전제 오류 천재가 요구한 출처를 반드시 추가하세요."
+          }
+        ]
+      },
+      {
+        "label": "PASS_generation",
+        "ok": true,
+        "expectOk": true,
+        "checks": [
+          {
+            "id": "underlineCount",
+            "severity": "warn",
+            "passed": true,
+            "message": "밑줄 개수 검사 건너뜀 (expected=null)"
+          },
+          {
+            "id": "answerLeak",
+            "severity": "fail",
+            "passed": true,
+            "message": "정답 누출 없음 (첫 800자 검사 PASS)"
+          },
+          {
+            "id": "placeholderLeft",
+            "severity": "fail",
+            "passed": true,
+            "message": "미완성 흔적 없음"
+          },
+          {
+            "id": "provenanceCited",
+            "severity": "warn",
+            "passed": true,
+            "message": "출처 표기 PASS"
+          }
+        ]
+      }
+    ]
+  },
+  "gates": [
+    true,
+    true,
+    true
+  ],
+  "allPass": true,
+  "at": "2026-10-25T06:42:00.911Z"
+}
