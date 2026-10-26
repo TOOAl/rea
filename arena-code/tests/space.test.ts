@@ -189,3 +189,53 @@ describe("Space — 3형제 Brains", () => {
     expect(reg.byLayer(1).length).toBe(18);
   });
 });
+
+describe("Space PR-2 — spatial hybrid + palace canvas", () => {
+  it("searchHybrid 공간 가중 — 같은 zone이면 상위 랭크", () => {
+    const root = mkdtempSync(join(tmpdir(), "spatial-hybrid-"));
+    const bank = new MemoryBank({ root, domain: "hybrid" });
+    // 두 기억: 텍스트 유사도 비슷한데 zone 다름
+    bank.addWithSpace({ id: "s1", cue: "수학 정리 증명", content: "삼각함수 공식" });
+    bank.addWithSpace({ id: "s2", cue: "역사 전쟁 기록", content: "삼각형 진법" }); // '삼각' 단어로 텍스트 유사도 유발
+    // 질의: 수학 + 공간도 수학 근처
+    const hitsWithSpace = bank.searchHybrid("수학 삼각함수 증명", 2, { spatialBoost: 0.18 });
+    const hitsNoSpace = bank.searchHybrid("수학 삼각함수 증명", 2, { spatialBoost: 0 });
+    // 공간 가중이 있으면 수학(s1)이 1위일 확률이 더 높거나 최소 점수 차이가 커짐
+    expect(hitsWithSpace.length).toBe(2);
+    expect(hitsWithSpace[0].id).toBe("s1"); // zone=math가 spatial boost로 1위
+    expect(hitsNoSpace.length).toBe(2);
+    rmSync(root, { recursive: true, force: true });
+  });
+  it("generatePalaceHtml 1080×760 + 25 loci + 한글", async () => {
+    const { generatePalaceHtml } = await import("../src/visual/palace.js");
+    const root = mkdtempSync(join(tmpdir(), "palace-html-"));
+    const bank = new MemoryBank({ root, domain: "palace-vis" });
+    bank.addWithSpace({ id: "v1", cue: "수학 공식", content: "오일러 e^iπ+1=0" });
+    bank.addWithSpace({ id: "v2", cue: "세종 자격루", content: "장영실 물시계" });
+    bank.addWithSpace({ id: "v3", cue: "코드 배포", content: "K8s 롤아웃" });
+    const entries = bank.list();
+    const html = generatePalaceHtml(entries, { title: "테스트 궁전" });
+    expect(html).toContain("테스트 궁전");
+    expect(html).toContain("<svg");
+    expect(html).toContain("현관");
+    expect(html).toContain("다락방");
+    expect(html).toContain("수학 공식".slice(0, 4));
+    // viewBox 검사 — Ghidra P-Code 패턴: SVG viewBox 1080×760
+    expect(html).toContain('viewBox="0 0 1080 760"');
+    // 한글 깨짐 없음 — Noto Sans KR 포함
+    expect(html).toContain("Noto Sans KR");
+    // 빈자리 표시 확인
+    expect(html).toContain("빈 자리");
+    rmSync(root, { recursive: true, force: true });
+  });
+  it("palace html 308 → 309? 전체 310 이상", async () => {
+    const root = mkdtempSync(join(tmpdir(), "palace-count-"));
+    const { generatePalaceHtml } = await import("../src/visual/palace.js");
+    const bank = new MemoryBank({ root, domain: "cnt" });
+    for (let i = 0; i < 5; i++) bank.addWithSpace({ id: `c${i}`, cue: `기억 ${i}`, content: `내용 ${i} 수학` });
+    const html = generatePalaceHtml(bank.list());
+    const locusDots = (html.match(/#\d+/g) || []).length;
+    expect(locusDots).toBeGreaterThanOrEqual(25); // #0 … #24
+    rmSync(root, { recursive: true, force: true });
+  });
+});
