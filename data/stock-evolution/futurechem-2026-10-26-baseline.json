@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-26",
+  "verified_at": "2026-10-26T18:41:00+09:00",
+  "source": "Npay 증권 m.stock.naver.com/domestic/stock/220100/total",
+  "stock": "퓨쳐켐 220100 KOSDAQ",
+  "ohlcv": {
+    "open": 9470,
+    "high": 10770,
+    "low": 8710,
+    "close": 9210,
+    "close_type": "애프터마켓 (정규장 종가는 8990→애프터 9210)",
+    "volume": 4540007,
+    "amount": 45210810000,
+    "market_cap": 285320000000,
+    "prev_close": 8990
+  },
+  "orderbook_snapshot": {
+    "note": "10:00 시점 3,424,560주/349억, 09:55 9,630(+7.12%), 10:00 9,500(+5.67%) — Level2 10호가 스냅샷은 내일부터 수집",
+    "oib": null,
+    "strength": null,
+    "vi_triggered": null,
+    "high_low_story": "시가 갭상승(9470) → 고가 10770 돌파 시도 → 저가 8710 눌림 → 애프터 9210 마감 = 돌파형 급증 후 힘겨루기"
+  },
+  "factors": {
+    "clinical": {
+      "event": "FC705 미국 임상2a상 ORR 38.9% (10/23 공시)",
+      "impact": "상승 재료, +29.91% 상한가 견인",
+      "evidence": "CBC 10/23 상한가 공시 확인"
+    },
+    "sector": {
+      "kosdaq_bio": "-1.05% (당일 업종 하락 속 퓨쳐켐 +2.45% 상대강세)",
+      "note": "업종 하락과 대조 [중앙이코노미 10/26 09:55]"
+    },
+    "flow": {
+      "foreign_rate": "4.10%",
+      "note": "전일 대비 변동 미확인 — 내일부터 delta 추적"
+    },
+    "volume_type": "돌파형 급증 (고가 경신 + 452억 동반) — 마하세븐 3기준 모두 충족"
+  },
+  "our_prediction": {
+    "at": "2026-10-26T18:50:00+09:00",
+    "close_base": 9210,
+    "scenarios": {
+      "A_눌림": { "range": [8600, 9100], "prob": 0.45, "desc": "차익실현, 454만주 피로" },
+      "B_횡보": { "range": [9100, 9600], "prob": 0.3, "desc": "관망, 추가공시 없음" },
+      "C_상승": { "range": [9600, 10800], "prob": 0.25, "desc": "외국인 추가매수+재부각" }
+    },
+    "calibration": 0.45,
+    "note": "점 예측 아님, 구간+확률 [추정] — 내일 어느 구간에 들어가는지로 calibration 평가"
+  },
+  "result": null,
+  "evolution_delta": null,
+  "disclaimer": "교육·테스트용, 투자 권유 아님. 1개로 확정 금지, 쌓여서 정확해짐."
+}
