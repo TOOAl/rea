@@ -31,6 +31,19 @@ export interface RagIndexOptions {
   persistDir?: string; // 예: .arena/rag-index
   embedder?: Embedder;
   vectorStoreDir?: string; // .vectors.json 저장 위치 — 없으면 persistDir 사용
+  spatialBoost?: number; // PR-3: 동일 zone이면 가중 (기본 0.12)
+}
+
+function inferRagZone(text: string): string {
+  const lower = text.toLowerCase();
+  if (/수학|math|증명|공식|정리|방정식|기하|미적분|확률|조합/.test(lower)) return "math";
+  if (/역사|history|왕|조선|고려|세종|일제|독립|전쟁|혁명/.test(lower)) return "history";
+  if (/코드|code|함수|버그|api|서버|프론트|배포|git|npm|테스트/.test(lower)) return "code";
+  if (/과학|science|물리|화학|생물|실험|원자|세포/.test(lower)) return "science";
+  if (/경제|economy|시장|주식|코스피|투자|수익|손실|거래/.test(lower)) return "economy";
+  if (/예술|art|그림|음악|영화|디자인|색|빛|구도/.test(lower)) return "art";
+  if (/영어|english|단어|vocab|문법|회화/.test(lower)) return "english";
+  return "general";
 }
 
 export function domainSlug(d: string): string {
@@ -97,7 +110,9 @@ export class RagIndex {
     for (const doc of docs) {
       const cs = chunkText(doc.text, doc.source);
       for (const c of cs) {
-        if (doc.metadata) c.metadata = { ...c.metadata, ...doc.metadata };
+        if (doc.metadata) c.metadata = { ...c.metadata, ...doc.metadata } as Record<string, unknown>;
+        // PR-3: zone 자동 태깅 — Grid cell coarse
+        if (!c.metadata?.["zone"]) c.metadata = { ...c.metadata, zone: inferRagZone(`${doc.source} ${c.text}`) } as Record<string, unknown>;
         this.chunks.push(c);
         this.ensureVector(c);
         added++;
@@ -179,6 +194,8 @@ export class RagIndex {
       recencyBoost?: Map<string, number>;
       wSparse?: number;
       wDense?: number;
+      spatialBoost?: number; // PR-3: 동일 zone이면 가중 (기본 0.12, 0이면 끔)
+      spatialZone?: string; // PR-3: 미리 계산된 query zone (없으면 infer)
     },
   ): RagSearchHit[] {
     if (this.chunks.length === 0 || !query.trim()) return [];
@@ -226,12 +243,35 @@ export class RagIndex {
       if (opts?.recencyBoost?.has(d.chunk.id)) {
         score += opts.recencyBoost.get(d.chunk.id)! * 0.1;
       }
+      // PR-3: spatial zone boost — Grid cell coarse (space-genius)
+      const sb = opts?.spatialBoost ?? 0.12;
+      if (sb > 0) {
+        const qZone = opts?.spatialZone ?? inferRagZone(query);
+        const cZone = (d.chunk.metadata?.["zone"] as string) ?? inferRagZone(`${d.chunk.source} ${d.chunk.text}`);
+        if (cZone && qZone && cZone === qZone) score += sb;
+      }
 
       return { chunk: d.chunk, score };
     });
 
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, topK);
+  }
+
+  /** PR-3: 공간 가중 RAG — 질의 zone과 같은 청크에 +spatialBoost (Grid cell coarse) */
+  searchWithSpace(query: string, topK = 5, spatialBoost = 0.12): RagSearchHit[] {
+    return this.search(query, topK, { spatialBoost });
+  }
+  zoneStats(): Map<string, number> {
+    const m = new Map<string, number>();
+    for (const c of this.chunks) {
+      const z = (c.metadata?.["zone"] as string) ?? inferRagZone(`${c.source} ${c.text}`);
+      m.set(z, (m.get(z) ?? 0) + 1);
+    }
+    return m;
+  }
+  byZone(zone: string): Chunk[] {
+    return this.chunks.filter(c => ((c.metadata?.["zone"] as string) ?? inferRagZone(`${c.source} ${c.text}`)) === zone);
   }
 
   // --- Persist (청크 + 벡터 함께 영속화 — 벡터는 .vectors.json, 독립 파일로 분리) ---

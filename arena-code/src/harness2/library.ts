@@ -80,6 +80,19 @@ function field(path: string, key: string): string {
   } catch { return ""; }
 }
 
+// --- S3 Zone — 해마 Grid cell 기반 경험 분류 (PR-3: space-genius) ---
+export function inferZoneForLibrary(text: string): string {
+  const lower = text.toLowerCase();
+  if (/수학|math|증명|공식|정리|방정식|기하|미적분|확률|조합/.test(lower)) return "math";
+  if (/역사|history|왕|조선|고려|세종|일제|독립|전쟁|혁명/.test(lower)) return "history";
+  if (/코드|code|함수|버그|api|서버|프론트|배포|git|npm|테스트/.test(lower)) return "code";
+  if (/과학|science|물리|화학|생물|실험|원자|세포/.test(lower)) return "science";
+  if (/경제|economy|시장|주식|코스피|투자|수익|손실|거래/.test(lower)) return "economy";
+  if (/예술|art|그림|음악|영화|디자인|색|빛|구도/.test(lower)) return "art";
+  if (/영어|english|단어|vocab|문법|회화/.test(lower)) return "english";
+  return "general";
+}
+
 // ---------------------------------------------------------------------------
 // Library — 도메인별 도서관
 // ---------------------------------------------------------------------------
@@ -336,9 +349,19 @@ export class HarnessLibrary {
     if (names.length === 0) {
       rows.push("_(empty — this is the first task in this domain)_");
     }
+    // S3: zone 통계 헤더 — Grid cell 기반 분류 요약 (PR-3)
+    try {
+      const zs = this.zoneStats();
+      if (zs.size > 0) {
+        const summary = [...zs.entries()].map(([z,c])=> `${z}:${c}`).join(" | ");
+        rows.push(`> Zone: ${summary}`, "");
+      }
+    } catch {}
     for (const name of names) {
       const ed = join(this.dir, "harnesses", name);
       const cue = field(join(ed, "EXPERIENCE.md"), "cue");
+      const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
+      const zone = inferZoneForLibrary(`${cue} ${lesson}`);
       const tree = readTree(ARENA_SURFACE, join(ed, "harness"));
       rows.push(
         `## \`harnesses/${name}/\``,
@@ -346,11 +369,84 @@ export class HarnessLibrary {
         `- why:     \`harnesses/${name}/EXPERIENCE.md\``,
       );
       if (cue) rows.push(`- cue:     ${cue}`);
+      rows.push(`- zone:    ${zone}`);
       rows.push("");
     }
     mkdirSync(this.dir, { recursive: true });
     writeFileSync(this.indexPath, rows.join("\n"), "utf-8");
     return this.indexPath;
+  }
+
+  // --- S3 PR-3: zone 기반 확장 ---
+  zoneStats(): Map<string, number> {
+    const m = new Map<string, number>();
+    for (const slugName of this.entries()) {
+      const ed = join(this.dir, "harnesses", slugName);
+      const cue = field(join(ed, "EXPERIENCE.md"), "cue");
+      const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
+      const zone = inferZoneForLibrary(`${cue} ${lesson}`);
+      m.set(zone, (m.get(zone) ?? 0) + 1);
+    }
+    return m;
+  }
+  entriesByZone(zone: string): string[] {
+    return this.entries().filter(slugName => {
+      const ed = join(this.dir, "harnesses", slugName);
+      const cue = field(join(ed, "EXPERIENCE.md"), "cue");
+      const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
+      return inferZoneForLibrary(`${cue} ${lesson}`) === zone;
+    });
+  }
+  searchByZone(zone: string, query: string, topK = 5): RagHit[] {
+    // 같은 zone만 필터 후 기존 search 수행 (Grid cell coarse → fine 패턴)
+    const slugs = this.entriesByZone(zone);
+    if (slugs.length === 0 || !query.trim()) return [];
+    const qTokens = tokenize(query);
+    if (qTokens.length === 0) return [];
+    const qTf = tf(qTokens);
+    const docs: Array<{ slug: string; tf: Map<string, number>; doc: ReturnType<HarnessLibrary["docText"]> }> = [];
+    const df = new Map<string, number>();
+    for (const slugName of slugs) {
+      const doc = this.docText(slugName);
+      const text = [doc.cue, doc.lesson, doc.evidence, doc.why, doc.harnessKeys].join(" ");
+      const tokens = tokenize(text);
+      docs.push({ slug: slugName, tf: tf(tokens), doc });
+      for (const tk of new Set(tokens)) df.set(tk, (df.get(tk) ?? 0) + 1);
+    }
+    const N = docs.length || 1;
+    const idf = new Map<string, number>();
+    for (const [tk,cnt] of df) idf.set(tk, Math.log((N+1)/(cnt+1))+1);
+    const weigh = (m: Map<string, number>) => { const o = new Map<string, number>(); for (const [k,w] of m) o.set(k, w*(idf.get(k)??1)); return o; };
+    const qVec = weigh(qTf);
+    const scored: RagHit[] = [];
+    for (const d of docs) {
+      let score = cosine(qVec, weigh(d.tf));
+      const cueTokens = new Set(tokenize(d.doc.cue));
+      for (const qt of qTokens) if (cueTokens.has(qt)) score += 0.08;
+      scored.push({ slug: d.slug, taskId: d.slug.replace(/__/g, "/"), score, cue: d.doc.cue, lesson: d.doc.lesson, evidence: d.doc.evidence, why: d.doc.why, harnessKeys: d.doc.harnessKeys, path: join(this.dir, "harnesses", d.slug) });
+    }
+    scored.sort((a,b)=> b.score - a.score);
+    return scored.slice(0, Math.max(1, Math.min(topK, scored.length)));
+  }
+  palaceOrder(): string[] {
+    // 궁전 순회 순서: 각 entry의 cue+lesson 해시 locusId로 정렬 (Method of Loci)
+    const slugs = this.entries();
+    const withCoord = slugs.map(slugName => {
+      const ed = join(this.dir, "harnesses", slugName);
+      const cue = field(join(ed, "EXPERIENCE.md"), "cue");
+      const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
+      let locusId = 999;
+      try {
+        // 동적 import 회피 — 간단 해시로 locusId 근사 (space.ts 해시 재구현 경량)
+        const t = `${cue} ${lesson}`;
+        let h = 2166136261;
+        for (let i=0;i<t.length;i++){ h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+        locusId = (h >>> 0) % 25;
+      } catch {}
+      return { slug: slugName, locusId };
+    });
+    withCoord.sort((a,b)=> a.locusId - b.locusId);
+    return withCoord.map(c=> c.slug);
   }
 
   // --- Context7 2-tool adapter (docs/CODING_TOOLS_REA_ANALYSIS.md 3.1) ---
