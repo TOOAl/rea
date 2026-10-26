@@ -83,7 +83,7 @@ describe("Council 4중 패킷 (Context+Visual+Reasoning+Knowledge) + 42 brains",
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(55);
+    expect(reg.all().length).toBe(57);
     const c = new Council(reg);
     const {
       outputs,

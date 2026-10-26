@@ -1,7 +1,9 @@
 /**
- * Exam Layout QA — SVG 경계 초과 자동 검수
- * 사용: node scripts/inspect_layout.js
- * 검사 대상: 중3과학시험지/*.html 의 모든 .fig svg
+ * Exam Layout QA — 4-Eye 자동 검수 (정적 0.1초 + Puppeteer 브라우저 모드)
+ * 사용: node scripts/inspect_layout.js            — 정적 + 브라우저 이중 검증
+ *       npm run qa:exam  (arena-code)             — tsx 4-Eye (빠른 정적)
+ *
+ * 흡수: Manus VerificationAgent / Codex --image / Cursor AXTree / Claude [ref] / Ghidra P-Code
  */
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
