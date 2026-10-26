@@ -222,75 +222,90 @@
       "id": "Lv1-008",
       "en": "acquire",
       "ipa": "/acqu.../",
-      "pos": "v./n.",
-      "ko": "습득하다",
-      "ko_detail": "습득하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "습득하다, 획득하다",
+      "ko_detail": "학습·경험을 통해 지식·기술을 얻다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "obtain",
+          "nuance": "노력·요청으로 얻다"
+        },
+        {
+          "en": "gain",
+          "nuance": "점진적으로 얻다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "lose",
+        "forfeit"
       ],
-      "caution": "acquire 철자·발음 주의",
-      "etymology": "acq 어근",
-      "example": "The acquire aspect is often overlooked in discussions.",
-      "example_ko": "습득하다 측면은 종종 간과된다.",
-      "cloze": "This is a acquire case.",
+      "caution": "acquire(습득) vs enquire(문의) — a/e 첫 모음 구분",
+      "etymology": "ad(~로)+quaerere(찾다)=찾아서 얻다",
+      "example": "Children acquire language through constant interaction.",
+      "example_ko": "아이들은 끊임없는 상호작용을 통해 언어를 습득한다.",
+      "cloze": "Children ______ language through constant interaction.",
       "freq": 30
     },
     {
       "id": "Lv1-009",
       "en": "adapt",
       "ipa": "/adap.../",
-      "pos": "v./n.",
-      "ko": "적응하다",
-      "ko_detail": "적응하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "적응하다, 조정하다",
+      "ko_detail": "새 환경·조건에 맞게 바꾸다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "adjust",
+          "nuance": "조절해 맞추다"
+        },
+        {
+          "en": "acclimate",
+          "nuance": "기후·문화에 익숙해지다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "resist",
+        "remain"
       ],
-      "caution": "adapt 철자·발음 주의",
-      "etymology": "ada 어근",
-      "example": "The adapt aspect is often overlooked in discussions.",
-      "example_ko": "적응하다 측면은 종종 간과된다.",
-      "cloze": "This is a adapt case.",
+      "caution": "adapt(적응) vs adopt(입양/채택) — 두 번째 자음 p/t 구분",
+      "etymology": "ad(~에)+aptus(맞는)=맞게 하다",
+      "example": "Plants adapt to arid conditions by storing water.",
+      "example_ko": "식물은 물을 저장하며 건조한 환경에 적응한다.",
+      "cloze": "Plants ______ to arid conditions by storing water.",
       "freq": 30
     },
     {
       "id": "Lv1-010",
       "en": "adequate",
       "ipa": "/adeq.../",
-      "pos": "v.",
-      "ko": "적절한",
-      "ko_detail": "적절한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "적절한, 충분한",
+      "ko_detail": "필요를 충족할 만큼 충분한",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "sufficient",
+          "nuance": "양적으로 충분"
+        },
+        {
+          "en": "appropriate",
+          "nuance": "맥락에 적절한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "insufficient",
+        "inadequate"
       ],
-      "caution": "adequate 철자·발음 주의",
-      "etymology": "ade 어근",
-      "example": "The adequate aspect is often overlooked in discussions.",
-      "example_ko": "적절한 측면은 종종 간과된다.",
-      "cloze": "This is a adequate case.",
+      "caution": "adequate(충분) vs adequate to/for 구별 — adequate for 목적",
+      "etymology": "ad(~까지)+aequus(같은)=같은 수준까지",
+      "example": "The evidence is adequate to support the conclusion.",
+      "example_ko": "그 증거는 결론을 뒷받침하기에 충분하다.",
+      "cloze": "The evidence is ______ to support the conclusion.",
       "freq": 30
     },
     {
@@ -298,199 +313,238 @@
       "en": "adjacent",
       "ipa": "/adja.../",
       "pos": "a.",
-      "ko": "인접한",
-      "ko_detail": "인접한 — 수능·내신 빈출",
+      "ko": "인접한, 이웃한",
+      "ko_detail": "공간·순서상 바로 옆에 있는",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "neighboring",
+          "nuance": "경계를 맞댄"
+        },
+        {
+          "en": "adjoining",
+          "nuance": "직접 붙어 있는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "distant",
+        "remote"
       ],
-      "caution": "adjacent 철자·발음 주의",
-      "etymology": "adj 어근",
-      "example": "The adjacent aspect is often overlooked in discussions.",
-      "example_ko": "인접한 측면은 종종 간과된다.",
-      "cloze": "This is a adjacent case.",
+      "caution": "adjacent to — 전치사 to 필수",
+      "etymology": "ad(옆)+jacere(눕다)=옆에 눕다",
+      "example": "The hotel is adjacent to the museum.",
+      "example_ko": "그 호텔은 박물관에 인접해 있다.",
+      "cloze": "The hotel is ______ to the museum.",
       "freq": 30
     },
     {
       "id": "Lv1-012",
       "en": "adjust",
       "ipa": "/adju.../",
-      "pos": "v./n.",
-      "ko": "조정하다",
-      "ko_detail": "조정하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "조정하다, 적응하다",
+      "ko_detail": "부분을 움직여 알맞게 하다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "modify",
+          "nuance": "부분을 바꾸다"
+        },
+        {
+          "en": "calibrate",
+          "nuance": "정밀하게 맞추다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "fix",
+        "maintain"
       ],
-      "caution": "adjust 철자·발음 주의",
-      "etymology": "adj 어근",
-      "example": "The adjust aspect is often overlooked in discussions.",
-      "example_ko": "조정하다 측면은 종종 간과된다.",
-      "cloze": "This is a adjust case.",
+      "caution": "adjust to N / adjust N to N — to 구문 주의",
+      "etymology": "ad(~을 향해)+justus(바른)=바르게 하다",
+      "example": "You need to adjust the lens to get a clear image.",
+      "example_ko": "선명한 이미지를 얻으려면 렌즈를 조정해야 한다.",
+      "cloze": "You need to ______ the lens to get a clear image.",
       "freq": 30
     },
     {
       "id": "Lv1-013",
       "en": "advocate",
       "ipa": "/advo.../",
-      "pos": "v.",
-      "ko": "옹호하다",
-      "ko_detail": "옹호하다 — 수능·내신 빈출",
+      "pos": "v./n.",
+      "ko": "옹호하다, 주장하다 / 옹호자",
+      "ko_detail": "공개적으로 지지·주장하다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "support",
+          "nuance": "일반적 지지"
+        },
+        {
+          "en": "champion",
+          "nuance": "적극적으로 옹호"
         }
       ],
       "antonyms": [
-        "opposite"
+        "oppose",
+        "criticize"
       ],
-      "caution": "advocate 철자·발음 주의",
-      "etymology": "adv 어근",
-      "example": "The advocate aspect is often overlooked in discussions.",
-      "example_ko": "옹호하다 측면은 종종 간과된다.",
-      "cloze": "This is a advocate case.",
+      "caution": "advocate+v. /ˈædvəkeɪt/ vs n. /ˈædvəkət/ — 강세로 품사 구분",
+      "etymology": "ad(~에게)+vocare(부르다)=부르짖다",
+      "example": "She advocates renewable energy in her community.",
+      "example_ko": "그녀는 지역사회에서 재생에너지를 옹호한다.",
+      "cloze": "She ______ renewable energy in her community.",
       "freq": 30
     },
     {
       "id": "Lv1-014",
       "en": "affect",
       "ipa": "/affe.../",
-      "pos": "v./n.",
+      "pos": "v.",
       "ko": "영향을 미치다",
-      "ko_detail": "영향을 미치다 — 수능·내신 빈출",
+      "ko_detail": "상태·감정에 변화를 주다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "influence",
+          "nuance": "간접적으로 작용"
+        },
+        {
+          "en": "impact",
+          "nuance": "강하게 부딪쳐 바꾸다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "neglect",
+        "ignore"
       ],
-      "caution": "affect 철자·발음 주의",
-      "etymology": "aff 어근",
-      "example": "The affect aspect is often overlooked in discussions.",
-      "example_ko": "영향을 미치다 측면은 종종 간과된다.",
-      "cloze": "This is a affect case.",
+      "caution": "affect(동사, 영향) vs effect(명사, 결과) — 어휘 빈출 함정 1위",
+      "etymology": "ad(~에)+facere(만들다)=만들어 내다",
+      "example": "Sleep deprivation can affect academic performance.",
+      "example_ko": "수면 부족은 학업 성취에 영향을 미칠 수 있다.",
+      "cloze": "Sleep deprivation can ______ academic performance.",
       "freq": 30
     },
     {
       "id": "Lv1-015",
       "en": "affiliate",
       "ipa": "/affi.../",
-      "pos": "v.",
-      "ko": "제휴하다",
-      "ko_detail": "제휴하다 — 수능·내신 빈출",
+      "pos": "v./n.",
+      "ko": "제휴하다, 가입시키다 / 계열사",
+      "ko_detail": "공식적 관계로 연결하다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "associate",
+          "nuance": "느슨하게 연결"
+        },
+        {
+          "en": "ally",
+          "nuance": "동맹으로 묶다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "separate",
+        "dissociate"
       ],
-      "caution": "affiliate 철자·발음 주의",
-      "etymology": "aff 어근",
-      "example": "The affiliate aspect is often overlooked in discussions.",
-      "example_ko": "제휴하다 측면은 종종 간과된다.",
-      "cloze": "This is a affiliate case.",
+      "caution": "be affiliated with — with 전치사",
+      "etymology": "ad(~에)+filius(아들)=아들로 삼다",
+      "example": "The clinic is affiliated with the university hospital.",
+      "example_ko": "그 병원은 대학병원과 제휴되어 있다.",
+      "cloze": "The clinic is ______ with the university hospital.",
       "freq": 30
     },
     {
       "id": "Lv1-016",
       "en": "afford",
       "ipa": "/affo.../",
-      "pos": "v./n.",
-      "ko": "~할 여유가 있다",
-      "ko_detail": "~할 여유가 있다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "~할 여유가 있다, 제공하다",
+      "ko_detail": "시간·금전·능력으로 감당하다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "provide",
+          "nuance": "제공하다"
+        },
+        {
+          "en": "manage",
+          "nuance": "간신히 해내다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "withhold",
+        "lack"
       ],
-      "caution": "afford 철자·발음 주의",
-      "etymology": "aff 어근",
-      "example": "The afford aspect is often overlooked in discussions.",
-      "example_ko": "~할 여유가 있다 측면은 종종 간과된다.",
-      "cloze": "This is a afford case.",
+      "caution": "can afford to V / can afford N — to부정사/명사 모두 가능",
+      "etymology": "ad(~에)+fortis(강한)=강하게 만들다→감당하다",
+      "example": "We cannot afford to ignore climate change any longer.",
+      "example_ko": "우리는 기후 변화를 더 이상 무시할 여유가 없다.",
+      "cloze": "We cannot ______ to ignore climate change any longer.",
       "freq": 30
     },
     {
       "id": "Lv1-017",
       "en": "aggregate",
       "ipa": "/aggr.../",
-      "pos": "v.",
-      "ko": "집합하다",
-      "ko_detail": "집합하다 — 수능·내신 빈출",
+      "pos": "n./v./a.",
+      "ko": "집합, 총계 / 모으다 / 총합의",
+      "ko_detail": "개별을 모아 전체로 하다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "total",
+          "nuance": "합계"
+        },
+        {
+          "en": "collective",
+          "nuance": "집합적"
         }
       ],
       "antonyms": [
-        "opposite"
+        "individual",
+        "isolate"
       ],
-      "caution": "aggregate 철자·발음 주의",
-      "etymology": "agg 어근",
-      "example": "The aggregate aspect is often overlooked in discussions.",
-      "example_ko": "집합하다 측면은 종종 간과된다.",
-      "cloze": "This is a aggregate case.",
+      "caution": "aggregate n. /ˈæɡrɪɡət/ vs v. /ˈæɡrɪɡeɪt/ — 품사에 따라 발음",
+      "etymology": "ad(~에)+gregare(모으다)=한 떼로 모으다",
+      "example": "The aggregate score determines the final ranking.",
+      "example_ko": "총합 점수가 최종 순위를 결정한다.",
+      "cloze": "The ______ score determines the final ranking.",
       "freq": 30
     },
     {
       "id": "Lv1-018",
       "en": "albeit",
       "ipa": "/albe.../",
-      "pos": "v./n.",
+      "pos": "conj.",
       "ko": "비록 ~이지만",
-      "ko_detail": "비록 ~이지만 — 수능·내신 빈출",
+      "ko_detail": "양보를 나타내는 접속사",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "although",
+          "nuance": "일반적 양보"
+        },
+        {
+          "en": "though",
+          "nuance": "구어적 양보"
         }
       ],
       "antonyms": [
-        "opposite"
+        "therefore"
       ],
-      "caution": "albeit 철자·발음 주의",
-      "etymology": "alb 어근",
-      "example": "The albeit aspect is often overlooked in discussions.",
-      "example_ko": "비록 ~이지만 측면은 종종 간과된다.",
-      "cloze": "This is a albeit case.",
+      "caution": "albeit + 형용사/부사 — albeit difficult, albeit slowly (절 아님)",
+      "etymology": "all+be+it=그것이 전부라도",
+      "example": "The task was completed, albeit late.",
+      "example_ko": "그 과제는 늦었지만 완료되었다.",
+      "cloze": "The task was completed, ______ late.",
       "freq": 30
     },
     {
@@ -498,24 +552,29 @@
       "en": "alleviate",
       "ipa": "/alle.../",
       "pos": "v.",
-      "ko": "완화하다",
-      "ko_detail": "완화하다 — 수능·내신 빈출",
+      "ko": "완화하다, 경감하다",
+      "ko_detail": "고통·문제의 강도를 낮추다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "relieve",
+          "nuance": "긴장을 풀어주다"
+        },
+        {
+          "en": "ease",
+          "nuance": "부드럽게 덜다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "aggravate",
+        "worsen"
       ],
-      "caution": "alleviate 철자·발음 주의",
-      "etymology": "all 어근",
-      "example": "The alleviate aspect is often overlooked in discussions.",
-      "example_ko": "완화하다 측면은 종종 간과된다.",
-      "cloze": "This is a alleviate case.",
+      "caution": "alleviate(완화) vs elevate(높이다) — 첫 모음 a/e 구분",
+      "etymology": "ad(~에서)+levare(가볍게 하다)=가볍게 하다",
+      "example": "Meditation can alleviate anxiety before exams.",
+      "example_ko": "명상은 시험 전 불안을 완화할 수 있다.",
+      "cloze": "Meditation can ______ anxiety before exams.",
       "freq": 30
     },
     {
@@ -523,24 +582,29 @@
       "en": "allocate",
       "ipa": "/allo.../",
       "pos": "v.",
-      "ko": "배분하다",
-      "ko_detail": "배분하다 — 수능·내신 빈출",
+      "ko": "배분하다, 할당하다",
+      "ko_detail": "목적에 따라 나누어 주다",
       "level": "Lv1",
       "day": 1,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "distribute",
+          "nuance": "널리 나누다"
+        },
+        {
+          "en": "assign",
+          "nuance": "임무를 배정하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "withhold",
+        "collect"
       ],
-      "caution": "allocate 철자·발음 주의",
-      "etymology": "all 어근",
-      "example": "The allocate aspect is often overlooked in discussions.",
-      "example_ko": "배분하다 측면은 종종 간과된다.",
-      "cloze": "This is a allocate case.",
+      "caution": "allocate A to B / allocate A for B — 전치사 to/for",
+      "etymology": "ad(~에)+locare(놓다)=제자리에 놓다",
+      "example": "The budget will allocate funds to public education.",
+      "example_ko": "예산은 공교육에 자금을 배분할 것이다.",
+      "cloze": "The budget will ______ funds to public education.",
       "freq": 30
     },
     {
