@@ -611,125 +611,150 @@
       "id": "Lv1-021",
       "en": "ambiguous",
       "ipa": "/ambi.../",
-      "pos": "v./n.",
+      "pos": "a.",
       "ko": "모호한",
-      "ko_detail": "모호한 — 수능·내신 빈출",
+      "ko_detail": "의미가 불분명해 여러 해석이 가능한",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "vague",
+          "nuance": "불명확한"
+        },
+        {
+          "en": "equivocal",
+          "nuance": "의도적으로 애매한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "clear",
+        "explicit"
       ],
-      "caution": "ambiguous 철자·발음 주의",
-      "etymology": "amb 어근",
-      "example": "The ambiguous aspect is often overlooked in discussions.",
-      "example_ko": "모호한 측면은 종종 간과된다.",
-      "cloze": "This is a ambiguous case.",
+      "caution": "ambiguous(모호) vs ambitious(야심) — 앞 5글자 ambi- 동일, 끝 구분",
+      "etymology": "ambi(양쪽)+agere(몰아가다)=양쪽으로 몰아 애매한",
+      "example": "The survey question was ambiguous and led to varied responses.",
+      "example_ko": "그 설문 문항은 모호해 다양한 응답을 낳았다.",
+      "cloze": "The survey question was ______ and led to varied responses.",
       "freq": 30
     },
     {
       "id": "Lv1-022",
       "en": "ambitious",
       "ipa": "/ambi.../",
-      "pos": "v./n.",
-      "ko": "야심찬",
-      "ko_detail": "야심찬 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "야심 있는, 큰 포부를 가진",
+      "ko_detail": "높은 목표를 향해 강한 의욕을 가진",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "aspiring",
+          "nuance": "열망하는"
+        },
+        {
+          "en": "enterprising",
+          "nuance": "진취적인"
         }
       ],
       "antonyms": [
-        "opposite"
+        "unambitious",
+        "modest"
       ],
-      "caution": "ambitious 철자·발음 주의",
-      "etymology": "amb 어근",
-      "example": "The ambitious aspect is often overlooked in discussions.",
-      "example_ko": "야심찬 측면은 종종 간과된다.",
-      "cloze": "This is a ambitious case.",
+      "caution": "ambitious person/project — 사람·계획 모두 수식",
+      "etymology": "ambi(둘러)+ire(가다)=둘러 다니며 표를 구걸하던 로마 후보자",
+      "example": "She has an ambitious plan to reduce plastic waste.",
+      "example_ko": "그녀는 플라스틱 폐기물을 줄이려는 야심 찬 계획을 갖고 있다.",
+      "cloze": "She has an ______ plan to reduce plastic waste.",
       "freq": 30
     },
     {
       "id": "Lv1-023",
       "en": "amend",
       "ipa": "/amen.../",
-      "pos": "v./n.",
-      "ko": "수정하다",
-      "ko_detail": "수정하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "수정하다, 개정하다",
+      "ko_detail": "잘못·부족한 부분을 고쳐 바로잡다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "revise",
+          "nuance": "내용을 고쳐 쓰다"
+        },
+        {
+          "en": "modify",
+          "nuance": "부분을 바꾸다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "preserve",
+        "retain"
       ],
-      "caution": "amend 철자·발음 주의",
-      "etymology": "ame 어근",
-      "example": "The amend aspect is often overlooked in discussions.",
-      "example_ko": "수정하다 측면은 종종 간과된다.",
-      "cloze": "This is a amend case.",
+      "caution": "amend(개정) vs emend(오자 교정) — a/e 첫 글자",
+      "etymology": "a(~에서)+menda(결점)=결점에서 벗어나다",
+      "example": "The law was amended to protect privacy.",
+      "example_ko": "그 법은 개인정보를 보호하도록 개정되었다.",
+      "cloze": "The law was ______ to protect privacy.",
       "freq": 30
     },
     {
       "id": "Lv1-024",
       "en": "analogous",
       "ipa": "/anal.../",
-      "pos": "v./n.",
-      "ko": "유사한",
-      "ko_detail": "유사한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "유사한, 비슷한",
+      "ko_detail": "기능·관계가 비슷한",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "similar",
+          "nuance": "비슷한"
+        },
+        {
+          "en": "comparable",
+          "nuance": "비교 가능한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "dissimilar",
+        "unrelated"
       ],
-      "caution": "analogous 철자·발음 주의",
-      "etymology": "ana 어근",
-      "example": "The analogous aspect is often overlooked in discussions.",
-      "example_ko": "유사한 측면은 종종 간과된다.",
-      "cloze": "This is a analogous case.",
+      "caution": "analogous to N — to 전치사",
+      "etymology": "ana(~에 따라)+logos(말·비례)=비례에 맞는",
+      "example": "The brain is analogous to a computer in some ways.",
+      "example_ko": "뇌는 어떤 면에서 컴퓨터와 유사하다.",
+      "cloze": "The brain is ______ to a computer in some ways.",
       "freq": 30
     },
     {
       "id": "Lv1-025",
       "en": "analyze",
       "ipa": "/anal.../",
-      "pos": "v./n.",
+      "pos": "v.",
       "ko": "분석하다",
-      "ko_detail": "분석하다 — 수능·내신 빈출",
+      "ko_detail": "구성 요소를 나누어 살펴보다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "examine",
+          "nuance": "자세히 살펴보다"
+        },
+        {
+          "en": "evaluate",
+          "nuance": "가치를 평가하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "synthesize",
+        "ignore"
       ],
-      "caution": "analyze 철자·발음 주의",
-      "etymology": "ana 어근",
-      "example": "The analyze aspect is often overlooked in discussions.",
-      "example_ko": "분석하다 측면은 종종 간과된다.",
-      "cloze": "This is a analyze case.",
+      "caution": "analyze(미) vs analyse(영) — 철자",
+      "etymology": "ana(나누어)+lysis(풀다)=나누어 풀다",
+      "example": "We need to analyze the data carefully.",
+      "example_ko": "우리는 데이터를 신중하게 분석해야 한다.",
+      "cloze": "We need to ______ the data carefully.",
       "freq": 30
     },
     {
@@ -737,24 +762,29 @@
       "en": "anticipate",
       "ipa": "/anti.../",
       "pos": "v.",
-      "ko": "예상하다",
-      "ko_detail": "예상하다 — 수능·내신 빈출",
+      "ko": "예상하다, 기대하다",
+      "ko_detail": "미리 헤아려 준비하다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "expect",
+          "nuance": "일어나리라 예상"
+        },
+        {
+          "en": "foresee",
+          "nuance": "미리 내다보다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "doubt",
+        "ignore"
       ],
-      "caution": "anticipate 철자·발음 주의",
-      "etymology": "ant 어근",
-      "example": "The anticipate aspect is often overlooked in discussions.",
-      "example_ko": "예상하다 측면은 종종 간과된다.",
-      "cloze": "This is a anticipate case.",
+      "caution": "anticipate that절 / anticipating N — 동명사 주의",
+      "etymology": "ante(앞)+capere(잡다)=앞에서 잡다",
+      "example": "We anticipate that demand will increase next year.",
+      "example_ko": "우리는 내년 수요가 증가할 것으로 예상한다.",
+      "cloze": "We ______ that demand will increase next year.",
       "freq": 30
     },
     {
@@ -762,49 +792,59 @@
       "en": "apparent",
       "ipa": "/appa.../",
       "pos": "a.",
-      "ko": "명백한",
-      "ko_detail": "명백한 — 수능·내신 빈출",
+      "ko": "명백한, 외관상의",
+      "ko_detail": "눈에 보일 만큼 분명한 / 겉보기에",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "evident",
+          "nuance": "증거로 분명한"
+        },
+        {
+          "en": "obvious",
+          "nuance": "누구나 아는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "hidden",
+        "obscure"
       ],
-      "caution": "apparent 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The apparent aspect is often overlooked in discussions.",
-      "example_ko": "명백한 측면은 종종 간과된다.",
-      "cloze": "This is a apparent case.",
+      "caution": "apparent(명백) vs apparently(아마) — 부사 의미 전환",
+      "etymology": "ad(~에)+parere(나타나다)=나타난",
+      "example": "It is apparent that he is upset.",
+      "example_ko": "그가 화난 것은 명백하다.",
+      "cloze": "It is ______ that he is upset.",
       "freq": 30
     },
     {
       "id": "Lv1-028",
       "en": "appeal",
       "ipa": "/appe.../",
-      "pos": "a.",
-      "ko": "호소하다",
-      "ko_detail": "호소하다 — 수능·내신 빈출",
+      "pos": "v./n.",
+      "ko": "호소하다, 매력",
+      "ko_detail": "감정·이성에 호소하거나 관심을 끌다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "attract",
+          "nuance": "끌어당기다"
+        },
+        {
+          "en": "plead",
+          "nuance": "간청하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "repel",
+        "bore"
       ],
-      "caution": "appeal 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The appeal aspect is often overlooked in discussions.",
-      "example_ko": "호소하다 측면은 종종 간과된다.",
-      "cloze": "This is a appeal case.",
+      "caution": "appeal to/for — to(대상) / for(요청)",
+      "etymology": "ad(~에)+pellere(밀다)=밀어 보내 호소하다",
+      "example": "The idea appeals to young investors.",
+      "example_ko": "그 아이디어는 젊은 투자자들에게 매력적이다.",
+      "cloze": "The idea ______ to young investors.",
       "freq": 30
     },
     {
@@ -812,24 +852,29 @@
       "en": "appreciate",
       "ipa": "/appr.../",
       "pos": "v.",
-      "ko": "감사하다/이해하다",
-      "ko_detail": "감사하다/이해하다 — 수능·내신 빈출",
+      "ko": "감사하다, 가치를 알다",
+      "ko_detail": "가치·노력을 인정하고 고마워하다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "value",
+          "nuance": "가치를 두다"
+        },
+        {
+          "en": "recognize",
+          "nuance": "인정하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "disregard",
+        "depreciate"
       ],
-      "caution": "appreciate 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The appreciate aspect is often overlooked in discussions.",
-      "example_ko": "감사하다/이해하다 측면은 종종 간과된다.",
-      "cloze": "This is a appreciate case.",
+      "caution": "appreciate N / appreciate that절 — that절 가능",
+      "etymology": "ad(~에)+pretium(값)=값을 주다",
+      "example": "We appreciate your cooperation.",
+      "example_ko": "당신의 협력에 감사드립니다.",
+      "cloze": "We ______ your cooperation.",
       "freq": 30
     },
     {
@@ -837,274 +882,329 @@
       "en": "approach",
       "ipa": "/appr.../",
       "pos": "v./n.",
-      "ko": "접근하다",
-      "ko_detail": "접근하다 — 수능·내신 빈출",
+      "ko": "접근하다, 다가오다",
+      "ko_detail": "공간·시간·방법상으로 가까워지다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "advance",
+          "nuance": "전진하다"
+        },
+        {
+          "en": "reach",
+          "nuance": "도달하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "retreat",
+        "withdraw"
       ],
-      "caution": "approach 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The approach aspect is often overlooked in discussions.",
-      "example_ko": "접근하다 측면은 종종 간과된다.",
-      "cloze": "This is a approach case.",
+      "caution": "approach N (타동사) — 전치사 없이 바로 목적어",
+      "etymology": "ad(~에)+prope(가까이)=가까이 가다",
+      "example": "The company is approaching the problem differently.",
+      "example_ko": "그 회사는 문제에 다르게 접근하고 있다.",
+      "cloze": "The company is ______ the problem differently.",
       "freq": 30
     },
     {
       "id": "Lv1-031",
       "en": "appropriate",
       "ipa": "/appr.../",
-      "pos": "v.",
-      "ko": "적절한",
-      "ko_detail": "적절한 — 수능·내신 빈출",
+      "pos": "a./v.",
+      "ko": "적절한 / 할당하다",
+      "ko_detail": "목적·상황에 알맞은",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "suitable",
+          "nuance": "어울리는"
+        },
+        {
+          "en": "proper",
+          "nuance": "바른"
         }
       ],
       "antonyms": [
-        "opposite"
+        "inappropriate",
+        "unsuitable"
       ],
-      "caution": "appropriate 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The appropriate aspect is often overlooked in discussions.",
-      "example_ko": "적절한 측면은 종종 간과된다.",
-      "cloze": "This is a appropriate case.",
+      "caution": "appropriate a. /əˈproʊpriət/ vs v. /əˈproʊprieɪt/ — 발음 구분",
+      "etymology": "ad(~에)+proprius(자기 것)=자기 것으로 만들다",
+      "example": "This dress is appropriate for the occasion.",
+      "example_ko": "이 드레스는 그 자리에 적절하다.",
+      "cloze": "This dress is ______ for the occasion.",
       "freq": 30
     },
     {
       "id": "Lv1-032",
       "en": "approximate",
       "ipa": "/appr.../",
-      "pos": "v.",
-      "ko": "대략적인",
-      "ko_detail": "대략적인 — 수능·내신 빈출",
+      "pos": "a./v.",
+      "ko": "대략의, 근사한 / 가깝게 하다",
+      "ko_detail": "정확하지 않지만 가까운",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "rough",
+          "nuance": "대략적인"
+        },
+        {
+          "en": "estimated",
+          "nuance": "추정된"
         }
       ],
       "antonyms": [
-        "opposite"
+        "exact",
+        "precise"
       ],
-      "caution": "approximate 철자·발음 주의",
-      "etymology": "app 어근",
-      "example": "The approximate aspect is often overlooked in discussions.",
-      "example_ko": "대략적인 측면은 종종 간과된다.",
-      "cloze": "This is a approximate case.",
+      "caution": "approximate a. /əˈprɒksɪmət/ vs v. /əˈprɒksɪmeɪt/",
+      "etymology": "ad(~에)+proximus(가장 가까운)=가깝게 하다",
+      "example": "The approximate cost is $500.",
+      "example_ko": "대략적인 비용은 500달러이다.",
+      "cloze": "The ______ cost is $500.",
       "freq": 30
     },
     {
       "id": "Lv1-033",
       "en": "arbitrary",
       "ipa": "/arbi.../",
-      "pos": "v./n.",
-      "ko": "자의적인",
-      "ko_detail": "자의적인 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "임의적인, 자의적인",
+      "ko_detail": "합리적 기준 없이 정한",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "random",
+          "nuance": "무작위의"
+        },
+        {
+          "en": "subjective",
+          "nuance": "주관적인"
         }
       ],
       "antonyms": [
-        "opposite"
+        "principled",
+        "systematic"
       ],
-      "caution": "arbitrary 철자·발음 주의",
-      "etymology": "arb 어근",
-      "example": "The arbitrary aspect is often overlooked in discussions.",
-      "example_ko": "자의적인 측면은 종종 간과된다.",
-      "cloze": "This is a arbitrary case.",
+      "caution": "arbitrary decision/rule — 자의적 결정",
+      "etymology": "arbitrari(판단하다)=판단하는 자의",
+      "example": "The choice seemed arbitrary.",
+      "example_ko": "그 선택은 임의적으로 보였다.",
+      "cloze": "The choice seemed ______.",
       "freq": 30
     },
     {
       "id": "Lv1-034",
       "en": "assemble",
       "ipa": "/asse.../",
-      "pos": "v./n.",
-      "ko": "조립하다",
-      "ko_detail": "조립하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "조립하다, 모으다",
+      "ko_detail": "부분을 모아 하나로 만들다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "gather",
+          "nuance": "모으다"
+        },
+        {
+          "en": "construct",
+          "nuance": "건설하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "disassemble",
+        "scatter"
       ],
-      "caution": "assemble 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assemble aspect is often overlooked in discussions.",
-      "example_ko": "조립하다 측면은 종종 간과된다.",
-      "cloze": "This is a assemble case.",
+      "caution": "assemble A from B — B로부터 조립",
+      "etymology": "ad(~로)+simul(함께)=함께 모으다",
+      "example": "We will assemble the furniture tomorrow.",
+      "example_ko": "우리는 내일 가구를 조립할 것이다.",
+      "cloze": "We will ______ the furniture tomorrow.",
       "freq": 30
     },
     {
       "id": "Lv1-035",
       "en": "assess",
       "ipa": "/asse.../",
-      "pos": "v./n.",
-      "ko": "평가하다",
-      "ko_detail": "평가하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "평가하다, 사정하다",
+      "ko_detail": "가치·정도를 판단하다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "evaluate",
+          "nuance": "평가하다"
+        },
+        {
+          "en": "judge",
+          "nuance": "판단하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "ignore",
+        "neglect"
       ],
-      "caution": "assess 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assess aspect is often overlooked in discussions.",
-      "example_ko": "평가하다 측면은 종종 간과된다.",
-      "cloze": "This is a assess case.",
+      "caution": "assess N / assess how~ — how절 가능",
+      "etymology": "ad(~에)+sedere(앉다)=옆에 앉아 살피다",
+      "example": "Teachers assess students' progress regularly.",
+      "example_ko": "교사들은 학생들의 진도를 정기적으로 평가한다.",
+      "cloze": "Teachers ______ students' progress regularly.",
       "freq": 30
     },
     {
       "id": "Lv1-036",
       "en": "assign",
       "ipa": "/assi.../",
-      "pos": "v./n.",
-      "ko": "할당하다",
-      "ko_detail": "할당하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "할당하다, 부여하다",
+      "ko_detail": "임무·자원을 나누어 주다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "allocate",
+          "nuance": "배분하다"
+        },
+        {
+          "en": "designate",
+          "nuance": "지정하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "withhold",
+        "remove"
       ],
-      "caution": "assign 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assign aspect is often overlooked in discussions.",
-      "example_ko": "할당하다 측면은 종종 간과된다.",
-      "cloze": "This is a assign case.",
+      "caution": "assign A to B / assign B A — 이중 목적어",
+      "etymology": "ad(~에)+signare(표시하다)=표시해 나누다",
+      "example": "The teacher will assign homework.",
+      "example_ko": "선생님이 숙제를 내줄 것이다.",
+      "cloze": "The teacher will ______ homework.",
       "freq": 30
     },
     {
       "id": "Lv1-037",
       "en": "assist",
       "ipa": "/assi.../",
-      "pos": "v./n.",
-      "ko": "돕다",
-      "ko_detail": "돕다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "돕다, 지원하다",
+      "ko_detail": "행동을 도와주다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "help",
+          "nuance": "돕다"
+        },
+        {
+          "en": "support",
+          "nuance": "지지하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "hinder",
+        "obstruct"
       ],
-      "caution": "assist 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assist aspect is often overlooked in discussions.",
-      "example_ko": "돕다 측면은 종종 간과된다.",
-      "cloze": "This is a assist case.",
+      "caution": "assist in V-ing / assist with N — 전치사",
+      "etymology": "ad(~에)+sistere(서다)=옆에 서서 돕다",
+      "example": "Volunteers assist the elderly every weekend.",
+      "example_ko": "자원봉사자들은 매주 주말 노인들을 돕는다.",
+      "cloze": "Volunteers ______ the elderly every weekend.",
       "freq": 30
     },
     {
       "id": "Lv1-038",
       "en": "assume",
       "ipa": "/assu.../",
-      "pos": "v./n.",
-      "ko": "가정하다",
-      "ko_detail": "가정하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "가정하다, 떠맡다",
+      "ko_detail": "증거 없이 사실로 여기다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "presume",
+          "nuance": "추정하다"
+        },
+        {
+          "en": "suppose",
+          "nuance": "상상하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "know",
+        "verify"
       ],
-      "caution": "assume 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assume aspect is often overlooked in discussions.",
-      "example_ko": "가정하다 측면은 종종 간과된다.",
-      "cloze": "This is a assume case.",
+      "caution": "assume that절 — 가정 내용 that절",
+      "etymology": "ad(~에)+sumere(취하다)=취하다",
+      "example": "We cannot assume that he will agree.",
+      "example_ko": "그가 동의할 것이라고 가정할 수 없다.",
+      "cloze": "We cannot ______ that he will agree.",
       "freq": 30
     },
     {
       "id": "Lv1-039",
       "en": "assure",
       "ipa": "/assu.../",
-      "pos": "v./n.",
-      "ko": "보장하다",
-      "ko_detail": "보장하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "확신시키다, 보장하다",
+      "ko_detail": "걱정을 없애 안심시키다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "ensure",
+          "nuance": "보장하다"
+        },
+        {
+          "en": "guarantee",
+          "nuance": "보증하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "alarm",
+        "discourage"
       ],
-      "caution": "assure 철자·발음 주의",
-      "etymology": "ass 어근",
-      "example": "The assure aspect is often overlooked in discussions.",
-      "example_ko": "보장하다 측면은 종종 간과된다.",
-      "cloze": "This is a assure case.",
+      "caution": "assure A of B / assure A that절 — of/that 구문",
+      "etymology": "ad(~에)+securus(안전한)=안전하게 하다",
+      "example": "The doctor assured her that she would recover.",
+      "example_ko": "의사는 그녀에게 회복될 것이라고 확신시켰다.",
+      "cloze": "The doctor ______ her that she would recover.",
       "freq": 30
     },
     {
       "id": "Lv1-040",
       "en": "attach",
       "ipa": "/atta.../",
-      "pos": "v./n.",
-      "ko": "붙이다",
-      "ko_detail": "붙이다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "붙이다, 첨부하다",
+      "ko_detail": "둘을 붙여 연결하다",
       "level": "Lv1",
       "day": 2,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "fasten",
+          "nuance": "고정하다"
+        },
+        {
+          "en": "join",
+          "nuance": "결합하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "detach",
+        "remove"
       ],
-      "caution": "attach 철자·발음 주의",
-      "etymology": "att 어근",
-      "example": "The attach aspect is often overlooked in discussions.",
-      "example_ko": "붙이다 측면은 종종 간과된다.",
-      "cloze": "This is a attach case.",
+      "caution": "be attached to — to 전치사",
+      "etymology": "ad(~에)+tack(못)=못으로 붙이다",
+      "example": "Please attach the file to the email.",
+      "example_ko": "파일을 이메일에 첨부해 주세요.",
+      "cloze": "Please ______ the file to the email.",
       "freq": 30
     },
     {
@@ -1112,99 +1212,119 @@
       "en": "attribute",
       "ipa": "/attr.../",
       "pos": "v./n.",
-      "ko": "~탓으로 돌리다",
-      "ko_detail": "~탓으로 돌리다 — 수능·내신 빈출",
+      "ko": "~탓으로 돌리다, 속성",
+      "ko_detail": "원인·성질을 돌려 말하다",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "ascribe",
+          "nuance": "원인으로 돌리다"
+        },
+        {
+          "en": "credit",
+          "nuance": "공을 돌리다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "deny",
+        "withhold"
       ],
-      "caution": "attribute 철자·발음 주의",
-      "etymology": "att 어근",
-      "example": "The attribute aspect is often overlooked in discussions.",
-      "example_ko": "~탓으로 돌리다 측면은 종종 간과된다.",
-      "cloze": "This is a attribute case.",
+      "caution": "attribute A to B — to 전치사, attribute 명사는 /ˈætrɪbjuːt/",
+      "etymology": "ad(~에)+tribuere(주다)=주다",
+      "example": "They attribute success to hard work.",
+      "example_ko": "그들은 성공을 노력 탓으로 돌린다.",
+      "cloze": "They ______ success to hard work.",
       "freq": 30
     },
     {
       "id": "Lv1-042",
       "en": "authentic",
       "ipa": "/auth.../",
-      "pos": "v./n.",
-      "ko": "진정한",
-      "ko_detail": "진정한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "진정한, 진짜의",
+      "ko_detail": "믿을 만한 진짜",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "genuine",
+          "nuance": "가짜가 아닌"
+        },
+        {
+          "en": "credible",
+          "nuance": "믿을 만한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "fake",
+        "counterfeit"
       ],
-      "caution": "authentic 철자·발음 주의",
-      "etymology": "aut 어근",
-      "example": "The authentic aspect is often overlooked in discussions.",
-      "example_ko": "진정한 측면은 종종 간과된다.",
-      "cloze": "This is a authentic case.",
+      "caution": "authentic(진짜) vs author(작가) — auth- 동일",
+      "etymology": "autos(자기)+hentes(행한)=자기 스스로 한",
+      "example": "This is an authentic painting by the artist.",
+      "example_ko": "이것은 그 작가의 진정한 그림이다.",
+      "cloze": "This is an ______ painting by the artist.",
       "freq": 30
     },
     {
       "id": "Lv1-043",
       "en": "available",
       "ipa": "/avai.../",
-      "pos": "v./n.",
-      "ko": "이용 가능한",
-      "ko_detail": "이용 가능한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "이용 가능한, 구할 수 있는",
+      "ko_detail": "원하면 쓸 수 있는",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "accessible",
+          "nuance": "접근 가능한"
+        },
+        {
+          "en": "obtainable",
+          "nuance": "구할 수 있는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "unavailable",
+        "scarce"
       ],
-      "caution": "available 철자·발음 주의",
-      "etymology": "ava 어근",
-      "example": "The available aspect is often overlooked in discussions.",
-      "example_ko": "이용 가능한 측면은 종종 간과된다.",
-      "cloze": "This is a available case.",
+      "caution": "available for/to — for 목적, to 사람",
+      "etymology": "ad(~에)+valere(강하다)=쓸 수 있을 만큼 강한",
+      "example": "Tickets are available online.",
+      "example_ko": "표는 온라인에서 구할 수 있다.",
+      "cloze": "Tickets are ______ online.",
       "freq": 30
     },
     {
       "id": "Lv1-044",
       "en": "aware",
       "ipa": "/awar.../",
-      "pos": "v./n.",
-      "ko": "인지하는",
-      "ko_detail": "인지하는 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "알고 있는, 의식하는",
+      "ko_detail": "정보를 알고 인지하는",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "conscious",
+          "nuance": "의식하는"
+        },
+        {
+          "en": "informed",
+          "nuance": "정보를 가진"
         }
       ],
       "antonyms": [
-        "opposite"
+        "unaware",
+        "ignorant"
       ],
-      "caution": "aware 철자·발음 주의",
-      "etymology": "awa 어근",
-      "example": "The aware aspect is often overlooked in discussions.",
-      "example_ko": "인지하는 측면은 종종 간과된다.",
-      "cloze": "This is a aware case.",
+      "caution": "be aware of N / that절 — of 필수",
+      "etymology": "a(~없이)+warian(조심하다) 아님, gewær(인식하는)",
+      "example": "Are you aware of the new policy?",
+      "example_ko": "새 정책을 알고 있나요?",
+      "cloze": "Are you ______ of the new policy?",
       "freq": 30
     },
     {
@@ -1212,24 +1332,29 @@
       "en": "beneficial",
       "ipa": "/bene.../",
       "pos": "a.",
-      "ko": "유익한",
-      "ko_detail": "유익한 — 수능·내신 빈출",
+      "ko": "유익한, 도움이 되는",
+      "ko_detail": "이익·건강에 좋은",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "advantageous",
+          "nuance": "유리한"
+        },
+        {
+          "en": "helpful",
+          "nuance": "도움이 되는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "harmful",
+        "detrimental"
       ],
-      "caution": "beneficial 철자·발음 주의",
-      "etymology": "ben 어근",
-      "example": "The beneficial aspect is often overlooked in discussions.",
-      "example_ko": "유익한 측면은 종종 간과된다.",
-      "cloze": "This is a beneficial case.",
+      "caution": "beneficial to/for — 둘 다 가능, 뉘앙스 차이",
+      "etymology": "bene(잘)+facere(만들다)=잘 만들다",
+      "example": "Exercise is beneficial to mental health.",
+      "example_ko": "운동은 정신 건강에 유익하다.",
+      "cloze": "Exercise is ______ to mental health.",
       "freq": 30
     },
     {
@@ -1237,349 +1362,417 @@
       "en": "bias",
       "ipa": "/bias.../",
       "pos": "n.",
-      "ko": "편향",
-      "ko_detail": "편향 — 수능·내신 빈출",
+      "ko": "편향, 편견",
+      "ko_detail": "한쪽으로 기울어 중립이 아님 (Lv1-007과 동일 개념, 다른 Day)",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "prejudice",
+          "nuance": "사람 대상 선입견"
+        },
+        {
+          "en": "partiality",
+          "nuance": "편애"
         }
       ],
       "antonyms": [
-        "opposite"
+        "objectivity",
+        "fairness"
       ],
-      "caution": "bias 철자·발음 주의",
-      "etymology": "bia 어근",
-      "example": "The bias aspect is often overlooked in discussions.",
-      "example_ko": "편향 측면은 종종 간과된다.",
-      "cloze": "This is a bias case.",
+      "caution": "bias toward/against — toward 우호, against 적대",
+      "etymology": "biais(비스듬한)=기울다",
+      "example": "The study was free from bias.",
+      "example_ko": "그 연구는 편향이 없었다.",
+      "cloze": "The study was free from ______.",
       "freq": 30
     },
     {
       "id": "Lv1-047",
       "en": "bond",
       "ipa": "/bond.../",
-      "pos": "v./n.",
-      "ko": "유대",
-      "ko_detail": "유대 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "결속, 유대 / 묶다",
+      "ko_detail": "사람·사물을 묶는 관계",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "connection",
+          "nuance": "연결"
+        },
+        {
+          "en": "tie",
+          "nuance": "끈"
         }
       ],
       "antonyms": [
-        "opposite"
+        "separation",
+        "division"
       ],
-      "caution": "bond 철자·발음 주의",
-      "etymology": "bon 어근",
-      "example": "The bond aspect is often overlooked in discussions.",
-      "example_ko": "유대 측면은 종종 간과된다.",
-      "cloze": "This is a bond case.",
+      "caution": "bond between A and B — between/and",
+      "etymology": "bindan(묶다)=묶다",
+      "example": "The bond between mother and child is strong.",
+      "example_ko": "모자 간의 유대는 강하다.",
+      "cloze": "The ______ between mother and child is strong.",
       "freq": 30
     },
     {
       "id": "Lv1-048",
       "en": "brief",
       "ipa": "/brie.../",
-      "pos": "v./n.",
-      "ko": "간략한",
-      "ko_detail": "간략한 — 수능·내신 빈출",
+      "pos": "a./n./v.",
+      "ko": "짧은, 간략한 / 요약",
+      "ko_detail": "시간·길이가 짧은",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "concise",
+          "nuance": "간결한"
+        },
+        {
+          "en": "short",
+          "nuance": "짧은"
         }
       ],
       "antonyms": [
-        "opposite"
+        "lengthy",
+        "detailed"
       ],
-      "caution": "brief 철자·발음 주의",
-      "etymology": "bri 어근",
-      "example": "The brief aspect is often overlooked in discussions.",
-      "example_ko": "간략한 측면은 종종 간과된다.",
-      "cloze": "This is a brief case.",
+      "caution": "brief A on B — B에 대해 간략히 알리다",
+      "etymology": "brevis(짧은)=짧은",
+      "example": "Please give a brief summary.",
+      "example_ko": "간략한 요약을 해 주세요.",
+      "cloze": "Please give a ______ summary.",
       "freq": 30
     },
     {
       "id": "Lv1-049",
       "en": "burden",
       "ipa": "/burd.../",
-      "pos": "v./n.",
-      "ko": "부담",
-      "ko_detail": "부담 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "부담, 짐 / 부담시키다",
+      "ko_detail": "짊어져야 할 무게·책임",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "load",
+          "nuance": "짐"
+        },
+        {
+          "en": "responsibility",
+          "nuance": "책임"
         }
       ],
       "antonyms": [
-        "opposite"
+        "relief",
+        "aid"
       ],
-      "caution": "burden 철자·발음 주의",
-      "etymology": "bur 어근",
-      "example": "The burden aspect is often overlooked in discussions.",
-      "example_ko": "부담 측면은 종종 간과된다.",
-      "cloze": "This is a burden case.",
+      "caution": "burden N with N / burden of N — with/of",
+      "etymology": "byrthen(짐)=짐",
+      "example": "Taxes are a heavy burden for small firms.",
+      "example_ko": "세금은 소기업에 무거운 부담이다.",
+      "cloze": "Taxes are a heavy ______ for small firms.",
       "freq": 30
     },
     {
       "id": "Lv1-050",
       "en": "capable",
       "ipa": "/capa.../",
-      "pos": "v./n.",
-      "ko": "유능한",
-      "ko_detail": "유능한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "유능한, ~할 수 있는",
+      "ko_detail": "능력을 가져 가능한",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "competent",
+          "nuance": "유능한"
+        },
+        {
+          "en": "able",
+          "nuance": "할 수 있는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "incapable",
+        "incompetent"
       ],
-      "caution": "capable 철자·발음 주의",
-      "etymology": "cap 어근",
-      "example": "The capable aspect is often overlooked in discussions.",
-      "example_ko": "유능한 측면은 종종 간과된다.",
-      "cloze": "This is a capable case.",
+      "caution": "be capable of V-ing — of 동명사",
+      "etymology": "capere(잡다)=잡을 수 있는",
+      "example": "She is capable of leading the team.",
+      "example_ko": "그녀는 팀을 이끌 수 있다.",
+      "cloze": "She is ______ of leading the team.",
       "freq": 30
     },
     {
       "id": "Lv1-051",
       "en": "capacity",
       "ipa": "/capa.../",
-      "pos": "v./n.",
-      "ko": "용량",
-      "ko_detail": "용량 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "용량, 능력",
+      "ko_detail": "담거나 해낼 수 있는 크기·능력",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "volume",
+          "nuance": "부피"
+        },
+        {
+          "en": "ability",
+          "nuance": "능력"
         }
       ],
       "antonyms": [
-        "opposite"
+        "incapacity",
+        "limitation"
       ],
-      "caution": "capacity 철자·발음 주의",
-      "etymology": "cap 어근",
-      "example": "The capacity aspect is often overlooked in discussions.",
-      "example_ko": "용량 측면은 종종 간과된다.",
-      "cloze": "This is a capacity case.",
+      "caution": "capacity to V / for N — to부정사/for 명사",
+      "etymology": "capax(담을 수 있는)=담다",
+      "example": "The stadium has a capacity of 50,000.",
+      "example_ko": "그 경기장은 5만 명을 수용할 수 있다.",
+      "cloze": "The stadium has a ______ of 50,000.",
       "freq": 30
     },
     {
       "id": "Lv1-052",
       "en": "category",
       "ipa": "/cate.../",
-      "pos": "v./n.",
-      "ko": "범주",
-      "ko_detail": "범주 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "범주, 분류",
+      "ko_detail": "공통 특징으로 묶은 부류",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "class",
+          "nuance": "계급"
+        },
+        {
+          "en": "type",
+          "nuance": "유형"
         }
       ],
       "antonyms": [
-        "opposite"
+        "individual"
       ],
-      "caution": "category 철자·발음 주의",
-      "etymology": "cat 어근",
-      "example": "The category aspect is often overlooked in discussions.",
-      "example_ko": "범주 측면은 종종 간과된다.",
-      "cloze": "This is a category case.",
+      "caution": "category of N — 복수 categories 주의 철자",
+      "etymology": "kata(아래)+agoreuein(말하다)=공개적으로 말하다→분류",
+      "example": "Books are divided into categories by genre.",
+      "example_ko": "책은 장르별로 범주로 나뉜다.",
+      "cloze": "Books are divided into ______ by genre.",
       "freq": 30
     },
     {
       "id": "Lv1-053",
       "en": "cease",
       "ipa": "/ceas.../",
-      "pos": "v./n.",
-      "ko": "중단하다",
-      "ko_detail": "중단하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "중단하다, 멈추다",
+      "ko_detail": "진행 중인 것을 멈추다",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "stop",
+          "nuance": "멈추다"
+        },
+        {
+          "en": "halt",
+          "nuance": "정지시키다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "continue",
+        "begin"
       ],
-      "caution": "cease 철자·발음 주의",
-      "etymology": "cea 어근",
-      "example": "The cease aspect is often overlooked in discussions.",
-      "example_ko": "중단하다 측면은 종종 간과된다.",
-      "cloze": "This is a cease case.",
+      "caution": "cease to V / cease V-ing — 둘 다 가능",
+      "etymology": "cedere(가다)=가던 것을 멈추다",
+      "example": "The company decided to cease production.",
+      "example_ko": "회사는 생산을 중단하기로 했다.",
+      "cloze": "The company decided to ______ production.",
       "freq": 30
     },
     {
       "id": "Lv1-054",
       "en": "challenge",
       "ipa": "/chal.../",
-      "pos": "v./n.",
-      "ko": "도전",
-      "ko_detail": "도전 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "도전, 과제 / 도전하다",
+      "ko_detail": "능력·의지를 시험하는 어려운 일",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "difficulty",
+          "nuance": "어려움"
+        },
+        {
+          "en": "question",
+          "nuance": "의문 제기"
         }
       ],
       "antonyms": [
-        "opposite"
+        "ease",
+        "solution"
       ],
-      "caution": "challenge 철자·발음 주의",
-      "etymology": "cha 어근",
-      "example": "The challenge aspect is often overlooked in discussions.",
-      "example_ko": "도전 측면은 종종 간과된다.",
-      "cloze": "This is a challenge case.",
+      "caution": "challenge A to V / challenge that절",
+      "etymology": "calumniare(비난하다)=비난→도전",
+      "example": "Learning a new language is a challenge.",
+      "example_ko": "새 언어를 배우는 것은 도전이다.",
+      "cloze": "Learning a new language is a ______.",
       "freq": 30
     },
     {
       "id": "Lv1-055",
       "en": "circumstance",
       "ipa": "/circ.../",
-      "pos": "v./n.",
-      "ko": "상황",
-      "ko_detail": "상황 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "상황, 환경",
+      "ko_detail": "주변을 둘러싼 조건",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "situation",
+          "nuance": "상황"
+        },
+        {
+          "en": "condition",
+          "nuance": "조건"
         }
       ],
       "antonyms": [
-        "opposite"
+        "independence"
       ],
-      "caution": "circumstance 철자·발음 주의",
-      "etymology": "cir 어근",
-      "example": "The circumstance aspect is often overlooked in discussions.",
-      "example_ko": "상황 측면은 종종 간과된다.",
-      "cloze": "This is a circumstance case.",
+      "caution": "under/in the circumstances — 전치사",
+      "etymology": "circum(주변)+stare(서다)=주변에 선 것",
+      "example": "Under no circumstances should you open the door.",
+      "example_ko": "어떤 상황에서도 문을 열어서는 안 된다.",
+      "cloze": "Under no ______ should you open the door.",
       "freq": 30
     },
     {
       "id": "Lv1-056",
       "en": "cite",
       "ipa": "/cite.../",
-      "pos": "v./n.",
-      "ko": "인용하다",
-      "ko_detail": "인용하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "인용하다, 언급하다",
+      "ko_detail": "근거로 예를 들다",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "quote",
+          "nuance": "원문 그대로 인용"
+        },
+        {
+          "en": "refer",
+          "nuance": "참조하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "ignore",
+        "omit"
       ],
-      "caution": "cite 철자·발음 주의",
-      "etymology": "cit 어근",
-      "example": "The cite aspect is often overlooked in discussions.",
-      "example_ko": "인용하다 측면은 종종 간과된다.",
-      "cloze": "This is a cite case.",
+      "caution": "cite A as N — A를 N으로 인용",
+      "etymology": "citare(부르다)=부르다",
+      "example": "The author cites several studies.",
+      "example_ko": "저자는 여러 연구를 인용한다.",
+      "cloze": "The author ______ several studies.",
       "freq": 30
     },
     {
       "id": "Lv1-057",
       "en": "civil",
       "ipa": "/civi.../",
-      "pos": "v./n.",
-      "ko": "시민의",
-      "ko_detail": "시민의 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "시민의, 민간의",
+      "ko_detail": "군사·종교가 아닌 시민 관련",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "civic",
+          "nuance": "시민적"
+        },
+        {
+          "en": "public",
+          "nuance": "공공의"
         }
       ],
       "antonyms": [
-        "opposite"
+        "military",
+        "rude"
       ],
-      "caution": "civil 철자·발음 주의",
-      "etymology": "civ 어근",
-      "example": "The civil aspect is often overlooked in discussions.",
-      "example_ko": "시민의 측면은 종종 간과된다.",
-      "cloze": "This is a civil case.",
+      "caution": "civil(시민) vs civilian(민간인) — 명사 구분",
+      "etymology": "civis(시민)=시민",
+      "example": "We need civil discourse.",
+      "example_ko": "우리는 시민적 담론이 필요하다.",
+      "cloze": "We need ______ discourse.",
       "freq": 30
     },
     {
       "id": "Lv1-058",
       "en": "clarify",
       "ipa": "/clar.../",
-      "pos": "v./n.",
+      "pos": "v.",
       "ko": "명확히 하다",
-      "ko_detail": "명확히 하다 — 수능·내신 빈출",
+      "ko_detail": "불분명한 것을 분명하게 하다",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "explain",
+          "nuance": "설명하다"
+        },
+        {
+          "en": "illuminate",
+          "nuance": "밝히다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "confuse",
+        "obscure"
       ],
-      "caution": "clarify 철자·발음 주의",
-      "etymology": "cla 어근",
-      "example": "The clarify aspect is often overlooked in discussions.",
-      "example_ko": "명확히 하다 측면은 종종 간과된다.",
-      "cloze": "This is a clarify case.",
+      "caution": "clarify that절 / clarify N — that절",
+      "etymology": "clarus(맑은)=맑게 하다",
+      "example": "Please clarify your question.",
+      "example_ko": "질문을 명확히 해 주세요.",
+      "cloze": "Please ______ your question.",
       "freq": 30
     },
     {
       "id": "Lv1-059",
       "en": "classic",
       "ipa": "/clas.../",
-      "pos": "v./n.",
-      "ko": "고전적인",
-      "ko_detail": "고전적인 — 수능·내신 빈출",
+      "pos": "a./n.",
+      "ko": "고전적인, 전형적인",
+      "ko_detail": "시간을 견딘 모범적",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "typical",
+          "nuance": "전형적인"
+        },
+        {
+          "en": "traditional",
+          "nuance": "전통적인"
         }
       ],
       "antonyms": [
-        "opposite"
+        "modern",
+        "novel"
       ],
-      "caution": "classic 철자·발음 주의",
-      "etymology": "cla 어근",
-      "example": "The classic aspect is often overlooked in discussions.",
-      "example_ko": "고전적인 측면은 종종 간과된다.",
-      "cloze": "This is a classic case.",
+      "caution": "classic(고전) vs classical(고전주의)",
+      "etymology": "classis(계층)=최상 계층",
+      "example": "This is a classic example of bias.",
+      "example_ko": "이것은 편향의 전형적인 예다.",
+      "cloze": "This is a ______ example of bias.",
       "freq": 30
     },
     {
@@ -1587,49 +1780,59 @@
       "en": "coherent",
       "ipa": "/cohe.../",
       "pos": "a.",
-      "ko": "일관된",
-      "ko_detail": "일관된 — 수능·내신 빈출",
+      "ko": "일관된, 논리적인",
+      "ko_detail": "부분들이 논리적으로 연결된",
       "level": "Lv1",
       "day": 3,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "consistent",
+          "nuance": "일관된"
+        },
+        {
+          "en": "logical",
+          "nuance": "논리적인"
         }
       ],
       "antonyms": [
-        "opposite"
+        "incoherent",
+        "confused"
       ],
-      "caution": "coherent 철자·발음 주의",
-      "etymology": "coh 어근",
-      "example": "The coherent aspect is often overlooked in discussions.",
-      "example_ko": "일관된 측면은 종종 간과된다.",
-      "cloze": "This is a coherent case.",
+      "caution": "coherent with — with 전치사",
+      "etymology": "co(함께)+haerere(붙다)=함께 붙다",
+      "example": "She gave a coherent explanation.",
+      "example_ko": "그녀는 일관된 설명을 했다.",
+      "cloze": "She gave a ______ explanation.",
       "freq": 30
     },
     {
       "id": "Lv1-061",
       "en": "coincide",
       "ipa": "/coin.../",
-      "pos": "v./n.",
-      "ko": "일치하다",
-      "ko_detail": "일치하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "일치하다, 동시에 일어나다",
+      "ko_detail": "시간·의견이 맞아떨어지다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "correspond",
+          "nuance": "대응하다"
+        },
+        {
+          "en": "agree",
+          "nuance": "의견이 맞다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "differ",
+        "conflict"
       ],
-      "caution": "coincide 철자·발음 주의",
-      "etymology": "coi 어근",
-      "example": "The coincide aspect is often overlooked in discussions.",
-      "example_ko": "일치하다 측면은 종종 간과된다.",
-      "cloze": "This is a coincide case.",
+      "caution": "coincide with — with 전치사",
+      "etymology": "co(함께)+incidere(떨어지다)=함께 떨어지다",
+      "example": "Our schedules coincide next week.",
+      "example_ko": "우리 일정은 다음 주에 일치한다.",
+      "cloze": "Our schedules ______ next week.",
       "freq": 30
     },
     {
@@ -1637,149 +1840,177 @@
       "en": "collapse",
       "ipa": "/coll.../",
       "pos": "v./n.",
-      "ko": "붕괴하다",
-      "ko_detail": "붕괴하다 — 수능·내신 빈출",
+      "ko": "붕괴하다, 무너지다",
+      "ko_detail": "갑자기 무너지거나 실패하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "crumble",
+          "nuance": "부서지다"
+        },
+        {
+          "en": "break down",
+          "nuance": "고장나다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "build",
+        "expand"
       ],
-      "caution": "collapse 철자·발음 주의",
-      "etymology": "col 어근",
-      "example": "The collapse aspect is often overlooked in discussions.",
-      "example_ko": "붕괴하다 측면은 종종 간과된다.",
-      "cloze": "This is a collapse case.",
+      "caution": "collapse vs collapsed 형용사",
+      "etymology": "co(함께)+labi(미끄러지다)=함께 미끄러지다",
+      "example": "The building collapsed after the earthquake.",
+      "example_ko": "그 건물은 지진 후 붕괴했다.",
+      "cloze": "The building ______ after the earthquake.",
       "freq": 30
     },
     {
       "id": "Lv1-063",
       "en": "colleague",
       "ipa": "/coll.../",
-      "pos": "v./n.",
+      "pos": "n.",
       "ko": "동료",
-      "ko_detail": "동료 — 수능·내신 빈출",
+      "ko_detail": "같은 직장에서 함께 일하는 사람",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "coworker",
+          "nuance": "동료"
+        },
+        {
+          "en": "associate",
+          "nuance": "협력자"
         }
       ],
       "antonyms": [
-        "opposite"
+        "opponent",
+        "rival"
       ],
-      "caution": "colleague 철자·발음 주의",
-      "etymology": "col 어근",
-      "example": "The colleague aspect is often overlooked in discussions.",
-      "example_ko": "동료 측면은 종종 간과된다.",
-      "cloze": "This is a colleague case.",
+      "caution": "colleague at/in — 직장 전치사",
+      "etymology": "col(함께)+legare(보내다)=함께 보내진 사람",
+      "example": "She discussed the idea with her colleagues.",
+      "example_ko": "그녀는 동료들과 아이디어를 논의했다.",
+      "cloze": "She discussed the idea with her ______.",
       "freq": 30
     },
     {
       "id": "Lv1-064",
       "en": "commence",
       "ipa": "/comm.../",
-      "pos": "v./n.",
+      "pos": "v.",
       "ko": "시작하다",
-      "ko_detail": "시작하다 — 수능·내신 빈출",
+      "ko_detail": "격식체로 시작하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "begin",
+          "nuance": "시작하다"
+        },
+        {
+          "en": "initiate",
+          "nuance": "개시하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "conclude",
+        "finish"
       ],
-      "caution": "commence 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The commence aspect is often overlooked in discussions.",
-      "example_ko": "시작하다 측면은 종종 간과된다.",
-      "cloze": "This is a commence case.",
+      "caution": "commence vs recommend — 철자 m 개수",
+      "etymology": "com(함께)+initiare(시작하다)",
+      "example": "The ceremony will commence at noon.",
+      "example_ko": "식전은 정오에 시작될 것이다.",
+      "cloze": "The ceremony will ______ at noon.",
       "freq": 30
     },
     {
       "id": "Lv1-065",
       "en": "commission",
       "ipa": "/comm.../",
-      "pos": "v./n.",
-      "ko": "위원회",
-      "ko_detail": "위원회 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "위원회, 수수료 / 의뢰하다",
+      "ko_detail": "공식 임무·보수",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "committee",
+          "nuance": "위원회"
+        },
+        {
+          "en": "fee",
+          "nuance": "요금"
         }
       ],
       "antonyms": [
-        "opposite"
+        "withhold"
       ],
-      "caution": "commission 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The commission aspect is often overlooked in discussions.",
-      "example_ko": "위원회 측면은 종종 간과된다.",
-      "cloze": "This is a commission case.",
+      "caution": "commission on/for — 전치사",
+      "etymology": "com(함께)+mittere(보내다)=함께 보내다→위임",
+      "example": "He earns a commission on each sale.",
+      "example_ko": "그는 판매마다 수수료를 번다.",
+      "cloze": "He earns a ______ on each sale.",
       "freq": 30
     },
     {
       "id": "Lv1-066",
       "en": "commit",
       "ipa": "/comm.../",
-      "pos": "v./n.",
-      "ko": "헌신하다",
-      "ko_detail": "헌신하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "저지르다, 헌신하다",
+      "ko_detail": "책임을 지고 하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "dedicate",
+          "nuance": "헌신하다"
+        },
+        {
+          "en": "perform",
+          "nuance": "수행하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "neglect",
+        "abandon"
       ],
-      "caution": "commit 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The commit aspect is often overlooked in discussions.",
-      "example_ko": "헌신하다 측면은 종종 간과된다.",
-      "cloze": "This is a commit case.",
+      "caution": "commit to V-ing / commit N to N",
+      "etymology": "com(함께)+mittere(보내다)=보내다",
+      "example": "You must commit to the plan.",
+      "example_ko": "너는 그 계획에 헌신해야 한다.",
+      "cloze": "You must ______ to the plan.",
       "freq": 30
     },
     {
       "id": "Lv1-067",
       "en": "commodity",
       "ipa": "/comm.../",
-      "pos": "v./n.",
-      "ko": "상품",
-      "ko_detail": "상품 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "상품, 원자재",
+      "ko_detail": "거래되는 물건",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "product",
+          "nuance": "제품"
+        },
+        {
+          "en": "goods",
+          "nuance": "상품"
         }
       ],
       "antonyms": [
-        "opposite"
+        "shortage"
       ],
-      "caution": "commodity 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The commodity aspect is often overlooked in discussions.",
-      "example_ko": "상품 측면은 종종 간과된다.",
-      "cloze": "This is a commodity case.",
+      "caution": "commodity vs comity(우호) — 철자",
+      "etymology": "commoditas(편리함)=편리한 물건",
+      "example": "Oil is a major commodity.",
+      "example_ko": "석유는 주요 원자재이다.",
+      "cloze": "Oil is a major ______.",
       "freq": 30
     },
     {
@@ -1787,74 +2018,88 @@
       "en": "communicate",
       "ipa": "/comm.../",
       "pos": "v.",
-      "ko": "소통하다",
-      "ko_detail": "소통하다 — 수능·내신 빈출",
+      "ko": "소통하다, 전달하다",
+      "ko_detail": "정보·감정을 나누다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "convey",
+          "nuance": "전달하다"
+        },
+        {
+          "en": "transmit",
+          "nuance": "보내다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "conceal",
+        "withhold"
       ],
-      "caution": "communicate 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The communicate aspect is often overlooked in discussions.",
-      "example_ko": "소통하다 측면은 종종 간과된다.",
-      "cloze": "This is a communicate case.",
+      "caution": "communicate with/to — with 사람, to 대상",
+      "etymology": "communis(공통의)=공통으로 하다",
+      "example": "We need to communicate clearly.",
+      "example_ko": "우리는 명확하게 소통해야 한다.",
+      "cloze": "We need to ______ clearly.",
       "freq": 30
     },
     {
       "id": "Lv1-069",
       "en": "community",
       "ipa": "/comm.../",
-      "pos": "v./n.",
-      "ko": "공동체",
-      "ko_detail": "공동체 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "공동체, 지역사회",
+      "ko_detail": "공통 관심·지역으로 묶인 집단",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "society",
+          "nuance": "사회"
+        },
+        {
+          "en": "group",
+          "nuance": "집단"
         }
       ],
       "antonyms": [
-        "opposite"
+        "individual"
       ],
-      "caution": "community 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The community aspect is often overlooked in discussions.",
-      "example_ko": "공동체 측면은 종종 간과된다.",
-      "cloze": "This is a community case.",
+      "caution": "community of/for — of 소속",
+      "etymology": "communis(공통의)=공동체",
+      "example": "The event brought the community together.",
+      "example_ko": "그 행사는 지역사회를 하나로 모았다.",
+      "cloze": "The event brought the ______ together.",
       "freq": 30
     },
     {
       "id": "Lv1-070",
       "en": "compatible",
       "ipa": "/comp.../",
-      "pos": "v./n.",
-      "ko": "호환되는",
-      "ko_detail": "호환되는 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "양립 가능한, 호환되는",
+      "ko_detail": "함께 있어도 충돌 없는",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "consistent",
+          "nuance": "일관된"
+        },
+        {
+          "en": "suitable",
+          "nuance": "적합한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "incompatible",
+        "conflicting"
       ],
-      "caution": "compatible 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The compatible aspect is often overlooked in discussions.",
-      "example_ko": "호환되는 측면은 종종 간과된다.",
-      "cloze": "This is a compatible case.",
+      "caution": "compatible with — with 전치사",
+      "etymology": "com(함께)+pati(견디다)=함께 견디다",
+      "example": "This software is compatible with Windows.",
+      "example_ko": "이 소프트웨어는 윈도우와 호환된다.",
+      "cloze": "This software is ______ with Windows.",
       "freq": 30
     },
     {
@@ -1862,174 +2107,209 @@
       "en": "compensate",
       "ipa": "/comp.../",
       "pos": "v.",
-      "ko": "보상하다",
-      "ko_detail": "보상하다 — 수능·내신 빈출",
+      "ko": "보상하다, 메우다",
+      "ko_detail": "손해를 갚거나 균형을 맞추다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "reimburse",
+          "nuance": "변제하다"
+        },
+        {
+          "en": "offset",
+          "nuance": "상쇄하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "penalize",
+        "deprive"
       ],
-      "caution": "compensate 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The compensate aspect is often overlooked in discussions.",
-      "example_ko": "보상하다 측면은 종종 간과된다.",
-      "cloze": "This is a compensate case.",
+      "caution": "compensate for N / compensate A for B",
+      "etymology": "com(함께)+pendere(달다)=달아 맞추다",
+      "example": "The company will compensate you for the loss.",
+      "example_ko": "회사는 손실에 대해 보상할 것이다.",
+      "cloze": "The company will ______ you for the loss.",
       "freq": 30
     },
     {
       "id": "Lv1-072",
       "en": "complement",
       "ipa": "/comp.../",
-      "pos": "a.",
-      "ko": "보완하다",
-      "ko_detail": "보완하다 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "보완하다, 보충",
+      "ko_detail": "부족을 채워 완전하게 하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "supplement",
+          "nuance": "추가하다"
+        },
+        {
+          "en": "enhance",
+          "nuance": "향상시키다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "contrast",
+        "undermine"
       ],
-      "caution": "complement 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The complement aspect is often overlooked in discussions.",
-      "example_ko": "보완하다 측면은 종종 간과된다.",
-      "cloze": "This is a complement case.",
+      "caution": "complement(보완) vs compliment(칭찬) — e/i",
+      "etymology": "com(함께)+plere(채우다)=채우다",
+      "example": "Wine complements the meal.",
+      "example_ko": "와인은 식사를 보완한다.",
+      "cloze": "Wine ______ the meal.",
       "freq": 30
     },
     {
       "id": "Lv1-073",
       "en": "complex",
       "ipa": "/comp.../",
-      "pos": "v./n.",
-      "ko": "복잡한",
-      "ko_detail": "복잡한 — 수능·내신 빈출",
+      "pos": "a./n.",
+      "ko": "복잡한, 복합의",
+      "ko_detail": "여러 부분이 얽힌",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "complicated",
+          "nuance": "복잡한"
+        },
+        {
+          "en": "intricate",
+          "nuance": "정교한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "simple",
+        "plain"
       ],
-      "caution": "complex 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The complex aspect is often overlooked in discussions.",
-      "example_ko": "복잡한 측면은 종종 간과된다.",
-      "cloze": "This is a complex case.",
+      "caution": "complex(복잡) vs complicated(복잡·미묘)",
+      "etymology": "com(함께)+plectere(꼬다)=함께 꼬인",
+      "example": "The issue is more complex than it seems.",
+      "example_ko": "그 문제는 보이는 것보다 더 복잡하다.",
+      "cloze": "The issue is more ______ than it seems.",
       "freq": 30
     },
     {
       "id": "Lv1-074",
       "en": "component",
       "ipa": "/comp.../",
-      "pos": "a.",
-      "ko": "구성요소",
-      "ko_detail": "구성요소 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "구성 요소, 부품",
+      "ko_detail": "전체를 이루는 한 부분",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "element",
+          "nuance": "요소"
+        },
+        {
+          "en": "part",
+          "nuance": "부분"
         }
       ],
       "antonyms": [
-        "opposite"
+        "whole",
+        "system"
       ],
-      "caution": "component 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The component aspect is often overlooked in discussions.",
-      "example_ko": "구성요소 측면은 종종 간과된다.",
-      "cloze": "This is a component case.",
+      "caution": "component of/for — of 소속",
+      "etymology": "com(함께)+ponere(놓다)=함께 놓다",
+      "example": "Each component was tested separately.",
+      "example_ko": "각 구성 요소는 따로 테스트되었다.",
+      "cloze": "Each ______ was tested separately.",
       "freq": 30
     },
     {
       "id": "Lv1-075",
       "en": "comprehensive",
       "ipa": "/comp.../",
-      "pos": "v./n.",
-      "ko": "포괄적인",
-      "ko_detail": "포괄적인 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "포괄적인, 종합적인",
+      "ko_detail": "빠짐없이 모두 포함한",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "thorough",
+          "nuance": "철저한"
+        },
+        {
+          "en": "inclusive",
+          "nuance": "포함하는"
         }
       ],
       "antonyms": [
-        "opposite"
+        "partial",
+        "limited"
       ],
-      "caution": "comprehensive 철자·발음 주의",
-      "etymology": "com 어근",
-      "example": "The comprehensive aspect is often overlooked in discussions.",
-      "example_ko": "포괄적인 측면은 종종 간과된다.",
-      "cloze": "This is a comprehensive case.",
+      "caution": "comprehensive study/report — 포괄적",
+      "etymology": "com(함께)+prehendere(잡다)=함께 잡다",
+      "example": "We need a comprehensive review.",
+      "example_ko": "우리는 포괄적인 검토가 필요하다.",
+      "cloze": "We need a ______ review.",
       "freq": 30
     },
     {
       "id": "Lv1-076",
       "en": "conceal",
       "ipa": "/conc.../",
-      "pos": "a.",
-      "ko": "숨기다",
-      "ko_detail": "숨기다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "숨기다, 감추다",
+      "ko_detail": "보이지 않게 하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "hide",
+          "nuance": "숨기다"
+        },
+        {
+          "en": "cover",
+          "nuance": "덮다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "reveal",
+        "expose"
       ],
-      "caution": "conceal 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The conceal aspect is often overlooked in discussions.",
-      "example_ko": "숨기다 측면은 종종 간과된다.",
-      "cloze": "This is a conceal case.",
+      "caution": "conceal vs cancel — 철자",
+      "etymology": "con(함께)+celare(숨기다)=숨기다",
+      "example": "He tried to conceal the truth.",
+      "example_ko": "그는 진실을 숨기려 했다.",
+      "cloze": "He tried to ______ the truth.",
       "freq": 30
     },
     {
       "id": "Lv1-077",
       "en": "conclude",
       "ipa": "/conc.../",
-      "pos": "v./n.",
-      "ko": "결론짓다",
-      "ko_detail": "결론짓다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "결론짓다, 끝내다",
+      "ko_detail": "논의를 마무리하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "finish",
+          "nuance": "끝내다"
+        },
+        {
+          "en": "infer",
+          "nuance": "추론하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "begin",
+        "start"
       ],
-      "caution": "conclude 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The conclude aspect is often overlooked in discussions.",
-      "example_ko": "결론짓다 측면은 종종 간과된다.",
-      "cloze": "This is a conclude case.",
+      "caution": "conclude that절 / conclude with N",
+      "etymology": "con(함께)+claudere(닫다)=닫다",
+      "example": "We can conclude that the theory is correct.",
+      "example_ko": "우리는 그 이론이 옳다고 결론지을 수 있다.",
+      "cloze": "We can ______ that the theory is correct.",
       "freq": 30
     },
     {
@@ -2037,24 +2317,29 @@
       "en": "concurrent",
       "ipa": "/conc.../",
       "pos": "a.",
-      "ko": "동시 발생의",
-      "ko_detail": "동시 발생의 — 수능·내신 빈출",
+      "ko": "동시의, 동시에 일어나는",
+      "ko_detail": "시간이 겹쳐 동시에",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "simultaneous",
+          "nuance": "동시의"
+        },
+        {
+          "en": "parallel",
+          "nuance": "평행한"
         }
       ],
       "antonyms": [
-        "opposite"
+        "sequential",
+        "separate"
       ],
-      "caution": "concurrent 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The concurrent aspect is often overlooked in discussions.",
-      "example_ko": "동시 발생의 측면은 종종 간과된다.",
-      "cloze": "This is a concurrent case.",
+      "caution": "concurrent with — with",
+      "etymology": "con(함께)+currere(달리다)=함께 달리다",
+      "example": "Concurrent sessions will be held.",
+      "example_ko": "동시 세션이 열릴 것이다.",
+      "cloze": "______ sessions will be held.",
       "freq": 30
     },
     {
@@ -2062,299 +2347,356 @@
       "en": "conduct",
       "ipa": "/cond.../",
       "pos": "v./n.",
-      "ko": "실시하다",
-      "ko_detail": "실시하다 — 수능·내신 빈출",
+      "ko": "수행하다, 실시하다 / 행위",
+      "ko_detail": "활동을 이끌어 하다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "perform",
+          "nuance": "수행하다"
+        },
+        {
+          "en": "carry out",
+          "nuance": "실행하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "neglect"
       ],
-      "caution": "conduct 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The conduct aspect is often overlooked in discussions.",
-      "example_ko": "실시하다 측면은 종종 간과된다.",
-      "cloze": "This is a conduct case.",
+      "caution": "conduct research/survey — 유의어 conduct vs direct",
+      "etymology": "con(함께)+ducere(이끌다)=이끌다",
+      "example": "They will conduct an experiment.",
+      "example_ko": "그들은 실험을 수행할 것이다.",
+      "cloze": "They will ______ an experiment.",
       "freq": 30
     },
     {
       "id": "Lv1-080",
       "en": "confine",
       "ipa": "/conf.../",
-      "pos": "v./n.",
-      "ko": "제한하다",
-      "ko_detail": "제한하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "제한하다, 가두다",
+      "ko_detail": "범위 안에 가두다",
       "level": "Lv1",
       "day": 4,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "restrict",
+          "nuance": "제한하다"
+        },
+        {
+          "en": "limit",
+          "nuance": "한정하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "release",
+        "expand"
       ],
-      "caution": "confine 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The confine aspect is often overlooked in discussions.",
-      "example_ko": "제한하다 측면은 종종 간과된다.",
-      "cloze": "This is a confine case.",
+      "caution": "be confined to N — to 전치사",
+      "etymology": "con(함께)+finis(끝)=끝 안에 가두다",
+      "example": "Please confine your remarks to the topic.",
+      "example_ko": "발언을 주제에 한정해 주세요.",
+      "cloze": "Please ______ your remarks to the topic.",
       "freq": 30
     },
     {
       "id": "Lv1-081",
       "en": "confirm",
       "ipa": "/conf.../",
-      "pos": "v./n.",
-      "ko": "확인하다",
-      "ko_detail": "확인하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "확인하다, 확증하다",
+      "ko_detail": "사실임을 분명히 하다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "verify",
+          "nuance": "검증하다"
+        },
+        {
+          "en": "validate",
+          "nuance": "입증하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "deny",
+        "refute"
       ],
-      "caution": "confirm 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The confirm aspect is often overlooked in discussions.",
-      "example_ko": "확인하다 측면은 종종 간과된다.",
-      "cloze": "This is a confirm case.",
+      "caution": "confirm that절 / confirm N",
+      "etymology": "con(함께)+firmus(단단한)=단단하게 하다",
+      "example": "Please confirm your reservation.",
+      "example_ko": "예약을 확인해 주세요.",
+      "cloze": "Please ______ your reservation.",
       "freq": 30
     },
     {
       "id": "Lv1-082",
       "en": "conflict",
       "ipa": "/conf.../",
-      "pos": "v./n.",
-      "ko": "충돌",
-      "ko_detail": "충돌 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "충돌, 갈등 / 충돌하다",
+      "ko_detail": "의견·이익이 맞서다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "clash",
+          "nuance": "충돌"
+        },
+        {
+          "en": "dispute",
+          "nuance": "분쟁"
         }
       ],
       "antonyms": [
-        "opposite"
+        "agreement",
+        "harmony"
       ],
-      "caution": "conflict 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The conflict aspect is often overlooked in discussions.",
-      "example_ko": "충돌 측면은 종종 간과된다.",
-      "cloze": "This is a conflict case.",
+      "caution": "conflict n. /ˈkɒnflɪkt/ vs v. /kənˈflɪkt/",
+      "etymology": "con(함께)+fligere(치다)=함께 치다",
+      "example": "There is a conflict between the two groups.",
+      "example_ko": "두 집단 사이에 갈등이 있다.",
+      "cloze": "There is a ______ between the two groups.",
       "freq": 30
     },
     {
       "id": "Lv1-083",
       "en": "conform",
       "ipa": "/conf.../",
-      "pos": "v./n.",
-      "ko": "따르다",
-      "ko_detail": "따르다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "따르다, 순응하다",
+      "ko_detail": "규칙·기준에 맞추다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "comply",
+          "nuance": "준수하다"
+        },
+        {
+          "en": "adapt",
+          "nuance": "적응하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "deviate",
+        "rebel"
       ],
-      "caution": "conform 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The conform aspect is often overlooked in discussions.",
-      "example_ko": "따르다 측면은 종종 간과된다.",
-      "cloze": "This is a conform case.",
+      "caution": "conform to N — to 전치사",
+      "etymology": "con(함께)+forma(형태)=형태를 맞추다",
+      "example": "You must conform to the rules.",
+      "example_ko": "규칙을 따라야 한다.",
+      "cloze": "You must ______ to the rules.",
       "freq": 30
     },
     {
       "id": "Lv1-084",
       "en": "confront",
       "ipa": "/conf.../",
-      "pos": "v./n.",
-      "ko": "직면하다",
-      "ko_detail": "직면하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "직면하다, 맞서다",
+      "ko_detail": "문제를 피하지 않고 마주하다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "face",
+          "nuance": "마주하다"
+        },
+        {
+          "en": "challenge",
+          "nuance": "도전하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "avoid",
+        "evade"
       ],
-      "caution": "confront 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The confront aspect is often overlooked in discussions.",
-      "example_ko": "직면하다 측면은 종종 간과된다.",
-      "cloze": "This is a confront case.",
+      "caution": "confront A with B — A에게 B를 들이대다",
+      "etymology": "con(함께)+frons(이마)=이마를 맞대다",
+      "example": "We must confront the issue directly.",
+      "example_ko": "우리는 그 문제에 직접 맞서야 한다.",
+      "cloze": "We must ______ the issue directly.",
       "freq": 30
     },
     {
       "id": "Lv1-085",
       "en": "consequence",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "결과",
-      "ko_detail": "결과 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "결과, 중요성",
+      "ko_detail": "원인 뒤에 오는 결과",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "result",
+          "nuance": "결과"
+        },
+        {
+          "en": "outcome",
+          "nuance": "성과"
         }
       ],
       "antonyms": [
-        "opposite"
+        "cause",
+        "origin"
       ],
-      "caution": "consequence 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The consequence aspect is often overlooked in discussions.",
-      "example_ko": "결과 측면은 종종 간과된다.",
-      "cloze": "This is a consequence case.",
+      "caution": "as a consequence — 결과로",
+      "etymology": "con(함께)+sequi(따르다)=따라오는 것",
+      "example": "Every action has consequences.",
+      "example_ko": "모든 행동에는 결과가 따른다.",
+      "cloze": "Every action has ______.",
       "freq": 30
     },
     {
       "id": "Lv1-086",
       "en": "considerable",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "상당한",
-      "ko_detail": "상당한 — 수능·내신 빈출",
+      "pos": "a.",
+      "ko": "상당한, 꽤 많은",
+      "ko_detail": "무시할 수 없을 만큼 큰",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "significant",
+          "nuance": "중요한"
+        },
+        {
+          "en": "substantial",
+          "nuance": "실질적인"
         }
       ],
       "antonyms": [
-        "opposite"
+        "negligible",
+        "minor"
       ],
-      "caution": "considerable 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The considerable aspect is often overlooked in discussions.",
-      "example_ko": "상당한 측면은 종종 간과된다.",
-      "cloze": "This is a considerable case.",
+      "caution": "considerable vs considerate(배려) — 철자",
+      "etymology": "considerare(별을 보다)=신중히 보다",
+      "example": "Considerable progress has been made.",
+      "example_ko": "상당한 진전이 있었다.",
+      "cloze": "______ progress has been made.",
       "freq": 30
     },
     {
       "id": "Lv1-087",
       "en": "consist",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "구성되다",
-      "ko_detail": "구성되다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "구성되다, 이루어지다",
+      "ko_detail": "부분들로 이루어지다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "comprise",
+          "nuance": "포함하다"
+        },
+        {
+          "en": "compose",
+          "nuance": "구성하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "divide"
       ],
-      "caution": "consist 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The consist aspect is often overlooked in discussions.",
-      "example_ko": "구성되다 측면은 종종 간과된다.",
-      "cloze": "This is a consist case.",
+      "caution": "consist of N / consist in N — of 구성, in 본질",
+      "etymology": "con(함께)+sistere(서다)=함께 서다",
+      "example": "Water consists of hydrogen and oxygen.",
+      "example_ko": "물은 수소와 산소로 이루어져 있다.",
+      "cloze": "Water ______ of hydrogen and oxygen.",
       "freq": 30
     },
     {
       "id": "Lv1-088",
       "en": "constant",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "지속적인",
-      "ko_detail": "지속적인 — 수능·내신 빈출",
+      "pos": "a./n.",
+      "ko": "끊임없는, 일정한 / 상수",
+      "ko_detail": "변하지 않고 계속되는",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "continuous",
+          "nuance": "연속적인"
+        },
+        {
+          "en": "steady",
+          "nuance": "안정된"
         }
       ],
       "antonyms": [
-        "opposite"
+        "variable",
+        "changing"
       ],
-      "caution": "constant 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The constant aspect is often overlooked in discussions.",
-      "example_ko": "지속적인 측면은 종종 간과된다.",
-      "cloze": "This is a constant case.",
+      "caution": "constant N / constant that절",
+      "etymology": "con(함께)+stare(서다)=함께 서서 변하지 않는",
+      "example": "He faces constant pressure.",
+      "example_ko": "그는 끊임없는 압박에 시달린다.",
+      "cloze": "He faces ______ pressure.",
       "freq": 30
     },
     {
       "id": "Lv1-089",
       "en": "constitute",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "구성하다",
-      "ko_detail": "구성하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "구성하다, 이루다",
+      "ko_detail": "부분이 모여 전체를 이루다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "form",
+          "nuance": "형성하다"
+        },
+        {
+          "en": "compose",
+          "nuance": "구성하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "destroy"
       ],
-      "caution": "constitute 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The constitute aspect is often overlooked in discussions.",
-      "example_ko": "구성하다 측면은 종종 간과된다.",
-      "cloze": "This is a constitute case.",
+      "caution": "constitute vs institute(설립) — 철자",
+      "etymology": "con(함께)+statuere(세우다)=세우다",
+      "example": "Women constitute 40% of the workforce.",
+      "example_ko": "여성은 노동력의 40%를 구성한다.",
+      "cloze": "Women ______ 40% of the workforce.",
       "freq": 30
     },
     {
       "id": "Lv1-090",
       "en": "constrain",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "제약하다",
-      "ko_detail": "제약하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "제약하다, 억제하다",
+      "ko_detail": "자유를 묶어 제한하다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "restrict",
+          "nuance": "제한하다"
+        },
+        {
+          "en": "limit",
+          "nuance": "한정하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "free",
+        "liberate"
       ],
-      "caution": "constrain 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The constrain aspect is often overlooked in discussions.",
-      "example_ko": "제약하다 측면은 종종 간과된다.",
-      "cloze": "This is a constrain case.",
+      "caution": "constrain A to V / be constrained by N",
+      "etymology": "con(함께)+stringere(조르다)=조르다",
+      "example": "Budget constraints limit our options.",
+      "example_ko": "예산 제약이 선택지를 제한한다.",
+      "cloze": "Budget constraints ______ our options.",
       "freq": 30
     },
     {
@@ -2362,249 +2704,296 @@
       "en": "construct",
       "ipa": "/cons.../",
       "pos": "v./n.",
-      "ko": "건설하다",
-      "ko_detail": "건설하다 — 수능·내신 빈출",
+      "ko": "건설하다, 구성하다",
+      "ko_detail": "부분을 모아 만들다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "build",
+          "nuance": "짓다"
+        },
+        {
+          "en": "create",
+          "nuance": "창조하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "destroy",
+        "demolish"
       ],
-      "caution": "construct 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The construct aspect is often overlooked in discussions.",
-      "example_ko": "건설하다 측면은 종종 간과된다.",
-      "cloze": "This is a construct case.",
+      "caution": "construct N from/of N — 재료",
+      "etymology": "con(함께)+struere(쌓다)=쌓다",
+      "example": "They will construct a new bridge.",
+      "example_ko": "그들은 새 다리를 건설할 것이다.",
+      "cloze": "They will ______ a new bridge.",
       "freq": 30
     },
     {
       "id": "Lv1-092",
       "en": "consult",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "상담하다",
-      "ko_detail": "상담하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "상담하다, 자문하다",
+      "ko_detail": "충고를 구하다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "advise",
+          "nuance": "조언하다"
+        },
+        {
+          "en": "confer",
+          "nuance": "협의하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "ignore"
       ],
-      "caution": "consult 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The consult aspect is often overlooked in discussions.",
-      "example_ko": "상담하다 측면은 종종 간과된다.",
-      "cloze": "This is a consult case.",
+      "caution": "consult A about/on N — about/on",
+      "etymology": "consultare(숙고하다)=숙고하다",
+      "example": "You should consult a doctor.",
+      "example_ko": "의사에게 상담해야 한다.",
+      "cloze": "You should ______ a doctor.",
       "freq": 30
     },
     {
       "id": "Lv1-093",
       "en": "consume",
       "ipa": "/cons.../",
-      "pos": "v./n.",
-      "ko": "소비하다",
-      "ko_detail": "소비하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "소비하다, 먹다",
+      "ko_detail": "써서 없애다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "use",
+          "nuance": "사용하다"
+        },
+        {
+          "en": "eat",
+          "nuance": "먹다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "produce",
+        "save"
       ],
-      "caution": "consume 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The consume aspect is often overlooked in discussions.",
-      "example_ko": "소비하다 측면은 종종 간과된다.",
-      "cloze": "This is a consume case.",
+      "caution": "consume vs costumer(소비자) — 철자",
+      "etymology": "con(함께)+sumere(취하다)=취하다",
+      "example": "We consume a lot of energy.",
+      "example_ko": "우리는 많은 에너지를 소비한다.",
+      "cloze": "We ______ a lot of energy.",
       "freq": 30
     },
     {
       "id": "Lv1-094",
       "en": "contact",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "접촉",
-      "ko_detail": "접촉 — 수능·내신 빈출",
+      "pos": "n./v.",
+      "ko": "연락, 접촉 / 연락하다",
+      "ko_detail": "만나거나 소통하다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "reach",
+          "nuance": "도달하다"
+        },
+        {
+          "en": "communicate",
+          "nuance": "소통하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "avoid"
       ],
-      "caution": "contact 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The contact aspect is often overlooked in discussions.",
-      "example_ko": "접촉 측면은 종종 간과된다.",
-      "cloze": "This is a contact case.",
+      "caution": "contact A / make contact with A",
+      "etymology": "con(함께)+tangere(닿다)=닿다",
+      "example": "Please contact me soon.",
+      "example_ko": "곧 연락 주세요.",
+      "cloze": "Please ______ me soon.",
       "freq": 30
     },
     {
       "id": "Lv1-095",
       "en": "contemporary",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "현대의",
-      "ko_detail": "현대의 — 수능·내신 빈출",
+      "pos": "a./n.",
+      "ko": "현대의, 동시대의",
+      "ko_detail": "같은 시기에 존재하는",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "modern",
+          "nuance": "현대의"
+        },
+        {
+          "en": "current",
+          "nuance": "현재의"
         }
       ],
       "antonyms": [
-        "opposite"
+        "ancient",
+        "old"
       ],
-      "caution": "contemporary 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The contemporary aspect is often overlooked in discussions.",
-      "example_ko": "현대의 측면은 종종 간과된다.",
-      "cloze": "This is a contemporary case.",
+      "caution": "contemporary with — with",
+      "etymology": "con(함께)+tempus(시간)=시간을 함께 하는",
+      "example": "He is a contemporary artist.",
+      "example_ko": "그는 현대 예술가이다.",
+      "cloze": "He is a ______ artist.",
       "freq": 30
     },
     {
       "id": "Lv1-096",
       "en": "context",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "맥락",
-      "ko_detail": "맥락 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "맥락, 배경",
+      "ko_detail": "주변 상황·문맥",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "background",
+          "nuance": "배경"
+        },
+        {
+          "en": "setting",
+          "nuance": "환경"
         }
       ],
       "antonyms": [
-        "opposite"
+        "isolation"
       ],
-      "caution": "context 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The context aspect is often overlooked in discussions.",
-      "example_ko": "맥락 측면은 종종 간과된다.",
-      "cloze": "This is a context case.",
+      "caution": "in/out of context — 맥락 안/밖",
+      "etymology": "con(함께)+texere(짜다)=함께 짜인 것",
+      "example": "Consider the context of the statement.",
+      "example_ko": "그 발언의 맥락을 고려하라.",
+      "cloze": "Consider the ______ of the statement.",
       "freq": 30
     },
     {
       "id": "Lv1-097",
       "en": "contradict",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "모순되다",
-      "ko_detail": "모순되다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "모순되다, 반박하다",
+      "ko_detail": "서로 어긋나 맞서다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "oppose",
+          "nuance": "반대하다"
+        },
+        {
+          "en": "deny",
+          "nuance": "부인하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "agree",
+        "confirm"
       ],
-      "caution": "contradict 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The contradict aspect is often overlooked in discussions.",
-      "example_ko": "모순되다 측면은 종종 간과된다.",
-      "cloze": "This is a contradict case.",
+      "caution": "contradict N / contradict that절",
+      "etymology": "contra(반대)+dicere(말하다)=반대로 말하다",
+      "example": "His actions contradict his words.",
+      "example_ko": "그의 행동은 말과 모순된다.",
+      "cloze": "His actions ______ his words.",
       "freq": 30
     },
     {
       "id": "Lv1-098",
       "en": "contribute",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "기여하다",
-      "ko_detail": "기여하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "기여하다, 기부하다",
+      "ko_detail": "부분을 보태 돕다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "donate",
+          "nuance": "기부하다"
+        },
+        {
+          "en": "provide",
+          "nuance": "제공하다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "withhold",
+        "detract"
       ],
-      "caution": "contribute 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The contribute aspect is often overlooked in discussions.",
-      "example_ko": "기여하다 측면은 종종 간과된다.",
-      "cloze": "This is a contribute case.",
+      "caution": "contribute to N — to 전치사",
+      "etymology": "con(함께)+tribuere(주다)=함께 주다",
+      "example": "Everyone can contribute to the project.",
+      "example_ko": "모두가 그 프로젝트에 기여할 수 있다.",
+      "cloze": "Everyone can ______ to the project.",
       "freq": 30
     },
     {
       "id": "Lv1-099",
       "en": "controversy",
       "ipa": "/cont.../",
-      "pos": "v./n.",
-      "ko": "논쟁",
-      "ko_detail": "논쟁 — 수능·내신 빈출",
+      "pos": "n.",
+      "ko": "논쟁, 논란",
+      "ko_detail": "의견이 갈려 다투는 일",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "debate",
+          "nuance": "토론"
+        },
+        {
+          "en": "dispute",
+          "nuance": "분쟁"
         }
       ],
       "antonyms": [
-        "opposite"
+        "agreement",
+        "harmony"
       ],
-      "caution": "controversy 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The controversy aspect is often overlooked in discussions.",
-      "example_ko": "논쟁 측면은 종종 간과된다.",
-      "cloze": "This is a controversy case.",
+      "caution": "controversy over/about N — over/about",
+      "etymology": "contra(반대)+versus(돌리다)=반대로 돌리다",
+      "example": "The policy caused controversy.",
+      "example_ko": "그 정책은 논란을 일으켰다.",
+      "cloze": "The policy caused ______.",
       "freq": 30
     },
     {
       "id": "Lv1-100",
       "en": "convene",
       "ipa": "/conv.../",
-      "pos": "v./n.",
-      "ko": "소집하다",
-      "ko_detail": "소집하다 — 수능·내신 빈출",
+      "pos": "v.",
+      "ko": "소집하다, 모이다",
+      "ko_detail": "공식 모임을 위해 모으다",
       "level": "Lv1",
       "day": 5,
       "synonyms": [
         {
-          "en": "similar word",
-          "nuance": "유사 의미"
+          "en": "assemble",
+          "nuance": "모이다"
+        },
+        {
+          "en": "gather",
+          "nuance": "모으다"
         }
       ],
       "antonyms": [
-        "opposite"
+        "disperse",
+        "adjourn"
       ],
-      "caution": "convene 철자·발음 주의",
-      "etymology": "con 어근",
-      "example": "The convene aspect is often overlooked in discussions.",
-      "example_ko": "소집하다 측면은 종종 간과된다.",
-      "cloze": "This is a convene case.",
+      "caution": "convene N / convene to V — 목적어/부정사",
+      "etymology": "con(함께)+venire(오다)=함께 오다",
+      "example": "The board will convene next Monday.",
+      "example_ko": "이사회는 다음 월요일에 소집될 것이다.",
+      "cloze": "The board will ______ next Monday.",
       "freq": 30
     },
     {
