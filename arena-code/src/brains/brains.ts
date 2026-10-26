@@ -52,6 +52,7 @@ import {
 import { NOBEL_BRAINS } from "./nobel.js";
 import { PHD_BRAINS } from "./phd.js";
 import { MATH_QUINTET_BRAINS } from "./mathQuintet.js";
+import { SpacePalaceBrain, SpaceNavigatorBrain, SpaceGrapherBrain } from "./spaceGenius.js";
 
 function mkOutput(
   input: BrainInput,
@@ -291,6 +292,10 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     ...VOLUME_BRAINS,
     // ★ 수학 5형제 — FunSearch/AlphaTensor/AlphaProof/AlphaGeometry/DeepThink (v7 Math Quintet)
     ...MATH_QUINTET_BRAINS,
+    // ★ 공간 3형제 — Place/Grid cell → 기억궁전/항법/장면그래프 (v8 Space Genius)
+    new SpacePalaceBrain(memory),
+    new SpaceNavigatorBrain(memory),
+    new SpaceGrapherBrain(memory),
   ];
 }
 

@@ -24,6 +24,9 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 
+import type { SpaceCoord } from "./space.js";
+import { coordForText as _coordForText, buildSpatialEdges as _buildSpatialEdges, planPath as _planPath } from "./space.js";
+
 export interface MemoryEntry {
   id: string;
   cue: string;
@@ -40,6 +43,8 @@ export interface MemoryEntry {
   validUntil?: string; // D4 TTL 만료 시점
   ttlDays?: number; // D4
   event?: MemoryEvent; // D2
+  // --- v3 공간 확장: 해마 Place/Grid → 궁전 인덱싱 ---
+  spaceMeta?: SpaceCoord; // S1 place cell 좌표 + grid tile + palace locus
 }
 
 export type MemoryEvent = "ADD" | "UPDATE" | "DELETE" | "NOOP";
@@ -90,9 +95,22 @@ function scopeFromString(s?: string): MemoryScope | undefined {
   }
   return Object.keys(out).length ? out : undefined;
 }
+// --- 공간 파싱 헬퍼 v3 ---
+function parseSpaceMeta(raw: string): SpaceCoord | undefined {
+  const m = /^- spaceMeta:\s*(.+)$/m.exec(raw);
+  if (!m) return undefined;
+  try {
+    const j = JSON.parse(m[1].trim());
+    if (typeof j.x === "number" && typeof j.y === "number") return j as SpaceCoord;
+  } catch {}
+  return undefined;
+}
+
 // --- 파싱 헬퍼: v2 필드 ---
 function parseExtras(raw: string): Partial<MemoryEntry> {
   const o: Partial<MemoryEntry> = {};
+  const sm = parseSpaceMeta(raw);
+  if (sm) (o as any).spaceMeta = sm;
   const get = (k: string) => new RegExp(`^- ${k}:\\s*(.+)$`, "m").exec(raw)?.[1]?.trim();
   const scopeStr = get("scope");
   if (scopeStr) o.scope = scopeFromString(scopeStr);
@@ -252,6 +270,7 @@ export class MemoryBank {
     validUntil?: string;
     ttlDays?: number;
     event?: MemoryEvent;
+    spaceMeta?: SpaceCoord;
   }): string | null {
     if (!opts.cue.trim() || !opts.content.trim()) return null;
     const d = this.dirForScope(opts.scope);
@@ -266,9 +285,30 @@ export class MemoryBank {
     const ttl = opts.ttlDays !== undefined ? `ttlDays: ${opts.ttlDays}\n` : "";
     const scopeStr = opts.scope && (opts.scope.user||opts.scope.agent||opts.scope.session) ? `scope: ${scopeToSlug(opts.scope)}\n` : "";
     const ev = opts.event ? `event: ${opts.event}\n` : "";
-    const md = `# ${opts.id}\n\n- cue: ${opts.cue.trim()}\n- content: ${opts.content.trim()}\n- evidence: ${opts.evidence?.trim() ?? ""}\n- createdAt: ${now}\n${conf}${st}${rt}${vf}${vu}${ttl}${scopeStr}${ev}`;
+    const sm = opts.spaceMeta ? `- spaceMeta: ${JSON.stringify(opts.spaceMeta)}\n` : "";
+    const md = `# ${opts.id}\n\n- cue: ${opts.cue.trim()}\n- content: ${opts.content.trim()}\n- evidence: ${opts.evidence?.trim() ?? ""}\n- createdAt: ${now}\n${conf}${st}${rt}${vf}${vu}${ttl}${scopeStr}${ev}${sm}`;
     writeFileSync(p, md, "utf-8");
     return p;
+  }
+
+  /** 공간 포함 저장 — cue/content로 해시 좌표 자동 생성 (해마 place cell) */
+  addWithSpace(opts: {
+    id: string;
+    cue: string;
+    content: string;
+    evidence?: string;
+    scope?: MemoryScope;
+    confidence?: number;
+    sourceType?: string;
+    ttlDays?: number;
+    spaceMeta?: SpaceCoord;
+  }): { path: string | null; spaceMeta: SpaceCoord } {
+    let sm = opts.spaceMeta;
+    if (!sm) {
+      sm = _coordForText(`${opts.cue} ${opts.content}`, this.domain);
+    }
+    const p = this.add({ ...opts, spaceMeta: sm });
+    return { path: p, spaceMeta: sm! };
   }
 
   // D2: ADD/UPDATE/DELETE/NOOP 분류 — 간단 휴리스틱 (Mem0 경량)
@@ -305,7 +345,7 @@ export class MemoryBank {
     return { event: "ADD", reason: `mid sim ${s.toFixed(2)}` };
   }
 
-  // D2 고수준: addScoped — 분류 후 ADD/UPDATE/DELETE 자동 라우팅
+  // D2 고수준: addScoped — 분류 후 ADD/UPDATE/DELETE 자동 라우팅 (공간 좌표 자동 부여)
   addScoped(opts: {
     id: string;
     cue: string;
@@ -315,6 +355,7 @@ export class MemoryBank {
     confidence?: number;
     sourceType?: string;
     ttlDays?: number;
+    spaceMeta?: SpaceCoord;
   }): { path: string | null; event: MemoryEvent; reason: string } {
     const cls = this.classifyEvent(opts.cue, opts.content);
     if (cls.event === "NOOP") return { path: null, event: "NOOP", reason: cls.reason };
@@ -329,7 +370,12 @@ export class MemoryBank {
       const p = this.add({ ...opts, id: cls.targetId, content: merged, event: "UPDATE" });
       return { path: p, event: "UPDATE", reason: cls.reason };
     }
-    const p = this.add({ ...opts, event: "ADD" });
+    // 공간 좌표가 없으면 자동 생성 (place cell)
+    let sm = (opts as any).spaceMeta as SpaceCoord | undefined;
+    if (!sm) {
+      try { sm = _coordForText(`${opts.cue} ${opts.content}`, this.domain); } catch {}
+    }
+    const p = this.add({ ...opts, event: "ADD", spaceMeta: sm });
     return { path: p, event: "ADD", reason: cls.reason };
   }
 
@@ -356,7 +402,8 @@ export class MemoryBank {
     mkdirSync(d, { recursive: true });
     const now = cur.createdAt; // createdAt 유지, evidence에 reason 추가
     const evStr = reason ? `${cur.evidence ?? ""} | update: ${reason}`.trim() : cur.evidence ?? "";
-    const md = `# ${id}\n\n- cue: ${next.cue.trim()}\n- content: ${next.content.trim()}\n- evidence: ${evStr}\n- createdAt: ${now}\n- confidence: ${next.confidence ?? cur.confidence ?? 0.7}\n${next.referenceTime ? `- referenceTime: ${next.referenceTime}\n`: ""}${next.validUntil ? `- validUntil: ${next.validUntil}\n`: ""}${next.ttlDays ? `- ttlDays: ${next.ttlDays}\n`: ""}${cur.scope ? `- scope: ${scopeToSlug(cur.scope)}\n`: ""}- event: UPDATE\n`;
+    const smStr = (cur as any).spaceMeta ? `- spaceMeta: ${JSON.stringify((cur as any).spaceMeta)}\n` : (next as any).spaceMeta ? `- spaceMeta: ${JSON.stringify((next as any).spaceMeta)}\n` : "";
+    const md = `# ${id}\n\n- cue: ${next.cue.trim()}\n- content: ${next.content.trim()}\n- evidence: ${evStr}\n- createdAt: ${now}\n- confidence: ${next.confidence ?? cur.confidence ?? 0.7}\n${next.referenceTime ? `- referenceTime: ${next.referenceTime}\n`: ""}${next.validUntil ? `- validUntil: ${next.validUntil}\n`: ""}${next.ttlDays ? `- ttlDays: ${next.ttlDays}\n`: ""}${cur.scope ? `- scope: ${scopeToSlug(cur.scope)}\n`: ""}- event: UPDATE\n${smStr}`;
     writeFileSync(cur.path, md, "utf-8");
     return cur.path;
   }
@@ -531,6 +578,60 @@ export class MemoryBank {
       if (!dup) seen.set(e.id, e);
     }
     return { merged, expired, total: this.list().length };
+  }
+
+  // ── S: 공간 천재 — Place/Grid cell 기반 공간 인덱싱 ──
+  /** 근처 기억: 중심 좌표 반경 내 entry 반환 (Place cell) */
+  nearby(center: SpaceCoord, radius = 0.25, limit = 8): MemoryEntry[] {
+    const all = this.list({ includeExpired: false }).filter(e => e.spaceMeta);
+    const scored = all.map(e => ({
+      e,
+      d: Math.sqrt(
+        (e.spaceMeta!.x - center.x) ** 2 +
+        (e.spaceMeta!.y - center.y) ** 2 +
+        (e.spaceMeta!.z - center.z) ** 2,
+      ),
+    })).filter(s => s.d <= radius).sort((a, b) => a.d - b.d).slice(0, limit);
+    return scored.map(s => s.e);
+  }
+  /** 궁전 순회: locusId 순서대로 정렬 (Method of Loci walk) */
+  palaceWalk(): MemoryEntry[] {
+    const all = this.list({ includeExpired: false }).filter(e => e.spaceMeta);
+    return [...all].sort((a, b) => (a.spaceMeta!.locusId) - (b.spaceMeta!.locusId));
+  }
+  /** 구역별 목록 — Grid cell coarse (예: math, history) */
+  byZone(zone: string): MemoryEntry[] {
+    return this.list({ includeExpired: false }).filter(e => e.spaceMeta?.zone === zone);
+  }
+  /** 공간 그래프 간선 — near/adjacent/contains (Grid+Place 결합) */
+  spatialEdges(): import("./space.js").SpatialEdge[] {
+    try {
+      return _buildSpatialEdges(this.list({ includeExpired: false }).filter(e => e.spaceMeta) as any);
+    } catch { return []; }
+  }
+  /** 텍스트 질의 → 가상 좌표 생성 후 nearby (의미적 내비게이션) */
+  searchNearby(query: string, radius = 0.30, topK = 5): MemoryEntry[] {
+    try {
+      const qCoord = _coordForText(query, this.domain);
+      // 1차: 공간 반경 후보, 2차: 하이브리드 랭킹으로 재정렬
+      const candidates = this.nearby(qCoord, radius, 20);
+      if (candidates.length === 0) return [];
+      // 간단 TF-IDF 재랭킹
+      const qTokens = new Set(tokenize(query));
+      const scored = candidates.map(e => {
+        const text = `${e.cue} ${e.content}`;
+        const overlap = tokenize(text).filter(t => qTokens.has(t)).length;
+        const conf = e.confidence ?? 0.7;
+        return { e, score: overlap + conf * 0.5 };
+      }).sort((a, b) => b.score - a.score);
+      return scored.slice(0, topK).map(s => s.e);
+    } catch { return []; }
+  }
+  /** 경로 계획: fromId → toId 사이의 랜드마크 반환 */
+  planPath(fromId: string, toId: string): ReturnType<typeof import("./space.js").planPath> | null {
+    try {
+      return _planPath(this.list({ includeExpired: false }) as any, fromId, toId) as any;
+    } catch { return null; }
   }
 
   static listDomains(root?: string): string[] {
