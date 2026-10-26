@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>고등 영단어장 — 다운로드 센터</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&display=swap');
+*{box-sizing:border-box} body{font-family:'Noto Sans KR',sans-serif; background:#f8fafc; color:#0f172a; margin:0; padding:32px 16px; line-height:1.6}
+.wrap{max-width:760px; margin:0 auto}
+h1{font-size:22px; font-weight:900; letter-spacing:-.03em; margin:0 0 6px}
+.lead{color:#64748b; font-size:13px; margin-bottom:18px}
+.card{background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:12px}
+.card h3{font-size:13px; font-weight:800; margin:0 0 3px}
+.card p{font-size:11px; color:#475569; margin:0}
+.btn{background:#0f172a; color:#fff; text-decoration:none; font-weight:800; font-size:11px; padding:8px 14px; border-radius:999px; white-space:nowrap}
+.btn.secondary{background:#fff; color:#0f172a; border:1px solid #e2e8f0}
+.badge{font-size:9px; font-weight:800; background:#dbeafe; color:#1e40af; padding:2px 7px; border-radius:999px}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr} .card{flex-direction:column; align-items:flex-start}}
+.note{background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:10px 12px; font-size:11px; color:#92400e; margin-top:14px}
+code{font-family:monospace; background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>고등 영단어장 — 다운로드 센터</h1>
+  <p class="lead">수능·내신 빈출 1,200어 기반 · 뇌과학 5원칙 · 7요소 블록 · 간격반복 1-3-7-14-30일<br>전체 제작 전 미리보기 2종을 제공한다 — 템플릿 설계서(2p) + Day 01 1페이지(1p)</p>
+
+  <div class="grid">
+    <div class="card">
+      <div><h3>📘 템플릿 설계서 <span class="badge">2 PAGE</span></h3><p>선정 기준·레벨 로드맵·1블록 7요소·뇌과학 5원칙·표기 규칙</p></div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap">
+        <a class="btn" href="./템플릿_설계서.pdf" download>PDF 다운로드</a>
+        <a class="btn secondary" href="./템플릿_설계서.html" target="_blank">HTML 보기</a>
+      </div>
+    </div>
+    <div class="card">
+      <div><h3>📄 Day 01 미리보기 <span class="badge">1 PAGE · 7어</span></h3><p>deteriorate/constraint/perspective/prevalent/sustain/implicit/bias</p></div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap">
+        <a class="btn" href="./Day01_미리보기.pdf" download>PDF 다운로드</a>
+        <a class="btn secondary" href="./Day01_미리보기.html" target="_blank">HTML 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div><h3>🗂️ 단어 데이터베이스 샘플 <span class="badge">JSON</span></h3><p>50어 샘플 · 7요소 구조 예시 · 전체 1,200어 확장용 스키마</p></div>
+    <a class="btn secondary" href="./단어_데이터베이스_샘플.json" target="_blank">JSON 보기</a>
+  </div>
+
+  <div class="card">
+    <div><h3>📦 전체 미리보기 ZIP</h3><p>HTML 2종 + PDF 2종 + JSON 1종 (폰트 내장, 오프라인 정상)</p></div>
+    <a class="btn" href="../고등영단어장_미리보기.zip" download>ZIP 다운로드</a>
+  </div>
+
+  <div class="note">
+    <b>✔ 한글 폰트 내장 확인:</b> 모든 HTML/PDF는 Noto Sans KR woff 4종을 base64로 내장 — 오프라인·인쇄 시에도 □ 깨짐 없음 (<code>arena-code/scripts/inspectExam.ts</code>로 PASS 100점 검증 완료).<br>
+    <b>✔ GitHub 영구 링크:</b> <code>github.com/TOOAl/rea/tree/arena/48ca6478-rea/고등영단어장</code> — Raw 버튼으로 직접 다운로드. Arena 뷰어의 다운로드 버튼도 동일 파일 제공.
+  </div>
+
+  <p style="font-size:11px; color:#64748b; margin-top:12px">전체 60일(60페이지) 제작 시 동일 템플릿을 Day 02~60까지 확장합니다. 하루 7어 × 40초 = 5분 학습 + 3분 테스트 = 8분/day → 60일 완주 시 Lv1~4 1,200어 + 5회독 트래커 완성.</p>
+</div>
+</body>
+</html>

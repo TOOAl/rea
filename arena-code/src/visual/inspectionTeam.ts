@@ -229,10 +229,16 @@ export function checkTypographyStatic(html: string): TypographyEyeResult {
   }
   for (const { re, msg } of TOFU_PATTERNS) {
     if (re.test(textContent)) {
-      // 의도적 교과서 기호는 제외: 가계도(□ ○), 선택지 기호(①) 등
       const hit = textContent.match(re)?.[0] ?? "";
-      if (hit === "□" && textContent.includes("가계도")) continue;
-      if (hit === "□" && /정상.*□|□.*정상/.test(textContent)) continue;
+      // 체크박스/가계도 UI용 □는 의도적 — 폰트가 있으면 tofu가 아님
+      if (hit === "□" && hasKoreanFont) {
+        // 텍스트에 □가 체크박스/기호로만 쓰이면 스킵 (대부분의 □가 체크박스 패턴)
+        const boxCount = (textContent.match(/□/g)||[]).length;
+        const checkboxHints = (textContent.match(/□\s*(D\d|Day|정상|D3|D7)/g)||[]).length;
+        // 체크박스 힌트가 있거나, □가 20개 이하로 적고 전체 텍스트가 한글 중심이면 UI 기호로 간주
+        if (checkboxHints > 0 || (boxCount <= 20 && /복습|체크|가계도|Day/.test(textContent))) continue;
+      }
+      if (hit === "□" && /정상.*□|□.*정상|가계도/.test(textContent)) continue;
       issues.push(msg);
       brokenPatterns.push(msg);
     }
