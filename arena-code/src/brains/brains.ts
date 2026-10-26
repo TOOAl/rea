@@ -51,6 +51,7 @@ import {
 } from "./premiseGuard.js";
 import { NOBEL_BRAINS } from "./nobel.js";
 import { PHD_BRAINS } from "./phd.js";
+import { MATH_QUINTET_BRAINS } from "./mathQuintet.js";
 
 function mkOutput(
   input: BrainInput,
@@ -288,6 +289,8 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     new EvolutionArchitectBrain(),
     // ★ 호가창 거래량 천재 — 마하세븐 흡수 (스캘핑 아닌 수급의 질)
     ...VOLUME_BRAINS,
+    // ★ 수학 5형제 — FunSearch/AlphaTensor/AlphaProof/AlphaGeometry/DeepThink (v7 Math Quintet)
+    ...MATH_QUINTET_BRAINS,
   ];
 }
 

@@ -10,7 +10,7 @@ describe("Genius evolve — M: 성적표", () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.rank().length).toBe(60);
+    expect(reg.rank().length).toBe(65);
     expect(reg.score("premise-error-guardian")).toBe(50); // 미참여 중립
     reg.recordScore("premise-error-guardian", 90);
     reg.recordScore("premise-error-guardian", 80);
