@@ -3,9 +3,13 @@
     "premise-error-guardian": [
       93,
       93,
-      93
+      93,
+      91,
+      91
     ],
     "memory-article-input": [
+      92,
+      92,
       92,
       92,
       92
@@ -13,54 +17,80 @@
     "premise-critical-thinker": [
       92,
       92,
+      92,
+      92,
       92
     ],
     "council-chair": [
+      95,
+      95,
       95,
       95,
       95
     ],
     "genius-medicine-nobel": [
       93,
+      93,
+      93,
       93
     ],
     "genius-economics-nobel": [
+      88,
+      88,
       88,
       88
     ],
     "genius-literature-nobel": [
       94,
+      94,
+      94,
       94
     ],
     "genius-peace-nobel": [
+      91,
+      91,
       91,
       91
     ],
     "genius-physics-nobel": [
       92,
+      92,
+      92,
       92
     ],
     "genius-phd-method": [
+      95,
+      95,
       95
     ],
     "genius-phd-stats": [
+      90,
+      90,
       90
     ],
     "genius-phd-review": [
+      94,
+      94,
       94
     ],
     "genius-phd-ethics": [
+      88,
+      88,
       88
     ],
     "genius-phd-innovation": [
+      93,
+      93,
       93
     ],
     "genius-phd-writing": [
+      89,
+      89,
       89
     ]
   },
   "swapHistory": [],
-  "at": "2026-10-24T17:11:19.018Z",
+  "at": "2026-10-26T10:47:58.953Z",
   "versions": [
     {
       "id": "memory-keeper",
@@ -81,6 +111,10 @@
     {
       "id": "memory-context",
       "v": "4.0.0"
+    },
+    {
+      "id": "memory-archivist-v2",
+      "v": "5.0.0"
     },
     {
       "id": "memory-article-input",
@@ -145,6 +179,14 @@
     {
       "id": "genius-audio",
       "v": "4.0.0"
+    },
+    {
+      "id": "inspector-geometry",
+      "v": "2.0.0"
+    },
+    {
+      "id": "inspector-typography",
+      "v": "2.0.0"
     },
     {
       "id": "genius-generator",
@@ -277,6 +319,10 @@
     {
       "id": "council-chair",
       "v": "4.0.0"
+    },
+    {
+      "id": "genius-evolution-architect",
+      "v": "1.0.0"
     }
   ],
   "rankSnapshot": [
@@ -285,35 +331,35 @@
       "name": "의회 의장",
       "layer": 5,
       "avg": 95,
-      "count": 3
+      "count": 5
     },
     {
       "id": "genius-phd-method",
       "name": "방법론 박사",
       "layer": 4,
       "avg": 95,
-      "count": 1
+      "count": 3
     },
     {
       "id": "genius-literature-nobel",
       "name": "문학 노벨 천재",
       "layer": 4,
       "avg": 94,
-      "count": 2
+      "count": 4
     },
     {
       "id": "genius-phd-review",
       "name": "피어리뷰 박사",
       "layer": 3,
       "avg": 94,
-      "count": 1
+      "count": 3
     },
     {
-      "id": "premise-error-guardian",
-      "name": "전제 오류 천재 (1층 파수꾼)",
-      "layer": 1,
+      "id": "genius-medicine-nobel",
+      "name": "의학 노벨 천재",
+      "layer": 4,
       "avg": 93,
-      "count": 3
+      "count": 4
     }
   ]
 }
