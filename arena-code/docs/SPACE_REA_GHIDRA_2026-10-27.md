@@ -1,7 +1,7 @@
 # 공간 천재 — 해마 Place/Grid 세포 → 기억 궁전 (REA+Ghidra 분석)
 
-> branch: arena/1bfde13e-rea (main 236ade0) | 작성: Arena Code Agent | 대상: Hippocampus 3원칙 + Method of Loci
-> REA 6.5.0 + Ghidra 11.3 문자열 추적 | 장기기억 6.5 → 8.8 전망
+> branch: arena/7ce5aae4-rea (main 4f28917) | 작성: Arena Code Agent | 대상: Hippocampus 3원칙 + Method of Loci
+> REA 6.5.0 + Ghidra 11.3 문자열 추적 | 장기기억 6.5 → 8.8 전망 | PR-1 병합 4f28917 + PR-2 병합 + PR-3 완료
 
 ## 0. 한 줄 처방
 
@@ -37,7 +37,7 @@
 - 원리: 공간 간선 `near(0.25) / adjacent(locus±1) / contains(같은 방)`으로 기억을 장면(scene)으로 묶음
 - 흡수: `buildSpatialEdges(items)` — `near`는 반경 0.25, `adjacent`는 locus 인접, `contains`는 같은 방(room) 내.
 
-## 3. 설계 — 3형제 공간 천재
+## 3. 설계 — 3형제 공간 천재 (PR-1)
 
 ```
 MemoryEntry
@@ -45,7 +45,7 @@ MemoryEntry
   ├─ scope/confidence/TTL (v2 7대처방)
   └─ spaceMeta: {x,y,z, locusId, zone, gridKey, locusLabel}  ★ NEW v3
 
-src/memory/space.ts (300줄, API 0, 결정론)
+src/memory/space.ts (231줄, API 0, 결정론)
   ├─ coordForText(text, domain) → SpaceCoord  (Place cell)
   ├─ gridKeyForCoord(c, zone)               (Grid cell L1/L2)
   ├─ distance(a,b) / vector(a,b)            (내비게이션)
@@ -77,7 +77,47 @@ src/brains/spaceGenius.ts — 3형제 (각 1층, layer=1)
 협업: palace가 배치, navigator가 길, grapher가 연결 — 3형제 토론 시 "기억을 공간으로 걷는 법" 합의
 ```
 
-## 4. 체감 효과
+## 4. PR-2 — 공간 융합 + 시각화 (진행)
+
+### 4.1 RAG 공간 하이브리드 (bank.searchHybrid)
+
+```
+TF-IDF 0.55 + Dense 0.45 (기존) + Recency 0.2 + Confidence 0.15 + TTL
+  ↓
++ Spatial 0.18 (신규): 1 - dist(qCoord, entry.spaceMeta)/1.0 + zone 보너스 0.05 + L1타일 0.04
+```
+
+- `qCoord = coordForText(query, domain)` — 질의를 가상 좌표로 변환
+- 같은 방·같은 zone이면 가중 +0.09 — "수학 삼각함수" 질의 시 math zone이 history보다 0.18 상향
+- `spatialBoost` 옵션으로 0=끄기, 0.18=기본 (조절 가능) — 테스트: `searchHybrid(q, 2, {spatialBoost:0})` vs 0.18로 1위 뒤바뀜 확인
+
+### 4.2 궁전 캔버스 (src/visual/palace.ts)
+
+- `generatePalaceHtml(entries, {title, width:1080, height:760})` → HTML+SVG
+- 레이아웃: 5방 가로 × 5위치 세로 = 25칸, 각 칸에 zone 색뱃지(파랑=수학, 주황=역사…) + cue 10자 + confidence%
+- 범례: zone 색점 + "격자: L1 4×4×2 + L2 8×8×4 · 궁전: 25 loci"
+- 검증: viewBox `0 0 1080 760` 고정, 한글 `Noto Sans KR` 포함, 4-Eye 검수팀 정적 검사 통과 (geometry PASS)
+- 데모: `arena-code/docs/palace_demo.html` — 10개 샘플(수학2/세종2/코드2/과학1/경제1/영어1/예술1) 배치 예시
+
+### 4.3 Harness Library Zone 연동 (PR-3 완료)
+
+- `.arena/harness2/library/<domain>/INDEX.md`에 zone 헤더 `> Zone: math:1 | history:1 | code:1` + 각 entry `- zone: math` 자동 표기
+- `HarnessLibrary.zoneStats() / entriesByZone(zone) / searchByZone(zone, query) / palaceOrder()` — Grid cell coarse→fine
+- `searchByZone`은 같은 zone만 TF-IDF+cue 가중으로 재정렬 — `math:1`이면 history/code 경험은 증거에서 배제
+
+### 4.4 RAG 공간 하이브리드 (PR-3 — src/rag/index.ts)
+
+- `addDocuments` 시 `zone` 자동 태깅 (`inferRagZone` — math/history/code/science/economy/art/english/general)
+- `search(query, topK, {spatialBoost:0.12, spatialZone})` + `searchWithSpace(query, topK, 0.12)` — 질의 zone과 같은 청크에 +0.12
+- `zoneStats() / byZone(zone)` — workspace 전역 색인을 공간 가중 재정렬, `math:삼각함수` 질의 시 history 청크 밀어냄
+
+### 4.5 Palace Visual MCP Tool (PR-3 — src/tools/palaceVisual.ts)
+
+- `palace_visual({domain, outputPath, title, root})` → 1080×760 SVG 궁전 HTML 파일 생성
+- `MemoryBank(domain).list()` → `generatePalaceHtml` 래핑 — 도구 호출 한 번으로 `file://…/palace.html` 도면 완성
+- `CORE_TOOLS` 등록 — Agent가 `/memory palace` 한 마디로 호출 가능, 25 loci 점유율·zone 통계 포함 응답
+
+## 5. 체감 효과
 
 | 전 (평면) | 후 (공간) |
 |---|---|
@@ -86,20 +126,22 @@ src/brains/spaceGenius.ts — 3형제 (각 1층, layer=1)
 | 암기 시 반복 10회 | 궁전 산책 1회로 순서 고정 (MoL 3배 효율, Cicero) |
 | "세종과 자격루 관계는?" — 키워드만 | `near(세종, 자격루)=0.18` + `triple(세종—만들다→자격루)` 2-hop |
 
-## 5. 검증
+## 6. 검증
 
-- `tests/space.test.ts` 18 tests — 결정론/궁전25/zone/grid/distance/vector/palaceWalk/nearby/byZone/searchNearby/edges/planPath/3형제
-- 전체 308/308 PASS (42→43 files, 4 pre-existing ERR_MODULE_NOT_FOUND 유지)
-- 68명 체제 (65→68, layer1 15→18)
+- `tests/space.test.ts` 21 + `tests/space_pr3.test.ts` 7 = 28 tests — 결정론/궁전25/zone/grid/distance/vector/palaceWalk/nearby/byZone/searchNearby/edges/planPath/3형제/공간하이브리드/캔버스/라이브러리RAG공간/palaceTool
+- 전체 318/318 PASS (43→44 files, 4 pre-existing ERR_MODULE_NOT_FOUND 유지)
+- 68명 체제 (65→68, layer1 15→18) + PalaceVisualTool 1종 추가
 
-## 6. 한눈 (12살)
+## 7. 한눈 (12살)
 
 > 기억을 방에 짐처럼 놓자. 수학은 책상, 역사는 침대.
 > 방을 걸어가면 "책상→침대" 순서로 다 떠오르고, 가까운 방 짐은 같이 보인다.
 > 이게 해마가 하는 일 — 공간으로 시간을 기억하기.
 
-## 7. 다음 (PR-2)
+## 8. 다음 (v1.1 마무리 — 완료)
 
-- [ ] `src/rag/index.ts` — 공간 가중 hybrid (nearby 0.3 + sparse 0.7 혼합)
-- [ ] `src/visual/styleLibrary.ts` — 궁전 시각화 (25 loci 캔버스)
-- [ ] `src/harness2/library.ts` — Harness success를 zone별로 궁전 저장
+- [x] `src/harness2/library.ts` — `inferZoneForLibrary` + `zoneStats/entriesByZone/searchByZone/palaceOrder` + INDEX.md zone 헤더
+- [x] `src/rag/index.ts` — `inferRagZone` + zone 자동 태깅 + `searchWithSpace(0.12)` + `zoneStats/byZone`
+- [x] `src/tools/palaceVisual.ts` — MCP Tool `palace_visual` + `CORE_TOOLS` 등록 + `file://` 도면 저장
+
+> v1.1 3개 PR 모두 완료 — Bank/Harness/RAG/Tool 4축 공간 천재. 다음은 운영·문서 정리만 남음.

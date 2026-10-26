@@ -432,12 +432,12 @@ export class MemoryBank {
     } catch {}
   }
 
-  // --- D3: 하이브리드 + 최신성 + 신뢰도 가중 ---
-  search(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number }): MemoryEntry[] {
+  // --- D3: 하이브리드 + 최신성 + 신뢰도 + 공간 가중 ---
+  search(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number; spatialBoost?: number }): MemoryEntry[] {
     return this.searchHybrid(query, topK, opts);
   }
 
-  searchHybrid(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number }): MemoryEntry[] {
+  searchHybrid(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number; spatialBoost?: number }): MemoryEntry[] {
     const entries = this.list({ includeExpired: false });
     let filtered = entries;
     if (opts?.minConfidence !== undefined) filtered = filtered.filter(e=> (e.confidence ?? 0.7) >= opts.minConfidence!);
@@ -469,6 +469,12 @@ export class MemoryBank {
       return out;
     };
     const qVec = weigh(qTf);
+    // Spatial coord for query — 공간 가중 (PR-2: S + TF-IDF + dense)
+    let qCoord: import("./space.js").SpaceCoord | null = null;
+    const spatialBoost = opts?.spatialBoost ?? 0.18; // 기본 0.18 — 공간 18% + TF-IDF/dense 82%
+    if (spatialBoost > 0) {
+      try { qCoord = _coordForText(query, this.domain); } catch {}
+    }
     // Dense embedder hybrid — HashEmbedder 256d (API 0, Ghidra P-Code 철학: 모든 텍스트를 동일 IR로)
     let qDense: number[] | null = null;
     const denseWeight = 0.45; // dense 45% + sparse 55% — Cursor hybrid와 동일 비율
@@ -507,6 +513,16 @@ export class MemoryBank {
         const ttlLeft = Date.parse(d.entry.validUntil) - Date.now();
         if (!Number.isNaN(ttlLeft) && ttlLeft > 0 && ttlLeft < 3 * 86400000) score -= 0.1;
         if (ttlLeft < 0) score -= 0.5; // 이미 만료됐는데 list에서 미제거된 경우
+      }
+      // S 공간 가중 — 쿼리 좌표와 가깝고 같은 zone이면 +0.18, 같은 L1 타일이면 +0.08 추가
+      if (qCoord && d.entry.spaceMeta) {
+        const sm = d.entry.spaceMeta;
+        const dx = sm.x - qCoord.x, dy = sm.y - qCoord.y, dz = sm.z - qCoord.z;
+        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz); // 0..1.732
+        const spatialScore = Math.max(0, 1 - dist / 1.0); // 1=완전가까움, 0=1.0 이상
+        score += spatialScore * spatialBoost;
+        if (sm.zone === qCoord.zone) score += 0.05; // zone 일치 보너스 (Grid cell 모듈)
+        if (sm.gridKey.split("/")[0] === qCoord.gridKey.split("/")[0]) score += 0.04; // L1 타일 일치
       }
       return { entry: d.entry, score };
     });
