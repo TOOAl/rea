@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import pathlib
+import pathlib, re
 ROOT = pathlib.Path("/home/user/rea")
 fonts = {
   "Regular": pathlib.Path("/tmp/woff-NotoSansKR-Regular-Hestia.b64").read_text(),
@@ -15,17 +15,20 @@ css = f"""
 """
 for html_path in (ROOT/"고등영단어장").glob("*.html"):
   t = html_path.read_text(encoding="utf-8")
-  if "Noto Sans KR" in t and "data:font/woff;base64" in t:
-    print(f"skip {html_path.name} already embedded")
+  if "data:font/woff;base64" in t:
+    # already embedded — only fix broken import line if present
+    if "googlefonts replaced" in t:
+      t = re.sub(r"/\* googlefonts replaced.*?\n", "", t)
+      html_path.write_text(t, encoding="utf-8")
+      print(f"fixed broken import {html_path.name}")
+    else:
+      print(f"skip {html_path.name} already embedded")
     continue
   # inject after <style> opening or <head>
-  if "</style>" in t:
-    # replace GoogleFonts import with embedded
-    t = t.replace("@import url('https://fonts.googleapis.com", "/* googlefonts replaced by embedded woff */ /*")
+  if "/* FONT_EMBED */" in t:
     t = t.replace("/* FONT_EMBED */", css)
-    if "/* FONT_EMBED */" not in t and "data:font/woff;base64" not in t:
-      # fallback: insert before </head>
-      t = t.replace("</head>", f"<style>{css}</style>\n</head>")
+  elif "@import url('https://fonts.googleapis.com" in t:
+    t = re.sub(r"@import url\('https://fonts\.googleapis\.com[^']*'\);\s*\n?", css+"\n", t)
   else:
     t = t.replace("</head>", f"<style>{css}</style>\n</head>")
   html_path.write_text(t, encoding="utf-8")
