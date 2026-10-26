@@ -37,7 +37,7 @@ describe("Math Quintet v7 — 5형제", () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(65);
+    expect(reg.all().length).toBe(68);
     expect(reg.get("math-funsearch")).toBeDefined();
     expect(reg.get("math-lean")).toBeDefined();
     expect(reg.get("math-deepthink")).toBeDefined();
