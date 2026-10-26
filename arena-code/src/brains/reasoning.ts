@@ -56,6 +56,12 @@ export interface ReasoningPacket {
 const THOUGHT_HINTS: Record<string, string[]> = {
   "genius-code": ["코드로 검증: 테스트 먼저", "역방향 추론: 출력에서 거꾸로", "경계값 분석"],
   "genius-math": ["수식으로 증명: 불변식 찾기", "경우 나누기", "반례 탐색"],
+  // v7 Math Quintet — 5형제 전용 thought 힌트 (FunSearch/Tensor/Lean/Synthetic/DeepThink)
+  "math-funsearch": ["프로그램=해법: priority() 진화", "수백만 변형 교차", "대칭 힌트 발견"],
+  "math-tensor": ["게임화: 상태/행동/보상 정의", "MCTS 한 수 탐색", "항등식 검증"],
+  "math-lean": ["Lean 형식화: theorem 증명", "Test-Time RL 변형", "컴파일 검증"],
+  "math-synthetic": ["합성 증명 10억개", "보조선 제안 ↔ 기호 추론", "기하 시각화"],
+  "math-deepthink": ["4.5시간 장기사고", "ToT 5회 반복", "Validator 2/3 통과"],
   "genius-art": ["스토리로 풀기: 등장인물 시점", "비유로 단순화", "12살 설명"],
   "genius-cinematic": ["장면으로 보기: 전경-배경 분리", "동기 먼저", "빛의 출처 추적"],
   "genius-visual": ["시각적 위계: 무엇이 먼저 보이는가", "유창성 vs 일탈 균형", "A/B 가설"],
