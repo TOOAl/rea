@@ -61,6 +61,7 @@ export interface SmartScope {
 }
 
 import { STOP, tokenize, tf, cosine } from "../rag/text.js";
+import { getEmbedder } from "../rag/embedder.js";
 
 function slug(s: string): string {
   return s
@@ -421,16 +422,45 @@ export class MemoryBank {
       return out;
     };
     const qVec = weigh(qTf);
+    // Dense embedder hybrid — HashEmbedder 256d (API 0, Ghidra P-Code 철학: 모든 텍스트를 동일 IR로)
+    let qDense: number[] | null = null;
+    const denseWeight = 0.45; // dense 45% + sparse 55% — Cursor hybrid와 동일 비율
+    try {
+      const emb = getEmbedder();
+      qDense = emb.embed(query);
+    } catch {}
     const scored = docs.map((d) => {
       const dVec = weigh(d.tf);
-      let score = cosine(qVec, dVec);
-      // cue bonus
+      let sparseScore = cosine(qVec, dVec);
+      // cue bonus for sparse
       const cueTokens = new Set(tokenize(d.entry.cue));
-      for (const qt of qTokens) if (cueTokens.has(qt)) score += 0.1;
+      for (const qt of qTokens) if (cueTokens.has(qt)) sparseScore += 0.1;
+      // dense blend — 의미 유사도가 TF-IDF 빈틈 메움 (예: "배포 규칙" ↔ "deploy policy")
+      let denseScore = 0;
+      if (qDense) {
+        try {
+          const emb = getEmbedder();
+          const dText = [d.entry.cue, d.entry.content].join(" ");
+          const dDense = emb.embed(dText);
+          denseScore = emb.similarity(qDense!, dDense);
+          // dense 음수(완전 무관)는 0으로 클리핑
+          if (denseScore < 0) denseScore = 0;
+        } catch {}
+      }
+      // hybrid — sparse와 dense 가중 합
+      let score = qDense !== null ? (sparseScore * (1 - denseWeight) + denseScore * denseWeight) : sparseScore;
       // recency
       score += recencyScore(d.entry.createdAt) * 0.2;
-      // confidence
-      score += ((d.entry.confidence ?? 0.7) - 0.5) * 0.15;
+      // confidence — 신뢰도 0.4 미만은 recall 제외(이전 필터로 이미 걸렀지만 추가 페널티)
+      const conf = d.entry.confidence ?? 0.7;
+      if (conf < 0.4) score -= 0.3;
+      else score += (conf - 0.5) * 0.15;
+      // TTL 임박 페널티 — validUntil 3일 이내면 -0.1 (만료 직전 정보는 덜 신뢰)
+      if (d.entry.validUntil) {
+        const ttlLeft = Date.parse(d.entry.validUntil) - Date.now();
+        if (!Number.isNaN(ttlLeft) && ttlLeft > 0 && ttlLeft < 3 * 86400000) score -= 0.1;
+        if (ttlLeft < 0) score -= 0.5; // 이미 만료됐는데 list에서 미제거된 경우
+      }
       return { entry: d.entry, score };
     });
     scored.sort((a, b) => b.score - a.score);

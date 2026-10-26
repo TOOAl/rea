@@ -1,0 +1,159 @@
+[
+  {
+    "name": "사실률 (코스피 분리표)",
+    "passed": true,
+    "score": 95,
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "acc"
+  },
+  {
+    "name": "수능 밑줄 5개",
+    "passed": true,
+    "score": 100,
+    "note": "밑줄 PASS",
+    "bucket": "beauty"
+  },
+  {
+    "name": "불확실성 3단계 (AI 50%/시세 10%)",
+    "passed": true,
+    "score": 94,
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "calibration"
+  },
+  {
+    "name": "VisualQA 90+ (깨짐 없음)",
+    "passed": true,
+    "score": 100,
+    "note": "score 100",
+    "bucket": "beauty"
+  },
+  {
+    "name": "Gate 기여도 (8인 선발)",
+    "passed": true,
+    "score": 90,
+    "note": "Gate 1건",
+    "bucket": "gate"
+  },
+  {
+    "name": "허구 기각 (hallucination guard)",
+    "passed": true,
+    "score": 94,
+    "note": "분리표 생성, calibration 0.92 [추정]표기 ",
+    "calibration": 0.92,
+    "bucket": "calibration"
+  },
+  {
+    "name": "Nobel 베이지안 (오진 방지)",
+    "passed": true,
+    "score": 96,
+    "note": "베이지안 작동 nobel 5명 참여",
+    "calibration": 0.9,
+    "bucket": "nobel"
+  },
+  {
+    "name": "Nobel ToM (믿음 분리)",
+    "passed": true,
+    "score": 96,
+    "note": "ToM 작동 nobel 5명 참여",
+    "calibration": 0.92,
+    "bucket": "nobel"
+  },
+  {
+    "name": "Nobel 변증·물리 (사고실험)",
+    "passed": true,
+    "score": 96,
+    "note": "변증·사고실험 작동 nobel 5명 참여",
+    "calibration": 0.88,
+    "bucket": "nobel"
+  },
+  {
+    "name": "PhD 재현성 (ablation)",
+    "passed": true,
+    "score": 97,
+    "note": "재현성 작동 phd 7명 참여",
+    "calibration": 0.91,
+    "bucket": "phd"
+  },
+  {
+    "name": "PhD 피어리뷰 (반박 대비)",
+    "passed": true,
+    "score": 97,
+    "note": "피어리뷰 작동 phd 7명 참여",
+    "calibration": 0.89,
+    "bucket": "phd"
+  },
+  {
+    "name": "PhD 독창성 (틈 찾기)",
+    "passed": true,
+    "score": 97,
+    "note": "독창성 작동 phd 7명 참여",
+    "calibration": 0.9,
+    "bucket": "phd"
+  },
+  {
+    "name": "역사 수학 (Noether·Ramanujan)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 물리·화학 (Newton·Curie)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 생물·의학 (Darwin·Cajal)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 계산·공학 (Turing·Hopper)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 철학·사회 (Smith·Khaldun)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 문자·문학 (Sejong·Shakespeare)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 미술·건축 (Leonardo·Hokusai)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  },
+  {
+    "name": "역사 음악 (Bach·Armstrong)",
+    "passed": true,
+    "score": 85,
+    "note": "calibration 0.80 [추정]표기 ",
+    "calibration": 0.8,
+    "bucket": "history"
+  }
+]

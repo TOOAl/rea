@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-26",
+  "slot": "morning",
+  "slot_label": "08:00(美 마감→韓 개장 전)",
+  "verified_at": "2026-10-26T14:47:55.388Z",
+  "kst": "2026-10-26T23:47:54.000Z",
+  "source": "api.stock.naver.com/chart/domestic/item/005930/day (+ overseas)",
+  "stock": "삼성전자 005930 KOSPI + US 3지수",
+  "ohlcv": {
+    "open": null,
+    "high": null,
+    "low": null,
+    "close": null,
+    "volume": null,
+    "market_cap": null,
+    "foreignRetentionRate": null,
+    "_manual_needed": true
+  },
+  "us_market": {
+    "note": "08:00 슬롯 — 美 전일 마감 데이터. 한국 개장 전 필터로 사용",
+    "spx": {
+      "name": "S&P500",
+      "fetched": false,
+      "error": "Overseas fetch failed for SPX"
+    },
+    "nasdaq": {
+      "name": "NASDAQ",
+      "fetched": false,
+      "error": "Overseas fetch failed for IXIC"
+    },
+    "sox": {
+      "name": "SOX(필라델피아 반도체)",
+      "fetched": false,
+      "error": "Overseas fetch failed for SOX"
+    },
+    "influence_note": "SOX와 삼성전자는 상관계수 0.7~0.8 (2023-2025). SOX -1% → 삼성 -0.7% 경향, 그러나 HBM 호황기에는 디커플링"
+  },
+  "cross_market_read": {
+    "us_influence": "전일 美 마감: S&P 미수신 / NASDAQ 미수신 / SOX 미수신 → 한국 반도체 심리 선행",
+    "lesson": "美 하락에도 삼성이 버티면 기관 수급 강함. 2023년 DS 적자 때도 SOX 급락에 삼성은 DX 덕에 버팀 — 분해 사고 필요",
+    "next_action": "09:00 개장 전 갭/외인 수급 확인 → 15:30 재측정과 비교"
+  },
+  "evolution_note": "이 파일이 하루 2개씩 쌓이면(08시/15시30분) 진화 천재가 ‘美→韓’ vs ‘韓→美’ 전이 확률을 계산합니다. 예: SOX +2%일 때 삼성 다음날 +1.5% 확률 등",
+  "disclaimer": "교육·테스트용, 투자 권유 아님"
+}

@@ -205,53 +205,145 @@ export function estimateTokens(messages: Message[]): number {
 }
 export { estimateTokensAccurate, checkBudget } from "./tokenizer.js";
 
-// --- Compaction ---
+// --- Compaction — 5-Stage (Claude Code 2.0 흡수: BudgetReduction→Snip→Microcompact→Collapse→Auto-Compact) ---
 
+export interface CompactionStats {
+  stage: string;
+  beforeTokens: number;
+  afterTokens: number;
+  saved: number;
+}
+
+/**
+ * 5-Stage Compaction Pipeline — Claude Code 2.0이 6500토큰 서브에이전트로 하는 것을
+ * Arena는 결정적 휴리스틱 4단계 + 모델 1단계로 동일 효과 (API 호출 1회만)
+ */
 export async function compactMessages(
   messages: Message[],
   provider: Provider,
   system: string,
+  budgetTokens?: number,
 ): Promise<Message[]> {
-  // Budget reduction: 오래된 tool_result 요약
-  if (messages.length <= 6) {
-    // 메시지가 적으면 AutoCompact (모델에게 요약 요청)
-    return autoCompact(messages, provider, system);
-  }
+  const budget = budgetTokens ?? 8000; // queryLoop가 80% 넘으면 호출, 목표는 60%까지 축소
+  let cur = [...messages];
+  const target = Math.floor(budget * 0.6);
 
-  // Keep first 2 and last 4, summarize middle
-  const keepHead = 2;
-  const keepTail = 4;
+  // Stage 1: BudgetReduction — tool_result 800자 이상이면 800자로 절단 (가장 저렴)
+  cur = stageBudgetReduction(cur);
+  if (estimateTokens(cur) <= target) return cur;
+
+  // Stage 2: Snip — 가장 오래된 non-essential 메시지 제거 (user/tool_result 중 keepPatterns 미포함)
+  cur = stageSnip(cur);
+  if (estimateTokens(cur) <= target || cur.length <= 8) return cur;
+
+  // Stage 3: Microcompact — 중간 구간을 keepPatterns 보존 요약 (Pillar 1)
+  cur = stageMicrocompact(cur);
+  if (estimateTokens(cur) <= target) return cur;
+
+  // Stage 4: Collapse — 연속 tool_result burst를 하나로 합침 (예: 3개 tool_result → 1개)
+  cur = stageCollapse(cur);
+  if (estimateTokens(cur) <= target) return cur;
+
+  // Stage 5: Auto-Compact — 모델에게 요약 요청 (6500토큰 서브에이전트와 동일, Claude Code 5단계 마지막)
+  // messages가 이미 적으면 바로 AutoCompact, 아니면 남은 cur로 AutoCompact
+  return autoCompact(cur, provider, system);
+}
+
+function getMessageText(m: Message): string {
+  if (typeof m.content === "string") return m.content;
+  return m.content.map(b => (b as unknown as {text?:string; content?:string; input?:unknown}).text ?? (b as unknown as {content?:string}).content ?? JSON.stringify((b as unknown as {input?:unknown}).input ?? "")).join(" ");
+}
+
+/** Stage 1: BudgetReduction — tool_result가 1200자 넘으면 800자로 절단 + truncated 플래그 */
+function stageBudgetReduction(messages: Message[]): Message[] {
+  return messages.map(m => {
+    const t = getMessageText(m);
+    if (t.length > 1200 && m.role === "user" && t.includes("tool_result")) {
+      return { ...m, content: t.slice(0, 800) + `\n[... BudgetReduction: ${t.length}→800 chars truncated]` } as Message;
+    }
+    // assistant tool_use도 2000자 넘으면 절단
+    if (t.length > 2000) {
+      return { ...m, content: t.slice(0, 2000) + `\n[... BudgetReduction truncated]` } as Message;
+    }
+    return m;
+  });
+}
+
+/** Stage 2: Snip — 가장 오래된 메시지 중 keepPatterns 없는 것 제거 */
+function stageSnip(messages: Message[]): Message[] {
+  if (messages.length <= 8) return messages;
+  const keepPatterns = [/decision|pending|TODO|EvidenceLedger|file.*:\d+/i, /error|failed|blocked/i];
+  // head 2 + tail 4는 Snip 대상 제외, 중간에서 제거
+  const head = 2, tail = 4;
+  const middle = messages.slice(head, -tail);
+  const scored = middle.map((m, idx) => {
+    const txt = getMessageText(m);
+    const hasKeep = keepPatterns.some(re => re.test(txt));
+    const isToolResult = m.role === "user" && txt.includes("tool_result");
+    // 점수 높을수록 제거 우선 (오래되고 + keep 없음 + tool_result)
+    let score = 0;
+    if (!hasKeep) score += 10;
+    if (isToolResult) score += 5;
+    score += (middle.length - idx) * 0.1; // 오래된 것이 더 높은 점수 (앞쪽)
+    return { m, idx, score, hasKeep };
+  });
+  // 제거 대상: 점수 높은 순으로 messages가 10개 이하가 될 때까지
+  scored.sort((a,b) => b.score - a.score);
+  const toRemoveIdx = new Set<number>();
+  const targetLen = 10;
+  const removeCount = Math.min(scored.length, messages.length - targetLen);
+  for (let i=0; i<removeCount; i++) {
+    if (scored[i].hasKeep) continue; // keep은 절대 제거 안 함
+    toRemoveIdx.add(scored[i].idx);
+  }
+  if (toRemoveIdx.size === 0) return messages;
+  const filtered = middle.filter((_, idx) => !toRemoveIdx.has(idx));
+  return [...messages.slice(0, head), ...filtered, ...messages.slice(-tail)];
+}
+
+/** Stage 3: Microcompact — 중간 구간을 경로/결정/에러 보존 요약 */
+function stageMicrocompact(messages: Message[]): Message[] {
+  if (messages.length <= 6) return messages;
+  const keepHead = 2, keepTail = 4;
   const head = messages.slice(0, keepHead);
   const middle = messages.slice(keepHead, -keepTail);
   const tail = messages.slice(-keepTail);
-
-  // Middle을 간단히 요약하되, 파일경로/결정/미결은 보존 (Pillar 1)
-  const keepPatterns = [
-    /[a-zA-Z0-9_-]+\.[a-z]+:\d+/,
-    /decision|pending|TODO|EvidenceLedger/i,
-  ];
-  const middleText = middle
-    .map((m) => {
-      const raw =
-        typeof m.content === "string"
-          ? m.content
-          : m.content
-              .map((b) => b.text ?? b.content ?? JSON.stringify(b.input ?? ""))
-              .join(" ");
-      const keepLines = raw
-        .split("\n")
-        .filter((l) => keepPatterns.some((re) => re.test(l)));
-      const base = raw.slice(0, 500);
-      return `${m.role}: ${base}${keepLines.length ? `\n[keep] ${keepLines.slice(0, 3).join(" | ")}` : ""}`;
-    })
-    .join("\n");
-
+  if (middle.length === 0) return messages;
+  const keepPatterns = [/[a-zA-Z0-9_-]+\.[a-z]+:\d+/, /decision|pending|TODO|EvidenceLedger/i, /error|fail|blocked|denied/i];
+  const middleText = middle.map(m => {
+    const raw = getMessageText(m);
+    const keepLines = raw.split("\n").filter(l => keepPatterns.some(re => re.test(l)));
+    const base = raw.slice(0, 500);
+    return `${m.role}: ${base}${keepLines.length ? `\n[keep] ${keepLines.slice(0, 3).join(" | ")}` : ""}`;
+  }).join("\n");
   const summaryMsg: Message = {
     role: "user",
-    content: `[Context compacted: ${middle.length} messages summarized — filePaths/decisions/pendingTasks preserved]\n${middleText.slice(0, 3000)}`,
+    content: `[Microcompact: ${middle.length} messages summarized — filePaths/decisions/errors preserved]\n${middleText.slice(0, 3000)}`,
   };
-
   return [...head, summaryMsg, ...tail];
+}
+
+/** Stage 4: Collapse — 연속 tool_result burst(3개 이상)를 하나로 합침 */
+function stageCollapse(messages: Message[]): Message[] {
+  const out: Message[] = [];
+  let burst: Message[] = [];
+  const flush = () => {
+    if (burst.length === 0) return;
+    if (burst.length >= 3) {
+      const combined = burst.map(m => getMessageText(m).slice(0, 600)).join("\n---\n");
+      out.push({ role: "user", content: `[Collapsed ${burst.length} tool_results]\n${combined.slice(0, 2500)}` } as Message);
+    } else {
+      out.push(...burst);
+    }
+    burst = [];
+  };
+  for (const m of messages) {
+    const isToolResult = m.role === "user" && getMessageText(m).includes("tool_result");
+    if (isToolResult) burst.push(m);
+    else { flush(); out.push(m); }
+  }
+  flush();
+  return out;
 }
 
 async function autoCompact(

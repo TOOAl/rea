@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-26",
+  "verified_at": "2026-10-26T20:09:23+09:00",
+  "verified_via": "fetch_page https://m.stock.naver.com/api/stock/220100/basic + https://api.stock.naver.com/chart/domestic/item/220100/day",
+  "source": "api.stock.naver.com/chart/domestic/item/220100/day + m.stock.naver.com/api/stock/220100/basic",
+  "stock": "퓨쳐켐 220100 KOSDAQ",
+  "ohlcv": {
+    "open": 10200,
+    "high": 10200,
+    "low": 8710,
+    "close": 9230,
+    "close_type": "정규장+애프터 확정 (Npay 18:41 9210 → 최종 20:09 9230)",
+    "volume": 1148433,
+    "prev_volume_manual": 4540007,
+    "amount": null,
+    "market_cap": null,
+    "prev_close": 8990,
+    "foreignRetentionRate": 4.1
+  },
+  "orderbook_snapshot": {
+    "note": "10:00 3,424,560주/349억, 09:55 9,630(+7.12%), 10:00 9,500(+5.67%) — Level2 10호가 스냅샷은 내일부터 수집",
+    "oib": null,
+    "strength": null,
+    "vi_triggered": null,
+    "high_low_story": "시가 갭상승 10200(고가=시가, 강한 갭) → 저가 8710 눌림 → 종가 9230 마감 = 갭상승 후 눌림, 돌파형→힘겨루기"
+  },
+  "factors": {
+    "clinical": {
+      "event": "FC705 미국 임상2a상 ORR 38.9% (10/23 공시)",
+      "impact": "상승 재료, +29.91% 상한가 견인",
+      "evidence": "CBC 10/23 상한가 공시 확인"
+    },
+    "sector": {
+      "kosdaq_bio": "-1.05% (당일 업종 하락 속 퓨쳐켐 +2.67% 상대강세)",
+      "note": "업종 하락과 대조 [중앙이코노미 10/26 09:55]"
+    },
+    "flow": {
+      "foreign_rate": "4.1%",
+      "note": "외인 4.10% 유지"
+    },
+    "volume_type": "돌파형 급증 (고가=시가 10200 + 114만주, 전일비 급증)"
+  },
+  "our_prediction": {
+    "at": "2026-10-26T18:50:00+09:00",
+    "close_base": 9230,
+    "close_base_note": "예측 시점엔 애프터 9210으로 봤으나 최종 9230으로 보정 (오차 20원 0.22% — 다음 예측부터 9230 기준)",
+    "scenarios": {
+      "A_눌림": { "range": [8600, 9100], "prob": 0.45, "desc": "차익실현, 454만주 피로" },
+      "B_횡보": { "range": [9100, 9600], "prob": 0.3, "desc": "관망, 추가공시 없음" },
+      "C_상승": { "range": [9600, 10800], "prob": 0.25, "desc": "외국인 추가매수+재부각" }
+    },
+    "calibration": 0.45,
+    "note": "점 예측 아님, 구간+확률 [추정] — 내일 어느 구간에 들어가는지로 calibration 평가. 기준 9230으로 재계산하면 A 8600-9100 / B 9100-9600 / C 9600-10800 동일"
+  },
+  "result": null,
+  "evolution_delta": null,
+  "disclaimer": "교육·테스트용, 투자 권유 아님. 1개로 확정 금지, 쌓여서 정확해짐.",
+  "correction": "2026-10-26 20:09 Npay 최종 9230으로 보정, 시가/고가 10200으로 수정 (기존 9470/10770은 장중 속보치)"
+}

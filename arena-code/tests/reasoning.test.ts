@@ -108,7 +108,7 @@ describe("ReasoningEngine + Council 통합", () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(57);
+    expect(reg.all().length).toBe(60);
     const council = new Council(reg);
     const { outputs, decision, reasoningPacket, contextPacket, visualPacket } =
       await council.deliberate("Game of 24 수학 추론 8 4 6 4", "GSM8K");

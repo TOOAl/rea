@@ -39,6 +39,8 @@ import {
   ManagementStrategistBrain,
   EngineeringDesignerBrain,
 } from "./strategist.js";
+import { EvolutionArchitectBrain } from "./evolution.js";
+import { VOLUME_BRAINS } from "./volumeOrderbook.js";
 import { GateBrain } from "./gate.js";
 import { ArticleInputBrain } from "./articleInput.js";
 import { GeometryVerifierBrain, TypographyVerifierBrain } from "./visualInspection.js";
@@ -282,6 +284,10 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     // v2.23.0 3.5층 게이트
     new GateBrain(),
     new CouncilBrain(),
+    // ★ 진화 천재 — 5층 전략, 담임 (M/L 고도화, 시간과 함께 성장)
+    new EvolutionArchitectBrain(),
+    // ★ 호가창 거래량 천재 — 마하세븐 흡수 (스캘핑 아닌 수급의 질)
+    ...VOLUME_BRAINS,
   ];
 }
 

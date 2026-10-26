@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-26",
+  "slot": "afternoon",
+  "slot_label": "15:30(韓 마감)",
+  "verified_at": "2026-10-26T14:47:55.585Z",
+  "kst": "2026-10-26T23:47:55.000Z",
+  "source": "api.stock.naver.com/chart/domestic/item/005930/day (+ overseas)",
+  "stock": "삼성전자 005930 KOSPI + US 3지수",
+  "ohlcv": {
+    "open": null,
+    "high": null,
+    "low": null,
+    "close": null,
+    "volume": null,
+    "market_cap": null,
+    "foreignRetentionRate": null,
+    "_manual_needed": true
+  },
+  "us_market": {
+    "note": "15:30 슬롯 — 韓 마감 확정. 美 선물/프리마켓과 비교하여 오버나이트 리스크 판단",
+    "us_futures_hint": "15:30 KST = 01:30 EST → 美 개장 8시간 전. S&P 선물 등락으로 익일 갭 예측"
+  },
+  "cross_market_read": {
+    "us_influence": "금일 韓 마감: 삼성 - → 익일 美 개장 전 한국 결과 확정 (SOX 선물과 비교)",
+    "lesson": "韓 상승 후 美 선물이 하락이면 갭 되돌림 경계. 2025 Q3처럼 DS +7조가 美 AI 수요와 동조되면 다음날 추가 상승 지속",
+    "next_action": "금일 적중/미적중 기록 → 익일 08:00 美 반영과 비교하여 calibration"
+  },
+  "evolution_note": "이 파일이 하루 2개씩 쌓이면(08시/15시30분) 진화 천재가 ‘美→韓’ vs ‘韓→美’ 전이 확률을 계산합니다. 예: SOX +2%일 때 삼성 다음날 +1.5% 확률 등",
+  "disclaimer": "교육·테스트용, 투자 권유 아님"
+}

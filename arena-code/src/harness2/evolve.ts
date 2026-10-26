@@ -50,6 +50,15 @@ const BENCH_CASES: BenchCase[] = [
   { name: "PhD 재현성 (ablation)", task: "ablation 실험 설계 — 5부품 중 무엇이 효과인가", article: "새 기능 5개를 한꺼번에 넣고 성능 올랐다고 주장. 대조군 없이 인과 단정하면 재현 실패 — 1개씩 빼보는 ablation 필요.", topic: "phd-repro", expect: { needSeparation:true, needUncertainMark:true, bucket:"phd" } },
   { name: "PhD 피어리뷰 (반박 대비)", task: "논문 심사 질문 — Reviewer의 가장 아픈 지적", article: "Reviewer: n이 작아 운 좋게 나온 것 아닌가? 선행연구 X 반례 누락, 교란 변수 통제 안 됨. 디펜스에서 답 못하면 탈락.", topic: "phd-review", expect: { needSeparation:false, needUncertainMark:true, bucket:"phd" } },
   { name: "PhD 독창성 (틈 찾기)", task: "새 모델 제안 — 기존 이론이 못 설명하는 틈", article: "기존 생태계 이론이 ‘코드 버그는 환경 탓’만 설명. 새 모델 ‘버그는 면역체계처럼 진화한다’면 예측이 달라야 — 독창성 증명 필요.", topic: "phd-novelty", expect: { needSeparation:true, needUncertainMark:true, bucket:"phd" } },
+  // ★ 역사 8문제 — 8분야 각 1문제, flat 해소용 (문자·문학 카나리 포함)
+  { name: "역사 수학 (Noether·Ramanujan)", task: "수학 천재의 증명 vs 예상 — 노터의 구조 재설계와 라마누잔의 직관을 12살에게 비교", article: "노터는 대칭이 보존량을 만든다고 구조를 다시 짜고, 라마누잔은 수많은 급수를 예상했다. 둘 다 증명과 예상의 차이를 보여준다.", topic: "history-math", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 물리·화학 (Newton·Curie)", task: "뉴턴의 통합과 퀴리의 측정이 만나는 순간 — 불일치 측정값이 새 물질을 가리킬 때", article: "퀴리는 측정값이 예상과 달라 폴로늄을 찾았다. 뉴턴은 지상과 천체를 한 식으로 묶었다.", topic: "history-physics", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 생물·의학 (Darwin·Cajal)", task: "다윈의 누적 논증과 카할의 그림이 만드는 과학", article: "다윈은 20년 편지와 관찰을 모았고, 카할은 염색한 뇌를 그려 뉴런이 따로 있음을 보였다.", topic: "history-bio", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 계산·공학 (Turing·Hopper)", task: "튜링의 형식과 호퍼의 도구 — 계산을 정의하고 사람에게 가르치기", article: "튜링은 계산의 한계를 형식화했고, 호퍼는 기계어를 사람 말로 바꾸는 컴파일러를 만들었다.", topic: "history-computing", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 철학·사회 (Smith·Khaldun)", task: "스미스의 보이지 않는 손과 할둔의 결속 — 개인→사회 결과가 의도와 왜 다른가", article: "스미스는 분업이 국부를 만든다고 했고, 할둔은 결속이 강할 때 문명이 선다고 했다.", topic: "history-philosophy", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 문자·문학 (Sejong·Shakespeare)", task: "세종 한글 창제 원리를 12살에게 3단계(관찰→원리→놀이)로 설명", article: "세종은 소리 나는 모양을 본떠 글자를 만들고, 해례로 원리를 적어 배우기 쉽게 했다.", topic: "history-literature", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 미술·건축 (Leonardo·Hokusai)", task: "레오나르도의 그림-질문과 호쿠사이의 시점 바꾸기", article: "레오나르도는 해부도를 그려 질문했고, 호쿠사이는 파도 그림에서 크기와 시점을 바꿨다.", topic: "history-art", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
+  { name: "역사 음악 (Bach·Armstrong)", task: "바흐의 대위 규칙과 암스트롱의 즉흥 — 제약 속에서 새로 만들기", article: "바흐는 성부 독립 규칙으로 흐름을 만들고, 암스트롱은 정해진 리듬 위에서 음색을 바꿨다.", topic: "history-music", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
 ];
 
 function scoreUncertainty(article: string, outputs: any[]): { passed: boolean; calibration: number; note: string } {
