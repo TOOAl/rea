@@ -103,7 +103,7 @@ describe("VisualEngine + Council 통합", () => {
     const mem = new BrainMemory();
     const reg = new BrainRegistry();
     for (const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(55);
+    expect(reg.all().length).toBe(57);
     const council = new Council(reg);
     const { outputs, decision, visualPacket, contextPacket } =
       await council.deliberate(

@@ -15,6 +15,7 @@ import { WebSearchTool } from "./webSearch.js";
 import { ResearchTool } from "../loop/research.js";
 import { BrainsTool } from "./brains.js";
 import { VisualRepairTool } from "./visualRepair.js";
+import { InspectLayoutTool, CheckOverflowTool } from "./visualInspection.js";
 import { StyleSearchTool } from "./styleRag.js";
 import { BROWSER_TOOLS } from "./browser.js";
 import { SERENA_TOOLS } from "./serena.js";
@@ -67,6 +68,8 @@ export const CORE_TOOLS_LIST: Tool[] = [
   ResearchTool,
   BrainsTool,
   VisualRepairTool,
+  InspectLayoutTool,
+  CheckOverflowTool,
   StyleSearchTool,
   ...BROWSER_TOOLS,
   ...SERENA_TOOLS,

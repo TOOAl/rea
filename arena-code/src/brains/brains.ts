@@ -41,6 +41,7 @@ import {
 } from "./strategist.js";
 import { GateBrain } from "./gate.js";
 import { ArticleInputBrain } from "./articleInput.js";
+import { GeometryVerifierBrain, TypographyVerifierBrain } from "./visualInspection.js";
 import {
   PremiseErrorBrain,
   ContradictionBrain,
@@ -258,6 +259,8 @@ export function createDefaultBrains(memory: BrainMemory): Brain[] {
     new CinematicBrain(),
     new VisualDesignBrain(),
     new AudioFocusBrain(),
+    new GeometryVerifierBrain(),
+    new TypographyVerifierBrain(),
     new GeneratorBrain(),
     new VerifierBrain(),
     new RefinerBrain(),
