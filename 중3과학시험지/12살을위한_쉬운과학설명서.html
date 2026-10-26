@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12살을 위한 쉬운 과학 설명서 - 유전, 별, 우주</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&family=Gamja+Flower&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1f2937;--muted:#6b7280;--bg:#fff7ed;--paper:#ffffff;--accent:#f97316;--accent2:#06b6d4;--accent3:#8b5cf6;--line:#fed7aa}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;line-height:1.7}
+  .page{max-width:860px;margin:18px auto;background:var(--paper);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden;border:3px solid #ffedd5}
+  .topbar{height:8px;background:linear-gradient(90deg,#f97316,#facc15,#06b6d4,#8b5cf6)}
+  .cover{padding:22px 26px 18px;background:linear-gradient(135deg,#fff7ed,#ffedd5 55%,#ecfeff);border-bottom:3px dashed #fed7aa;text-align:center}
+  .cover h1{margin:0;font-family:'Jua',sans-serif;font-size:34px;color:#9a3412;letter-spacing:-0.02em}
+  .cover h1 small{display:block;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;color:#ea580c;letter-spacing:0.06em;margin-bottom:6px}
+  .cover .subtitle{margin:8px 0 0;font-size:14px;color:#7c2d12;font-weight:700}
+  .chips{margin:12px 0 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .chip{font-size:12px;background:#fff;border:2px solid #fed7aa;padding:5px 10px;border-radius:999px;font-weight:700}
+  .chip.a{background:#ffedd5;color:#9a3412}.chip.b{background:#cffafe;color:#0e7490}.chip.c{background:#ede9fe;color:#6d28d9}
+  .notice{margin:14px 22px;background:#fffbeb;border:2px solid #fde68a;border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:1fr 160px;gap:12px}
+  .notice h3{margin:0;font-family:'Jua',sans-serif;font-size:15px;color:#92400e}
+  .notice ul{margin:6px 0 0 16px;padding:0;font-size:12.5px;color:#451a03;line-height:1.7}
+  .mascot{border:2px solid #fde68a;background:#ffffff;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .toc{margin:14px 22px;border:2px solid #e9d5ff;background:#faf5ff;border-radius:14px;padding:10px 14px}
+  .toc h3{margin:0;font-family:'Jua',sans-serif;color:#6d28d9}
+  .toc ol{margin:6px 0 0 18px;font-size:13px;line-height:1.8}
+  .toc ol b{color:#6d28d9}
+  .chapter{margin:18px 22px;border:2px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff}
+  .chapter-head{padding:10px 14px;display:flex;align-items:center;gap:10px;color:#fff}
+  .chapter-head .num{width:36px;height:36px;border-radius:999px;background:rgba(255,255,255,.95);color:var(--ink);display:grid;place-items:center;font-weight:900}
+  .chapter-head h2{margin:0;font-family:'Jua',sans-serif;font-size:18px}
+  .chapter-head p{margin:0 0 0 auto;font-size:12px;opacity:.95;font-weight:700}
+  .chapter-body{padding:14px}
+  .card{border:2px solid #f3f4f6;border-radius:14px;padding:12px;margin:10px 0;background:#fff}
+  .card h3{margin:0;font-family:'Jua',sans-serif;font-size:16px}
+  .card .desc{font-size:13px;color:#374151;margin-top:6px}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .compare .box{border:2px dashed #e5e7eb;border-radius:12px;padding:10px;text-align:center}
+  .fig{margin:10px 0;background:#f9fafb;border:2px solid #e5e7eb;border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .fig svg{max-width:100%;height:auto}
+  .figcap{font-size:11px;color:var(--muted)}
+  .analogy{border-left:5px solid #f97316;background:#fff7ed;border-radius:8px;padding:8px 10px;font-size:12.5px;margin:8px 0}
+  .analogy b{color:#9a3412}
+  .quiz{border:2px solid #06b6d4;background:#ecfeff;border-radius:12px;padding:10px 12px;margin:10px 0}
+  .quiz b{color:#0e7490}
+  .quiz .q{font-size:13px;font-weight:800;margin-top:6px}
+  .quiz .choices{font-size:12.5px;margin:6px 0 0 16px}
+  .quiz details{margin-top:8px}
+  .quiz summary{cursor:pointer;font-size:12px;color:#0e7490;font-weight:800}
+  .badge{font-size:11px;background:#fff;border:1px solid #e5e7eb;padding:2px 7px;border-radius:999px}
+  .footer{padding:16px 22px;border-top:3px dashed #fed7aa;display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+  .print-btn{position:fixed;right:14px;bottom:14px;background:#1f2937;color:#fff;border:0;padding:10px 14px;border-radius:999px;font-size:13px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+  @media print{body{background:#fff}.page{box-shadow:none;border:none;margin:0;max-width:none}.print-btn{display:none}@page{size:A4;margin:10mm}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+<div class="page">
+  <div class="topbar"></div>
+
+  <div class="cover">
+    <h1><small>중3 언니·오빠 시험지를 12살 동생도 이해하는</small>🔬✨ 12살을 위한 쉬운 과학 설명서 ✨🌌</h1>
+    <p class="subtitle">유전 · 별 · 은하와 우주 — 비유로 이해하는 진짜 과학 이야기</p>
+    <div class="chips">
+      <span class="chip a">📖 유전 = 가족 닮은꼴의 비밀</span>
+      <span class="chip b">⭐ 별 = 밤하늘 전구의 색과 밝기</span>
+      <span class="chip c">🌌 우주 = 별들의 도시와 풍선 우주</span>
+    </div>
+  </div>
+
+  <div class="notice">
+    <div>
+      <h3>📣 이 설명서는 이렇게 읽어요! (약속 3가지)</h3>
+      <ul>
+        <li><b>어려운 단어</b>가 나오면 바로 옆에 <b>쉬운 말(비유)</b>을 꼭 적었어요. 모르면 비유만 기억해도 돼요.</li>
+        <li>그림과 표는 <b>손으로 그려보며</b> 읽으면 2배 잘 이해돼요. 연필로 따라 그려 보세요!</li>
+        <li>각 장 끝에 <b>1분 퀴즈</b>가 있어요. 맞히지 못해도 괜찮아요 — 해설을 읽으면 끝!</li>
+      </ul>
+    </div>
+    <div class="mascot">
+      <div style="font-size:42px">🧒🤖</div>
+      <div style="font-size:12px;font-weight:800;color:#9a3412">안내 친구<br>지니와 코스모</div>
+      <div style="font-size:11px;color:var(--muted)">“모르면 다시 설명해줄게!”</div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>🗺️ 차례 — 3개의 모험</h3>
+    <ol>
+      <li><b>1장 가족 닮은꼴의 비밀 — 유전</b> : 왜 나는 엄마·아빠를 닮았을까? (멘델의 완두, 염색체 책, DNA 알파벳)</li>
+      <li><b>2장 밤하늘 전구들 — 별</b> : 별은 왜 색이 다르고 밝기가 다를까? (전구, 손전등, 성적표 HR도)</li>
+      <li><b>3장 별들의 도시와 풍선 우주 — 은하와 우주</b> : 은하는 별들의 도시, 우주는 커지는 풍선!</li>
+    </ol>
+  </div>
+
+  <!-- ================= 1장 유전 ================= -->
+  <div class="chapter">
+    <div class="chapter-head" style="background:linear-gradient(90deg,#f97316,#fb923c)">
+      <div class="num">1</div>
+      <h2>가족 닮은꼴의 비밀 — 유전</h2>
+      <p>핵심 비유: LEGO 설명서 + 책</p>
+    </div>
+    <div class="chapter-body">
+
+      <div class="card">
+        <h3>🧬 1) 우리 몸의 설명서는 어디에 있을까?</h3>
+        <div class="desc">우리 몸은 <b>세포</b>라는 작은 방(레고 블록)이 모여 만들어졌어요. 각 방 안에는 <b>염색체</b>라는 <b>설명서 책 46권</b>이 있어요. (아빠 23권 + 엄마 23권)</div>
+        <div class="fig">
+          <svg width="680" height="150" viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="680" height="150" rx="14" fill="#fff" stroke="#fed7aa"/>
+            <text x="340" y="18" text-anchor="middle" font-size="12" font-weight="900" fill="#9a3412">우리 몸 = 세포(방)들의 아파트 / 각 방 안의 책장 = 염색체 46권</text>
+            <!-- 세포 -->
+            <g transform="translate(20,30)">
+              <rect x="0" y="0" width="200" height="100" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+              <text x="100" y="14" text-anchor="middle" font-size="11" font-weight="800">세포 1개 (방 1칸)</text>
+              <g transform="translate(10,20)">
+                <rect x="0" y="0" width="32" height="44" rx="3" fill="#fde68a" stroke="#f59e0b"/><text x="16" y="26" text-anchor="middle" font-size="8">책</text>
+                <rect x="36" y="0" width="32" height="44" rx="3" fill="#fde68a" stroke="#f59e0b"/>
+                <rect x="72" y="0" width="32" height="44" rx="3" fill="#fde68a" stroke="#f59e0b"/>
+                <text x="90" y="58" text-anchor="middle" font-size="9">... 46권</text>
+                <text x="90" y="70" text-anchor="middle" font-size="9" fill="#9a3412">아빠 23 + 엄마 23</text>
+              </g>
+              <text x="100" y="90" text-anchor="middle" font-size="10" fill="#6b7280">핵(책장) 안에 염색체</text>
+            </g>
+            <!-- 화살표 -->
+            <text x="250" y="80" font-size="18">➡️</text>
+            <!-- DNA -->
+            <g transform="translate(280,30)">
+              <rect x="0" y="0" width="200" height="100" rx="12" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+              <text x="100" y="14" text-anchor="middle" font-size="11" font-weight="800">책 속 글자 = DNA</text>
+              <text x="100" y="30" text-anchor="middle" font-size="10">A T C G 알파벳</text>
+              <text x="100" y="45" text-anchor="middle" font-size="11" font-family="monospace">A T T C G A ...</text>
+              <text x="100" y="62" text-anchor="middle" font-size="9" fill="#0e7490">이 글자들이 모여 한 문단 = 유전자</text>
+              <rect x="20" y="70" width="160" height="18" rx="6" fill="#cffafe" stroke="#06b6d4"/><text x="100" y="82" text-anchor="middle" font-size="10">유전자: "키 크게!"라는 문장</text>
+            </g>
+            <text x="510" y="80" font-size="18">➡️</text>
+            <g transform="translate(540,30)">
+              <rect x="0" y="0" width="120" height="100" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="60" y="14" text-anchor="middle" font-size="11" font-weight="800">몸이 만들어짐</text>
+              <text x="60" y="32" text-anchor="middle" font-size="20">🧒</text>
+              <text x="60" y="55" text-anchor="middle" font-size="10">눈 색, 키, 혈액형</text>
+              <text x="60" y="70" text-anchor="middle" font-size="10">다 이 설명서 때문에!</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 1 — 세포 → 염색체(책 46권) → DNA(글자) → 유전자(문장) → 우리 몸</div>
+        </div>
+        <div class="analogy"><b>🧒 쉬운 비유:</b> <b>염색체=책</b>, <b>DNA=책 속 알파벳</b>, <b>유전자=한 문장(예: "피부색 하얗게 하라")</b>. 책 46권이 우리 몸을 만드는 총 설명서예요!</div>
+      </div>
+
+      <div class="card">
+        <h3>🌱 2) 멘델 할아버지의 완두콩 실험 — 왜 완두콩이었을까?</h3>
+        <div class="desc">150년 전 멘델은 완두콩으로 유전 법칙을 찾았어요. 키 큰/작은 완두처럼 <b>확실히 구분되는 특징(대립 형질)</b>만 골랐기 때문에 규칙이 보인 거예요. 만약 “조금 큰, 애매하게 큰”처럼 연속으로 변하는 특징이었다면 규칙을 찾기 어려웠을 거예요.</div>
+        <div class="fig">
+          <svg width="640" height="120" viewBox="0 0 640 120" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="640" height="120" rx="14" fill="#fff" stroke="#e5e7eb"/>
+            <text x="160" y="18" text-anchor="middle" font-size="11" font-weight="800">멘델이 고른 특징 (대립 형질)</text>
+            <g transform="translate(20,30)">
+              <rect x="0" y="0" width="280" height="70" rx="10" fill="#f0fdf4" stroke="#22c55e"/>
+              <text x="140" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#065f46">⭕ 키 큼 / 키 작음 — 확실!</text>
+              <text x="140" y="36" text-anchor="middle" font-size="11">둥근 / 주름진, 노랑 / 초록</text>
+              <text x="140" y="54" text-anchor="middle" font-size="11">→ 세어볼 수 있어 규칙 발견!</text>
+            </g>
+            <g transform="translate(340,30)">
+              <rect x="0" y="0" width="280" height="70" rx="10" fill="#fef2f2" stroke="#ef4444"/>
+              <text x="140" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#7f1d1d">❌ 애매한 특징 — 어려웠을 거예요</text>
+              <text x="140" y="36" text-anchor="middle" font-size="11">조금 큼, 보통, 약간 작음...</text>
+              <text x="140" y="54" text-anchor="middle" font-size="11">→ 세기 어려워 규칙 안 보여요</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 2 — 좋은 과학은 “확실히 구분되는 것”부터 본다</div>
+        </div>
+        <div class="compare">
+          <div class="box"><div style="font-size:22px">👨‍👩‍👧</div><div style="font-size:12px;font-weight:800">가족도 마찬가지</div><div style="font-size:12px">보조개 있음/없음, 귓볼 붙음/떨어짐처럼 확실히 구분되는 건 유전 규칙을 찾기 쉬워요.</div></div>
+          <div class="box"><div style="font-size:22px">🧪</div><div style="font-size:12px;font-weight:800">멘델의 방법</div><div style="font-size:12px">한 번에 <b>한 가지 특징만</b> 따로 보고 → 나중에 두 가지 함께 보는 순서로 실험했어요.</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🎲 3) 퍼넷 사각형 — 동전 던지기 같은 확률 게임</h3>
+        <div class="desc">아빠(Rr)와 엄마(Rr)가 만났을 때 아이가 어떻게 태어날지 표로 그려보는 게 <b>퍼넷 사각형</b>이에요. 동전 두 개 던지기와 똑같아요!</div>
+        <div class="fig">
+          <svg width="560" height="160" viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="160" rx="14" fill="#fff" stroke="#fed7aa"/>
+            <text x="280" y="18" text-anchor="middle" font-size="12" font-weight="900" fill="#9a3412">아빠 Rr × 엄마 Rr → 아이는? (R=둥근 우성, r=주름 열성)</text>
+            <g font-size="12" text-anchor="middle" font-weight="700">
+              <rect x="40" y="30" width="70" height="32" rx="6" fill="#f3f4f6" stroke="#9ca3af"/><text x="75" y="50">아빠\엄마</text>
+              <rect x="110" y="30" width="70" height="32" rx="6" fill="#dbeafe" stroke="#3b82f6"/><text x="145" y="50">R</text>
+              <rect x="180" y="30" width="70" height="32" rx="6" fill="#dbeafe" stroke="#3b82f6"/><text x="215" y="50">r</text>
+              <rect x="40" y="62" width="70" height="32" rx="6" fill="#ffedd5" stroke="#f97316"/><text x="75" y="82">R</text>
+              <rect x="110" y="62" width="70" height="32" rx="6" fill="#fef9c3" stroke="#eab308"/><text x="145" y="82">RR 둥근</text>
+              <rect x="180" y="62" width="70" height="32" rx="6" fill="#fef9c3" stroke="#eab308"/><text x="215" y="82">Rr 둥근</text>
+              <rect x="40" y="94" width="70" height="32" rx="6" fill="#ffedd5" stroke="#f97316"/><text x="75" y="114">r</text>
+              <rect x="110" y="94" width="70" height="32" rx="6" fill="#fef9c3" stroke="#eab308"/><text x="145" y="114">Rr 둥근</text>
+              <rect x="180" y="94" width="70" height="32" rx="6" fill="#e0e7ff" stroke="#6366f1"/><text x="215" y="114">rr 주름</text>
+            </g>
+            <g transform="translate(290,30)">
+              <rect x="0" y="0" width="250" height="96" rx="10" fill="#f0fdf4" stroke="#22c55e"/>
+              <text x="125" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#065f46">결과: 둥근 3 : 주름 1</text>
+              <text x="125" y="36" text-anchor="middle" font-size="12">주사위 4번 중 3번 둥근!</text>
+              <text x="125" y="54" text-anchor="middle" font-size="10" fill="#065f46">RR 1개, Rr 2개, rr 1개</text>
+              <text x="125" y="72" text-anchor="middle" font-size="10">→ 둥근 3/4, 주름 1/4</text>
+              <text x="125" y="86" text-anchor="middle" font-size="10" fill="#92400e">둥근 중 순수 RR은 1/3!</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 3 — 퍼넷 사각형: 아빠가 주는 카드 1장 × 엄마가 주는 카드 1장 조합</div>
+        </div>
+        <div class="analogy"><b>🎲 비유:</b> 아빠 주머니에 R카드/r카드 1장씩, 엄마도 1장씩 → 각자 1장 랜덤으로 내기. 그래서 아이는 <b>RR/Rr/Rr/rr 4가지 중 하나가 랜덤</b>으로 돼요!</div>
+      </div>
+
+      <div class="card">
+        <h3>👩‍❤️‍👨 4) 성별은 누가 정할까?</h3>
+        <div class="desc">엄마는 <b>X</b> 카드만, 아빠는 <b>X</b> 또는 <b>Y</b> 카드를 가지고 있어요. 아빠가 X를 주면 딸(XX), Y를 주면 아들(XY)이에요. 그래서 성별은 아빠 카드로 정해지는 거예요! (절대 엄마 탓이 아니에요)</div>
+        <div class="fig">
+          <svg width="560" height="90" viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="90" rx="14" fill="#fff" stroke="#e5e7eb"/>
+            <g text-anchor="middle">
+              <rect x="20" y="12" width="150" height="60" rx="10" fill="#fce7f3" stroke="#ec4899"/><text x="95" y="28" font-size="11" font-weight="800">엄마 XX</text><text x="95" y="44" font-size="12">→ 난자: X만 100%</text><text x="95" y="60" font-size="18">🥚</text>
+              <text x="190" y="44" font-size="18">＋</text>
+              <rect x="210" y="12" width="150" height="60" rx="10" fill="#dbeafe" stroke="#3b82f6"/><text x="285" y="28" font-size="11" font-weight="800">아빠 XY</text><text x="285" y="44" font-size="12">→ 정자: X 50% / Y 50%</text><text x="285" y="60" font-size="18">🏊‍♂️</text>
+              <text x="380" y="44" font-size="18">=</text>
+              <rect x="400" y="12" width="140" height="60" rx="10" fill="#f5f3ff" stroke="#8b5cf6"/><text x="470" y="28" font-size="11" font-weight="800">아이</text><text x="470" y="44" font-size="10">XX 딸 / XY 아들</text><text x="470" y="60" font-size="14">👧 50% / 👦 50%</text>
+            </g>
+          </svg>
+        </div>
+        <div class="quiz">
+          <b>🧠 1분 퀴즈 ①</b>
+          <div class="q">Q. 엄마 아빠 모두 보조개가 없는데 아이에게 보조개가 생겼다면, 보조개는 우성일까 열성일까?</div>
+          <div class="choices">힌트: “없는 부모에게서 있는 아이”가 태어났어요.</div>
+          <details><summary>정답 보기</summary><div style="font-size:12px;margin-top:6px;background:#fff;padding:8px;border-radius:8px"><b>열성!</b> 부모가 몰래 숨긴 열성 카드(a)를 둘 다 가지고 있었던 거예요. 부모 Aa × Aa → 아이 aa(보조개). 그래서 정상 부모에게서 발현 아이가 나오면 열성이에요. (시험 5번 공식!)</div></details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🌈 5) 돌연변이 — 나쁜 것만은 아니야!</h3>
+        <div class="desc"><b>돌연변이</b>는 설명서 책의 글자가 바뀌는 거예요. 가끔 나쁜 변화도 있지만, <b>새로운 글자 덕분에 다양한 생물이 생기는 재료</b>가 돼요. 흰 공작, 파란 장미 같은 특별한 아름다움도 돌연변이 덕분이에요. 대신 유전자 검사는 다른 사람의 비밀을 함부로 보거나 차별하면 안 돼요. <b>약속: 비밀 보장, 차별 금지!</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2장 별 ================= -->
+  <div class="chapter">
+    <div class="chapter-head" style="background:linear-gradient(90deg,#06b6d4,#0ea5e9)">
+      <div class="num">2</div>
+      <h2>밤하늘 전구들 — 별</h2>
+      <p>핵심 비유: 전구 색 + 손전등 거리</p>
+    </div>
+    <div class="chapter-body">
+
+      <div class="card">
+        <h3>🎨 1) 별의 색 = 온도계!</h3>
+        <div class="desc">별의 색은 <b>표면 온도</b>를 알려줘요. 뜨거울수록 파란색, 차가울수록 빨간색이에요. 우리 난로(빨강=뜨겁다)와 반대라서 헷갈려요!</div>
+        <div class="fig">
+          <svg width="640" height="90" viewBox="0 0 640 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="640" height="90" rx="14" fill="#fff" stroke="#e5e7eb"/>
+            <defs><linearGradient id="starGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#60a5fa"/><stop offset="30%" stop-color="#ffffff"/><stop offset="60%" stop-color="#facc15"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs>
+            <rect x="20" y="20" width="600" height="20" rx="10" fill="url(#starGrad)" stroke="#d1d5db"/>
+            <text x="40" y="58" font-size="11" font-weight="800" fill="#1e3a8a">🔵 파란 별 30,000℃ 가장 뜨거움!</text>
+            <text x="420" y="58" font-size="11" font-weight="800" fill="#7f1d1d">🔴 빨간 별 3,000℃ 차가움</text>
+            <text x="260" y="76" font-size="11" fill="#6b7280">태양은 노란 별 5,800℃ 중간쯤</text>
+            <text x="320" y="16" text-anchor="middle" font-size="11" fill="#374151">뜨거움 → 차가움 (분광형 O B A F G K M)</text>
+          </svg>
+          <div class="figcap">그림 4 — 별 색 온도계: 파랑=뜨거움, 빨강=차가움</div>
+        </div>
+        <div class="analogy"><b>🔥 비유:</b> 불을 생각해봐요. 가장 뜨거운 불꽃 중심은 파랗고, 조금 식은 겉불꽃은 빨개요. 별도 똑같아요!</div>
+      </div>
+
+      <div class="card">
+        <h3>🔦 2) 밝기 2가지 — 겉보기 vs 진짜 밝기</h3>
+        <div class="desc">밤에 멀리서 비추는 <b>큰 자동차 전조등</b>과 가까이서 비추는 <b>작은 손전등</b>이 똑같이 밝아 보일 수 있어요. 별도 그래요!</div>
+        <div class="compare">
+          <div class="box" style="background:#f0fdf4;border-color:#86efac">
+            <div style="font-size:11px;font-weight:800;color:#065f46">겉보기등급 (지구에서 본 밝기)</div>
+            <div style="font-size:28px">👀</div>
+            <div style="font-size:12px">지금 내 눈에만 보이는 밝기<br><b>거리 영향 받음</b></div>
+          </div>
+          <div class="box" style="background:#eff6ff;border-color:#93c5fd">
+            <div style="font-size:11px;font-weight:800;color:#1e40af">절대등급 (진짜 밝기)</div>
+            <div style="font-size:28px">💡</div>
+            <div style="font-size:12px">모두를 같은 거리(10pc)에 놓고 비교<br><b>진짜 광도</b></div>
+          </div>
+        </div>
+        <div class="desc" style="margin-top:8px">등급 숫자는 <b>작을수록 밝아요</b>! 1등급이 2등급보다 밝아요. 시험에 자주 나오는 함정이에요.</div>
+        <div class="fig">
+          <svg width="560" height="80" viewBox="0 0 560 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="80" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <text x="280" y="16" text-anchor="middle" font-size="11" font-weight="800">예: A별과 B별이 겉보기등급 1등으로 같이 보여도</text>
+            <g text-anchor="middle" font-size="11">
+              <rect x="30" y="24" width="220" height="40" rx="8" fill="#fef3c7" stroke="#fbbf24"/><text x="140" y="38" font-weight="800">A별 M -5등 진짜 엄청 밝음!</text><text x="140" y="54" font-size="10">→ 사실은 아주 멀리 있음</text>
+              <rect x="310" y="24" width="220" height="40" rx="8" fill="#dbeafe" stroke="#60a5fa"/><text x="420" y="38" font-weight="800">B별 M 2등 진짜 어두움</text><text x="420" y="54" font-size="10">→ 가까이 있어서 밝아 보임</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📏 3) 별까지 거리 재기 — 연주시차 (지구 공전 이용)</h3>
+        <div class="desc">엄지손가락을 펴고 왼쪽 눈, 오른쪽 눈 번갈아 뜨면 엄지가 움직여 보이죠? <b>시차</b>예요. 지구도 1월에 보는 별과 7월에 보는 별 위치 차이를 재서 거리를 계산해요. 차이가 클수록 가까운 별!</div>
+        <div class="fig">
+          <svg width="560" height="110" viewBox="0 0 560 110" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="110" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <circle cx="90" cy="55" r="12" fill="#facc15" stroke="#eab308"/><text x="90" y="58" text-anchor="middle" font-size="9" font-weight="800">태양</text>
+            <ellipse cx="90" cy="55" rx="65" ry="26" fill="none" stroke="#93c5fd" stroke-dasharray="5 4"/>
+            <circle cx="40" cy="48" r="5" fill="#60a5fa"/><text x="40" y="36" text-anchor="middle" font-size="9">1월 지구</text>
+            <circle cx="155" cy="62" r="5" fill="#60a5fa"/><text x="155" y="80" text-anchor="middle" font-size="9">7월 지구</text>
+            <circle cx="480" cy="28" r="7" fill="#fff" stroke="#1e40af" stroke-width="1.5"/><text x="480" y="31" text-anchor="middle" font-size="9">★</text>
+            <line x1="40" y1="48" x2="480" y2="28" stroke="#cbd5e1"/><line x1="155" y1="62" x2="480" y2="28" stroke="#cbd5e1"/>
+            <text x="280" y="100" text-anchor="middle" font-size="11">공식: 거리(pc) = 1 ÷ 연주시차(″) → 0.1″면 10pc!</text>
+          </svg>
+          <div class="figcap">그림 5 — 엄지 시차처럼 지구가 움직이며 별을 다른 각도에서 본다</div>
+        </div>
+        <div class="quiz">
+          <b>🧠 1분 퀴즈 ②</b>
+          <div class="q">Q. 연주시차가 0.1″인 별과 0.01″인 별 중 더 가까운 별은?</div>
+          <details><summary>정답 보기</summary><div style="font-size:12px;margin-top:6px;background:#fff;padding:8px;border-radius:8px"><b>0.1″ 별이 더 가까워요!</b> 시차각이 클수록 가깝고, 1÷0.1=10pc vs 1÷0.01=100pc → 10pc가 더 가까워요.</div></details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📊 4) 별들의 성적표 — HR도</h3>
+        <div class="desc">HR도는 별들의 <b>성적표</b>예요. 가로축은 온도(왼쪽이 뜨거움), 세로축은 밝기(위가 밝음). 대부분 별은 대각선 <b>주계열</b> 띠에 모여 있어요. 우리 태양도 그 중간쯤!</div>
+        <div class="fig">
+          <svg width="560" height="210" viewBox="0 0 560 210" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="210" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <text x="280" y="18" text-anchor="middle" font-size="12" font-weight="900">별들의 성적표 HR도</text>
+            <line x1="60" y1="170" x2="500" y2="170" stroke="#111827" stroke-width="1.5"/><line x1="60" y1="30" x2="60" y2="170" stroke="#111827" stroke-width="1.5"/>
+            <text x="280" y="190" text-anchor="middle" font-size="11">온도 → 차가움(오른쪽) 뜨거움(왼쪽)</text>
+            <text x="14" y="100" text-anchor="middle" font-size="11" transform="rotate(-90 14 100)">밝기 ↑</text>
+            <ellipse cx="280" cy="105" rx="165" ry="42" fill="#dbeafe" opacity="0.45" stroke="#3b82f6" stroke-dasharray="5 4"/>
+            <text x="280" y="108" text-anchor="middle" font-size="11" font-weight="800" fill="#1e40af">주계열 (별 90%가 여기에!)</text>
+            <text x="200" y="128" text-anchor="middle" font-size="10" fill="#1e40af">☀️ 태양은 여기!</text>
+            <ellipse cx="430" cy="50" rx="42" ry="16" fill="#fee2e2" stroke="#ef4444"/><text x="430" y="54" text-anchor="middle" font-size="10">거성(크고 밝음)</text>
+            <ellipse cx="120" cy="60" rx="32" ry="13" fill="#fef3c7" stroke="#f59e0b"/><text x="120" y="63" text-anchor="middle" font-size="9">백색왜성(작고 어두움)</text>
+            <g fill="#1e40af"><circle cx="410" cy="92" r="3"/><circle cx="310" cy="102" r="3"/><circle cx="190" cy="116" r="3"/></g>
+          </svg>
+          <div class="figcap">그림 6 — HR도: 주계열이 메인, 거성과 백색왜성은 특별반</div>
+        </div>
+        <div class="analogy"><b>🏫 비유:</b> 주계열=일반 학급(대부분 여기), 거성=농구부(크고 눈에 띔), 백색왜성=작은 보석(뜨겁지만 작아 어두움)</div>
+      </div>
+
+      <div class="card">
+        <h3>⏳ 5) 별의 일생 — 사람처럼 태어나고 죽어요</h3>
+        <div class="desc">작은 별(태양 정도): <b>성운(구름) → 아기별 → 주계열(어른) → 적색거성(할아버지) → 백색왜성(작은 별똥)</b><br>큰 별(태양 8배 이상): 마지막에 <b>초신성 펑! → 중성자별/블랙홀</b></div>
+        <div class="fig">
+          <svg width="620" height="70" viewBox="0 0 620 70" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="620" height="70" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <g text-anchor="middle" font-size="11" font-weight="700">
+              <text x="60" y="18">☁️ 성운</text><text x="60" y="34" font-size="9" fill="#6b7280">별 구름</text>
+              <text x="130" y="30">→</text>
+              <text x="190" y="18">⭐ 주계열</text><text x="190" y="34" font-size="9" fill="#6b7280">어른 100억년</text>
+              <text x="260" y="30">→</text>
+              <text x="320" y="18">🔴 적색거성</text><text x="320" y="34" font-size="9" fill="#6b7280">부푼 할아버지</text>
+              <text x="390" y="30">→</text>
+              <text x="450" y="18">⚪ 백색왜성</text><text x="450" y="34" font-size="9" fill="#6b7280">작은 다이아</text>
+              <text x="510" y="30">|</text>
+              <text x="570" y="18">큰 별은</text><text x="570" y="34" font-size="9">💥초신성→블랙홀</text>
+            </g>
+            <text x="310" y="60" text-anchor="middle" font-size="10" fill="#6b7280">질량 큰 별일수록 연료 빨리 써서 수명 짧아요 (큰 차가 기름 빨리 먹는 것처럼)</text>
+          </svg>
+        </div>
+        <div class="quiz">
+          <b>🧠 1분 퀴즈 ③</b>
+          <div class="q">Q. 같은 별자리(예: 오리온) 별들은 가까이 붙어 있을까?</div>
+          <details><summary>정답 보기</summary><div style="font-size:12px;margin-top:6px;background:#fff;padding:8px;border-radius:8px"><b>아니요! 시선 방향만 비슷할 뿐, 실제 거리는 엄청 달라요.</b> 천장에 붙은 스티커처럼 앞에서 보면 같이 보여도, 실제로는 앞뒤로 멀리 떨어져 있어요. 2차원 그림 vs 3차원 공간!</div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 3장 은하·우주 ================= -->
+  <div class="chapter">
+    <div class="chapter-head" style="background:linear-gradient(90deg,#8b5cf6,#a78bfa)">
+      <div class="num">3</div>
+      <h2>별들의 도시와 풍선 우주 — 은하와 우주</h2>
+      <p>핵심 비유: 도시 + 풍선빵</p>
+    </div>
+    <div class="chapter-body">
+
+      <div class="card">
+        <h3>🏙️ 1) 은하 = 별들의 도시</h3>
+        <div class="desc">은하는 <b>별 1000억 개가 모인 도시</b>예요. 우리은하는 옆에서 보면 얇은 접시(은하수), 위에서 보면 소용돌이(나선은하)예요. 우리는 그 도시의 변두리(오리온 팔)에 살아요. 중심이 아니에요!</div>
+        <div class="fig">
+          <svg width="600" height="120" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="600" height="120" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <text x="100" y="16" text-anchor="middle" font-size="11" font-weight="800">A 타원은하 — 동그란 도시</text>
+            <ellipse cx="100" cy="60" rx="50" ry="36" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/><text x="100" y="64" text-anchor="middle" font-size="9">늙은 별 많음</text>
+            <text x="300" y="16" text-anchor="middle" font-size="11" font-weight="800">B 나선은하 — 소용돌이 도시 (우리은하)</text>
+            <g transform="translate(300,60)">
+              <ellipse cx="0" cy="0" rx="70" ry="26" fill="none" stroke="#3b82f6" stroke-width="1.2"/>
+              <ellipse cx="0" cy="0" rx="16" ry="9" fill="#dbeafe" stroke="#3b82f6"/>
+              <path d="M -16 2 Q -34 14 -48 7" fill="none" stroke="#3b82f6" stroke-width="1.2"/><path d="M 16 2 Q 34 14 48 7" fill="none" stroke="#3b82f6" stroke-width="1.2"/>
+              <circle cx="35" cy="8" r="3" fill="#facc15" stroke="#eab308"/><text x="35" y="22" text-anchor="middle" font-size="8">☀️ 우리</text>
+            </g>
+            <text x="500" y="16" text-anchor="middle" font-size="11" font-weight="800">C 불규칙 — 모양 없는 마을</text>
+            <path d="M 460 50 Q 480 32 505 40 Q 532 52 525 72 Q 500 84 470 70 Z" fill="#e0e7ff" stroke="#6366f1"/><text x="500" y="100" text-anchor="middle" font-size="9" fill="#6b7280">가스 많아 별 탄생 활발</text>
+          </svg>
+          <div class="figcap">그림 7 — 허블의 은하 3형제: 동그란/소용돌이/불규칙</div>
+        </div>
+        <div class="analogy"><b>🏙️ 비유:</b> 타원은하=조용한 은퇴 마을(늙은 별), 나선은하=활기찬 대도시(젊은 별+늙은 별), 불규칙=공사 중인 마을(새 별 탄생 중)</div>
+      </div>
+
+      <div class="card">
+        <h3>🎈 2) 우주는 커지는 풍선! — 팽창과 허블 법칙</h3>
+        <div class="desc">풍선에 점을 찍고 부풀리면 모든 점이 서로 멀어지죠? 우주도 그래요. <b>멀리 있는 은하일수록 더 빨리 멀어져요</b>. 이걸 <b>허블 법칙</b>이라고 해요: <code>v = H₀ × d</code> (거리 2배면 속도 2배!)</div>
+        <div class="fig">
+          <svg width="560" height="130" viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="130" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <!-- 풍선 비유 -->
+            <g transform="translate(10,10)">
+              <rect x="0" y="0" width="240" height="100" rx="10" fill="#fef3c7" stroke="#fbbf24"/>
+              <text x="120" y="16" text-anchor="middle" font-size="11" font-weight="800">풍선 비유</text>
+              <ellipse cx="70" cy="55" rx="38" ry="28" fill="#fff" stroke="#e5e7eb"/><text x="70" y="58" text-anchor="middle" font-size="8">작은 풍선</text>
+              <circle cx="55" cy="50" r="2" fill="#ef4444"/><circle cx="75" cy="60" r="2" fill="#3b82f6"/><circle cx="65" cy="70" r="2" fill="#22c55e"/>
+              <text x="140" y="58" font-size="14">→</text>
+              <ellipse cx="195" cy="55" rx="52" ry="38" fill="#fff" stroke="#e5e7eb"/><circle cx="170" cy="42" r="2" fill="#ef4444"/><circle cx="205" cy="60" r="2" fill="#3b82f6"/><circle cx="185" cy="78" r="2" fill="#22c55e"/>
+              <text x="120" y="96" text-anchor="middle" font-size="9" fill="#92400e">부풀수록 점 사이 거리 모두 증가 — 중심 없음!</text>
+            </g>
+            <g transform="translate(270,10)">
+              <rect x="0" y="0" width="280" height="100" rx="10" fill="#eff6ff" stroke="#93c5fd"/>
+              <text x="140" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#1e40af">허블 그래프 (실제 관측)</text>
+              <line x1="20" y1="80" x2="220" y2="80" stroke="#111827" stroke-width="1.2"/><line x1="20" y1="20" x2="20" y2="80" stroke="#111827" stroke-width="1.2"/>
+              <text x="120" y="94" text-anchor="middle" font-size="9">거리 →</text><text x="10" y="50" font-size="9" transform="rotate(-90 10 50)">속도↑</text>
+              <g fill="#ef4444"><circle cx="50" cy="70" r="2.5"/><circle cx="80" cy="62" r="2.5"/><circle cx="120" cy="52" r="2.5"/><circle cx="170" cy="38" r="2.5"/></g>
+              <line x1="30" y1="74" x2="190" y2="32" stroke="#1e40af" stroke-width="1.5"/>
+              <text x="140" y="28" font-size="9" fill="#1e40af">멀수록 빠름!</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 8 — 왼쪽: 풍선 비유(어디서 봐도 팽창), 오른쪽: 실제 관측 그래프</div>
+        </div>
+        <div class="desc">예) 허블상수 70, 100Mpc 거리 은하 → <code>70×100=7000 km/s</code>로 멀어져요. 빛의 2% 속도!</div>
+        <div class="analogy"><b>⚠️ 중요:</b> “우주가 팽창하면 중심이 어디예요?” → <b>중심 없어요!</b> 풍선 표면처럼 어디서 봐도 모두 멀어져요. 우리가 중심이 아니에요.</div>
+      </div>
+
+      <div class="card">
+        <h3>💥 3) 빅뱅 — 우주의 생일 (138억 년 전)</h3>
+        <div class="desc">우주는 138억 년 전 <b>아주 뜨겁고 빽빽한 한 점</b>에서 시작해 팽창하며 식었어요. 증거 2가지가 있어요!</div>
+        <div class="compare">
+          <div class="box" style="background:#fef2f2;border-color:#fca5a5">
+            <div style="font-size:20px">🔴</div><div style="font-size:12px;font-weight:800">증거 1: 적색편이</div><div style="font-size:11px">모든 은하가 멀어짐(빛이 빨갛게 변함) → 우주가 커지고 있다!</div>
+          </div>
+          <div class="box" style="background:#eff6ff;border-color:#93c5fd">
+            <div style="font-size:20px">📻</div><div style="font-size:12px;font-weight:800">증거 2: 우주배경복사</div><div style="font-size:11px">어디서나 들리는 2.7K 전파 잡음 → 빅뱅의 남은 열!</div>
+          </div>
+        </div>
+        <div class="fig">
+          <svg width="640" height="70" viewBox="0 0 640 70" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="640" height="70" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <g text-anchor="middle" font-size="11" font-weight="700">
+              <text x="70" y="18">💥 빅뱅</text><text x="70" y="32" font-size="9" fill="#6b7280">고온·고밀도</text>
+              <text x="130" y="24">→</text>
+              <text x="190" y="18">🌡️ 팽창·냉각</text><text x="190" y="32" font-size="9" fill="#6b7280">식으며 커짐</text>
+              <text x="250" y="24">→</text>
+              <text x="310" y="18">⚛️ 원자 생성</text><text x="310" y="32" font-size="9" fill="#6b7280">38만년 후</text>
+              <text x="370" y="24">→</text>
+              <text x="430" y="18">⭐ 별·은하</text><text x="430" y="32" font-size="9" fill="#6b7280">수억년 후</text>
+              <text x="490" y="24">→</text>
+              <text x="550" y="18">🌌 현재 우주</text><text x="550" y="32" font-size="9" fill="#6b7280">138억년 후</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 9 — 빅뱅 후 시간 순서: 뜨거운 점 → 식으며 원자 → 별·은하 → 지금</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>👻 4) 우리가 모르는 게 더 많아 — 암흑물질과 암흑에너지</h3>
+        <div class="desc">우주를 100으로 나누면 우리가 보는 별과 가스는 <b>5</b>뿐! 나머지는 <b>암흑물질 27(보이지 않지만 중력 있음) + 암흑에너지 68(팽창을 더 빠르게!)</b>이에요. 아직 수수께끼라 과학자들이 열심히 연구 중이에요. 제임스웹 망원경이 그 비밀을 찾고 있어요!</div>
+        <div class="fig">
+          <svg width="560" height="90" viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="90" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <text x="280" y="16" text-anchor="middle" font-size="11" font-weight="800">우주의 재료 (100으로 나누면)</text>
+            <g transform="translate(20,24)">
+              <rect x="0" y="0" width="280" height="28" rx="6" fill="#ede9fe" stroke="#8b5cf6"/><text x="140" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#6d28d9">암흑에너지 68 — 팽창 가속!</text>
+              <rect x="0" y="32" width="120" height="28" rx="6" fill="#1f2937" stroke="#111827"/><text x="60" y="50" text-anchor="middle" font-size="11" fill="#fff">암흑물질 27</text>
+              <rect x="120" y="32" width="30" height="28" rx="6" fill="#facc15" stroke="#eab308"/><text x="135" y="50" text-anchor="middle" font-size="11" font-weight="800">별 5</text>
+              <text x="280" y="70" text-anchor="middle" font-size="10" fill="#6b7280">우리가 보는 건 5뿐! 나머지 95는 아직 비밀</text>
+            </g>
+            <g transform="translate(360,24)">
+              <rect x="0" y="0" width="180" height="60" rx="10" fill="#f0fdf4" stroke="#86efac"/>
+              <text x="90" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#065f46">과학은 모르는 걸 인정하는 것!</text>
+              <text x="90" y="34" text-anchor="middle" font-size="10">“모른다 → 궁금하다 → 탐구!”</text>
+              <text x="90" y="48" text-anchor="middle" font-size="10">이게 과학자의 마음이에요</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔬 5) 과학은 절대 진리가 아니에요</h3>
+        <div class="desc">“과학 이론이 바뀌었다”는 뉴스를 보면 “과학은 틀렸네?”라고 생각할 수 있지만, 사실은 반대예요. <b>새로운 증거가 나오면 가설을 검증하고 수정하는 게 과학의 힘</b>이에요. 증거로 계속 업데이트되는 가장 좋은 설명이 바로 과학이에요!</div>
+        <div class="fig" style="background:#fff">
+          <svg width="560" height="70" viewBox="0 0 560 70" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="560" height="70" rx="12" fill="#fff" stroke="#e5e7eb"/>
+            <g text-anchor="middle" font-size="11" font-weight="700">
+              <rect x="20" y="12" width="100" height="40" rx="8" fill="#fef3c7" stroke="#fbbf24"/><text x="70" y="28">🤔 가설 세우기</text><text x="70" y="42" font-size="9">“이럴까?”</text>
+              <text x="135" y="34">→</text>
+              <rect x="150" y="12" width="100" height="40" rx="8" fill="#dbeafe" stroke="#60a5fa"/><text x="200" y="28">🔍 검증·실험</text><text x="200" y="42" font-size="9">관측·실험</text>
+              <text x="265" y="34">→</text>
+              <rect x="280" y="12" width="100" height="40" rx="8" fill="#d1fae5" stroke="#34d399"/><text x="330" y="28">📄 증거</text><text x="330" y="42" font-size="9">데이터</text>
+              <text x="395" y="34">→</text>
+              <rect x="410" y="12" width="130" height="40" rx="8" fill="#ede9fe" stroke="#8b5cf6"/><text x="475" y="28">🔄 수정·발전</text><text x="475" y="42" font-size="9">더 좋은 설명으로!</text>
+            </g>
+          </svg>
+          <div class="figcap">그림 10 — 과학의 사이클: 가설 → 검증 → 증거 → 수정 (계속!)</div>
+        </div>
+        <div class="quiz">
+          <b>🧠 마지막 퀴즈 ④</b>
+          <div class="q">Q. “빅뱅 이론이 수정됐다”는 말은 과학이 실패했다는 뜻일까?</div>
+          <details><summary>정답 보기</summary><div style="font-size:12px;margin-top:6px;background:#fff;padding:8px;border-radius:8px"><b>아니요, 과학이 잘 작동한다는 증거예요!</b> 새로운 망원경으로 더 자세히 보니 더 정확하게 고친 거예요. 지도 앱이 업데이트되는 것처럼 과학도 증거로 계속 업데이트돼요. 그래서 과학을 믿을 수 있는 거예요.</div></details>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="chapter" style="border-color:#fde68a;background:#fffbeb">
+    <div class="chapter-head" style="background:linear-gradient(90deg,#f59e0b,#facc15);color:#451a03">
+      <div class="num" style="background:#fff">✓</div>
+      <h2 style="color:#451a03">다 읽었다면? — 스스로 정리해 보기</h2>
+      <p style="color:#92400e">연필로 빈칸 채우기</p>
+    </div>
+    <div class="chapter-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="box" style="border:2px solid #f59e0b;background:#fff;border-radius:12px;padding:10px">
+          <div style="font-weight:800;font-size:12px">📝 유전 한 문장 정리</div>
+          <div style="font-size:12px;margin-top:6px">나는 부모님께 염색체 ___권을 받고, DNA 알파벳 ___개로 쓰인 유전자 덕분에 가족을 닮았어요. 돌연변이는 ___을 만드는 재료예요.</div>
+          <details style="margin-top:6px"><summary style="font-size:11px">정답</summary><div style="font-size:12px;background:#fffbeb;padding:6px;border-radius:6px">46권, 4개(A/T/C/G), 새로운 유전자(다양성)</div></details>
+        </div>
+        <div class="box" style="border:2px solid #06b6d4;background:#fff;border-radius:12px;padding:10px">
+          <div style="font-weight:800;font-size:12px">⭐ 별 한 문장 정리</div>
+          <div style="font-size:12px;margin-top:6px">별의 색은 ___을, 밝기는 등급 숫자가 ___수록 밝음을, 거리는 ___가 클수록 가깝게 알려줘요.</div>
+          <details style="margin-top:6px"><summary style="font-size:11px">정답</summary><div style="font-size:12px;background:#ecfeff;padding:6px;border-radius:6px">온도, 작을, 연주시차</div></details>
+        </div>
+        <div class="box" style="border:2px solid #8b5cf6;background:#fff;border-radius:12px;padding:10px">
+          <div style="font-weight:800;font-size:12px">🌌 우주 한 문장 정리</div>
+          <div style="font-size:12px;margin-top:6px">우주는 ___년 전 빅뱅으로 시작해 ___하며 식었고, 은하들은 멀수록 ___게 멀어져요. 우리는 ___ 5뿐!</div>
+          <details style="margin-top:6px"><summary style="font-size:11px">정답</summary><div style="font-size:12px;background:#faf5ff;padding:6px;border-radius:6px">138억, 팽창, 빠르게, 보통물질</div></details>
+        </div>
+        <div class="box" style="border:2px dashed #9ca3af;background:#f9fafb;border-radius:12px;padding:10px;display:grid;place-items:center;text-align:center">
+          <div style="font-size:13px;font-weight:800">🎉 다 했다면?</div>
+          <div style="font-size:12px">이제 중3 언니·오빠 시험지를 다시 보면<br>어려운 단어가 <b>친구처럼</b> 보일 거예요!<br>용기 내어 도전해 보세요 💪</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>📚 12살을 위한 쉬운 과학 설명서 — 중학교 3학년 과학(유전·별·우주) 연계 / 교육과정 성취기준 기반</span>
+    <span>제작: 과학과 교사 · 그림: 지니와 코스모 · 인쇄하여 가정에서 함께 읽어보세요</span>
+  </div>
+</div>
+</body>
+</html>
