@@ -30,7 +30,7 @@ describe("Nobel Reasoning v5", ()=>{
     const reg = new BrainRegistry();
     const { createDefaultBrains } = await import("../src/brains/brains.js");
     for(const b of createDefaultBrains(mem)) reg.register(b);
-    expect(reg.all().length).toBe(57);
+    expect(reg.all().length).toBe(60);
     expect(reg.get("genius-physics-nobel")).toBeDefined();
     expect(reg.get("genius-literature-nobel")!.version).toBe("5.0.0");
     const council = new Council(reg);

@@ -71,6 +71,21 @@ export function createFleetProbeFn(opts: {
   }
 
   const probeFn = async (harness: Tree, label: string): Promise<RolloutView> => {
+    // 0) SecurityGate — blocked면 Fleet 차단, directProbe로 fallback + 차단 사유 기록
+    try {
+      const { shouldBlockFleetTask } = await import("./guard.js");
+      const { block, reason } = shouldBlockFleetTask(harness, "pr");
+      if (block) {
+        return {
+          label,
+          runId: `blocked-${randomUUID().slice(0, 8)}`,
+          ok: false,
+          delivered: false,
+          trajectory: `[SecurityGate BLOCKED ${label}] ${reason} — Fleet task 생성 차단, 수정 후 재시도`,
+          error: reason,
+        };
+      }
+    } catch {}
     // 1) Fleet Task 생성 — spec에 harness diff 요약 포함
     const harnessKeys = Object.keys(harness).join(", ").slice(0, 100);
     const spec = `[Harness² probe ${label}] task=${opts.engineTaskId} harnessKeys=${harnessKeys || "(empty)"} — ${opts.taskPrompt.slice(0, 80)}`;

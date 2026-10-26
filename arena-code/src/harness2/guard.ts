@@ -211,50 +211,97 @@ export function guardHint(report: GuardReport): string | null {
   return "single-candidate-try";
 }
 
-// --- Security stage gate (Gap #11: 검사 시점별) ---
-const SECRET_PATTERNS: Array<{ re: RegExp; msg: string }> = [
-  { re: /AKIA[0-9A-Z]{16}/, msg: "AWS Access Key 노출 의심 (AKIA...)" },
-  { re: /password\s*[:=]\s*["'][^"']{3,}["']/i, msg: "하드코딩 password 의심" },
-  { re: /api[_-]?key\s*[:=]\s*["'][^"']+["']/i, msg: "하드코딩 api_key 의심" },
-  { re: /secret\s*[:=]\s*["'][^"']{4,}["']/i, msg: "하드코딩 secret 의심" },
-  { re: /BEGIN (RSA )?PRIVATE KEY/, msg: "Private Key 노출" },
+// --- Security stage gate (Gap #11: 검사 시점별) — 전 영역 1위 흡수 2026-10-27 ---
+// Codex sandbox.rs + Ghidra 문자열 DB + Claude Code permission gate 통합
+const SECRET_PATTERNS: Array<{ re: RegExp; msg: string; severity: "critical" | "high" }> = [
+  { re: /AKIA[0-9A-Z]{16}/, msg: "AWS Access Key 노출 (AKIA...)", severity: "critical" },
+  { re: /aws_secret_access_key\s*[:=]\s*[\"'][^\"']{20,}[\"']/i, msg: "AWS Secret Key 하드코딩", severity: "critical" },
+  { re: /ghp_[0-9a-zA-Z]{36,}/, msg: "GitHub PAT 노출 (ghp_)", severity: "critical" },
+  { re: /github_pat_[0-9a-zA-Z_]{60,}/, msg: "GitHub Fine-grained PAT 노출", severity: "critical" },
+  { re: /gho_[0-9a-zA-Z]{36,}/, msg: "GitHub OAuth Token 노출 (gho_)", severity: "critical" },
+  { re: /password\s*[:=]\s*[\"'][^\"']{3,}[\"']/i, msg: "하드코딩 password 의심", severity: "high" },
+  { re: /api[_-]?key\s*[:=]\s*[\"'][^\"']+[\"']/i, msg: "하드코딩 api_key 의심", severity: "high" },
+  { re: /secret\s*[:=]\s*[\"'][^\"']{4,}[\"']/i, msg: "하드코딩 secret 의심", severity: "high" },
+  { re: /BEGIN (RSA |DSA |EC )?PRIVATE KEY/, msg: "Private Key 노출", severity: "critical" },
+  { re: /BEGIN OPENSSH PRIVATE KEY/, msg: "OpenSSH Private Key 노출", severity: "critical" },
+  { re: /xox[bpras]-[0-9A-Za-z-]{10,}/, msg: "Slack Token 노출 (xox...)", severity: "critical" },
+  { re: /https:\/\/discord\.com\/api\/webhooks\/[0-9]+\/[A-Za-z0-9_-]+/, msg: "Discord Webhook 노출", severity: "high" },
+  { re: /postgres:\/\/[^\s:]+:[^\s@]+@[^\s]+/i, msg: "Postgres connection string 노출", severity: "critical" },
+  { re: /mongodb(\+srv)?:\/\/[^\s:]+:[^\s@]+@[^\s]+/i, msg: "MongoDB connection string 노출", severity: "critical" },
+  { re: /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/, msg: "JWT 토큰 하드코딩 의심", severity: "high" },
+  { re: /Bearer\s+[A-Za-z0-9._-]{20,}/, msg: "Bearer Token 하드코딩 의심", severity: "high" },
+  { re: /rm\s+-rf\s+\//, msg: "위험 명령: rm -rf / (루트 삭제)", severity: "critical" },
+  { re: /:\(\)\s*\{\s*:\|\:&\s*\}/, msg: "위험 명령: fork bomb", severity: "critical" },
+  { re: /mkfs\./, msg: "위험 명령: mkfs 포맷", severity: "critical" },
 ];
 
 const WRITE_PATTERNS = [...SECRET_PATTERNS];
 const COMMIT_PATTERNS: typeof SECRET_PATTERNS = [
   ...WRITE_PATTERNS,
-  { re: /\bTODO\b|\bFIXME\b/, msg: "커밋 단계: TODO/FIXME 잔존 — 미완성 코드" },
+  { re: /\bTODO\b|\bFIXME\b/, msg: "커밋 단계: TODO/FIXME 잔존", severity: "high" },
+  { re: /console\.log\(/, msg: "커밋 단계: console.log 잔존", severity: "high" },
+  { re: /debugger;/, msg: "커밋 단계: debugger 잔존", severity: "high" },
+];
+const PR_PATTERNS: typeof SECRET_PATTERNS = [
+  ...COMMIT_PATTERNS,
+  { re: /sk-[A-Za-z0-9]{20,}/, msg: "PR 단계: OpenAI Key 노출 (sk-)", severity: "critical" },
+  { re: /xai-[A-Za-z0-9]{20,}/, msg: "PR 단계: xAI Key 노출", severity: "critical" },
 ];
 export type SecurityStage = "write" | "commit" | "pr";
 
-export function securityGate(tree: Tree, stage: SecurityStage, opts?: { spec?: string }): GuardReport {
+export interface SecurityGateReport extends GuardReport {
+  blocked: boolean;
+  stage: SecurityStage;
+  criticalCount: number;
+}
+
+export function securityGate(tree: Tree, stage: SecurityStage, opts?: { spec?: string }): SecurityGateReport {
   const issues: string[] = [];
   const warnings: string[] = [];
   const allText = Object.values(tree).join("\n\n");
-  let patterns: Array<{ re: RegExp; msg: string }> = [];
+  let patterns: Array<{ re: RegExp; msg: string; severity: "critical" | "high" }> = [];
   if (stage === "write") patterns = WRITE_PATTERNS;
   else if (stage === "commit") patterns = COMMIT_PATTERNS;
-  else patterns = [...COMMIT_PATTERNS]; // pr는 commit + spec
+  else patterns = PR_PATTERNS;
 
-  for (const { re, msg } of patterns) {
-    if (re.test(allText)) warnings.push(`[${stage}] ${msg}`);
+  let criticalCount = 0;
+  for (const { re, msg, severity } of patterns) {
+    if (re.test(allText)) {
+      const label = `[${stage}] ${msg}`;
+      if (severity === "critical") criticalCount++;
+      if (stage === "write") warnings.push(label);
+      else {
+        if (severity === "critical") issues.push(label);
+        else warnings.push(label);
+      }
+    }
   }
 
-  // pr 단계는 spec 검사 추가 (two-axis spec 로직 재사용)
   if (stage === "pr" && opts?.spec) {
     const specReport = checkSpecAxis(tree, opts.spec);
     issues.push(...specReport.issues);
     warnings.push(...specReport.warnings);
   }
 
-  // pr 단계에서 CODING_STANDARDS 검사도 포함 (standards axis 경고 병합)
   if (stage === "pr") {
     const std = checkStandardsAxis(tree);
-    // standards의 issues는 이미 security 이슈로 간주하지 않고 warnings로만 병합 (기존 guard와 차별)
     warnings.push(...std.warnings.filter(w => w.includes("Standards") || w.includes("Fowler")));
     if (std.issues.length) issues.push(...std.issues);
   }
 
-  return { ok: issues.length === 0, issues, warnings, checkedAt: new Date().toISOString() };
+  if (stage !== "write" && warnings.length >= 2 && issues.length === 0) {
+    const toPromote = warnings.shift()!;
+    issues.push(`[promoted] ${toPromote}`);
+  }
+
+  const blocked = criticalCount > 0 || issues.length > 0;
+  return { ok: issues.length === 0, issues, warnings, checkedAt: new Date().toISOString(), blocked, stage, criticalCount };
 }
 
+export function shouldBlockFleetTask(tree: Tree, stage: SecurityStage = "pr"): { block: boolean; reason: string } {
+  const report = securityGate(tree, stage);
+  if (report.blocked) {
+    return { block: true, reason: `SecurityGate blocked: ${report.issues.slice(0,2).join("; ")}${report.criticalCount ? ` (critical:${report.criticalCount})` : ""}` };
+  }
+  return { block: false, reason: "" };
+}
