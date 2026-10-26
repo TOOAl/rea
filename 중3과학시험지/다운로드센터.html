@@ -10,23 +10,27 @@
   .wrap{max-width:900px;margin:0 auto;padding:20px}
   h1{font-family:'Jua',sans-serif;font-size:28px;text-align:center;margin:10px 0 4px}
   .sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:18px}
+  .alert{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.6}
+  .alert b{color:#991b1b}
   .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
   @media(max-width:780px){.grid{grid-template-columns:1fr}}
   .card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
   .badge{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;display:inline-block}
-  .b1{background:#dbeafe;color:#1e40af}.b2{background:#fee2e2;color:#991b1b}.b3{background:#fef3c7;color:#92400e}
+  .b1{background:#dbeafe;color:#1e40af}.b2{background:#fee2e2;color:#991b1b}.b3{background:#fef3c7;color:#92400e}.b4{background:#dcfce7;color:#14532d}
   .card h3{margin:0;font-size:15px}
   .card p{margin:0;font-size:12.5px;color:#475569;line-height:1.6}
   .meta{font-size:11px;color:#94a3b8}
   .btn{display:block;text-align:center;padding:10px 12px;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;color:#fff}
   .btn.pdf{background:#1e40af}
   .btn.html{background:#0f172a}
+  .btn.zip{background:#15803d}
   .btn:hover{opacity:.9}
   .row{display:flex;gap:8px}
   .row a{flex:1}
   .info{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-top:16px}
   .info h4{margin:0 0 6px;font-size:13px}
   .info ul{margin:6px 0 0 16px;font-size:12px;color:#334155;line-height:1.7}
+  .info code{background:#f1f5f9;padding:2px 6px;border-radius:6px;font-size:11px}
   .footer{text-align:center;margin-top:16px;font-size:11px;color:#94a3b8}
 </style>
 </head>
@@ -35,27 +39,37 @@
   <h1>📥 중3 과학 시험지 다운로드 센터</h1>
   <p class="sub">2026학년도 2학기 · 유전 / 별 / 은하와 우주 · 교육부 성취기준 준거 · A4 인쇄 최적화</p>
 
+  <div class="alert">
+    <b>⚠️ 샌드박스 미리보기 오류 안내:</b> 이 페이지의 <code>https://3000-xxxx.e2b.app</code> 미리보기 링크는 E2B 보안 정책상 <code>e2b-traffic-access-token</code> 헤더가 없으면 브라우저에서 직접 열 때 <code>403 MISSING TRAFFIC ACCESS TOKEN</code>이 뜹니다.<br>
+    <b>항상 되는 다운로드:</b> 아래 <b>GitHub 영구 링크</b>를 사용하세요. GitHub에 커밋되어 있어 샌드박스가 꺼져도 언제나 받을 수 있습니다. (Arena 파일 뷰어의 다운로드 버튼도 동일하게 작동합니다)
+  </div>
+
   <div class="grid">
     <!-- 1 -->
     <div class="card">
       <span class="badge b1">문제지 · A4 2단 인쇄</span>
       <h3>📝 3학년 과학 문제지</h3>
       <p>25문항 100점 (선택형 20 + 서술형 5) · 45분<br>퍼넷·HR도·허블 그래프 등 도식 포함</p>
-      <div class="meta">PDF 292KB · HTML 45KB · 최종 수정: 2026-10-26</div>
+      <div class="meta">PDF 292KB · HTML 45KB</div>
       <div class="row">
-        <a class="btn pdf" href="./3학년_과학_문제지.pdf" download>📄 PDF 다운로드</a>
-        <a class="btn html" href="./3학년_과학_문제지.html" target="_blank">🌐 HTML 보기</a>
+        <a class="btn pdf" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/3학년_과학_문제지.pdf" target="_blank">📄 GitHub에서 PDF 받기</a>
       </div>
+      <div class="row">
+        <a class="btn html" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/3학년_과학_문제지.html" target="_blank">🌐 HTML 보기</a>
+      </div>
+      <div class="meta">GitHub에서 파일 열고 → 우측 <b>Download</b> 또는 <b>Raw</b> 버튼 클릭</div>
     </div>
     <!-- 2 -->
     <div class="card">
       <span class="badge b2">교사 전용 · 분리 배포</span>
       <h3>✅ 정답 및 해설지</h3>
       <p>빠른 정답표 + 성취기준 매핑<br>문항별 오답 분석 + 서술형 루브릭</p>
-      <div class="meta">PDF 353KB · HTML 37KB · 보안 문서</div>
+      <div class="meta">PDF 353KB · HTML 37KB</div>
       <div class="row">
-        <a class="btn pdf" href="./3학년_과학_정답및해설지.pdf" download>📄 PDF 다운로드</a>
-        <a class="btn html" href="./3학년_과학_정답및해설지.html" target="_blank">🌐 HTML 보기</a>
+        <a class="btn pdf" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/3학년_과학_정답및해설지.pdf" target="_blank">📄 GitHub에서 PDF 받기</a>
+      </div>
+      <div class="row">
+        <a class="btn html" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/3학년_과학_정답및해설지.html" target="_blank">🌐 HTML 보기</a>
       </div>
     </div>
     <!-- 3 -->
@@ -63,12 +77,23 @@
       <span class="badge b3">12살 눈높이 · 비유/퀴즈</span>
       <h3>🔬 쉬운 과학 설명서</h3>
       <p>LEGO·전구·풍선 비유로 이해하는<br>유전·별·우주 이야기</p>
-      <div class="meta">PDF 299KB · HTML 47KB · 가정 학습용</div>
+      <div class="meta">PDF 299KB · HTML 47KB</div>
       <div class="row">
-        <a class="btn pdf" href="./12살을위한_쉬운과학설명서.pdf" download>📄 PDF 다운로드</a>
-        <a class="btn html" href="./12살을위한_쉬운과학설명서.html" target="_blank">🌐 HTML 보기</a>
+        <a class="btn pdf" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/12살을위한_쉬운과학설명서.pdf" target="_blank">📄 GitHub에서 PDF 받기</a>
+      </div>
+      <div class="row">
+        <a class="btn html" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지/12살을위한_쉬운과학설명서.html" target="_blank">🌐 HTML 보기</a>
       </div>
     </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;flex-direction:row;align-items:center;gap:14px">
+    <span class="badge b4">전체 묶음</span>
+    <div style="flex:1">
+      <h3 style="margin:0;font-size:14px">📦 전체 파일 ZIP 한 번에 받기</h3>
+      <p style="margin:4px 0 0;font-size:12px;color:#475569">HTML 3개 + PDF 3개 + 다운로드 센터 모두 포함 (689KB)</p>
+    </div>
+    <a class="btn zip" href="https://github.com/TOOAl/rea/blob/arena/652b6dd2-rea/중3과학시험지_전체.zip" target="_blank" style="min-width:160px">📦 ZIP 다운로드</a>
   </div>
 
   <div class="info">
@@ -76,23 +101,20 @@
     <ul>
       <li><b>문제지</b>는 A4 2단 인쇄에 최적화되어 있습니다. PDF를 열고 <code>실제 크기 / 양면 인쇄</code>로 출력하세요.</li>
       <li><b>해설지</b>는 시험 종료 후 공개용입니다. 채점 전에는 별도 보관하세요.</li>
-      <li>모든 파일은 <code>중3과학시험지/</code> 폴더에 HTML·PDF가 함께 있어 오프라인에서도 열 수 있습니다.</li>
+      <li>모든 파일은 Arena 파일 뷰어에서도 열 수 있습니다: 뷰어 우측 상단 <b>다운로드 ⬇️ 버튼</b>을 누르면 바로 저장됩니다.</li>
     </ul>
   </div>
 
   <div class="info">
-    <h4>📂 전체 파일 목록</h4>
+    <h4>🔗 영구 링크 (샌드박스가 꺼져도 작동)</h4>
     <ul>
-      <li><a href="./3학년_과학_문제지.html">3학년_과학_문제지.html</a> — 웹/미리보기용</li>
-      <li><a href="./3학년_과학_문제지.pdf" download>3학년_과학_문제지.pdf</a> — 인쇄용 (2단)</li>
-      <li><a href="./3학년_과학_정답및해설지.html">3학년_과학_정답및해설지.html</a></li>
-      <li><a href="./3학년_과학_정답및해설지.pdf" download>3학년_과학_정답및해설지.pdf</a></li>
-      <li><a href="./12살을위한_쉬운과학설명서.html">12살을위한_쉬운과학설명서.html</a></li>
-      <li><a href="./12살을위한_쉬운과학설명서.pdf" download>12살을위한_쉬운과학설명서.pdf</a></li>
+      <li>브랜치: <code>arena/652b6dd2-rea</code> — <a href="https://github.com/TOOAl/rea/tree/arena/652b6dd2-rea/중3과학시험지" target="_blank">GitHub 폴더 바로가기</a></li>
+      <li>GitHub 웹에서 파일 클릭 → <b>Raw</b> 또는 <b>Download</b> 버튼으로 저장하세요.</li>
+      <li>E2B 미리보기 링크(<code>https://3000-xxxx.e2b.app</code>)는 세션 중에만 보이는 임시 링크이므로, 앞으로는 GitHub 링크를 기본으로 제공합니다.</li>
     </ul>
   </div>
 
-  <p class="footer">제작: 중학교 3학년 과학과 · 교육부 2015·2022 개정 교육과정 준거 · 브랜치 arena/652b6dd2-rea</p>
+  <p class="footer">제작: 중학교 3학년 과학과 · 교육부 2015·2022 개정 교육과정 준거 · 브랜치 arena/652b6dd2-rea · 커밋 4d12b36 이후</p>
 </div>
 </body>
 </html>
