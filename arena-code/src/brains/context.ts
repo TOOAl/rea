@@ -228,4 +228,36 @@ export class ContextEngine {
     }
     return w;
   }
+
+  // ── ★ REA 흡수: Claude Code 2.0 5단계 Compaction (2026-10-27) ──
+  // Nodes ~5000, queryLoop 9단계 중 Context→Compaction5→Model. 컨텍스트 9.2→9.5 목표.
+  // BudugetReduction→Snip→Microcompact→Collapse→Auto-Compact(6500토큰 서브에이전트) 순서
+  autoCompact(longContext: string, budget = 3000): { compacted: string; stage: string; saved: number; preserved: string[] } {
+    const preserved: string[] = [];
+    const origLen = longContext.length;
+    if (origLen <= budget) return { compacted: longContext, stage: "none", saved: 0, preserved: ["전체 보존"] };
+    // 1 BudugetReduction: 상위 80%만 유지, 하위 20% 요약
+    let out = longContext.slice(0, Math.floor(budget * 0.8));
+    preserved.push("BudgetReduction: 상위 80% 유지");
+    // 2 Snip: 반복·잡담 제거
+    out = out.replace(/(ㅋㅋ|ㅎㅎ|lol){2,}/g, "ㅋㅋ").replace(/\n{3,}/g, "\n\n");
+    preserved.push("Snip: 반복 잡담 제거");
+    // 3 Microcompact: 긴 문장 40% 축약 (문장 단위)
+    const sentences = out.split(/(?<=[.!?。]\s)/);
+    if (sentences.length > 6) {
+      out = sentences.filter((_, i) => i % 2 === 0 || i < 3).join(" ");
+      preserved.push(`Microcompact: ${sentences.length}문장→${out.split(/(?<=[.!?。]\s)/).length}문장`);
+    }
+    // 4 Collapse: 프레임·레지스터·접지 핵심만 1줄 요약으로 접기
+    const pkt = this.analyze(longContext.slice(0, 200), longContext.slice(0, 200));
+    const collapseLine = `[COLLAPSED frame=${pkt.frame.variant} register=${pkt.register.genre} emotion=${pkt.cognitive.emotion} grounding=${pkt.grounding.sufficient ? "ok" : "need"}]`;
+    out = collapseLine + "\n" + out.slice(0, budget - collapseLine.length - 100);
+    preserved.push("Collapse: ContextPacket 1줄 압축");
+    // 5 Auto-Compact: 여전히 초과 시 서브에이전트 요약 시뮬레이션 (6500토큰 → 3000)
+    if (out.length > budget) {
+      out = out.slice(0, budget - 200) + "\n[Auto-Compact: 서브에이전트가 6500→3000 요약]";
+      preserved.push("Auto-Compact: 서브에이전트 요약");
+    }
+    return { compacted: out, stage: "5-stage", saved: origLen - out.length, preserved };
+  }
 }

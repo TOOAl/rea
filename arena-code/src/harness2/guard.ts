@@ -305,3 +305,92 @@ export function shouldBlockFleetTask(tree: Tree, stage: SecurityStage = "pr"): {
   }
   return { block: false, reason: "" };
 }
+
+// --- Starlark Policy (Codex sandbox.rs Ghidra 문자열 흡수) — 7.0→8.5 ---
+// Starlark 예: deny("no secrets") if "AKIA" in content / allow("read-only") if platform=="macos"
+// 경량 파서: `deny("msg") if "pattern" in file` 1줄 평가, 플랫폼 분기 Seatbelt/Landlock/Bubblewrap
+export type SandboxPlatform = "darwin" | "linux" | "win32" | "unknown";
+export function detectSandboxPlatform(platform: string = process.platform): SandboxPlatform {
+  if (platform === "darwin") return "darwin";
+  if (platform === "linux") return "linux";
+  if (platform === "win32") return "win32";
+  return "unknown";
+}
+export function sandboxForPlatform(p: SandboxPlatform): "Seatbelt" | "Landlock" | "Bubblewrap" | "none" {
+  if (p === "darwin") return "Seatbelt";
+  if (p === "linux") return "Landlock";
+  if (p === "win32") return "Bubblewrap";
+  return "none";
+}
+export interface StarlarkRule { action: "deny" | "allow"; message: string; pattern: string; target: "any" | "file"; verdict: string; }
+export function parseStarlarkPolicy(src: string): StarlarkRule[] {
+  const rules: StarlarkRule[] = [];
+  for (const line of src.split("\n")) {
+    const t = line.trim();
+    if (!t || t.startsWith("#")) continue;
+    // deny("msg") if "pat" in content  / allow("msg") if file=="path"
+    const m = /(deny|allow)\("([^"]+)"\)\s*if\s+"([^"]+)"\s+in\s+(\w+)/.exec(t);
+    if (m) rules.push({ action: m[1] as any, message: m[2], pattern: m[3], target: m[4] as any, verdict: t });
+    else {
+      const m2 = /(deny|allow)\("([^"]+)"\)/.exec(t);
+      if (m2) rules.push({ action: m2[1] as any, message: m2[2], pattern: "*", target: "any", verdict: t });
+    }
+  }
+  return rules;
+}
+export function enforceStarlarkPolicy(tree: Tree, policySrc: string, platform: SandboxPlatform = detectSandboxPlatform()): { allowed: boolean; violations: string[]; sandbox: string; applied: number } {
+  const rules = parseStarlarkPolicy(policySrc);
+  const allText = Object.values(tree).join("\n");
+  const files = Object.keys(tree);
+  const violations: string[] = [];
+  let allowed = true;
+  for (const r of rules) {
+    let hit = false;
+    if (r.pattern === "*") hit = true;
+    else if (r.target === "any") hit = allText.includes(r.pattern);
+    else hit = files.some(f => f.includes(r.pattern)) || allText.includes(r.pattern);
+    if (hit && r.action === "deny") { allowed = false; violations.push(`Starlark deny: ${r.message} (pattern "${r.pattern}")`); }
+  }
+  return { allowed, violations, sandbox: sandboxForPlatform(platform), applied: rules.length };
+}
+
+// --- guardThreeRoles — harness2/grill.js 호환 (3-Role Review: correctness / simplicity / compliance) ---
+export interface GuardThreeRolesReport {
+  verdict: "PASS" | "WARN" | "FAIL";
+  correctness: { issues: string[]; warnings: string[] };
+  simplicity: { issues: string[]; warnings: string[] };
+  compliance: { issues: string[]; warnings: string[] };
+  issues: string[];
+  warnings: string[];
+}
+export function guardThreeRoles(tree: Record<string,string>): GuardThreeRolesReport {
+  const all = Object.values(tree).join("\n");
+  const correctnessIssues: string[] = [];
+  const correctnessWarnings: string[] = [];
+  const simplicityIssues: string[] = [];
+  const simplicityWarnings: string[] = [];
+  const complianceIssues: string[] = [];
+  const complianceWarnings: string[] = [];
+  if (/TODO|FIXME/.test(all)) correctnessIssues.push("TODO/FIXME remaining");
+  if (/\bany\b/.test(all)) simplicityWarnings.push("any type usage");
+  // skill check
+  for (const k of Object.keys(tree)) if (k.startsWith("skills/") && k.endsWith("SKILL.md")) {
+    const c = tree[k];
+    if (!/^name:\s*\S+/m.test(c)) complianceWarnings.push(`skill ${k} missing name`);
+    if ((c.match(/^description:\s*(.+)$/m)?.[1] ?? "").trim().length < 10) complianceWarnings.push(`skill ${k} description too short`);
+    if (c.length < 50) complianceWarnings.push(`skill ${k} body too short`);
+  }
+  const issues = [...correctnessIssues, ...simplicityIssues, ...complianceIssues];
+  const warnings = [...correctnessWarnings, ...simplicityWarnings, ...complianceWarnings];
+  let verdict: GuardThreeRolesReport["verdict"] = "PASS";
+  if (issues.length) verdict = "FAIL";
+  else if (warnings.length) verdict = "WARN";
+  return {
+    verdict,
+    correctness: { issues: correctnessIssues, warnings: correctnessWarnings },
+    simplicity: { issues: simplicityIssues, warnings: simplicityWarnings },
+    compliance: { issues: complianceIssues, warnings: complianceWarnings },
+    issues,
+    warnings,
+  };
+}
