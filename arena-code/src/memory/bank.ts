@@ -650,6 +650,52 @@ export class MemoryBank {
     } catch { return null; }
   }
 
+  /** 2-hop 그래프 확장 — Zep 시간그래프 흡수: 1차 검색 → triples 2-hop으로 확장 (scene graph) */
+  searchWithGraph(query: string, topK = 5, hops = 2): MemoryEntry[] {
+    const first = this.searchHybrid(query, topK * 2);
+    if (first.length === 0 || hops <= 1) return first.slice(0, topK);
+    const triples = this.toGraph();
+    const bySubject = new Map<string, FactTriple[]>();
+    const byObject = new Map<string, FactTriple[]>();
+    for (const t of triples) {
+      if (!bySubject.has(t.subject)) bySubject.set(t.subject, []);
+      bySubject.get(t.subject)!.push(t);
+      if (!byObject.has(t.object)) byObject.set(t.object, []);
+      byObject.get(t.object)!.push(t);
+    }
+    const idToEntry = new Map(first.map(e => [e.id, e] as const));
+    const expanded = new Map<string, MemoryEntry>(idToEntry);
+    let frontier = [...first];
+    for (let h = 0; h < hops - 1; h++) {
+      const next: MemoryEntry[] = [];
+      for (const e of frontier) {
+        const t = `${e.cue} ${e.content}`;
+        // subject/object 매칭으로 이웃 찾기
+        for (const tr of triples) {
+          if (t.includes(tr.subject) || t.includes(tr.object)) {
+            const nid = tr.sourceId;
+            if (!expanded.has(nid)) {
+              const ne = this.get(nid);
+              if (ne && !isExpired(ne)) { expanded.set(nid, ne); next.push(ne); }
+            }
+          }
+        }
+      }
+      if (next.length === 0) break;
+      frontier = next;
+    }
+    return [...expanded.values()].slice(0, topK);
+  }
+
+  /** 신뢰도 가중 시간창 검색 — TTL 만료 전 신뢰도 감쇠 흡수 (Letta) */
+  recallByTimeWindow(query: string, days = 7, minConfidence = 0.5): MemoryEntry[] {
+    const cutoff = Date.now() - days * 86400000;
+    return this.searchHybrid(query, 10, { timeWindowDays: days, minConfidence }).filter(e => {
+      const t = Date.parse(e.referenceTime ?? e.createdAt);
+      return !Number.isNaN(t) && t >= cutoff;
+    });
+  }
+
   static listDomains(root?: string): string[] {
     const base = resolve(root ?? join(process.cwd(), ".memory-bank"));
     if (!existsSync(base)) return [];
