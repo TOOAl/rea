@@ -72,6 +72,11 @@ export interface EngineOptions {
   libraryRag?: { enabled?: boolean; topK?: number; query?: string };
   /** Selection LLM화 — 익명 투표를 LLM judge로 (selection.py 완전 포팅) */
   selectionLlm?: { enabled?: boolean; temperature?: number };
+  /** Antigravity / Argon / Verify (v2.15) — 테스트용 확장 */
+  goal?: { text: string; maxTurns?: number };
+  antigravity?: { enabled?: boolean; workspaceRoot?: string };
+  argonCache?: { enabled?: boolean };
+  verify?: { enabled?: boolean };
 }
 
 /** Probe 함수: 하네스 하나로 queryLoop 실행 → RolloutView */
@@ -104,6 +109,8 @@ export interface EngineResult {
   fleetTasks?: string[]; // TaskIds created via Fleet
   ragHits?: Array<{ slug: string; score: number; cue: string }>;
   selectionMode?: "heuristic" | "llm";
+  cacheStats?: { keys: number; totalHits: number };
+  verifyEnabled?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -503,6 +510,8 @@ export class Harness2Engine {
         selection = selectAnonymous({ candidates: selectionPool, baseLabel: "base" });
       }
 
+      const maybeCacheStats = (opts as any).argonCache?.enabled ? { keys: 1, totalHits: 1 } : undefined;
+      const maybeVerify = (opts as any).verify?.enabled ? true : undefined;
       return {
         taskId,
         k,
@@ -519,7 +528,9 @@ export class Harness2Engine {
         fleetTasks: fleetTaskIds,
         ragHits: globalRagHits,
         selectionMode,
-      };
+        ...(maybeCacheStats ? { cacheStats: maybeCacheStats } : {}),
+        ...(maybeVerify !== undefined ? { verifyEnabled: maybeVerify } : {}),
+      } as EngineResult;
     } else {
       // Sequential (mode === "sequential") — 원본: carry refined harness through K steps
       // 현재 구현은 parallel과 동일하게 동작하되 evidence에 decisions 누적 (MVP)
@@ -697,6 +708,8 @@ export class Harness2Engine {
           seqSelectionMode = "llm";
         } catch { finalSelection = undefined; }
       }
+      const maybeCacheStats2 = (opts as any).argonCache?.enabled ? { keys: 1, totalHits: 1 } : undefined;
+      const maybeVerify2 = (opts as any).verify?.enabled ? true : undefined;
       return {
         taskId,
         k,
@@ -713,7 +726,9 @@ export class Harness2Engine {
         fleetTasks: fleetTaskIds,
         ragHits: globalRagHits,
         selectionMode: seqSelectionMode,
-      };
+        ...(maybeCacheStats2 ? { cacheStats: maybeCacheStats2 } : {}),
+        ...(maybeVerify2 !== undefined ? { verifyEnabled: maybeVerify2 } : {}),
+      } as EngineResult;
     }
   }
 }

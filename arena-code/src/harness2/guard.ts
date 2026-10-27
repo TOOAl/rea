@@ -305,3 +305,44 @@ export function shouldBlockFleetTask(tree: Tree, stage: SecurityStage = "pr"): {
   }
   return { block: false, reason: "" };
 }
+
+// --- guardThreeRoles — harness2/grill.js 호환 (3-Role Review: correctness / simplicity / compliance) ---
+export interface GuardThreeRolesReport {
+  verdict: "PASS" | "WARN" | "FAIL";
+  correctness: { issues: string[]; warnings: string[] };
+  simplicity: { issues: string[]; warnings: string[] };
+  compliance: { issues: string[]; warnings: string[] };
+  issues: string[];
+  warnings: string[];
+}
+export function guardThreeRoles(tree: Record<string,string>): GuardThreeRolesReport {
+  const all = Object.values(tree).join("\n");
+  const correctnessIssues: string[] = [];
+  const correctnessWarnings: string[] = [];
+  const simplicityIssues: string[] = [];
+  const simplicityWarnings: string[] = [];
+  const complianceIssues: string[] = [];
+  const complianceWarnings: string[] = [];
+  if (/TODO|FIXME/.test(all)) correctnessIssues.push("TODO/FIXME remaining");
+  if (/\bany\b/.test(all)) simplicityWarnings.push("any type usage");
+  // skill check
+  for (const k of Object.keys(tree)) if (k.startsWith("skills/") && k.endsWith("SKILL.md")) {
+    const c = tree[k];
+    if (!/^name:\s*\S+/m.test(c)) complianceWarnings.push(`skill ${k} missing name`);
+    if ((c.match(/^description:\s*(.+)$/m)?.[1] ?? "").trim().length < 10) complianceWarnings.push(`skill ${k} description too short`);
+    if (c.length < 50) complianceWarnings.push(`skill ${k} body too short`);
+  }
+  const issues = [...correctnessIssues, ...simplicityIssues, ...complianceIssues];
+  const warnings = [...correctnessWarnings, ...simplicityWarnings, ...complianceWarnings];
+  let verdict: GuardThreeRolesReport["verdict"] = "PASS";
+  if (issues.length) verdict = "FAIL";
+  else if (warnings.length) verdict = "WARN";
+  return {
+    verdict,
+    correctness: { issues: correctnessIssues, warnings: correctnessWarnings },
+    simplicity: { issues: simplicityIssues, warnings: simplicityWarnings },
+    compliance: { issues: complianceIssues, warnings: complianceWarnings },
+    issues,
+    warnings,
+  };
+}

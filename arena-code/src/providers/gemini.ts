@@ -49,6 +49,8 @@ function toGeminiContents(system: string, messages: Message[]) {
   return contents;
 }
 
+export function isGemini4Argon(model: string): boolean { return /gemini-4-argon/.test(model); }
+
 export class GeminiProvider implements Provider {
   name = "gemini";
   model: string;

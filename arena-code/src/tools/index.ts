@@ -22,6 +22,10 @@ import { SERENA_TOOLS } from "./serena.js";
 import { ATLASSIAN_TOOLS } from "./atlassian.js";
 import { MathGameTool } from "./mathGame.js";
 import { PalaceVisualTool } from "./palaceVisual.js";
+import { DataVizTool } from "./dataViz.js";
+import { PredictTool } from "./predict.js";
+import { SheetsTool } from "./sheets.js";
+import { FormulaTool } from "./formula.js";
 import type { Tool } from "./types.js";
 import { ToolRegistry } from "./registry.js";
 import { GHIDRA_TOOLS as _InternalGhidraTools } from "./ghidra/index.js";
@@ -78,6 +82,10 @@ export const CORE_TOOLS_LIST: Tool[] = [
   ...ATLASSIAN_TOOLS,
   MathGameTool,
   PalaceVisualTool,
+  DataVizTool,
+  PredictTool,
+  SheetsTool,
+  FormulaTool,
 ];
 
 // 동기 버전 — 내부 패키지만 (기존 호환, 외부 없이 빌드 가능)
