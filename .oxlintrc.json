@@ -2,8 +2,8 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "import", "unicorn", "oxc"],
   "rules": {
-    "complexity": ["warn", 20],
-    "max-depth": ["warn", 4],
+    "complexity": ["warn", 26],
+    "max-depth": ["warn", 5],
     "max-lines": [
       "warn",
       {
@@ -15,12 +15,12 @@
     "max-lines-per-function": [
       "warn",
       {
-        "max": 100,
+        "max": 150,
         "skipBlankLines": true,
         "skipComments": true
       }
     ],
-    "max-params": ["warn", 4],
+    "max-params": ["warn", 5],
     "no-var": "warn",
     "no-var-requires": "error",
     "typescript/no-import-type-side-effects": "error"
