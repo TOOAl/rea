@@ -212,6 +212,12 @@
         "complexity": ["warn", 30],
         "max-depth": ["warn", 6]
       }
+    },
+    {
+      "files": ["src/adb/AdbProvider.ts", "src/artifacts/apple/NibArchive.ts", "src/application/SetupSkill.ts", "src/ghidra/GhidraLoadImageValues.ts", "src/pcap/PcapProvider.ts", "src/windows/WindowsOwnedProcess.ts", "src/application/javascript/JavaScriptArtifactAnalysis.ts"],
+      "rules": {
+        "max-params": ["warn", 6]
+      }
     }
   ],
   "env": {
