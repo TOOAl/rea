@@ -224,6 +224,12 @@
       "rules": {
         "complexity": ["warn", 30]
       }
+    },
+    {
+      "files": ["src/process/capture/ProcessCaptureLifecycle.ts"],
+      "rules": {
+        "max-lines-per-function": ["warn", { "max": 250, "skipBlankLines": true, "skipComments": true }]
+      }
     }
   ],
   "env": {

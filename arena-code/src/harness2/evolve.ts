@@ -205,7 +205,7 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
   // 주간 집계 1회 기록 (트렌드 주 단위 유지)
   for (const [id, arr] of Object.entries(weekly)) {
     const avg = Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
-    reg.recordScore(id as any, avg);
+    reg.recordScore(id as unknown as Parameters<typeof reg.recordScore>[0], avg);
   }
 
   // 드리프트 감지: 전주 대비 평균 변화
@@ -219,8 +219,8 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
     if (files.length>=2) {
       const prev = JSON.parse(readFileSync(join(outDir, files[files.length-2]), "utf-8")) as BenchResult[];
       const avgNow = results.reduce((a,b)=>a+b.score,0)/results.length;
-      const avgPrev = prev.reduce((a:any,b:any)=>a+b.score,0)/prev.length;
-      (results as any).__driftDelta = Math.round(avgNow-avgPrev);
+      const avgPrev = prev.reduce((a:{score:number},b:{score:number})=>a+b.score,0 as unknown as number)/prev.length as unknown as number;
+      (results as unknown as {__driftDelta?:number}).__driftDelta = Math.round(avgNow-avgPrev);
     }
   } catch {}
 
