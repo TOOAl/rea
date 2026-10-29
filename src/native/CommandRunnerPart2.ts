@@ -1,133 +1,127 @@
-export const __stub = 1;
-//   private readonly environment: NodeJS.ProcessEnv;
-//   readonly #pendingCleanup = new Set<ProviderProcessSupervisor>();
-//   #cleanupAttempt: Promise<readonly NativeCommandCleanupFailure[]> | undefined;
-//   constructor(
-//     environment: Readonly<NodeJS.ProcessEnv>,
-//     private readonly resolveTool: NativeToolResolver = (tool, signal) =>
-//       resolveXcrunTool(tool, this.environment, signal, this.launcher),
-//     private readonly launcher?: NativeCommandLauncher,
-//   ) {
-//     this.environment = snapshotEnvironment(environment);
-//   }
-//
-//   run(
-//     tool: string,
-//     arguments_: readonly string[],
-//     options: NativeCommandOptions,
-//   ): Promise<Result<NativeCommandCapture, NativeCommandFailure>> {
-//     if (!ALLOWED_TOOLS.has(tool))
-//       return Promise.resolve(
-//         err(new NativeCommandFailure(tool, "unavailable")),
-//       );
-//     return this.#runAfterCleanup(tool, arguments_, options);
-//   }
-//
-//   /** Retry every retained owner; a failed retry prevents another command launch. */
-//   retryCleanup(): Promise<readonly NativeCommandCleanupFailure[]> {
-//     if (this.#pendingCleanup.size === 0) return Promise.resolve([]);
-//     if (this.#cleanupAttempt !== undefined) return this.#cleanupAttempt;
-//     this.#cleanupAttempt = this.#retryCleanup().finally(() => {
-//       this.#cleanupAttempt = undefined;
-//     });
-//     return this.#cleanupAttempt;
-//   }
-//
-//   async #runAfterCleanup(
-//     tool: string,
-//     arguments_: readonly string[],
-//     options: NativeCommandOptions,
-//   ): Promise<Result<NativeCommandCapture, NativeCommandFailure>> {
-//     const pendingFailures = await this.retryCleanup();
-//     if (pendingFailures.length > 0)
-//       return err(commandCleanupFailure(tool, pendingFailures));
-//     const resolved = await this.resolveTool(
-//       tool,
-//       options.signal,
-//       this.launcher,
-//     );
-//     if (!resolved.ok) {
-//       if (resolved.error.cleanupOwner !== undefined)
-//         this.#pendingCleanup.add(resolved.error.cleanupOwner);
-//       return resolved;
-//     }
-//     const captured = await captureProcess(
-//       resolved.value.path,
-//       arguments_,
-//       tool,
-//       options,
-//       this.environment,
-//       this.launcher,
-//     );
-//     if (!captured.ok && captured.error.cleanupOwner !== undefined)
-//       this.#pendingCleanup.add(captured.error.cleanupOwner);
-//     return captured.ok
-//       ? ok({
-//           ...captured.value,
-//           tool,
-//           executable: resolved.value.path,
-//           executableSha256: resolved.value.sha256,
-//           toolVersion: null,
-//           versionReason:
-//             "Tool exposes no uniform stable version flag; executable SHA-256 is a prelaunch file sample and does not prove atomic OS image binding.",
-//           arguments: [...arguments_],
-//         })
-//       : captured;
-//   }
-//
-//   async #retryCleanup(): Promise<readonly NativeCommandCleanupFailure[]> {
-//     const failures: NativeCommandCleanupFailure[] = [];
-//     for (const owner of this.#pendingCleanup) {
-//       let reason: string | undefined;
-//       try {
-//         const stopped = await owner.stop();
-//         if (stopped.status !== "incomplete") {
-//           this.#pendingCleanup.delete(owner);
-//           continue;
-//         }
-//         reason = stopped.reason || "native command cleanup remains unverified";
-//       } catch (cause: unknown) {
-//         reason =
-//           cause instanceof Error
-//             ? cause.message || cause.name
-//             : String(cause) || "native command cleanup failed unexpectedly";
-//       }
-//       failures.push({
-//         owner,
-//         reason: reason ?? "native command cleanup remains unverified",
-//         resources: commandProcessResources(owner),
-//       });
-//     }
-//     return failures;
-//   }
-// }
-//
-// const commandProcessResources = (
-//   owner: ProviderProcessSupervisor,
-// ): readonly string[] => {
-//   const ownership = owner.launch.ownership;
-//   return ownership === undefined
-//     ? ["native-command-process"]
-//     : [
-//         ownership.runId,
-//         `pid:${String(ownership.leaderPid)}`,
-//         `process-group:${String(ownership.processGroupId)}`,
-//       ];
-// };
-//
-// const commandCleanupFailure = (
-//   tool: string,
-//   failures: readonly NativeCommandCleanupFailure[],
-// ): NativeCommandFailure =>
-//   new NativeCommandFailure(
-//     tool,
-//     "io",
-//     null,
-//     {
-//       cleanupFailures: failures,
-//       cause: new AggregateError(
-//         failures.map(
-//           ({ reason, resources }) =>
-//             new Error(`${reason} (${resources.join(", ")})`),
-//         ),
-export const _l = 131;
+import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
+import { createHash, randomUUID } from "node:crypto";
+import { createReadStream } from "node:fs";
+import { realpath } from "node:fs/promises";
+
+import { err, ok, type Result } from "../domain/result.js";
+import { DarwinProcessOwnershipInspectionError } from "../process/DarwinProcessRunTokenReader.js";
+import {
+  OwnedCommandFailure,
+  runOwnedCommand,
+} from "../process/OwnedCommand.js";
+import type {
+  OwnedProviderProcessSpawnOptions,
+  ProviderProcessSnapshot,
+  ProviderProcessSupervisor,
+  SpawnedOwnedProviderProcess,
+} from "../process/ProviderProcess.js";
+import { boundedUtf8Text } from "../process/boundedUtf8Text.js";
+
+/** Maximum wall-clock duration for one native command. */
+
+// src/native/CommandRunnerPart2.ts
+const captureProcess = async (
+  executable: string,
+  arguments_: readonly string[],
+  tool: string,
+  options: {
+    readonly signal?: AbortSignal;
+    readonly acceptNonZero?: boolean;
+  },
+  environment: Readonly<NodeJS.ProcessEnv>,
+  launcher?: NativeCommandLauncher,
+): Promise<Result<ProcessCapture, NativeCommandFailure>> => {
+  const runId = `rea-native-command-${randomUUID()}`;
+  try {
+    const snapshot = await runOwnedCommand(
+      {
+        command: executable,
+        arguments: [...arguments_],
+        runId,
+        env: {
+          LC_ALL: "C",
+          LANG: "C",
+        },
+        hostEnvironment: environment,
+        ...(options.signal === undefined ? {} : { signal: options.signal }),
+      },
+      {
+        timeoutMs: NATIVE_COMMAND_TIMEOUT_MS,
+        diagnosticBytes: NATIVE_COMMAND_OUTPUT_BUDGET_BYTES,
+        acceptNonZeroExit: options.acceptNonZero === true,
+      },
+      launcher === undefined ? {} : { launcher },
+    );
+    return ok(processCaptureFromSnapshot(snapshot));
+  } catch (cause: unknown) {
+    if (cause instanceof OwnedCommandFailure) {
+      const capture =
+        cause.snapshot === null
+          ? null
+          : failureCapture(
+              processCaptureFromSnapshot(cause.snapshot),
+              cause.snapshot.diagnosticTruncated === true,
+            );
+      return err(
+        new NativeCommandFailure(
+          tool,
+          cause.reason === "process"
+            ? processFailureReason(capture)
+            : cause.reason,
+          capture?.exitCode ?? null,
+          {
+            cause,
+            ...(cause.cleanupOwner === undefined
+              ? {}
+              : { cleanupOwner: cause.cleanupOwner }),
+          },
+          capture,
+          cause.cleanupFailure,
+          cause.resources,
+        ),
+      );
+    }
+    return err(
+      new NativeCommandFailure(tool, "io", null, {
+        cause,
+        // Process supervision needs the Darwin ownership helper; its typed
+        // message names the compiler or SDK prerequisite to fix.
+        ...(cause instanceof DarwinProcessOwnershipInspectionError
+          ? { detail: cause.message }
+          : {}),
+      }),
+    );
+  }
+};
+
+const processFailureReason = (
+  capture: NativeCommandFailureCapture | null,
+): "io" | "nonzero-exit" =>
+  capture !== null &&
+  (capture.signal !== null ||
+    (capture.exitCode !== null && capture.exitCode !== 0))
+    ? "nonzero-exit"
+    : "io";
+
+const processCaptureFromSnapshot = (
+  snapshot: ProviderProcessSnapshot,
+): ProcessCapture => ({
+  stdout: snapshot.stdout.text,
+  stderr: snapshot.stderr.text,
+  stdoutBytes: snapshot.stdout.bytes,
+  stderrBytes: snapshot.stderr.bytes,
+  exitCode: snapshot.exitCode ?? null,
+  signal: snapshot.signal ?? null,
+});
+
+const hashFile = (path: string, signal?: AbortSignal): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const hash = createHash("sha256");
+    const stream = createReadStream(
+      path,
+      signal === undefined ? undefined : { signal },
+    );
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.once("error", reject);
+    stream.once("end", () => resolve(hash.digest("hex")));
+  });

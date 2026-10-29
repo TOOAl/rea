@@ -1,134 +1,100 @@
-export const __stub = 1;
-//   );
-//   const rightPairs = new Map(
-//     input.pairing.pairs.map((pair) => [pair.rightIndex, pair]),
-//   );
-//   return [
-//     ...input.leftShapes.map((shape, index) =>
-//       inventoryFor("left", index, shape, leftPairs.get(index)),
-//     ),
-//     ...input.rightShapes.map((shape, index) =>
-//       inventoryFor("right", index, shape, rightPairs.get(index)),
-//     ),
-//   ];
-// };
-//
-// const inventoryFor = (
-//   side: JavaScriptExportShapePropertyInventory["side"],
-//   variantIndex: number,
-//   shape: Shape,
-//   pair: VariantPair | undefined,
-// ): JavaScriptExportShapePropertyInventory => ({
-//   side,
-//   variant_index: variantIndex,
-//   discriminant: pair?.discriminant ?? null,
-//   paired: pair !== undefined,
-//   source_range: shape.source_range,
-//   properties: uniqueSorted([
-//     ...shape.fields
-//       .filter((field) => fieldPresence(shape, field, field.path) === "present")
-//       .map(({ path }) => path),
-//     ...shape.property_coverage.map(({ path }) => path),
-//   ]).filter((path) => path !== ""),
-//   property_coverage: shape.property_coverage.map(({ path, status }) => ({
-//     path,
-//     status,
-//   })),
-// });
-//
-// /** Report whether any retained shape lacks complete property coverage. */
-// export const hasPartialJavaScriptExportPropertyCoverage = (
-//   shapes: readonly Shape[],
-// ): boolean =>
-//   shapes.some(
-//     (shape) =>
-//       shape.property_coverage.some(({ status }) => status === "partial") ||
-//       shape.fields.some(
-//         (field) =>
-//           fieldPresence(shape, field, field.path) === "unknown-coverage",
-//       ),
-//   );
-//
-// interface DiscriminantOccurrence {
-//   readonly discriminant: Discriminant;
-//   readonly indexes: number[];
-// }
-//
-// const discriminantOccurrences = (
-//   shapes: readonly Shape[],
-// ): Map<string, DiscriminantOccurrence> => {
-//   const output = new Map<string, DiscriminantOccurrence>();
-//   shapes.forEach((shape, index) => {
-//     for (const field of shape.fields) {
-//       if (fieldPresence(shape, field, field.path) !== "present") continue;
-//       const value = literalValue(field);
-//       if (!value.found) continue;
-//       const discriminant = { path: field.path, value: value.value };
-//       const key = canonicalExportShapeValue(discriminant);
-//       const current = output.get(key);
-//       output.set(key, {
-//         discriminant,
-//         indexes: [...(current?.indexes ?? []), index],
-//       });
-//     }
-//   });
-//   return output;
-// };
-//
-// const reciprocalPairs = (
-//   leftTargets: ReadonlyMap<number, ReadonlySet<number>>,
-//   rightTargets: ReadonlyMap<number, ReadonlySet<number>>,
-//   edges: ReadonlyMap<string, readonly Discriminant[]>,
-// ): VariantPair[] => {
-//   const pairs: VariantPair[] = [];
-//   for (const [leftIndex, targets] of leftTargets) {
-//     if (targets.size !== 1) continue;
-//     const rightIndex = [...targets][0];
-//     if (
-//       rightIndex === undefined ||
-//       rightTargets.get(rightIndex)?.size !== 1 ||
-//       !rightTargets.get(rightIndex)?.has(leftIndex)
-//     )
-//       continue;
-//     const discriminants = edges
-//       .get(`${String(leftIndex)}:${String(rightIndex)}`)
-//       ?.toSorted(compareDiscriminants);
-//     const discriminant = discriminants?.[0];
-//     if (discriminant !== undefined)
-//       pairs.push({ leftIndex, rightIndex, discriminant });
-//   }
-//   return pairs.sort((first, second) =>
-//     compareDiscriminants(first.discriminant, second.discriminant),
-//   );
-// };
-//
-// const addTarget = (
-//   map: Map<number, Set<number>>,
-//   source: number,
-//   target: number,
-// ): void => {
-//   const values = map.get(source) ?? new Set<number>();
-//   values.add(target);
-//   map.set(source, values);
-// };
-//
-// const indexesNotIn = (
-//   shapes: readonly Shape[],
-//   paired: ReadonlySet<number>,
-// ): number[] =>
-//   shapes.map((_, index) => index).filter((index) => !paired.has(index));
-//
-// const compareDiscriminants = (
-//   left: Discriminant,
-//   right: Discriminant,
-// ): number =>
-//   compareUnicodeCodePoints(
-//     canonicalExportShapeValue(left),
-//     canonicalExportShapeValue(right),
-//   );
-//
-// const selectionUnknownChange = (
-//   input: ChangeBuildInput,
-// ): JavaScriptExportShapeComparisonChange =>
-//   changeWithId({
-export const _l = 132;
+import {
+  canonicalExportShapeValue,
+  digestExportShapeValue,
+} from "./javascriptExportShapeComparisonIdentity.js";
+import type {
+  JavaScriptExportShapeComparisonChange,
+  JavaScriptExportShapeComparisonResult,
+  JavaScriptExportShapePropertyInventory,
+} from "./javascriptExportShapeComparisonSchemas.js";
+import { uniqueSorted } from "../canonicalOrdering.js";
+import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
+import type {
+  SelectedJavaScriptExport,
+  RetainedJavaScriptExportShapes,
+} from "./javascriptExportShapeSelection.js";
+
+type Primitive = string | number | boolean | null;
+type Shape = RetainedJavaScriptExportShapes["shapes"][number];
+type Field = Shape["fields"][number];
+type SelectorResult = JavaScriptExportShapeComparisonResult["left"];
+
+// src/domain/javascript/javascriptExportShapeVariantsPart2.ts
+const selectionAvailability = (
+  selection: SelectorResult,
+  side: "left" | "right",
+): ValueAvailability => ({
+  availability: "unknown",
+  reason: `${capitalize(side)} export selection is ${selection.status}.`,
+});
+
+const emptyShapeAvailability = (
+  shapes: readonly Shape[],
+  side: "left" | "right",
+): ValueAvailability => ({
+  availability: "unknown",
+  reason:
+    shapes.length === 0
+      ? `${capitalize(side)} export has no retained direct return shape.`
+      : `${capitalize(side)} export return shape cannot be paired without an opposite variant.`,
+});
+
+const unpairedChange = (
+  side: "left" | "right",
+  shape: Shape,
+  evidenceLinks: [string, string],
+): JavaScriptExportShapeComparisonChange =>
+  changeWithId({
+    status: "unknown",
+    path: "",
+    discriminant: null,
+    presence: UNKNOWN_COVERAGE_PRESENCE,
+    left: {
+      availability: "unknown",
+      reason:
+        side === "left"
+          ? "Left return variant has no unique exact cross-version pairing."
+          : "No left return variant was uniquely paired with this right variant.",
+    },
+    right: {
+      availability: "unknown",
+      reason:
+        side === "right"
+          ? "Right return variant has no unique exact cross-version pairing."
+          : "No right return variant was uniquely paired with this left variant.",
+    },
+    left_source_range: side === "left" ? shape.source_range : null,
+    right_source_range: side === "right" ? shape.source_range : null,
+    evidence_links: evidenceLinks,
+    limitations: [
+      "The return variant was not paired because no reciprocal unique literal discriminant exists.",
+    ],
+  });
+
+const changeWithId = (
+  semantic: Omit<JavaScriptExportShapeComparisonChange, "change_id">,
+): JavaScriptExportShapeComparisonChange => ({
+  ...semantic,
+  change_id: `jesc_change_${digestExportShapeValue(semantic)}`,
+});
+
+const literalValue = (
+  field: Field,
+):
+  | { readonly found: true; readonly value: Primitive }
+  | { readonly found: false } =>
+  field.state === "literal" && isPrimitive(field.value)
+    ? { found: true, value: field.value }
+    : { found: false };
+
+const primitiveArray = (value: unknown): Primitive[] =>
+  Array.isArray(value) ? value.filter(isPrimitive) : [];
+
+const isPrimitive = (value: unknown): value is Primitive =>
+  value === null ||
+  typeof value === "string" ||
+  typeof value === "number" ||
+  typeof value === "boolean";
+
+const capitalize = (value: string): string =>
+  `${value.slice(0, 1).toUpperCase()}${value.slice(1)}`;
