@@ -1,138 +1,115 @@
-export const __stub = 1;
-//     }
-//     try {
-//       // An interrupted connect can clear the client's transport reference
-//       // before its startup child is closed. The transport retains that child.
-//       await transport.close();
-//     } catch (cause: unknown) {
-//       cleanupFailure = {
-//         cause:
-//           cleanupFailure === undefined || cleanupFailure.cause === cause
-//             ? cause
-//             : new AggregateError(
-//                 [cleanupFailure.cause, cause],
-//                 `MCP client and transport cleanup failed: ${errorMessage(cleanupFailure.cause)}; ${errorMessage(cause)}`,
-//               ),
-//       };
-//     }
-//   }
-//   if (cleanupFailure !== undefined)
-//     result = {
-//       ...result,
-//       healthy: false,
-//       checks: [
-//         ...result.checks,
-//         {
-//           name: "cleanup",
-//           ok: false,
-//           detail: `MCP stdio cleanup failed: ${errorMessage(cleanupFailure.cause)}`,
-//         },
-//       ],
-//     };
-//   return { ...result, diagnostics: stderr.value() };
-// };
-//
-// type ProductionMcpDoctorResult =
-//   | Awaited<ReturnType<typeof inspectProductionMcpSession>>
-//   | {
-//       readonly healthy: false;
-//       readonly adapter: "production-stdio";
-//       readonly server: null;
-//       readonly inventory: null;
-//       readonly identity: null;
-//       readonly request_flow: {
-//         readonly tool: "binary_session";
-//         readonly ok: false;
-//       };
-//       readonly checks: readonly McpDoctorCheck[];
-//     };
-//
-// /** Join SDK-triggered and caller-triggered close calls for the same child. */
-// class OwnedStdioClientTransport extends StdioClientTransport {
-//   #closePromise: Promise<void> | undefined;
-//
-//   override close(): Promise<void> {
-//     this.#closePromise ??= super.close();
-//     return this.#closePromise;
-//   }
-// }
-//
-// const inspectProductionMcpSession = async (
-//   client: Client,
-//   deadline: number,
-//   signal: AbortSignal,
-//   catalog: ReturnType<typeof createCatalogIdentity>,
-// ) => {
-//   const request = requestOptions(deadline, signal);
-//   const [tools, prompts] = await Promise.all([
-//     client.listTools(undefined, request),
-//     client.listPrompts(undefined, request),
-//   ]);
-//   const sessionTool = tools.tools.find(({ name }) => name === "binary_session");
-//   const requestFlow = await client
-//     .callTool(
-//       { name: "binary_session", arguments: {} },
-//       {
-//         ...requestOptions(deadline, signal),
-//         ...(sessionTool === undefined ? {} : { toolDefinition: sessionTool }),
-//       },
-//     )
-//     .then(ok, (cause: unknown) =>
-//       err({ kind: "request-flow" as const, detail: errorMessage(cause) }),
-//     );
-//   const inventory = {
-//     tools: compareInventory(
-//       TOOL_CONTRACTS.map(({ name }) => name),
-//       tools.tools.map(({ name }) => name),
-//     ),
-//     prompts: compareInventory(
-//       PROMPT_CONTRACTS.map(({ name }) => name),
-//       prompts.prompts.map(({ name }) => name),
-//     ),
-//   };
-//   const observedIdentity = parseIdentityToolResult(
-//     requestFlow.ok ? requestFlow.value.structuredContent : undefined,
-//   );
-//   const serverVersion = client.getServerVersion();
-//   const protocolVersion = client.getNegotiatedProtocolVersion();
-//   const checks: McpDoctorCheck[] = [
-//     {
-//       name: "initialize",
-//       ok:
-//         serverVersion?.name === PRODUCT_IDENTITY.mcpServerKey &&
-//         serverVersion.version === PRODUCT_IDENTITY.packageVersion &&
-//         protocolVersion !== undefined,
-//       detail: `${serverVersion?.name ?? "unknown"}@${serverVersion?.version ?? "unknown"}; protocol=${protocolVersion ?? "unknown"}`,
-//     },
-//     ...Object.entries(inventory).map(([name, comparison]) =>
-//       inventoryCheck(name, comparison),
-//     ),
-//     {
-//       name: "server-identity",
-//       ok:
-//         observedIdentity.packageVersion === PRODUCT_IDENTITY.packageVersion &&
-//         observedIdentity.catalogDigest === catalog.digests.combined_sha256,
-//       detail: `package=${observedIdentity.packageVersion ?? "missing"}; catalog=${observedIdentity.catalogDigest ?? "missing"}`,
-//     },
-//     {
-//       name: "request-flow",
-//       ok: requestFlow.ok && requestFlow.value.isError !== true,
-//       detail: requestFlow.ok
-//         ? "binary_session target-free request"
-//         : requestFlow.error.detail,
-//     },
-//   ];
-//   return {
-//     healthy: checks.every(({ ok }) => ok),
-//     adapter: "production-stdio" as const,
-//     server: {
-//       name: serverVersion?.name ?? null,
-//       version: serverVersion?.version ?? null,
-//       protocol_version: protocolVersion ?? null,
-//     },
-//     inventory,
-//     identity: {
-//       expected_package_version: PRODUCT_IDENTITY.packageVersion,
-//       observed_package_version: observedIdentity.packageVersion,
-//       expected_catalog_digest: catalog.digests.combined_sha256,
-export const _l = 136;
+import { Client } from "@modelcontextprotocol/client";
+import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
+import { Formatter, Help, z } from "incur";
+import { performance } from "node:perf_hooks";
+import { resolve } from "node:path";
+import { StringDecoder } from "node:string_decoder";
+
+import { createCatalogIdentity } from "./catalogIdentity.js";
+import {
+  compactPresentationForMcpInputSchemaProfile,
+  parseMcpInputSchemaProfile,
+} from "./config/mcpInputSchemaProfile.js";
+import { parseMcpOutputSchemaProfile } from "./config/mcpOutputSchemaProfile.js";
+import { PROMPT_CONTRACTS } from "./contracts/promptContracts.js";
+import { TOOL_CONTRACTS } from "./contracts/toolContracts.js";
+import { err, ok } from "./domain/result.js";
+import { PRODUCT_IDENTITY } from "./identity.js";
+import { MCP_STARTUP_POLICY } from "./mcpStartupPolicy.js";
+
+const OUTPUT_FORMATS = ["toon", "json", "yaml", "md", "jsonl"] as const;
+
+// src/mcpDoctorPart2.ts
+/**
+ * Report whether `--help`/`-h` appears in option position. Tokens consumed
+ * as `--format`'s value are skipped so `--format --help` stays an invalid
+ * format error instead of silently becoming a help request.
+ */
+const hasHelpInOptionPosition = (arguments_: readonly string[]): boolean => {
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const argument = arguments_[index];
+    if (argument === "--format") {
+      index += 1;
+      continue;
+    }
+    if (HELP_FLAGS.has(argument ?? "")) return true;
+  }
+  return false;
+};
+
+const isOutputFormat = (value: string | undefined): value is OutputFormat =>
+  OUTPUT_FORMATS.some((candidate) => candidate === value);
+
+const requestOptions = (deadline: number, signal: AbortSignal) => ({
+  signal,
+  timeout: Math.max(1, Math.ceil(deadline - performance.now())),
+});
+
+const targetFreeEnvironment = (
+  environment: Readonly<Record<string, string | undefined>>,
+): Record<string, string> => {
+  const result = Object.fromEntries(
+    Object.entries(environment).filter(
+      (entry): entry is [string, string] => entry[1] !== undefined,
+    ),
+  );
+  for (const name of [
+    "HOPPER_TARGET_PATH",
+    "HOPPER_TARGET_KIND",
+    "HOPPER_LOADER_ARGS_JSON",
+  ])
+    delete result[name];
+  return result;
+};
+
+const catalogIdentityForEnvironment = (
+  environment: Readonly<Record<string, string | undefined>>,
+): ReturnType<typeof createCatalogIdentity> => {
+  const inputProfile = parseMcpInputSchemaProfile(
+    environment.REA_MCP_INPUT_SCHEMA_PROFILE,
+  );
+  const outputProfile = parseMcpOutputSchemaProfile(
+    environment.REA_MCP_OUTPUT_SCHEMA_PROFILE,
+  );
+  return createCatalogIdentity(
+    compactPresentationForMcpInputSchemaProfile(
+      inputProfile.ok ? inputProfile.value : undefined,
+    ),
+    outputProfile.ok ? (outputProfile.value ?? "full") : "full",
+  );
+};
+
+const captureStderr = () => {
+  const retained = Buffer.allocUnsafe(MCP_STARTUP_POLICY.doctorStderrBytes);
+  let retainedBytes = 0;
+  let bytes = 0;
+  let truncated = false;
+  return {
+    append(chunk: unknown) {
+      const buffer = Buffer.isBuffer(chunk)
+        ? chunk
+        : Buffer.from(String(chunk), "utf8");
+      bytes += buffer.byteLength;
+      const remaining = retained.byteLength - retainedBytes;
+      const copied = Math.min(remaining, buffer.byteLength);
+      if (copied > 0) {
+        buffer.copy(retained, retainedBytes, 0, copied);
+        retainedBytes += copied;
+      }
+      if (copied < buffer.byteLength) truncated = true;
+    },
+    value: () => ({
+      stderr: truncated
+        ? new StringDecoder("utf8").write(retained.subarray(0, retainedBytes))
+        : retained.toString("utf8", 0, retainedBytes),
+      stderr_bytes: bytes,
+      stderr_truncated: truncated,
+    }),
+  };
+};
+
+const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const errorMessage = (cause: unknown): string =>
+  cause instanceof Error ? cause.message : String(cause);
