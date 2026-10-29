@@ -17,8 +17,24 @@
  *   - 다음에 비슷한 요리를 할 때 도서관에서 책을 꺼내 보면 더 잘 할 수 있음
  */
 
-import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, statSync, rmSync } from "node:fs";
-import { resolveLibraryId as ctxResolveLibraryId, queryDocs as ctxQueryDocs, type ResolvedLibrary } from "./context7.js";
+import {
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  rmSync,
+  mkdtempSync,
+  copyFileSync,
+  cpSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import {
+  resolveLibraryId as ctxResolveLibraryId,
+  queryDocs as ctxQueryDocs,
+  type ResolvedLibrary,
+} from "./context7.js";
 import { join, resolve, dirname } from "node:path";
 import type { Tree } from "./harness.js";
 import { writeTree, readTree, ARENA_SURFACE } from "./harness.js";
@@ -29,18 +45,18 @@ import { assertNoGraderVerdictsInTree } from "./context.js";
 // ---------------------------------------------------------------------------
 
 export interface Experience {
-  cue: string;            // 언제 이 교훈이 유용한지 (예: "인증 관련 작업")
-  lesson: string;         // 교훈 본문
-  evidence: string;       // 근거 (어떤 궤적에서 배웠는지)
-  confidence?: string;    // 확신도 (선택)
-  edits?: string;         // 각 edit이 한 일 (선택)
+  cue: string; // 언제 이 교훈이 유용한지 (예: "인증 관련 작업")
+  lesson: string; // 교훈 본문
+  evidence: string; // 근거 (어떤 궤적에서 배웠는지)
+  confidence?: string; // 확신도 (선택)
+  edits?: string; // 각 edit이 한 일 (선택)
 }
 
 export interface LibraryEntry {
   taskId: string;
-  label: string;          // 예: "compose-1"
+  label: string; // 예: "compose-1"
   runId?: string;
-  why?: string;            // 왜 채택됐는지
+  why?: string; // 왜 채택됐는지
   harness: Tree;
   experience: Experience;
   createdAt: string;
@@ -51,7 +67,10 @@ export interface LibraryEntry {
 // ---------------------------------------------------------------------------
 
 function slug(taskId: string): string {
-  return taskId.replace(/\//g, "__").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
+  return taskId
+    .replace(/\//g, "__")
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .slice(0, 80);
 }
 
 function domainDir(domain: string): string {
@@ -61,13 +80,18 @@ function domainDir(domain: string): string {
 export function hasExperience(exp: unknown): boolean {
   if (typeof exp !== "object" || exp === null) return false;
   const e = exp as Record<string, unknown>;
-  return ["cue", "lesson", "evidence"].every(k => typeof e[k] === "string" && (e[k] as string).trim().length > 0);
+  return ["cue", "lesson", "evidence"].every(
+    (k) => typeof e[k] === "string" && (e[k] as string).trim().length > 0,
+  );
 }
 
 function inventory(harness: Tree): string {
   const keys = Object.keys(harness).sort();
   if (keys.length === 0) return "(empty)";
-  return keys.slice(0, 6).join(", ") + (keys.length > 6 ? ` +${keys.length - 6} more` : "");
+  return (
+    keys.slice(0, 6).join(", ") +
+    (keys.length > 6 ? ` +${keys.length - 6} more` : "")
+  );
 }
 
 function field(path: string, key: string): string {
@@ -77,17 +101,24 @@ function field(path: string, key: string): string {
     const re = new RegExp(`^- \\*\\*${key}\\*\\*: (.+)$`, "m");
     const m = re.exec(text);
     return m ? m[1].trim() : "";
-  } catch { return ""; }
+  } catch {
+    return "";
+  }
 }
 
 // --- S3 Zone — 해마 Grid cell 기반 경험 분류 (PR-3: space-genius) ---
 export function inferZoneForLibrary(text: string): string {
   const lower = text.toLowerCase();
-  if (/수학|math|증명|공식|정리|방정식|기하|미적분|확률|조합/.test(lower)) return "math";
-  if (/역사|history|왕|조선|고려|세종|일제|독립|전쟁|혁명/.test(lower)) return "history";
-  if (/코드|code|함수|버그|api|서버|프론트|배포|git|npm|테스트/.test(lower)) return "code";
-  if (/과학|science|물리|화학|생물|실험|원자|세포/.test(lower)) return "science";
-  if (/경제|economy|시장|주식|코스피|투자|수익|손실|거래/.test(lower)) return "economy";
+  if (/수학|math|증명|공식|정리|방정식|기하|미적분|확률|조합/.test(lower))
+    return "math";
+  if (/역사|history|왕|조선|고려|세종|일제|독립|전쟁|혁명/.test(lower))
+    return "history";
+  if (/코드|code|함수|버그|api|서버|프론트|배포|git|npm|테스트/.test(lower))
+    return "code";
+  if (/과학|science|물리|화학|생물|실험|원자|세포/.test(lower))
+    return "science";
+  if (/경제|economy|시장|주식|코스피|투자|수익|손실|거래/.test(lower))
+    return "economy";
   if (/예술|art|그림|음악|영화|디자인|색|빛|구도/.test(lower)) return "art";
   if (/영어|english|단어|vocab|문법|회화/.test(lower)) return "english";
   return "general";
@@ -97,10 +128,88 @@ export function inferZoneForLibrary(text: string): string {
 // Library — 도메인별 도서관
 // ---------------------------------------------------------------------------
 
-const STOP = new Set(["the","a","an","and","or","but","in","on","at","to","for","of","with","is","are","was","were","be","been","this","that","it","as","by","from","are","has","have","had","will","would","can","should","could","may","will","you","your","our","we","us","they","them","their","its","if","then","else","when","what","which","how","why","not","no","yes","do","does","did","done","about","into","over","under","after","before","up","down","out","so","such","than","too","very"]);
+const STOP = new Set([
+  "the",
+  "a",
+  "an",
+  "and",
+  "or",
+  "but",
+  "in",
+  "on",
+  "at",
+  "to",
+  "for",
+  "of",
+  "with",
+  "is",
+  "are",
+  "was",
+  "were",
+  "be",
+  "been",
+  "this",
+  "that",
+  "it",
+  "as",
+  "by",
+  "from",
+  "are",
+  "has",
+  "have",
+  "had",
+  "will",
+  "would",
+  "can",
+  "should",
+  "could",
+  "may",
+  "will",
+  "you",
+  "your",
+  "our",
+  "we",
+  "us",
+  "they",
+  "them",
+  "their",
+  "its",
+  "if",
+  "then",
+  "else",
+  "when",
+  "what",
+  "which",
+  "how",
+  "why",
+  "not",
+  "no",
+  "yes",
+  "do",
+  "does",
+  "did",
+  "done",
+  "about",
+  "into",
+  "over",
+  "under",
+  "after",
+  "before",
+  "up",
+  "down",
+  "out",
+  "so",
+  "such",
+  "than",
+  "too",
+  "very",
+]);
 
 function tokenize(text: string): string[] {
-  return text.toLowerCase().split(/[^a-z0-9]+/g).filter(w => w.length >= 2 && w.length <= 24 && !STOP.has(w));
+  return text
+    .toLowerCase()
+    .split(/[^a-z0-9]+/g)
+    .filter((w) => w.length >= 2 && w.length <= 24 && !STOP.has(w));
 }
 function tf(tokens: string[]): Map<string, number> {
   const m = new Map<string, number>();
@@ -110,25 +219,40 @@ function tf(tokens: string[]): Map<string, number> {
   return m;
 }
 function cosine(a: Map<string, number>, b: Map<string, number>): number {
-  let dot = 0, na = 0, nb = 0;
-  for (const [k, va] of a) { dot += va * (b.get(k) ?? 0); na += va * va; }
+  let dot = 0,
+    na = 0,
+    nb = 0;
+  for (const [k, va] of a) {
+    dot += va * (b.get(k) ?? 0);
+    na += va * va;
+  }
   for (const [, vb] of b) nb += vb * vb;
   const denom = Math.sqrt(na) * Math.sqrt(nb) || 1;
   return dot / denom;
 }
 export interface RagHit {
-  slug: string; taskId: string; score: number; cue: string; lesson: string; evidence: string; why: string; harnessKeys: string; path: string;
+  slug: string;
+  taskId: string;
+  score: number;
+  cue: string;
+  lesson: string;
+  evidence: string;
+  why: string;
+  harnessKeys: string;
+  path: string;
 }
 
 export class HarnessLibrary {
-  readonly root: string;     // 예: .arena/harness2/library
+  readonly root: string; // 예: .arena/harness2/library
   readonly domain: string;
   readonly domainSlug: string;
 
   constructor(opts: { root?: string; domain: string }) {
     this.domain = opts.domain;
     this.domainSlug = domainDir(opts.domain);
-    this.root = resolve(opts.root ?? join(process.cwd(), ".arena", "harness2", "library"));
+    this.root = resolve(
+      opts.root ?? join(process.cwd(), ".arena", "harness2", "library"),
+    );
   }
 
   get dir(): string {
@@ -157,20 +281,31 @@ export class HarnessLibrary {
       if (harnesses.length === 0) return null;
       // EXPERIENCE.md가 하나라도 있으면 있음
       for (const h of harnesses) {
-        if (existsSync(join(this.dir, "harnesses", h, "EXPERIENCE.md"))) return this.dir;
+        if (existsSync(join(this.dir, "harnesses", h, "EXPERIENCE.md")))
+          return this.dir;
       }
       return null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 
   entries(): string[] {
     const d = join(this.dir, "harnesses");
     if (!existsSync(d)) return [];
     try {
-      return readdirSync(d).filter(n => {
-        try { return statSync(join(d, n)).isDirectory(); } catch { return false; }
-      }).sort();
-    } catch { return []; }
+      return readdirSync(d)
+        .filter((n) => {
+          try {
+            return statSync(join(d, n)).isDirectory();
+          } catch {
+            return false;
+          }
+        })
+        .sort();
+    } catch {
+      return [];
+    }
   }
 
   treeOf(taskId: string): Tree {
@@ -195,14 +330,18 @@ export class HarnessLibrary {
 
     const d = this.entryDir(opts.taskId);
     // 기존 제거 후 재생성
-    if (existsSync(join(d, "harness"))) rmSync(join(d, "harness"), { recursive: true, force: true });
+    if (existsSync(join(d, "harness")))
+      rmSync(join(d, "harness"), { recursive: true, force: true });
     mkdirSync(join(d, "harness"), { recursive: true });
-    writeTree(ARENA_SURFACE, opts.harness, join(d, "harness"), { stubs: false });
+    writeTree(ARENA_SURFACE, opts.harness, join(d, "harness"), {
+      stubs: false,
+    });
 
     const lines: string[] = [
       `# ${opts.taskId}`,
       "",
-      `- adopted: \`${opts.label}\`` + (opts.runId ? `  (run \`${opts.runId}\`)` : ""),
+      `- adopted: \`${opts.label}\`` +
+        (opts.runId ? `  (run \`${opts.runId}\`)` : ""),
       `- components: ${inventory(opts.harness)}`,
       "",
     ];
@@ -243,14 +382,20 @@ export class HarnessLibrary {
   retain(taskIds: string[]): void {
     const keep = new Set(taskIds.map(slug));
     const all = this.entries();
-    const toRemove = all.filter(e => !keep.has(e));
+    const toRemove = all.filter((e) => !keep.has(e));
     if (toRemove.length > 0) {
-      const taskIdsToRemove = toRemove.map(e => e.replace(/__/g, "/"));
+      const taskIdsToRemove = toRemove.map((e) => e.replace(/__/g, "/"));
       this.forget(taskIdsToRemove);
     }
   }
 
-  private docText(slugName: string): { cue: string; lesson: string; evidence: string; why: string; harnessKeys: string } {
+  private docText(slugName: string): {
+    cue: string;
+    lesson: string;
+    evidence: string;
+    why: string;
+    harnessKeys: string;
+  } {
     const ed = join(this.dir, "harnesses", slugName);
     const expPath = join(ed, "EXPERIENCE.md");
     const cue = field(expPath, "cue");
@@ -275,11 +420,18 @@ export class HarnessLibrary {
     const qTokens = tokenize(query);
     if (qTokens.length === 0) return [];
     const qTf = tf(qTokens);
-    const docs: Array<{ slug: string; tokens: string[]; tf: Map<string, number>; doc: ReturnType<HarnessLibrary["docText"]> }> = [];
+    const docs: Array<{
+      slug: string;
+      tokens: string[];
+      tf: Map<string, number>;
+      doc: ReturnType<HarnessLibrary["docText"]>;
+    }> = [];
     const df = new Map<string, number>();
     for (const slugName of slugs) {
       const doc = this.docText(slugName);
-      const text = [doc.cue, doc.lesson, doc.evidence, doc.why, doc.harnessKeys].filter(Boolean).join(" ");
+      const text = [doc.cue, doc.lesson, doc.evidence, doc.why, doc.harnessKeys]
+        .filter(Boolean)
+        .join(" ");
       const tokens = tokenize(text);
       docs.push({ slug: slugName, tokens, tf: tf(tokens), doc });
       const uniq = new Set(tokens);
@@ -301,7 +453,17 @@ export class HarnessLibrary {
       const cueTokens = new Set(tokenize(d.doc.cue));
       let cueBonus = 0;
       for (const qt of qTokens) if (cueTokens.has(qt)) cueBonus += 0.08;
-      scored.push({ slug: d.slug, taskId: d.slug.replace(/__/g, "/"), score: score + cueBonus, cue: d.doc.cue, lesson: d.doc.lesson, evidence: d.doc.evidence, why: d.doc.why, harnessKeys: d.doc.harnessKeys, path: join(this.dir, "harnesses", d.slug) });
+      scored.push({
+        slug: d.slug,
+        taskId: d.slug.replace(/__/g, "/"),
+        score: score + cueBonus,
+        cue: d.doc.cue,
+        lesson: d.doc.lesson,
+        evidence: d.doc.evidence,
+        why: d.doc.why,
+        harnessKeys: d.doc.harnessKeys,
+        path: join(this.dir, "harnesses", d.slug),
+      });
     }
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, Math.max(1, Math.min(topK, scored.length)));
@@ -309,8 +471,6 @@ export class HarnessLibrary {
   buildRagSnapshot(query: string, topK: number = 5): string | null {
     const hits = this.search(query, topK);
     if (hits.length === 0) return null;
-    const { mkdtempSync } = require("node:fs") as typeof import("node:fs");
-    const { tmpdir } = require("node:os") as typeof import("node:os");
     const tmp = mkdtempSync(join(tmpdir(), "arena-rag-"));
     const dstDomain = join(tmp, this.domainSlug);
     mkdirSync(join(dstDomain, "harnesses"), { recursive: true });
@@ -318,13 +478,17 @@ export class HarnessLibrary {
       const src = join(this.dir, "harnesses", h.slug);
       const dst = join(dstDomain, "harnesses", h.slug);
       try {
-        const { copyFileSync: _cp, readdirSync: _rd, statSync: _st, mkdirSync: _mk } = require("node:fs") as typeof import("node:fs");
+        const _cp = copyFileSync;
+        const _rd = readdirSync;
+        const _st = statSync;
+        const _mk = mkdirSync;
         const stack: Array<[string, string]> = [[src, dst]];
         while (stack.length) {
           const [s, d] = stack.pop()!;
           _mk(d, { recursive: true });
           for (const e of _rd(s)) {
-            const se = join(s, e); const de = join(d, e);
+            const se = join(s, e);
+            const de = join(d, e);
             const st = _st(se);
             if (st.isDirectory()) stack.push([se, de]);
             else if (st.isFile()) _cp(se, de);
@@ -332,8 +496,18 @@ export class HarnessLibrary {
         }
       } catch {}
     }
-    const rows: string[] = [`# Library — ${this.domain} (RAG filtered: top ${hits.length} for "${query.slice(0,60)}")`, ""];
-    for (const h of hits) rows.push(`## \`harnesses/${h.slug}/\``, `- score: ${h.score.toFixed(3)}`, `- cue: ${h.cue || "(none)"}`, `- harness: ${h.harnessKeys}`, "");
+    const rows: string[] = [
+      `# Library — ${this.domain} (RAG filtered: top ${hits.length} for "${query.slice(0, 60)}")`,
+      "",
+    ];
+    for (const h of hits)
+      rows.push(
+        `## \`harnesses/${h.slug}/\``,
+        `- score: ${h.score.toFixed(3)}`,
+        `- cue: ${h.cue || "(none)"}`,
+        `- harness: ${h.harnessKeys}`,
+        "",
+      );
     writeFileSync(join(dstDomain, "INDEX.md"), rows.join("\n"), "utf-8");
     return tmp;
   }
@@ -353,7 +527,9 @@ export class HarnessLibrary {
     try {
       const zs = this.zoneStats();
       if (zs.size > 0) {
-        const summary = [...zs.entries()].map(([z,c])=> `${z}:${c}`).join(" | ");
+        const summary = [...zs.entries()]
+          .map(([z, c]) => `${z}:${c}`)
+          .join(" | ");
         rows.push(`> Zone: ${summary}`, "");
       }
     } catch {}
@@ -390,7 +566,7 @@ export class HarnessLibrary {
     return m;
   }
   entriesByZone(zone: string): string[] {
-    return this.entries().filter(slugName => {
+    return this.entries().filter((slugName) => {
       const ed = join(this.dir, "harnesses", slugName);
       const cue = field(join(ed, "EXPERIENCE.md"), "cue");
       const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
@@ -404,34 +580,58 @@ export class HarnessLibrary {
     const qTokens = tokenize(query);
     if (qTokens.length === 0) return [];
     const qTf = tf(qTokens);
-    const docs: Array<{ slug: string; tf: Map<string, number>; doc: ReturnType<HarnessLibrary["docText"]> }> = [];
+    const docs: Array<{
+      slug: string;
+      tf: Map<string, number>;
+      doc: ReturnType<HarnessLibrary["docText"]>;
+    }> = [];
     const df = new Map<string, number>();
     for (const slugName of slugs) {
       const doc = this.docText(slugName);
-      const text = [doc.cue, doc.lesson, doc.evidence, doc.why, doc.harnessKeys].join(" ");
+      const text = [
+        doc.cue,
+        doc.lesson,
+        doc.evidence,
+        doc.why,
+        doc.harnessKeys,
+      ].join(" ");
       const tokens = tokenize(text);
       docs.push({ slug: slugName, tf: tf(tokens), doc });
       for (const tk of new Set(tokens)) df.set(tk, (df.get(tk) ?? 0) + 1);
     }
     const N = docs.length || 1;
     const idf = new Map<string, number>();
-    for (const [tk,cnt] of df) idf.set(tk, Math.log((N+1)/(cnt+1))+1);
-    const weigh = (m: Map<string, number>) => { const o = new Map<string, number>(); for (const [k,w] of m) o.set(k, w*(idf.get(k)??1)); return o; };
+    for (const [tk, cnt] of df) idf.set(tk, Math.log((N + 1) / (cnt + 1)) + 1);
+    const weigh = (m: Map<string, number>) => {
+      const o = new Map<string, number>();
+      for (const [k, w] of m) o.set(k, w * (idf.get(k) ?? 1));
+      return o;
+    };
     const qVec = weigh(qTf);
     const scored: RagHit[] = [];
     for (const d of docs) {
       let score = cosine(qVec, weigh(d.tf));
       const cueTokens = new Set(tokenize(d.doc.cue));
       for (const qt of qTokens) if (cueTokens.has(qt)) score += 0.08;
-      scored.push({ slug: d.slug, taskId: d.slug.replace(/__/g, "/"), score, cue: d.doc.cue, lesson: d.doc.lesson, evidence: d.doc.evidence, why: d.doc.why, harnessKeys: d.doc.harnessKeys, path: join(this.dir, "harnesses", d.slug) });
+      scored.push({
+        slug: d.slug,
+        taskId: d.slug.replace(/__/g, "/"),
+        score,
+        cue: d.doc.cue,
+        lesson: d.doc.lesson,
+        evidence: d.doc.evidence,
+        why: d.doc.why,
+        harnessKeys: d.doc.harnessKeys,
+        path: join(this.dir, "harnesses", d.slug),
+      });
     }
-    scored.sort((a,b)=> b.score - a.score);
+    scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, Math.max(1, Math.min(topK, scored.length)));
   }
   palaceOrder(): string[] {
     // 궁전 순회 순서: 각 entry의 cue+lesson 해시 locusId로 정렬 (Method of Loci)
     const slugs = this.entries();
-    const withCoord = slugs.map(slugName => {
+    const withCoord = slugs.map((slugName) => {
       const ed = join(this.dir, "harnesses", slugName);
       const cue = field(join(ed, "EXPERIENCE.md"), "cue");
       const lesson = field(join(ed, "EXPERIENCE.md"), "lesson");
@@ -440,41 +640,70 @@ export class HarnessLibrary {
         // 동적 import 회피 — 간단 해시로 locusId 근사 (space.ts 해시 재구현 경량)
         const t = `${cue} ${lesson}`;
         let h = 2166136261;
-        for (let i=0;i<t.length;i++){ h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+        for (let i = 0; i < t.length; i++) {
+          h ^= t.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
         locusId = (h >>> 0) % 25;
       } catch {}
       return { slug: slugName, locusId };
     });
-    withCoord.sort((a,b)=> a.locusId - b.locusId);
-    return withCoord.map(c=> c.slug);
+    withCoord.sort((a, b) => a.locusId - b.locusId);
+    return withCoord.map((c) => c.slug);
   }
 
   // --- Context7 2-tool adapter (docs/CODING_TOOLS_REA_ANALYSIS.md 3.1) ---
-  async resolveLibraryId(libraryName: string, query?: string): Promise<ResolvedLibrary[]> {
+  async resolveLibraryId(
+    libraryName: string,
+    query?: string,
+  ): Promise<ResolvedLibrary[]> {
     return ctxResolveLibraryId(libraryName, query);
   }
-  async queryDocs(libraryId: string, query: string): Promise<{ libraryId: string; query: string; snippets: string[]; source: "context7" | "fallback" }> {
+  async queryDocs(
+    libraryId: string,
+    query: string,
+  ): Promise<{
+    libraryId: string;
+    query: string;
+    snippets: string[];
+    source: "context7" | "fallback";
+  }> {
     return ctxQueryDocs(libraryId, query);
   }
   /** Context7 문서를 RAG 이전에 주입 — query → snippets를 별도 tmp로 저장 후 Evidence에 첨부 가능 */
-  async buildContext7Snapshot(libraryId: string, query: string): Promise<string | null> {
+  async buildContext7Snapshot(
+    libraryId: string,
+    query: string,
+  ): Promise<string | null> {
     const docs = await this.queryDocs(libraryId, query);
     if (!docs.snippets.length) return null;
-    const { mkdtempSync } = require("node:fs") as typeof import("node:fs");
-    const { tmpdir } = require("node:os") as typeof import("node:os");
     const tmp = mkdtempSync(join(tmpdir(), "arena-ctx7-"));
-    writeFileSync(join(tmp, "CTX7.md"), `# Context7 — ${libraryId}\n\nQuery: ${query}\n\n${docs.snippets.join("\n\n---\n\n")}\n`, "utf-8");
+    writeFileSync(
+      join(tmp, "CTX7.md"),
+      `# Context7 — ${libraryId}\n\nQuery: ${query}\n\n${docs.snippets.join("\n\n---\n\n")}\n`,
+      "utf-8",
+    );
     return tmp;
   }
 
   /** 전체 도메인 목록 (root 하위) */
   static listDomains(root?: string): string[] {
-    const base = resolve(root ?? join(process.cwd(), ".arena", "harness2", "library"));
+    const base = resolve(
+      root ?? join(process.cwd(), ".arena", "harness2", "library"),
+    );
     if (!existsSync(base)) return [];
     try {
-      return readdirSync(base).filter(n => {
-        try { return statSync(join(base, n)).isDirectory(); } catch { return false; }
-      }).sort();
-    } catch { return []; }
+      return readdirSync(base)
+        .filter((n) => {
+          try {
+            return statSync(join(base, n)).isDirectory();
+          } catch {
+            return false;
+          }
+        })
+        .sort();
+    } catch {
+      return [];
+    }
   }
 }

@@ -1,25 +1,32 @@
 /**
  * Skills — Muse Code의 Bundled Skills 포팅
  * /plan, /grill, /goal, /loop + Codex의 skills 연동
- * 
+ *
  * Muse Code는 AGENTS.md와 함께 skills를 사용:
  * - /plan: 작업을 계획으로 변환, 승인 후 실행
  * - /grill: 계획을 스트레스 테스트
  * - /goal: 목표 달성까지 계속 작업
  * - /loop: cron job (5m, 1h 등)
- * 
+ *
  * Codex도 유사: .codex/skills, .agents/skills
  */
-import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import {
+  readFileSync,
+  existsSync,
+  readdirSync,
+  statSync,
+  mkdirSync,
+  cpSync,
+} from "node:fs";
 import { join, resolve, dirname, basename } from "node:path";
 
 export interface Skill {
-  name: string;          // /plan, /grill 등
-  path: string;          // 파일 경로
-  description: string;   // 짧은 설명 (skill 파일 첫 줄)
-  content: string;       // 전체 내용
-  source: string;        // arena-code, ghidra, user 등
-  triggers?: string[];   // 자연어 트리거 (Genius: ["퀴리","curie"...])
+  name: string; // /plan, /grill 등
+  path: string; // 파일 경로
+  description: string; // 짧은 설명 (skill 파일 첫 줄)
+  content: string; // 전체 내용
+  source: string; // arena-code, ghidra, user 등
+  triggers?: string[]; // 자연어 트리거 (Genius: ["퀴리","curie"...])
 }
 
 // 빌트인 Skills (Muse Code bundling 근사)
@@ -40,7 +47,8 @@ const BUILTIN_SKILLS: Record<string, Skill> = {
   grill: {
     name: "grill",
     path: "builtin:grill",
-    description: "계획을 스트레스 테스트 — 엣지 케이스, 보안, 성능 관점에서 질문",
+    description:
+      "계획을 스트레스 테스트 — 엣지 케이스, 보안, 성능 관점에서 질문",
     content: `당신은 계획 검토자(grill)입니다. 계획의 약점을 찾으세요:
 1. 엣지 케이스: 빈 입력, 대용량, 동시성, 에러 상황에서 계획이 깨지지 않는가?
 2. 보안: 권한, 입력 검증, 인젝션 취약점은 없는가?
@@ -65,7 +73,7 @@ const BUILTIN_SKILLS: Record<string, Skill> = {
   loop: {
     name: "loop",
     path: "builtin:loop",
-    description: "반복 작업 스케줄링 — cron job (예: /loop 5m \"테스트 실행\")",
+    description: '반복 작업 스케줄링 — cron job (예: /loop 5m "테스트 실행")',
     content: `당신은 반복 스케줄러입니다. 사용자가 지정한 간격으로 작업을 반복하세요:
 - 형식: /loop <간격> "<프롬프트>"
 - 간격: 5m (5분), 1h (1시간), 2d (2일), 또는 cron 표현식 (예: 0 * * * *)
@@ -91,7 +99,8 @@ const BUILTIN_SKILLS: Record<string, Skill> = {
   youtube: {
     name: "youtube",
     path: "builtin:youtube",
-    description: "유튜브 자동화 — 기사/주제 → 8분 대본·제목·설명란·태그·썸네일·자막·수익화 체크까지 원클릭 (1층 입력 연동)",
+    description:
+      "유튜브 자동화 — 기사/주제 → 8분 대본·제목·설명란·태그·썸네일·자막·수익화 체크까지 원클릭 (1층 입력 연동)",
     content: `당신은 유튜브 수익화 자동화 PD입니다. 1층 기사/주제 입력을 받아 8분 팩트체크 영상을 완성하세요. REA 5층 파이프라인을 따르세요.
 
 ## 0. 입력 확인 (1층 — 가장 먼저)
@@ -159,7 +168,10 @@ export class SkillManager {
     this.loadUserSkills();
   }
 
-  private parseFrontmatter(content: string): { description?: string; triggers?: string[] } {
+  private parseFrontmatter(content: string): {
+    description?: string;
+    triggers?: string[];
+  } {
     const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
     if (!fmMatch) return {};
     const fm = fmMatch[1];
@@ -230,8 +242,11 @@ export class SkillManager {
               description = fm.description.slice(0, 200);
             } else {
               const body = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "");
-              const lines = body.split("\n").filter((l) => l.trim() && !l.trim().startsWith("#"));
-              description = lines[0]?.slice(0, 200) || `사용자 정의 스킬: ${skillName}`;
+              const lines = body
+                .split("\n")
+                .filter((l) => l.trim() && !l.trim().startsWith("#"));
+              description =
+                lines[0]?.slice(0, 200) || `사용자 정의 스킬: ${skillName}`;
             }
 
             this.skills.set(skillName.toLowerCase(), {
@@ -316,18 +331,24 @@ export class SkillManager {
   }
 
   // Codex 스타일 skills import (muse skills import --from claude)
-  static importFromClaude(workspaceRoot: string): { imported: number; message: string } {
+  static importFromClaude(workspaceRoot: string): {
+    imported: number;
+    message: string;
+  } {
     const claudeSkillsDir = join(resolve(workspaceRoot), ".claude", "skills");
     const arenaSkillsDir = join(resolve(workspaceRoot), ".arena", "skills");
 
     if (!existsSync(claudeSkillsDir)) {
-      return { imported: 0, message: "Claude 스킬 디렉토리가 없습니다: .claude/skills" };
+      return {
+        imported: 0,
+        message: "Claude 스킬 디렉토리가 없습니다: .claude/skills",
+      };
     }
 
     try {
       const entries = readdirSync(claudeSkillsDir);
       let count = 0;
-      const { mkdirSync, copyFileSync } = require("node:fs") as typeof import("node:fs");
+      // mkdirSync already imported
       mkdirSync(arenaSkillsDir, { recursive: true });
 
       for (const entry of entries) {
@@ -335,16 +356,22 @@ export class SkillManager {
         const dest = join(arenaSkillsDir, entry);
         if (!existsSync(dest)) {
           try {
-            const { cpSync } = require("node:fs") as typeof import("node:fs");
+            // cpSync already imported
             cpSync(src, dest, { recursive: true });
             count++;
           } catch {}
         }
       }
 
-      return { imported: count, message: `${count}개 스킬을 .claude/skills에서 .arena/skills로 가져왔습니다` };
+      return {
+        imported: count,
+        message: `${count}개 스킬을 .claude/skills에서 .arena/skills로 가져왔습니다`,
+      };
     } catch (e: unknown) {
-      return { imported: 0, message: `import 실패: ${e instanceof Error ? e.message : String(e)}` };
+      return {
+        imported: 0,
+        message: `import 실패: ${e instanceof Error ? e.message : String(e)}`,
+      };
     }
   }
 }
