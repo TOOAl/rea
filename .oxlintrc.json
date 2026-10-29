@@ -204,6 +204,14 @@
       "rules": {
         "no-constant-condition": "off"
       }
+    },
+    {
+      "files": ["src/gdb/GdbSessionManager.ts", "src/adb/AdbProvider.ts", "src/domain/native/nativeAotPe.ts", "src/domain/javascript/javascriptSemanticMemberMutations.ts", "src/process/capture/ProcessCaptureLifecycle.ts", "src/cutter/CutterBridgeClient.ts"],
+      "rules": {
+        "max-lines-per-function": ["warn", { "max": 150, "skipBlankLines": true, "skipComments": true }],
+        "complexity": ["warn", 30],
+        "max-depth": ["warn", 6]
+      }
     }
   ],
   "env": {
