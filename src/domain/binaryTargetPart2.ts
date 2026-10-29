@@ -1,144 +1,159 @@
-export const __stub = 1;
-//     architectures.push(architecture);
-//     slices.set(architecture, {
-//       offset: declaration.offset,
-//       size: declaration.size,
-//     });
-//   }
-//   const preferred = fatHostArchitecture(host);
-//   const slice = preferred === undefined ? undefined : slices.get(preferred);
-//   if (preferred === undefined || slice === undefined)
-//     return err(`FAT binary has no host-compatible ${host} architecture`);
-//   const minimumHeaderSize =
-//     preferred === "arm64" || preferred === "x86_64" ? 32 : 28;
-//   if (slice.size < minimumHeaderSize)
-//     return err(`FAT slice for ${preferred} is shorter than its Mach-O header`);
-//   return ok({
-//     format: "mach-o-universal",
-//     architecture: preferred,
-//     availableArchitectures: architectures,
-//     universalSlice: { offset: slice.offset, size: slice.size },
-//   });
-// };
-//
-// const fatHostArchitecture = (
-//   host: NodeJS.Architecture,
-// ): HeaderArchitecture | undefined => {
-//   switch (host) {
-//     case "arm64":
-//       return "arm64";
-//     case "x64":
-//       return "x86_64";
-//     case "ia32":
-//       return "x86";
-//     case "arm":
-//       return "arm";
-//     default:
-//       return undefined;
-//   }
-// };
-//
-// const fatIdentityError = (
-//   bytes: Buffer,
-//   header: Extract<
-//     ReturnType<typeof readFatContainerHeader>,
-//     { state: "parsed" }
-//   >,
-// ): string | null => {
-//   const identity = classifyFatContainerIdentity(header, (offset) => {
-//     if (offset >= bytes.length) return undefined;
-//     if (offset + 4 > bytes.length) return null;
-//     return bytes.readUInt32BE(offset);
-//   });
-//   if (identity.state === "needs-slice-header")
-//     return "FAT slice identity is outside the bounded prefix";
-//   if (identity.state === "not-mach-o")
-//     return "FAT table does not identify a Mach-O image";
-//   if (identity.state === "malformed") return identity.reason;
-//   return null;
-// };
-//
-// const parseElf = (
-//   bytes: Buffer,
-//   fileSize: number,
-// ): Result<ExecutableMetadata, string> => {
-//   const fixedHeader = readElfFixedHeader(bytes, fileSize);
-//   if (!fixedHeader.ok) return fixedHeader;
-//   const { elfClass, byteOrder } = fixedHeader.value;
-//   const little = byteOrder === "little";
-//   const machine = little ? bytes.readUInt16LE(18) : bytes.readUInt16BE(18);
-//   const architecture = elfArchitecture(machine);
-//   if (architecture === undefined) return err("unsupported ELF architecture");
-//   if (
-//     architecture === "mips" ||
-//     architecture === "riscv" ||
-//     architecture === "powerpc"
-//   ) {
-//     const flagsOffset = elfClass === 32 ? 36 : 48;
-//     const metadata: ElfFamilyMetadata = {
-//       elfClass,
-//       byteOrder: little ? "little" : "big",
-//       type: little ? bytes.readUInt16LE(16) : bytes.readUInt16BE(16),
-//       flags: little
-//         ? bytes.readUInt32LE(flagsOffset)
-//         : bytes.readUInt32BE(flagsOffset),
-//     };
-//     if (architecture === "powerpc")
-//       return ok({
-//         format: "elf",
-//         architecture,
-//         availableArchitectures: [architecture],
-//         powerpc: metadata,
-//       });
-//     return architecture === "mips"
-//       ? ok({
-//           format: "elf",
-//           architecture,
-//           availableArchitectures: [architecture],
-//           mips: metadata,
-//         })
-//       : ok({
-//           format: "elf",
-//           architecture,
-//           availableArchitectures: [architecture],
-//           riscv: metadata,
-//         });
-//   }
-//   return ok({
-//     format: "elf",
-//     architecture,
-//     availableArchitectures: [architecture],
-//   });
-// };
-//
-// const parseMz = (
-//   bytes: Buffer,
-//   fileSize: number,
-//   signatureAtOffset?: Buffer,
-// ): Result<ExecutableMetadata, string> => {
-//   const windowsHeader = observeMzWindowsHeader(
-//     bytes,
-//     fileSize,
-//     signatureAtOffset,
-//   );
-//   if (
-//     windowsHeader.state === "header-needed" ||
-//     windowsHeader.state === "signature-needed"
-//   )
-//     return err(
-//       "Windows new-header pointer or signature is outside the bounded prefix",
-//     );
-//   if (windowsHeader.state === "declared") {
-//     const { offset } = windowsHeader;
-//     if (offset < 64 || offset > bytes.length - 24)
-//       return err("invalid or truncated Windows executable header in MZ image");
-//     if (["NE", "LE", "LX"].includes(windowsHeader.signature))
-//       return err(
-//         `unsupported ${windowsHeader.signature} executable in MZ image`,
-//       );
-//     if (windowsHeader.signature !== "PE")
-//       return err("invalid or truncated Windows executable header in MZ image");
-//     const codeView = parsePeCodeViewFromBuffer(bytes, offset);
-//     return parsePeRecord(bytes.subarray(offset), codeView);
-//   }
-export const _l = 142;
+import type {
+  BinaryArchitecture,
+  ElfFamilyMetadata,
+  HeaderArchitecture,
+  MipsElfMetadata,
+  PeCodeViewRecord,
+  RiscvElfMetadata,
+  PowerPcElfMetadata,
+  UniversalMachOSlice,
+} from "./binaryTargetTypes.js";
+import { err, ok, type Result } from "./result.js";
+import { readElfFixedHeader } from "./elfFixedHeader.js";
+import { observeMzWindowsHeader, parseDosMzHeader } from "./dosMz.js";
+import { decodePeMachine } from "./peMachine.js";
+import {
+  classifyFatContainerIdentity,
+  readFatContainerHeader,
+} from "./apple/machoContainer.js";
+
+/** Format and architecture facts recovered from an executable header. */
+
+// src/domain/binaryTargetPart2.ts
+export const parsePeCodeViewFromBuffer = (
+  fileBytes: Buffer,
+  peOffset: number,
+): PeCodeViewRecord | undefined => {
+  if (fileBytes.length < peOffset + 24) return undefined;
+  const numberOfSections = fileBytes.readUInt16LE(peOffset + 6);
+  const optionalHeaderSize = fileBytes.readUInt16LE(peOffset + 20);
+  if (
+    optionalHeaderSize > 4096 ||
+    fileBytes.length < peOffset + 24 + optionalHeaderSize
+  )
+    return undefined;
+  const optionalHeader = fileBytes.subarray(
+    peOffset + 24,
+    peOffset + 24 + optionalHeaderSize,
+  );
+  const debugDir = peDebugDirectoryEntry(optionalHeader);
+  if (debugDir === undefined) return undefined;
+  const sectionTableOffset = peOffset + 24 + optionalHeaderSize;
+  const sectionTableSize = numberOfSections * 40;
+  if (fileBytes.length < sectionTableOffset + sectionTableSize)
+    return undefined;
+  const sectionTable = fileBytes.subarray(
+    sectionTableOffset,
+    sectionTableOffset + sectionTableSize,
+  );
+  const debugFileOffset = peRvaToFileOffset(
+    debugDir.debugRva,
+    sectionTable,
+    numberOfSections,
+    debugDir.sizeOfHeaders,
+    Math.min(debugDir.debugSize, 4096),
+  );
+  if (debugFileOffset === undefined || fileBytes.length < debugFileOffset + 28)
+    return undefined;
+  const maxDebugBytes = Math.min(
+    debugDir.debugSize,
+    fileBytes.length - debugFileOffset,
+  );
+  const numEntries = Math.floor(maxDebugBytes / 28);
+  for (let j = 0; j < numEntries; j++) {
+    const entryOffset = debugFileOffset + j * 28;
+    const type = fileBytes.readUInt32LE(entryOffset + 12);
+    if (type !== 2) continue; // IMAGE_DEBUG_TYPE_CODEVIEW
+    const sizeOfData = fileBytes.readUInt32LE(entryOffset + 16);
+    let pointerToRawData = fileBytes.readUInt32LE(entryOffset + 24);
+    if (pointerToRawData === 0) {
+      const addressOfRawData = fileBytes.readUInt32LE(entryOffset + 20);
+      const mapped = peRvaToFileOffset(
+        addressOfRawData,
+        sectionTable,
+        numberOfSections,
+        debugDir.sizeOfHeaders,
+        Math.min(sizeOfData, 4096),
+      );
+      if (mapped === undefined) continue;
+      pointerToRawData = mapped;
+    }
+    if (
+      sizeOfData < 16 ||
+      fileBytes.length < pointerToRawData + Math.min(sizeOfData, 24)
+    )
+      continue;
+    const codeViewData = fileBytes.subarray(
+      pointerToRawData,
+      Math.min(fileBytes.length, pointerToRawData + sizeOfData),
+    );
+    const parsed = parseCodeViewData(codeViewData, sizeOfData);
+    if (parsed !== undefined) return parsed;
+  }
+  return undefined;
+};
+
+const peManagedStatus = (
+  optionalHeader: Buffer,
+  architecture: BinaryArchitecture,
+): Result<boolean, string> => {
+  if (optionalHeader.length < 2) return err("truncated PE optional header");
+  const magic = optionalHeader.readUInt16LE(0);
+  const expectedMagic =
+    architecture === "x86_64" || architecture === "arm64" ? 0x20b : 0x10b;
+  if (magic !== expectedMagic)
+    return err("PE optional-header magic does not match its architecture");
+  const directoryOffset = magic === 0x20b ? 112 : 96;
+  const directoryCountOffset = directoryOffset - 4;
+  if (optionalHeader.length < directoryCountOffset + 4)
+    return err("truncated PE optional header");
+  const directoryCount = optionalHeader.readUInt32LE(directoryCountOffset);
+  const requiredBytes = directoryOffset + directoryCount * 8;
+  if (
+    !Number.isSafeInteger(requiredBytes) ||
+    requiredBytes > optionalHeader.length
+  )
+    return err("truncated PE data-directory table");
+  if (directoryCount <= 14) return ok(false);
+  const cliDirectory = directoryOffset + 14 * 8;
+  return ok(
+    optionalHeader.readUInt32LE(cliDirectory) !== 0 ||
+      optionalHeader.readUInt32LE(cliDirectory + 4) !== 0,
+  );
+};
+
+const machArchitecture = (cpu: number): HeaderArchitecture | undefined => {
+  switch (cpu) {
+    case 7:
+      return "x86";
+    case 0x01000007:
+      return "x86_64";
+    case 12:
+      return "arm";
+    case 0x0100000c:
+      return "arm64";
+  }
+  return undefined;
+};
+
+const elfArchitecture = (
+  machine: number,
+): Exclude<BinaryArchitecture, "6502"> | undefined => {
+  switch (machine) {
+    case 3:
+      return "x86";
+    case 62:
+      return "x86_64";
+    case 8: // EM_MIPS: ISA, ABI and byte order remain separate ELF facts.
+      return "mips";
+    case 20: // EM_PPC; byte order and processor variant remain ELF declarations.
+      return "powerpc";
+    case 40:
+      return "arm";
+    case 183:
+      return "arm64";
+    case 243: // EM_RISCV: XLEN, byte order and e_flags remain separate ELF facts.
+      return "riscv";
+  }
+  return undefined;
+};
