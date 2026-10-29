@@ -1,4 +1,8 @@
-export interface LongRunResult { benchmarks: any[]; proposals: any[]; shipped: any[]; rejected: any[]; prBody: string; selfAudit: string }
+export interface LongRunBenchmark { id: string; goal: string; }
+export interface LongRunProposal { id: string; }
+export interface LongRunShipped { title: string; }
+export interface LongRunRejected { id: string; }
+export interface LongRunResult { benchmarks: LongRunBenchmark[]; proposals: LongRunProposal[]; shipped: LongRunShipped[]; rejected: LongRunRejected[]; prBody: string; selfAudit: string }
 export function simulateLongRun(goal: string): LongRunResult {
   const benchmarks=[1,2,3,4,5].map(i=>({id:`b${i}`, goal}));
   const proposals=[1,2,3,4,5,6].map(i=>({id:`p${i}`}))

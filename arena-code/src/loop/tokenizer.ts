@@ -15,7 +15,7 @@ async function ensureEncoder(): Promise<void> {
   encReady = (async () => {
     try {
       // js-tiktoken 0.8+ — 이제 설치됨 (npm install js-tiktoken)
-      const mod: any = await import("js-tiktoken");
+      const mod = await import("js-tiktoken") as unknown as { encodingForModel?: (m:string)=>{encode:(s:string)=>number[]}; getEncoding?: (e:string)=>{encode:(s:string)=>number[]}; Tiktoken?: new (b:unknown)=>{encode:(s:string)=>number[]}; cl100k_base?: unknown };
       // API 호환: getEncoding / encodingForModel 둘 다 시도
       if (mod.encodingForModel) enc = mod.encodingForModel("gpt-4o") ?? mod.getEncoding("cl100k_base");
       else if (mod.getEncoding) enc = mod.getEncoding("cl100k_base");

@@ -175,6 +175,15 @@
         "unicorn/no-useless-spread": "off",
         "unicorn/no-new-array": "off"
       }
+    },
+    {
+      "files": ["arena-code/src/loop/structuralContext.ts", "src/domain/process/processTraceSpecification.ts", "src/inspector/V8InspectorCaptureProjection.ts", "src/sqlite/SqliteDatabaseProvider.ts", "src/kuna/KunaProjectCache.ts", "src/kuna/KunaTargetCommands.ts", "src/domain/javascript/electronWrappedCallPaths.ts"],
+      "rules": {
+        "no-useless-escape": "off",
+        "unicorn/no-new-array": "off",
+        "unicorn/no-useless-spread": "off",
+        "no-unused-expressions": "off"
+      }
     }
   ],
   "env": {
