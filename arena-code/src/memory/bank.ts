@@ -25,7 +25,11 @@ import {
 import { join, resolve } from "node:path";
 
 import type { SpaceCoord } from "./space.js";
-import { coordForText as _coordForText, buildSpatialEdges as _buildSpatialEdges, planPath as _planPath } from "./space.js";
+import {
+  coordForText as _coordForText,
+  buildSpatialEdges as _buildSpatialEdges,
+  planPath as _planPath,
+} from "./space.js";
 
 export interface MemoryEntry {
   id: string;
@@ -101,7 +105,8 @@ function parseSpaceMeta(raw: string): SpaceCoord | undefined {
   if (!m) return undefined;
   try {
     const j = JSON.parse(m[1].trim());
-    if (typeof j.x === "number" && typeof j.y === "number") return j as SpaceCoord;
+    if (typeof j.x === "number" && typeof j.y === "number")
+      return j as SpaceCoord;
   } catch {}
   return undefined;
 }
@@ -111,7 +116,8 @@ function parseExtras(raw: string): Partial<MemoryEntry> {
   const o: Partial<MemoryEntry> = {};
   const sm = parseSpaceMeta(raw);
   if (sm) (o as any).spaceMeta = sm;
-  const get = (k: string) => new RegExp(`^- ${k}:\\s*(.+)$`, "m").exec(raw)?.[1]?.trim();
+  const get = (k: string) =>
+    new RegExp(`^- ${k}:\\s*(.+)$`, "m").exec(raw)?.[1]?.trim();
   const scopeStr = get("scope");
   if (scopeStr) o.scope = scopeFromString(scopeStr);
   const conf = get("confidence");
@@ -133,7 +139,8 @@ function parseExtras(raw: string): Partial<MemoryEntry> {
     if (!Number.isNaN(n)) o.ttlDays = n;
   }
   const ev = get("event");
-  if (ev && ["ADD","UPDATE","DELETE","NOOP"].includes(ev)) o.event = ev as MemoryEvent;
+  if (ev && ["ADD", "UPDATE", "DELETE", "NOOP"].includes(ev))
+    o.event = ev as MemoryEvent;
   return o;
 }
 function isExpired(e: MemoryEntry): boolean {
@@ -148,9 +155,9 @@ function recencyScore(createdAt: string): number {
   const days = (Date.now() - t) / 86400000;
   // 0일=1.0, 7일=0.7, 30일=0.4, 90일=0.1
   if (days <= 1) return 1;
-  if (days <= 7) return 0.9 - (days-1)*0.03;
-  if (days <= 30) return 0.7 - (days-7)*0.013;
-  if (days <= 90) return 0.4 - (days-30)*0.005;
+  if (days <= 7) return 0.9 - (days - 1) * 0.03;
+  if (days <= 30) return 0.7 - (days - 7) * 0.013;
+  if (days <= 90) return 0.4 - (days - 30) * 0.005;
   return 0.05;
 }
 
@@ -187,7 +194,9 @@ export class MemoryBank {
     // scoped 탐색: domain 하위 모든 디렉토리 스캔
     if (!existsSync(this.dir)) return null;
     try {
-      const subs = readdirSync(this.dir, { withFileTypes: true }).filter(d=>d.isDirectory());
+      const subs = readdirSync(this.dir, { withFileTypes: true }).filter((d) =>
+        d.isDirectory(),
+      );
       for (const sub of subs) {
         const p = join(this.dir, sub.name, `${slug(id)}.md`);
         if (existsSync(p)) return p;
@@ -200,7 +209,10 @@ export class MemoryBank {
     return existsSync(this.dir);
   }
 
-  list(opts?: { includeExpired?: boolean; scope?: MemoryScope }): MemoryEntry[] {
+  list(opts?: {
+    includeExpired?: boolean;
+    scope?: MemoryScope;
+  }): MemoryEntry[] {
     const roots: string[] = [];
     if (opts?.scope) {
       roots.push(this.dirForScope(opts.scope));
@@ -219,7 +231,9 @@ export class MemoryBank {
     for (const r of roots) {
       if (!existsSync(r)) continue;
       try {
-        for (const f of readdirSync(r).filter(f=>f.endsWith(".md") && !f.startsWith("_graph"))) {
+        for (const f of readdirSync(r).filter(
+          (f) => f.endsWith(".md") && !f.startsWith("_graph"),
+        )) {
           files.push({ full: join(r, f) });
         }
       } catch {}
@@ -232,11 +246,17 @@ export class MemoryBank {
         const raw = readFileSync(full, "utf-8");
         const cue = /cue:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
         const content =
-          /content:\s*([\s\S]*?)(?:\nevidence:|\ncreatedAt:)/.exec(raw)?.[1]?.trim() ?? "";
+          /content:\s*([\s\S]*?)(?:\nevidence:|\ncreatedAt:)/
+            .exec(raw)?.[1]
+            ?.trim() ?? "";
         const evidence = /evidence:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
         const createdAt = /createdAt:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
         const extras = parseExtras(raw);
-        const id = full.split("/").pop()!.replace(/\.md$/, "").replace(/__/g, "/");
+        const id = full
+          .split("/")
+          .pop()!
+          .replace(/\.md$/, "")
+          .replace(/__/g, "/");
         if (seen.has(id)) continue;
         seen.add(id);
         const e: MemoryEntry = {
@@ -254,7 +274,7 @@ export class MemoryBank {
         entries.push(e);
       } catch {}
     }
-    return entries.sort((a,b)=> b.createdAt.localeCompare(a.createdAt));
+    return entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
   add(opts: {
@@ -277,15 +297,27 @@ export class MemoryBank {
     mkdirSync(d, { recursive: true });
     const p = join(d, `${slug(opts.id)}.md`);
     const now = new Date().toISOString();
-    const conf = opts.confidence !== undefined ? `confidence: ${opts.confidence}\n` : "";
+    const conf =
+      opts.confidence !== undefined ? `confidence: ${opts.confidence}\n` : "";
     const st = opts.sourceType ? `sourceType: ${opts.sourceType}\n` : "";
-    const rt = opts.referenceTime ? `referenceTime: ${opts.referenceTime}\n` : "";
+    const rt = opts.referenceTime
+      ? `referenceTime: ${opts.referenceTime}\n`
+      : "";
     const vf = opts.validFrom ? `validFrom: ${opts.validFrom}\n` : "";
-    const vu = opts.validUntil ? `validUntil: ${opts.validUntil}\n` : opts.ttlDays ? `validUntil: ${new Date(Date.now()+ opts.ttlDays*86400000).toISOString()}\n` : "";
+    const vu = opts.validUntil
+      ? `validUntil: ${opts.validUntil}\n`
+      : opts.ttlDays
+        ? `validUntil: ${new Date(Date.now() + opts.ttlDays * 86400000).toISOString()}\n`
+        : "";
     const ttl = opts.ttlDays !== undefined ? `ttlDays: ${opts.ttlDays}\n` : "";
-    const scopeStr = opts.scope && (opts.scope.user||opts.scope.agent||opts.scope.session) ? `scope: ${scopeToSlug(opts.scope)}\n` : "";
+    const scopeStr =
+      opts.scope && (opts.scope.user || opts.scope.agent || opts.scope.session)
+        ? `scope: ${scopeToSlug(opts.scope)}\n`
+        : "";
     const ev = opts.event ? `event: ${opts.event}\n` : "";
-    const sm = opts.spaceMeta ? `- spaceMeta: ${JSON.stringify(opts.spaceMeta)}\n` : "";
+    const sm = opts.spaceMeta
+      ? `- spaceMeta: ${JSON.stringify(opts.spaceMeta)}\n`
+      : "";
     const md = `# ${opts.id}\n\n- cue: ${opts.cue.trim()}\n- content: ${opts.content.trim()}\n- evidence: ${opts.evidence?.trim() ?? ""}\n- createdAt: ${now}\n${conf}${st}${rt}${vf}${vu}${ttl}${scopeStr}${ev}${sm}`;
     writeFileSync(p, md, "utf-8");
     return p;
@@ -312,13 +344,16 @@ export class MemoryBank {
   }
 
   // D2: ADD/UPDATE/DELETE/NOOP 분류 — 간단 휴리스틱 (Mem0 경량)
-  classifyEvent(cue: string, content: string): { event: MemoryEvent; targetId?: string; reason: string } {
+  classifyEvent(
+    cue: string,
+    content: string,
+  ): { event: MemoryEvent; targetId?: string; reason: string } {
     const entries = this.list({ includeExpired: true });
-    if (entries.length===0) return { event: "ADD", reason: "empty bank" };
+    if (entries.length === 0) return { event: "ADD", reason: "empty bank" };
     // 가장 유사한 기존 항목 찾기 (TF-IDF 코사인)
     const q = `${cue} ${content}`;
     const qT = tokenize(q);
-    if (qT.length===0) return { event: "NOOP", reason: "no tokens" };
+    if (qT.length === 0) return { event: "NOOP", reason: "no tokens" };
     const qTf = tf(qT);
     let best: { e: MemoryEntry; score: number } | null = null;
     // idf 간이: 전체 어휘 빈도로 근사
@@ -326,20 +361,41 @@ export class MemoryBank {
       const dT = tokenize(`${e.cue} ${e.content}`);
       const dTf = tf(dT);
       // 간이 코사인 (idf 없이, 속도)
-      let dot=0, na=0, nb=0;
-      for (const [k,v] of qTf) { dot+= v*(dTf.get(k)??0); na+=v*v; }
-      for (const [,v] of dTf) nb+=v*v;
-      const score = dot / (Math.sqrt(na)*Math.sqrt(nb) ||1);
+      let dot = 0,
+        na = 0,
+        nb = 0;
+      for (const [k, v] of qTf) {
+        dot += v * (dTf.get(k) ?? 0);
+        na += v * v;
+      }
+      for (const [, v] of dTf) nb += v * v;
+      const score = dot / (Math.sqrt(na) * Math.sqrt(nb) || 1);
       if (!best || score > best.score) best = { e, score };
     }
     if (!best) return { event: "ADD", reason: "no match" };
     const s = best.score;
-    const hasNeg = /(아니|틀렸|취소|삭제|반대|not\s+true|incorrect)/i.test(content);
-    if (s >= 0.88 && hasNeg) return { event: "DELETE", targetId: best.e.id, reason: `high sim ${s.toFixed(2)} + negation` };
-    if (s >= 0.78) return { event: "UPDATE", targetId: best.e.id, reason: `high sim ${s.toFixed(2)}` };
+    const hasNeg = /(아니|틀렸|취소|삭제|반대|not\s+true|incorrect)/i.test(
+      content,
+    );
+    if (s >= 0.88 && hasNeg)
+      return {
+        event: "DELETE",
+        targetId: best.e.id,
+        reason: `high sim ${s.toFixed(2)} + negation`,
+      };
+    if (s >= 0.78)
+      return {
+        event: "UPDATE",
+        targetId: best.e.id,
+        reason: `high sim ${s.toFixed(2)}`,
+      };
     if (s < 0.18) {
       // 무의미 짧음은 NOOP
-      if (content.trim().length < 12) return { event: "NOOP", reason: `low relevance ${s.toFixed(2)} too short` };
+      if (content.trim().length < 12)
+        return {
+          event: "NOOP",
+          reason: `low relevance ${s.toFixed(2)} too short`,
+        };
       return { event: "ADD", reason: `low sim ${s.toFixed(2)}` };
     }
     return { event: "ADD", reason: `mid sim ${s.toFixed(2)}` };
@@ -358,7 +414,8 @@ export class MemoryBank {
     spaceMeta?: SpaceCoord;
   }): { path: string | null; event: MemoryEvent; reason: string } {
     const cls = this.classifyEvent(opts.cue, opts.content);
-    if (cls.event === "NOOP") return { path: null, event: "NOOP", reason: cls.reason };
+    if (cls.event === "NOOP")
+      return { path: null, event: "NOOP", reason: cls.reason };
     if (cls.event === "DELETE" && cls.targetId) {
       this.delete(cls.targetId);
       return { path: null, event: "DELETE", reason: cls.reason };
@@ -366,14 +423,23 @@ export class MemoryBank {
     if (cls.event === "UPDATE" && cls.targetId) {
       // 기존 내용에 병합 요약
       const prev = this.get(cls.targetId);
-      const merged = prev ? `${prev.content} | 업데이트: ${opts.content}` : opts.content;
-      const p = this.add({ ...opts, id: cls.targetId, content: merged, event: "UPDATE" });
+      const merged = prev
+        ? `${prev.content} | 업데이트: ${opts.content}`
+        : opts.content;
+      const p = this.add({
+        ...opts,
+        id: cls.targetId,
+        content: merged,
+        event: "UPDATE",
+      });
       return { path: p, event: "UPDATE", reason: cls.reason };
     }
     // 공간 좌표가 없으면 자동 생성 (place cell)
     let sm = (opts as any).spaceMeta as SpaceCoord | undefined;
     if (!sm) {
-      try { sm = _coordForText(`${opts.cue} ${opts.content}`, this.domain); } catch {}
+      try {
+        sm = _coordForText(`${opts.cue} ${opts.content}`, this.domain);
+      } catch {}
     }
     const p = this.add({ ...opts, event: "ADD", spaceMeta: sm });
     return { path: p, event: "ADD", reason: cls.reason };
@@ -385,25 +451,54 @@ export class MemoryBank {
     const raw = readFileSync(p, "utf-8");
     const cue = /cue:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
     const content =
-      /content:\s*([\s\S]*?)(?:\nevidence:|\ncreatedAt:)/.exec(raw)?.[1]?.trim() ?? "";
+      /content:\s*([\s\S]*?)(?:\nevidence:|\ncreatedAt:)/
+        .exec(raw)?.[1]
+        ?.trim() ?? "";
     const evidence = /evidence:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
     const createdAt = /createdAt:\s*(.+)/.exec(raw)?.[1]?.trim() ?? "";
     const extras = parseExtras(raw);
-    return { id, cue, content, evidence, createdAt, path: p, ...extras, confidence: extras.confidence ?? 0.7, sourceType: extras.sourceType ?? "llm" } as MemoryEntry;
+    return {
+      id,
+      cue,
+      content,
+      evidence,
+      createdAt,
+      path: p,
+      ...extras,
+      confidence: extras.confidence ?? 0.7,
+      sourceType: extras.sourceType ?? "llm",
+    } as MemoryEntry;
   }
 
   // update: 기존 entry를 유지하며 패치 — Letta self-edit
-  update(id: string, patch: Partial<Pick<MemoryEntry,"cue"|"content"|"evidence"|"confidence"|"validUntil">>, reason?: string): string | null {
+  update(
+    id: string,
+    patch: Partial<
+      Pick<
+        MemoryEntry,
+        "cue" | "content" | "evidence" | "confidence" | "validUntil"
+      >
+    >,
+    reason?: string,
+  ): string | null {
     const cur = this.get(id);
     if (!cur) return null;
     const next = { ...cur, ...patch } as MemoryEntry;
     // 기존 scope 유지
-    const d = cur.path ? cur.path.substring(0, cur.path.lastIndexOf("/")) : this.dir;
+    const d = cur.path
+      ? cur.path.substring(0, cur.path.lastIndexOf("/"))
+      : this.dir;
     mkdirSync(d, { recursive: true });
     const now = cur.createdAt; // createdAt 유지, evidence에 reason 추가
-    const evStr = reason ? `${cur.evidence ?? ""} | update: ${reason}`.trim() : cur.evidence ?? "";
-    const smStr = (cur as any).spaceMeta ? `- spaceMeta: ${JSON.stringify((cur as any).spaceMeta)}\n` : (next as any).spaceMeta ? `- spaceMeta: ${JSON.stringify((next as any).spaceMeta)}\n` : "";
-    const md = `# ${id}\n\n- cue: ${next.cue.trim()}\n- content: ${next.content.trim()}\n- evidence: ${evStr}\n- createdAt: ${now}\n- confidence: ${next.confidence ?? cur.confidence ?? 0.7}\n${next.referenceTime ? `- referenceTime: ${next.referenceTime}\n`: ""}${next.validUntil ? `- validUntil: ${next.validUntil}\n`: ""}${next.ttlDays ? `- ttlDays: ${next.ttlDays}\n`: ""}${cur.scope ? `- scope: ${scopeToSlug(cur.scope)}\n`: ""}- event: UPDATE\n${smStr}`;
+    const evStr = reason
+      ? `${cur.evidence ?? ""} | update: ${reason}`.trim()
+      : (cur.evidence ?? "");
+    const smStr = (cur as any).spaceMeta
+      ? `- spaceMeta: ${JSON.stringify((cur as any).spaceMeta)}\n`
+      : (next as any).spaceMeta
+        ? `- spaceMeta: ${JSON.stringify((next as any).spaceMeta)}\n`
+        : "";
+    const md = `# ${id}\n\n- cue: ${next.cue.trim()}\n- content: ${next.content.trim()}\n- evidence: ${evStr}\n- createdAt: ${now}\n- confidence: ${next.confidence ?? cur.confidence ?? 0.7}\n${next.referenceTime ? `- referenceTime: ${next.referenceTime}\n` : ""}${next.validUntil ? `- validUntil: ${next.validUntil}\n` : ""}${next.ttlDays ? `- ttlDays: ${next.ttlDays}\n` : ""}${cur.scope ? `- scope: ${scopeToSlug(cur.scope)}\n` : ""}- event: UPDATE\n${smStr}`;
     writeFileSync(cur.path, md, "utf-8");
     return cur.path;
   }
@@ -421,29 +516,50 @@ export class MemoryBank {
       for (const e of readdirSync(this.root, { withFileTypes: true })) {
         if (e.isDirectory() && e.name.startsWith(this.domainSlug)) {
           const full = join(this.root, e.name);
-          if (existsSync(full)) for (const sub of readdirSync(full, { withFileTypes: true })) {
-            if (sub.isDirectory()) {
-              const sp = join(full, sub.name);
-              if (existsSync(sp) && sp !== this.dir) rmSync(sp, { recursive: true, force: true });
+          if (existsSync(full))
+            for (const sub of readdirSync(full, { withFileTypes: true })) {
+              if (sub.isDirectory()) {
+                const sp = join(full, sub.name);
+                if (existsSync(sp) && sp !== this.dir)
+                  rmSync(sp, { recursive: true, force: true });
+              }
             }
-          }
         }
       }
     } catch {}
   }
 
   // --- D3: 하이브리드 + 최신성 + 신뢰도 + 공간 가중 ---
-  search(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number; spatialBoost?: number }): MemoryEntry[] {
+  search(
+    query: string,
+    topK = 5,
+    opts?: {
+      minConfidence?: number;
+      timeWindowDays?: number;
+      spatialBoost?: number;
+    },
+  ): MemoryEntry[] {
     return this.searchHybrid(query, topK, opts);
   }
 
-  searchHybrid(query: string, topK = 5, opts?: { minConfidence?: number; timeWindowDays?: number; spatialBoost?: number }): MemoryEntry[] {
+  searchHybrid(
+    query: string,
+    topK = 5,
+    opts?: {
+      minConfidence?: number;
+      timeWindowDays?: number;
+      spatialBoost?: number;
+    },
+  ): MemoryEntry[] {
     const entries = this.list({ includeExpired: false });
     let filtered = entries;
-    if (opts?.minConfidence !== undefined) filtered = filtered.filter(e=> (e.confidence ?? 0.7) >= opts.minConfidence!);
+    if (opts?.minConfidence !== undefined)
+      filtered = filtered.filter(
+        (e) => (e.confidence ?? 0.7) >= opts.minConfidence!,
+      );
     if (opts?.timeWindowDays !== undefined) {
-      const cutoff = Date.now() - opts.timeWindowDays!*86400000;
-      filtered = filtered.filter(e=> {
+      const cutoff = Date.now() - opts.timeWindowDays! * 86400000;
+      filtered = filtered.filter((e) => {
         const t = Date.parse(e.referenceTime ?? e.createdAt);
         return !Number.isNaN(t) && t >= cutoff;
       });
@@ -473,7 +589,9 @@ export class MemoryBank {
     let qCoord: import("./space.js").SpaceCoord | null = null;
     const spatialBoost = opts?.spatialBoost ?? 0.18; // 기본 0.18 — 공간 18% + TF-IDF/dense 82%
     if (spatialBoost > 0) {
-      try { qCoord = _coordForText(query, this.domain); } catch {}
+      try {
+        qCoord = _coordForText(query, this.domain);
+      } catch {}
     }
     // Dense embedder hybrid — HashEmbedder 256d (API 0, Ghidra P-Code 철학: 모든 텍스트를 동일 IR로)
     let qDense: number[] | null = null;
@@ -501,7 +619,10 @@ export class MemoryBank {
         } catch {}
       }
       // hybrid — sparse와 dense 가중 합
-      let score = qDense !== null ? (sparseScore * (1 - denseWeight) + denseScore * denseWeight) : sparseScore;
+      let score =
+        qDense !== null
+          ? sparseScore * (1 - denseWeight) + denseScore * denseWeight
+          : sparseScore;
       // recency
       score += recencyScore(d.entry.createdAt) * 0.2;
       // confidence — 신뢰도 0.4 미만은 recall 제외(이전 필터로 이미 걸렀지만 추가 페널티)
@@ -511,18 +632,22 @@ export class MemoryBank {
       // TTL 임박 페널티 — validUntil 3일 이내면 -0.1 (만료 직전 정보는 덜 신뢰)
       if (d.entry.validUntil) {
         const ttlLeft = Date.parse(d.entry.validUntil) - Date.now();
-        if (!Number.isNaN(ttlLeft) && ttlLeft > 0 && ttlLeft < 3 * 86400000) score -= 0.1;
+        if (!Number.isNaN(ttlLeft) && ttlLeft > 0 && ttlLeft < 3 * 86400000)
+          score -= 0.1;
         if (ttlLeft < 0) score -= 0.5; // 이미 만료됐는데 list에서 미제거된 경우
       }
       // S 공간 가중 — 쿼리 좌표와 가깝고 같은 zone이면 +0.18, 같은 L1 타일이면 +0.08 추가
       if (qCoord && d.entry.spaceMeta) {
         const sm = d.entry.spaceMeta;
-        const dx = sm.x - qCoord.x, dy = sm.y - qCoord.y, dz = sm.z - qCoord.z;
-        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz); // 0..1.732
+        const dx = sm.x - qCoord.x,
+          dy = sm.y - qCoord.y,
+          dz = sm.z - qCoord.z;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz); // 0..1.732
         const spatialScore = Math.max(0, 1 - dist / 1.0); // 1=완전가까움, 0=1.0 이상
         score += spatialScore * spatialBoost;
         if (sm.zone === qCoord.zone) score += 0.05; // zone 일치 보너스 (Grid cell 모듈)
-        if (sm.gridKey.split("/")[0] === qCoord.gridKey.split("/")[0]) score += 0.04; // L1 타일 일치
+        if (sm.gridKey.split("/")[0] === qCoord.gridKey.split("/")[0])
+          score += 0.04; // L1 타일 일치
       }
       return { entry: d.entry, score };
     });
@@ -545,7 +670,12 @@ export class MemoryBank {
       for (const re of patterns) {
         const m = re.exec(t);
         if (m) {
-          triples.push({ subject: m[1], relation: m[2], object: m[3], sourceId: e.id });
+          triples.push({
+            subject: m[1],
+            relation: m[2],
+            object: m[3],
+            sourceId: e.id,
+          });
           break;
         }
       }
@@ -558,16 +688,25 @@ export class MemoryBank {
     const triples = this.toGraph();
     const p = join(this.dir, "_graph.jsonl");
     mkdirSync(this.dir, { recursive: true });
-    const lines = triples.map(t=> JSON.stringify(t)).join("\n");
+    const lines = triples.map((t) => JSON.stringify(t)).join("\n");
     writeFileSync(p, lines, "utf-8");
     return p;
   }
 
   // D4+D2: 야간 배치 — TTL 만료 삭제 + 고유사도 병합
-  consolidate(threshold = 0.88): { merged: number; expired: number; total: number } {
-    let expired = 0, merged = 0;
+  consolidate(threshold = 0.88): {
+    merged: number;
+    expired: number;
+    total: number;
+  } {
+    let expired = 0,
+      merged = 0;
     const all = this.list({ includeExpired: true });
-    for (const e of all) if (isExpired(e)) { this.delete(e.id); expired++; }
+    for (const e of all)
+      if (isExpired(e)) {
+        this.delete(e.id);
+        expired++;
+      }
     // 고유사도 병합: 0.88 이상 쌍은 최신 유지, 오래된 삭제
     const remaining = this.list({ includeExpired: false });
     const seen = new Map<string, MemoryEntry>();
@@ -576,11 +715,17 @@ export class MemoryBank {
       for (const [k, prev] of seen) {
         const a = tokenize(`${e.cue} ${e.content}`);
         const b = tokenize(`${prev.cue} ${prev.content}`);
-        const at = tf(a), bt = tf(b);
-        let dot=0, na=0, nb=0;
-        for (const [kk,v] of at) { dot+= v*(bt.get(kk)??0); na+=v*v; }
-        for (const [,v] of bt) nb+=v*v;
-        const s = dot/(Math.sqrt(na)*Math.sqrt(nb)||1);
+        const at = tf(a),
+          bt = tf(b);
+        let dot = 0,
+          na = 0,
+          nb = 0;
+        for (const [kk, v] of at) {
+          dot += v * (bt.get(kk) ?? 0);
+          na += v * v;
+        }
+        for (const [, v] of bt) nb += v * v;
+        const s = dot / (Math.sqrt(na) * Math.sqrt(nb) || 1);
         if (s >= threshold) {
           // 오래된 쪽 삭제 (createdAt 작은 쪽)
           const older = e.createdAt < prev.createdAt ? e : prev;
@@ -599,34 +744,44 @@ export class MemoryBank {
   // ── S: 공간 천재 — Place/Grid cell 기반 공간 인덱싱 ──
   /** 근처 기억: 중심 좌표 반경 내 entry 반환 (Place cell) */
   nearby(center: SpaceCoord, radius = 0.25, limit = 8): MemoryEntry[] {
-    const all = this.list({ includeExpired: false }).filter(e => e.spaceMeta);
-    const scored = all.map(e => ({
-      e,
-      d: Math.sqrt(
-        (e.spaceMeta!.x - center.x) ** 2 +
-        (e.spaceMeta!.y - center.y) ** 2 +
-        (e.spaceMeta!.z - center.z) ** 2,
-      ),
-    })).filter(s => s.d <= radius).sort((a, b) => a.d - b.d).slice(0, limit);
-    return scored.map(s => s.e);
+    const all = this.list({ includeExpired: false }).filter((e) => e.spaceMeta);
+    const scored = all
+      .map((e) => ({
+        e,
+        d: Math.sqrt(
+          (e.spaceMeta!.x - center.x) ** 2 +
+            (e.spaceMeta!.y - center.y) ** 2 +
+            (e.spaceMeta!.z - center.z) ** 2,
+        ),
+      }))
+      .filter((s) => s.d <= radius)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, limit);
+    return scored.map((s) => s.e);
   }
   /** 궁전 순회: locusId 순서대로 정렬 (Method of Loci walk) */
   palaceWalk(): MemoryEntry[] {
-    const all = this.list({ includeExpired: false }).filter(e => e.spaceMeta);
-    return [...all].sort((a, b) => (a.spaceMeta!.locusId) - (b.spaceMeta!.locusId));
+    const all = this.list({ includeExpired: false }).filter((e) => e.spaceMeta);
+    return [...all].sort((a, b) => a.spaceMeta!.locusId - b.spaceMeta!.locusId);
   }
   /** 구역별 목록 — Grid cell coarse (예: math, history) */
   byZone(zone: string): MemoryEntry[] {
-    return this.list({ includeExpired: false }).filter(e => e.spaceMeta?.zone === zone);
+    return this.list({ includeExpired: false }).filter(
+      (e) => e.spaceMeta?.zone === zone,
+    );
   }
   /** 공간 그래프 간선 — near/adjacent/contains (Grid+Place 결합) */
   spatialEdges(): import("./space.js").SpatialEdge[] {
     try {
-      return _buildSpatialEdges(this.list({ includeExpired: false }).filter(e => e.spaceMeta) as any);
-    } catch { return []; }
+      return _buildSpatialEdges(
+        this.list({ includeExpired: false }).filter((e) => e.spaceMeta) as any,
+      );
+    } catch {
+      return [];
+    }
   }
   /** 텍스트 질의 → 가상 좌표 생성 후 nearby (의미적 내비게이션) */
-  searchNearby(query: string, radius = 0.30, topK = 5): MemoryEntry[] {
+  searchNearby(query: string, radius = 0.3, topK = 5): MemoryEntry[] {
     try {
       const qCoord = _coordForText(query, this.domain);
       // 1차: 공간 반경 후보, 2차: 하이브리드 랭킹으로 재정렬
@@ -634,27 +789,41 @@ export class MemoryBank {
       if (candidates.length === 0) return [];
       // 간단 TF-IDF 재랭킹
       const qTokens = new Set(tokenize(query));
-      const scored = candidates.map(e => {
-        const text = `${e.cue} ${e.content}`;
-        const overlap = tokenize(text).filter(t => qTokens.has(t)).length;
-        const conf = e.confidence ?? 0.7;
-        return { e, score: overlap + conf * 0.5 };
-      }).sort((a, b) => b.score - a.score);
-      return scored.slice(0, topK).map(s => s.e);
-    } catch { return []; }
+      const scored = candidates
+        .map((e) => {
+          const text = `${e.cue} ${e.content}`;
+          const overlap = tokenize(text).filter((t) => qTokens.has(t)).length;
+          const conf = e.confidence ?? 0.7;
+          return { e, score: overlap + conf * 0.5 };
+        })
+        .sort((a, b) => b.score - a.score);
+      return scored.slice(0, topK).map((s) => s.e);
+    } catch {
+      return [];
+    }
   }
   /** 경로 계획: fromId → toId 사이의 랜드마크 반환 */
-  planPath(fromId: string, toId: string): ReturnType<typeof import("./space.js").planPath> | null {
+  planPath(
+    fromId: string,
+    toId: string,
+  ): ReturnType<typeof import("./space.js").planPath> | null {
     try {
-      return _planPath(this.list({ includeExpired: false }) as any, fromId, toId) as any;
-    } catch { return null; }
+      return _planPath(
+        this.list({ includeExpired: false }) as any,
+        fromId,
+        toId,
+      ) as any;
+    } catch {
+      return null;
+    }
   }
 
-  /** 2-hop 그래프 확장 — Zep 시간그래프 흡수: 1차 검색 → triples 2-hop으로 확장 (scene graph) */
+  /** 2-hop 그래프 확장 — Zep 시간그래프 흡수: 1차 검색 → triples 2-hop으로 확장 (scene graph) + hybrid 재정렬 */
   searchWithGraph(query: string, topK = 5, hops = 2): MemoryEntry[] {
     const first = this.searchHybrid(query, topK * 2);
     if (first.length === 0 || hops <= 1) return first.slice(0, topK);
     const triples = this.toGraph();
+    // bySubject/byObject 인덱스 — O(1) 이웃 조회
     const bySubject = new Map<string, FactTriple[]>();
     const byObject = new Map<string, FactTriple[]>();
     for (const t of triples) {
@@ -663,20 +832,25 @@ export class MemoryBank {
       if (!byObject.has(t.object)) byObject.set(t.object, []);
       byObject.get(t.object)!.push(t);
     }
-    const idToEntry = new Map(first.map(e => [e.id, e] as const));
+    const idToEntry = new Map(first.map((e) => [e.id, e] as const));
     const expanded = new Map<string, MemoryEntry>(idToEntry);
     let frontier = [...first];
     for (let h = 0; h < hops - 1; h++) {
       const next: MemoryEntry[] = [];
       for (const e of frontier) {
         const t = `${e.cue} ${e.content}`;
-        // subject/object 매칭으로 이웃 찾기
         for (const tr of triples) {
-          if (t.includes(tr.subject) || t.includes(tr.object)) {
+          // 정확도: subject/object는 2자 이상일 때만 substring 매칭 — 짧은 단어 오탐 방지
+          const subjHit = tr.subject.length >= 2 && t.includes(tr.subject);
+          const objHit = tr.object.length >= 2 && t.includes(tr.object);
+          if (subjHit || objHit) {
             const nid = tr.sourceId;
             if (!expanded.has(nid)) {
               const ne = this.get(nid);
-              if (ne && !isExpired(ne)) { expanded.set(nid, ne); next.push(ne); }
+              if (ne && !isExpired(ne)) {
+                expanded.set(nid, ne);
+                next.push(ne);
+              }
             }
           }
         }
@@ -684,13 +858,34 @@ export class MemoryBank {
       if (next.length === 0) break;
       frontier = next;
     }
-    return [...expanded.values()].slice(0, topK);
+    // 재정렬: 확장된 후보를 searchHybrid 점수 기준으로 다시 정렬 — 원래 hybrid 랭킹 유지
+    const allCandidates = [...expanded.values()];
+    if (allCandidates.length <= topK) return allCandidates;
+    // query와의 hybrid 점수로 재랭킹 — searchHybrid 내부 로직 경량 재사용 (sparse 점수)
+    const qTokens = new Set(tokenize(query));
+    const scored = allCandidates
+      .map((e) => {
+        const text = `${e.cue} ${e.content}`;
+        const overlap = tokenize(text).filter((tok) => qTokens.has(tok)).length;
+        const conf = e.confidence ?? 0.7;
+        const rec = recencyScore(e.createdAt) * 0.5;
+        return { e, score: overlap + conf * 0.3 + rec };
+      })
+      .sort((a, b) => b.score - a.score);
+    return scored.slice(0, topK).map((s) => s.e);
   }
 
   /** 신뢰도 가중 시간창 검색 — TTL 만료 전 신뢰도 감쇠 흡수 (Letta) */
-  recallByTimeWindow(query: string, days = 7, minConfidence = 0.5): MemoryEntry[] {
+  recallByTimeWindow(
+    query: string,
+    days = 7,
+    minConfidence = 0.5,
+  ): MemoryEntry[] {
     const cutoff = Date.now() - days * 86400000;
-    return this.searchHybrid(query, 10, { timeWindowDays: days, minConfidence }).filter(e => {
+    return this.searchHybrid(query, 10, {
+      timeWindowDays: days,
+      minConfidence,
+    }).filter((e) => {
       const t = Date.parse(e.referenceTime ?? e.createdAt);
       return !Number.isNaN(t) && t >= cutoff;
     });

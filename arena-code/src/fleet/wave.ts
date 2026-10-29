@@ -5,7 +5,6 @@
  */
 import type { Tree } from "../harness2/harness.js";
 import type { RolloutView } from "../harness2/context.js";
-import type { Provider } from "../providers/types.js";
 
 export interface WaveOptions {
   maxConcurrent?: number; // Orca --max-concurrent N (기본 3)
@@ -28,15 +27,23 @@ export interface WaveResult {
 // Durable queue lease — 간단 메모리 락 (Ghidra durable queue lease/lock 패턴)
 class LeaseQueue {
   private leased = new Set<string>();
-  acquire(id: string): boolean { if (this.leased.has(id)) return false; this.leased.add(id); return true; }
-  release(id: string) { this.leased.delete(id); }
-  size() { return this.leased.size; }
+  acquire(id: string): boolean {
+    if (this.leased.has(id)) return false;
+    this.leased.add(id);
+    return true;
+  }
+  release(id: string) {
+    this.leased.delete(id);
+  }
+  size() {
+    return this.leased.size;
+  }
 }
 
 export async function runWave(
   tasks: WaveTask[],
   probeFn: (harness: Tree, label: string) => Promise<RolloutView>,
-  opts: WaveOptions = {}
+  opts: WaveOptions = {},
 ): Promise<WaveResult> {
   const maxConcurrent = Math.max(1, Math.min(16, opts.maxConcurrent ?? 3));
   const timeoutMs = opts.timeoutMs ?? 60000;
@@ -50,7 +57,10 @@ export async function runWave(
   const workers: Promise<void>[] = [];
   const runOne = async () => {
     while (idx < tasks.length) {
-      if (Date.now() - start > timeoutMs) { timedOut = true; break; }
+      if (Date.now() - start > timeoutMs) {
+        timedOut = true;
+        break;
+      }
       const t = tasks[idx++];
       if (!queue.acquire(t.label)) continue; // leased
       try {
@@ -61,17 +71,26 @@ export async function runWave(
       }
     }
   };
-  for (let i = 0; i < Math.min(maxConcurrent, tasks.length); i++) workers.push(runOne());
+  for (let i = 0; i < Math.min(maxConcurrent, tasks.length); i++)
+    workers.push(runOne());
   // aggregator wait_for_all — Orca orchestration wait
   await Promise.all(workers);
-  return { rollouts, leased: queue.size(), timedOut, durationMs: Date.now() - start };
+  return {
+    rollouts,
+    leased: queue.size(),
+    timedOut,
+    durationMs: Date.now() - start,
+  };
 }
 
 // Engine 통합 헬퍼 — Fleet Wave로 inv/dom 동시 실행 (기존 Promise.all 대체)
 export async function fleetWaveBatch(
   candidates: WaveTask[],
-  probeByLabel: Map<string, (harness: Tree, label: string) => Promise<RolloutView>>,
-  opts: WaveOptions = {}
+  probeByLabel: Map<
+    string,
+    (harness: Tree, label: string) => Promise<RolloutView>
+  >,
+  opts: WaveOptions = {},
 ): Promise<Map<string, RolloutView>> {
   const probeFn = async (harness: Tree, label: string) => {
     const fn = probeByLabel.get(label);
