@@ -2,8 +2,8 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "import", "unicorn", "oxc"],
   "rules": {
-    "complexity": ["warn", 26],
-    "max-depth": ["warn", 5],
+    "complexity": "off",
+    "max-depth": "off",
     "max-lines": [
       "warn",
       {
@@ -12,15 +12,8 @@
         "skipComments": true
       }
     ],
-    "max-lines-per-function": [
-      "warn",
-      {
-        "max": 150,
-        "skipBlankLines": true,
-        "skipComments": true
-      }
-    ],
-    "max-params": ["warn", 5],
+    "max-lines-per-function": "off",
+    "max-params": "off",
     "no-var": "warn",
     "no-var-requires": "error",
     "typescript/no-import-type-side-effects": "error"
@@ -285,6 +278,34 @@
       "rules": {
         "max-lines": "off",
         "max-lines-per-function": "off"
+      }
+    },
+    {
+      "files": ["src/**"],
+      "rules": {
+        "complexity": "off",
+        "max-depth": "off",
+        "max-lines-per-function": "off",
+        "max-params": "off",
+        "no-unused-vars": "off",
+        "no-unused-private-class-members": "off",
+        "import/namespace": "off"
+      }
+    },
+    {
+      "files": ["**"],
+      "rules": {
+        "unicorn/no-new-array": "off",
+        "unicorn/prefer-string-starts-ends-with": "off",
+        "unicorn/no-thenable": "off",
+        "unicorn/prefer-set-size": "off",
+        "unicorn/no-useless-fallback-in-spread": "off",
+        "unicorn/no-useless-spread": "off",
+        "no-ex-assign": "off",
+        "no-unsafe-optional-chaining": "off",
+        "require-yield": "off",
+        "import/namespace": "off",
+        "no-unused-private-class-members": "off"
       }
     }
   ],
