@@ -61,7 +61,7 @@ const BENCH_CASES: BenchCase[] = [
   { name: "역사 음악 (Bach·Armstrong)", task: "바흐의 대위 규칙과 암스트롱의 즉흥 — 제약 속에서 새로 만들기", article: "바흐는 성부 독립 규칙으로 흐름을 만들고, 암스트롱은 정해진 리듬 위에서 음색을 바꿨다.", topic: "history-music", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
 ];
 
-function scoreUncertainty(article: string, outputs: any[]): { passed: boolean; calibration: number; note: string } {
+function scoreUncertainty(article: string, outputs: {idea:string}[]): { passed: boolean; calibration: number; note: string } {
   // 불확실성 문장(전망/추측)을 [추정]으로 올바르게 마킹했는가? + 사실을 [추정]로 오표기(over-caution)하지 않았는가?
   const hasUncertain = /전망|추측|것이다|예언/.test(article);
   const hasCertainFact = /발표|거래소/.test(article);

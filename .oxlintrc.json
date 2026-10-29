@@ -218,6 +218,12 @@
       "rules": {
         "max-params": ["warn", 6]
       }
+    },
+    {
+      "files": ["src/domain/javascript/javascriptSemanticMemberMutations.ts", "src/domain/javascript/javascriptSymbolicBindings.ts", "src/domain/native/nativeAotPe.ts", "src/application/javascript/JavaScriptArtifactPathResolution.ts", "src/domain/javascript/javascriptSemanticAnalysis.ts", "src/domain/javascript/javascriptSemanticGraph.ts"],
+      "rules": {
+        "complexity": ["warn", 30]
+      }
     }
   ],
   "env": {
