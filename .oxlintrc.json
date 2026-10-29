@@ -91,6 +91,90 @@
           }
         ]
       }
+    },
+    {
+      "files": [
+        "scripts/ci/workflow-run.mjs",
+        "scripts/verify-package-setup.mjs",
+        "src/application/SetupHost.ts",
+        "src/application/SetupInstallFailure.ts",
+        "src/artifacts/SafeOutputTree.ts",
+        "src/contracts/fridaRemoteAddress.ts",
+        "src/contracts/native/nativeToolContracts.ts",
+        "src/domain/adb/adbDeviceAnalysis.ts",
+        "src/domain/apple/dylibResolution.ts",
+        "src/domain/javascript/electronActiveObservation.ts",
+        "src/domain/localPath.ts",
+        "src/domain/native/nativeCallObservation.ts",
+        "src/domain/portableSchemaPatterns.test.ts",
+        "src/domain/process/processScenario.ts",
+        "src/domain/recordedTransportUrl.ts",
+        "src/domain/reverseEngineering.ts",
+        "src/evm/EvmBytecodeCarrier.ts",
+        "src/flutter/FlutterPayloadScan.ts",
+        "src/ida/IdaJsonDiagnostic.ts"
+      ],
+      "rules": {
+        "no-control-regex": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/lib/browser-capture-metadata-budget-e2e.mjs",
+        "scripts/lib/browser-scenario-service-worker-setup-e2e.mjs",
+        "scripts/lib/browser-scenario-service-workers-e2e.mjs",
+        "scripts/lib/real-ghidra-address-boundaries.mjs",
+        "scripts/lib/real-ghidra-file-offsets.mjs",
+        "scripts/verify-native-ui.mjs",
+        "scripts/verify-real-ghidra-windows.mjs",
+        "scripts/verify-real-ghidra.mjs",
+        "scripts/verify-real-hopper-deadlines.mjs",
+        "src/application/javascript/JavaScriptArtifactReconstruction.ts",
+        "src/artifacts/readStableArtifact.ts",
+        "src/cliBrowserScenarioCommands.ts",
+        "src/process/HopperLease.ts",
+        "src/process/LinuxResourceLimits.ts",
+        "src/sqlite/SqliteDatabaseSnapshot.ts",
+        "tests/acceptance/providers/hopperStartupRecovery.test.ts",
+        "tests/boundary/filesystem/directAnalysisSnapshotReplay.test.ts",
+        "tests/boundary/mcp/ghidraInventoryMcp.test.ts",
+        "tests/boundary/mcp/officialTools.test.ts",
+        "tests/boundary/process/processCaptureLifecycle.test.ts",
+        "tests/boundary/process/windowsOutputCapture.test.ts"
+      ],
+      "rules": {
+        "no-unsafe-finally": "off"
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/brains/reasoning.ts",
+        "arena-code/src/harness2/context7.ts",
+        "arena-code/src/harness2/harness.ts",
+        "arena-code/src/visual/imageGuard.ts",
+        "arena-code/src/visual/inspectionTeam.ts",
+        "arena-code/src/rag/embedder.ts",
+        "scripts/verify-solidity-metadata.mjs",
+        "src/cutter/CutterBridgeClient.ts"
+      ],
+      "rules": {
+        "no-useless-escape": "off",
+        "no-misleading-character-class": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/verify-real-kuna.mjs",
+        "src/flutter/FlutterBuildProvider.ts",
+        "src/frida/FridaInstrumentationManager.ts",
+        "arena-code/src/rag/embedder.ts",
+        "src/cutter/CutterBridgeClient.ts",
+        "arena-code/src/visual/imageGuard.ts"
+      ],
+      "rules": {
+        "unicorn/no-useless-spread": "off",
+        "unicorn/no-new-array": "off"
+      }
     }
   ],
   "env": {
