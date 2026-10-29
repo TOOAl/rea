@@ -1,150 +1,175 @@
-export const __stub = 1;
-// ): AnalysisErrorProjection["code"] => {
-//   if (error.reason === "integrity" && error.artifactDetails !== undefined)
-//     return "artifact_integrity_mismatch";
-//   if (error.reason === "limit") return "truncated";
-//   if (error.reason === "cancelled") return "cancelled";
-//   return "artifact_operation_failed";
-// };
-//
-// const evidenceFileCode = (
-//   reason: EvidenceFileError["reason"],
-// ): AnalysisErrorProjection["code"] => {
-//   if (reason === "invalid-json") return "evidence_integrity_mismatch";
-//   // A missing, non-file or already-existing path is the caller's selection.
-//   if (reason === "io") return "execution_failure";
-//   return "invalid_request";
-// };
-//
-// const unknownRegistryCode = (
-//   reason: UnknownRegistryError["reason"],
-// ): AnalysisErrorProjection["code"] => {
-//   if (reason === "revision-conflict" || reason === "already-exists")
-//     return "revision_conflict";
-//   if (reason === "limit") return "truncated";
-//   if (reason === "integrity") return "evidence_integrity_mismatch";
-//   return "execution_failure";
-// };
-//
-// const processCaptureCode = (
-//   error: AnalysisError,
-// ): AnalysisErrorProjection["code"] => {
-//   if (error.cleanupIncomplete) return "cleanup_incomplete";
-//   if (error.userCategory === "cancelled") return "cancelled";
-//   return "process_capture_failed";
-// };
-//
-// type SpecializedErrorTag =
-//   | "ArtifactOperationError"
-//   | "BinaryTargetError"
-//   | "BrowserObservationError"
-//   | "EvidenceFileError"
-//   | "ProcessCaptureError"
-//   | "ProviderSelectionError"
-//   | "UnknownRegistryError";
-//
-// const STATIC_ERROR_CODES = {
-//   AnalysisProtocolError: "unreadable_output",
-//   AnalysisOutputError: "unreadable_output",
-//   HopperProtocolError: "unreadable_output",
-//   AnalysisInputError: "invalid_request",
-//   AnalysisAccessDeniedError: "access_denied",
-//   AnalysisArtifactChangedError: "artifact_changed",
-//   AnalysisCapabilityUnavailableError: "capability_unavailable",
-//   AnalysisUnsupportedTargetError: "unsupported_target",
-//   AnalysisCancelledError: "cancelled",
-//   HopperCancelledError: "cancelled",
-//   AnalysisTimeoutError: "provider_timeout",
-//   AnalysisResourceConstraintError: "resource_constraint",
-//   HopperTimeoutError: "provider_timeout",
-//   HopperProcessError: "provider_unavailable",
-//   HopperStartError: "provider_unavailable",
-//   ConfigurationError: "configuration_invalid",
-//   NoBinaryOpenError: "target_unavailable",
-//   EvidenceIntegrityError: "evidence_integrity_mismatch",
-//   ProviderAdapterError: "execution_failure",
-//   HopperRemoteError: "execution_failure",
-// } as const satisfies Readonly<
-//   Record<
-//     Exclude<AnalysisErrorTag, SpecializedErrorTag>,
-//     AnalysisErrorProjection["code"]
-//   >
-// >;
-//
-// const staticErrorCode = (
-//   tag: AnalysisErrorTag,
-// ): AnalysisErrorProjection["code"] => {
-//   switch (tag) {
-//     case "ArtifactOperationError":
-//     case "BinaryTargetError":
-//     case "BrowserObservationError":
-//     case "EvidenceFileError":
-//     case "ProcessCaptureError":
-//     case "ProviderSelectionError":
-//     case "UnknownRegistryError":
-//       throw new TypeError(`Unhandled specialized analysis error: ${tag}`);
-//     default:
-//       return STATIC_ERROR_CODES[tag];
-//   }
-// };
-//
-// const errorDetails = (
-//   error: AnalysisError,
-// ): Readonly<Record<string, JsonValue>> | undefined =>
-//   requestErrorDetails(error) ??
-//   artifactStateErrorDetails(error) ??
-//   providerErrorDetails(error) ??
-//   lifecycleErrorDetails(error);
-//
-// const requestErrorDetails = (
-//   error: AnalysisError,
-// ): Readonly<Record<string, JsonValue>> | undefined => {
-//   if (error instanceof AnalysisUnsupportedTargetError)
-//     return {
-//       operation: error.operation,
-//       path: error.path,
-//       reason: error.reason,
-//     };
-//   if (error instanceof AnalysisResourceConstraintError)
-//     return {
-//       operation: error.operation,
-//       resource: error.resource,
-//       reason: error.reason,
-//       reported_limits: error.reportedLimits,
-//     };
-//   if (error instanceof AnalysisArtifactChangedError)
-//     return {
-//       operation: error.operation,
-//       path: error.path,
-//       reason: error.reason,
-//       boundary: "stable-artifact-read",
-//     };
-//   if (error instanceof AnalysisAccessDeniedError)
-//     return {
-//       operation: error.operation,
-//       path: error.path,
-//       system_code: error.systemCode,
-//       boundary: "filesystem-read",
-//     };
-//   if (error instanceof AnalysisOutputError)
-//     return {
-//       operation: error.operation,
-//       reason: error.reason,
-//       ...(error.diagnostics === undefined
-//         ? {}
-//         : { diagnostics: error.diagnostics }),
-//     };
-//   if (error instanceof AnalysisInputError && error.issues.length > 0)
-//     return {
-//       operation: error.operation,
-//       issues: error.issues.map((issue) => ({
-//         path: [...issue.path],
-//         reason: issue.reason,
-//         ...(issue.message === undefined ? {} : { message: issue.message }),
-//         ...(issue.expected === undefined ? {} : { expected: issue.expected }),
-//         ...(issue.minimum === undefined ? {} : { minimum: issue.minimum }),
-//         ...(issue.maximum === undefined ? {} : { maximum: issue.maximum }),
-//       })),
-//     };
-//   if (error instanceof EvidenceReferenceError)
-export const _l = 148;
+import { jsonValueSchema, type JsonValue } from "./jsonValue.js";
+import { isImmutableJsonSnapshot } from "./immutableJson.js";
+
+import {
+  analysisErrorCategory,
+  analysisErrorRemediationAction,
+  analysisErrorUserMessage,
+  assertKnownAnalysisErrorTag,
+} from "./analysisErrorPresentation.js";
+import {
+  AnalysisAccessDeniedError,
+  AnalysisArtifactChangedError,
+  AnalysisCancelledError,
+  AnalysisCapabilityUnavailableError,
+  AnalysisUnsupportedTargetError,
+  AnalysisInputError,
+  AnalysisOutputError,
+  AnalysisTimeoutError,
+  AnalysisResourceConstraintError,
+} from "./analysisErrorCore.js";
+
+// src/domain/analysisErrorProjectionPart2.ts
+const primaryBrowserFailureReason = (
+  error: BrowserObservationError,
+): string | undefined => {
+  if (!(error.cause instanceof AggregateError)) return undefined;
+  const primary = error.cause.errors[0];
+  if (primary instanceof BrowserObservationError) return primary.reason;
+  if (primary instanceof AnalysisCancelledError) return "cancelled";
+  if (primary instanceof AnalysisTimeoutError) return "timeout";
+  if (typeof primary === "object" && primary !== null && "_tag" in primary)
+    return typeof primary._tag === "string"
+      ? primary._tag
+      : "execution_failure";
+  return "execution_failure";
+};
+
+const lifecycleErrorDetails = (
+  error: AnalysisError,
+): Readonly<Record<string, JsonValue>> | undefined => {
+  if (error instanceof AnalysisCancelledError)
+    return {
+      operation: error.operation,
+      cleanup: error.cleanupIncomplete ? "incomplete" : "complete",
+      ...(error.cleanup === undefined || !error.cleanupIncomplete
+        ? {}
+        : {
+            cleanup_reason: error.cleanup.reason,
+            resources: [...error.cleanup.resources],
+            execution_failure: "cancelled",
+          }),
+    };
+  if (error instanceof HopperCancelledError)
+    return { operation: "hopper", cleanup: "complete" };
+  if (error instanceof AnalysisTimeoutError)
+    return {
+      operation: error.operation,
+      timeout_ms: error.timeoutMs,
+      ...(error.cleanup === undefined || !error.cleanupIncomplete
+        ? {}
+        : {
+            cleanup: "incomplete",
+            cleanup_reason: error.cleanup.reason,
+            resources: [...error.cleanup.resources],
+          }),
+    };
+  if (error instanceof HopperTimeoutError)
+    return {
+      stage: error.operation === undefined ? "startup" : error.stage,
+      timeout_ms: error.timeoutMs,
+      ...(error.launcherOutcome === undefined
+        ? {}
+        : { launcher: error.launcherOutcome }),
+      provider_state: error.providerState,
+      retry_action: error.providerState === "busy" ? "wait" : "retry",
+      ...(error.operation === undefined ? {} : { operation: error.operation }),
+      ...(error.requestId === undefined ? {} : { request_id: error.requestId }),
+    };
+  if (error._tag === "ProcessCaptureError" && error.cleanupIncomplete)
+    return {
+      cleanup: "incomplete",
+      resources: [...error.cleanupResources],
+      ...(error.cleanupReport === undefined
+        ? {}
+        : { cleanup_report: jsonValueSchema.parse(error.cleanupReport) }),
+      ...(error.executionFailure === undefined
+        ? {}
+        : { execution_failure: error.executionFailure }),
+    };
+  if (error._tag === "ProcessCaptureError") {
+    const details = {
+      ...(error.userCategory === "cancelled"
+        ? { operation: "process_capture", cleanup: "complete" }
+        : {}),
+      ...(error.cleanupReport === undefined
+        ? {}
+        : { cleanup_report: jsonValueSchema.parse(error.cleanupReport) }),
+      ...(error.executionFailure === undefined
+        ? {}
+        : { execution_failure: error.executionFailure }),
+    };
+    return Object.keys(details).length === 0 ? undefined : details;
+  }
+  if (error instanceof ConfigurationError && error.settings.length > 0)
+    return {
+      settings: error.settings.map(({ setting, constraint }) => ({
+        setting,
+        constraint,
+      })),
+    };
+  if (error instanceof BinaryTargetError)
+    return {
+      path: error.path,
+      reason: error.reason,
+      ...(error.constraint === undefined
+        ? {}
+        : { constraint: error.constraint }),
+      ...(error.systemCode === undefined
+        ? {}
+        : { system_code: error.systemCode, boundary: "filesystem-read" }),
+    };
+  return undefined;
+};
+
+const RETRYABLE_CODES: ReadonlySet<AnalysisErrorProjection["code"]> = new Set([
+  "artifact_changed",
+  "invalid_request",
+  "provider_timeout",
+  "cancelled",
+  "revision_conflict",
+  "provider_unavailable",
+]);
+
+export interface AnalysisErrorProjection extends Readonly<
+  Record<string, JsonValue>
+> {
+  readonly code:
+    | "invalid_request"
+    | "access_denied"
+    | "artifact_changed"
+    | "unreadable_output"
+    | "capability_unavailable"
+    | "unsupported_target"
+    | "provider_unavailable"
+    | "provider_timeout"
+    | "resource_constraint"
+    | "cancelled"
+    | "artifact_integrity_mismatch"
+    | "artifact_operation_failed"
+    | "evidence_integrity_mismatch"
+    | "truncated"
+    | "process_capture_failed"
+    | "cleanup_incomplete"
+    | "revision_conflict"
+    | "configuration_invalid"
+    | "target_unavailable"
+    | "execution_failure";
+  readonly category:
+    | "invalid_input"
+    | "unsupported_provider"
+    | "unsupported_target"
+    | "integrity_mismatch"
+    | "truncated"
+    | "cancelled"
+    | "timeout"
+    | "resource_constraint"
+    | "unavailable"
+    | "execution_failure";
+  readonly message: string;
+  readonly retryable: boolean;
+  readonly remediation: Readonly<{
+    action: string;
+  }>;
+  readonly details?: Readonly<Record<string, JsonValue>>;
+}
