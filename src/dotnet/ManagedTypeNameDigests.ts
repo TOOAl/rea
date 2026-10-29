@@ -11,7 +11,7 @@ import type { ManagedTypeReferenceLookup } from "./ManagedTypeReferences.js";
 import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
 import { managedFailure, readManagedValue } from "./ManagedReaderFailure.js";
 
-const TYPE_REF = 1;
+const _TYPE_REF = 1;
 const TYPE_DEF = 2;
 /** One type's own namespace and name, and its enclosing type's row if nested. */
 interface TypeLink {

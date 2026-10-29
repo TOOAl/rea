@@ -20,7 +20,7 @@ export async function runExternalOcr(imagePath: string): Promise<ExternalOcrResu
     const { data } = await worker.recognize(imagePath);
     await worker.terminate();
     return { text: data.text ?? "", confidence: data.confidence ?? 0, engine: "tesseract" };
-  } catch (e: any) {
+  } catch (_e: any) {
     return { text: "", confidence: 0, engine: "heuristic" };
   }
 }

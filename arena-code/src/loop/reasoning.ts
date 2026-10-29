@@ -9,10 +9,10 @@
  *
  * Harness² 철학: 모델 가중치 무변경, 하네스만 최적화
  */
-import type { Message, Provider, ContentBlock } from "../providers/types.js";
+import type { _Message, Provider, _ContentBlock } from "../providers/types.js";
 import { EvidenceLedger } from "./evidenceLedger.js";
-import { classifyIntent, type Intent } from "./intent.js";
-import { qualityGate, qualityFeedback, type QualityOptions } from "./outputQuality.js";
+import type { Intent } from "./intent.js";
+import type { QualityOptions } from "./outputQuality.js";
 
 export interface ReasoningTraceStep {
   turn: number;

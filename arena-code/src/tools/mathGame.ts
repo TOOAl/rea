@@ -107,7 +107,7 @@ export function applyMove(state: MathGameState, action: string): MathGameMove {
 }
 
 // ── MCP Tool wrapper ─────────────────────────────────────────────────────
-import type { Tool, ToolContext } from "./types.js";
+import type { Tool, _ToolContext } from "./types.js";
 
 export const MathGameTool: Tool = {
   name: "MathGame",

@@ -12,7 +12,7 @@ import {
 } from "../src/visual/eduVocabContract.js";
 import {
   checkTypographyStatic,
-  checkGeometryStatic,
+  // removed unused: checkGeometryStatic, (checkGeometryStatic)
 } from "../src/visual/inspectionTeam.js";
 import fs from "node:fs";
 import path from "node:path";

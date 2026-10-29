@@ -61,7 +61,7 @@ export class Council {
       : `task="${task.slice(0, 80)}" [ContextPacket frame=${contextPacket.frame.variant} emotion=${contextPacket.cognitive.emotion}]\n[VisualPacket zone=${visualPacket.purposeZone} masters=${visualPacket.masters.map((m) => m.name).join(",")} audio=${visualPacket.audio.hookOrFocus}]\n[ReasoningPacket tot=${reasoningPacket.tot.policy} valid=${reasoningPacket.validator.votes.filter((v) => v.valid).length} sisr=${reasoningPacket.sisr.pddlLike[0]?.slice(0, 20)}]\n[KnowledgePacket fact=${knowledgePacket.factChecks[0].level} critical=${knowledgePacket.critical.length}]`;
 
     const layers1to3: BrainLayer[] = [1, 2, 3];
-    const gateThreshold = opts.gateThreshold ?? 6;
+    const _gateThreshold = opts.gateThreshold ?? 6;
     const maxGateRetries = opts.maxGateRetries ?? 2;
     const outputs: BrainOutput[] = [];
     const onDemandLogs: string[] = [];

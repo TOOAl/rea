@@ -4,7 +4,7 @@ export function proposeAllInterfaces(spec:string): Design[] { return [proposeInt
 export function arenaJudge(cands: Design[], spec:string): { winner:Design; runnerUps:Design[]; reason:string } {
   const winner=cands[0]??{id:"w",title:spec}; return { winner, runnerUps: cands.slice(1), reason:`Arena judge picked ${winner.id} for ${spec.slice(0,12)} — best fit` };
 }
-export function threeViewReview(plan:any, design:Design): { verdict:"PASS"|"WARN"|"FAIL" } {
+export function threeViewReview(plan:any, _design:Design): { verdict:"PASS"|"WARN"|"FAIL" } {
   if (plan?.risks?.includes("복구 플로우 없음")) return {verdict:"WARN"};
   return {verdict:"PASS"};
 }

@@ -329,7 +329,7 @@ export class RagIndex {
     opts?: RagIndexOptions,
   ): Promise<RagIndex> {
     const { readFile } = await import("node:fs/promises");
-    const { existsSync, readdirSync, statSync } = await import("node:fs");
+    const { existsSync, _readdirSync, statSync } = await import("node:fs");
     const fg = (await import("fast-glob")).default;
     const idx = new RagIndex(opts);
     const patterns = [

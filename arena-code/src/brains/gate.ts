@@ -2,12 +2,12 @@
  * 3.5층 게이트 — 30명 천재 검증 문 (v2.23.0)
  * 필요 기반 7+1 선발: 과제 태그 점수 상위 7명 + 와일드카드 1명 (가장 낮은 점수) → 6/8 통과
  */
-import { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer, GateResult } from "./types.js";
+import { Brain, BrainInput, BrainOutput, BrainFeedback } from "./types.js";
 import { HISTORY_30, HistoryGenius } from "./geniusHistory.js";
 
 // 각 천재의 능력 프로필 (6차원) + 제약 태그 — 01·04 문서 6유형 기반
-interface GeniusProfile { id: string; vector: number[]; keywords: string[]; }
-const V6 = ["구조화","통합","시각화","형식제어","실용화","변형"] as const;
+interface _GeniusProfile { id: string; vector: number[]; keywords: string[]; }
+const _V6 = ["구조화","통합","시각화","형식제어","실용화","변형"] as const;
 // 수작업 프로필 — 결정적, 재현 가능
 const PROFILES: Record<string, { v: number[]; kw: string[] }> = {
   "hist-noether": { v:[0.95,0.6,0.3,0.7,0.5,0.4], kw:["구조","추상","대수","정리"] },
@@ -49,7 +49,7 @@ const PROFILES: Record<string, { v: number[]; kw: string[] }> = {
 };
 
 function taskVector(task: string): number[] {
-  const t = task.toLowerCase();
+  const _t = task.toLowerCase();
   const v = [0,0,0,0,0,0];
   if (/구조|추상|정리|공식|수학|정의|설계|체계/i.test(task)) v[0]=1;
   if (/통합|연결|종합|누적|증거|다윈|뉴턴|퀴리/i.test(task)) v[1]=1;

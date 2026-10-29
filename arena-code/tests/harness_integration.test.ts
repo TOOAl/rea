@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
+import { mkdtempSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Harness2Engine } from "../src/harness2/engine.js";
@@ -33,7 +33,7 @@ describe("Harness2Engine Argon integration (v2.15)", () => {
     expect((res as any).verifyEnabled).toBe(true);
     expect(res.finals.length).toBe(1);
     // verify report written
-    const verifyPath = join(cwd, ".arena/harness2/evidence", "int-goal-step-1", "verify-report.json");
+    const _verifyPath = join(cwd, ".arena/harness2/evidence", "int-goal-step-1", "verify-report.json");
     // engine writes to evidenceRoot inside cwd — check exists via any file
     const evidenceRoot = join(cwd, ".arena/harness2/evidence");
     expect(existsSync(evidenceRoot)).toBe(true);

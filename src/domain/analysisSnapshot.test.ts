@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  type AnalysisSnapshot,
+  type _AnalysisSnapshot,
   analysisSnapshotSchema,
   analysisQueryId,
   parseAnalysisSnapshot,

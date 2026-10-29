@@ -329,7 +329,7 @@ export class ReasoningEngine {
    Reasoning Brains — 1·2·3·4층에 장착, 교체 가능
    ─────────────────────────────────────────────────────────── */
 import { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer } from "./types.js";
-import { BrainMemory } from "./memory.js";
+// removed unused import: // removed unused import: import { BrainMemory } from "./memory.js";  // BrainMemory unused  // BrainMemory unused
 
 function mkOutput(input: BrainInput, brain: Brain, idea: string, confidence: number, tags: string[]): BrainOutput {
   return { brainId: brain.id, role: brain.role, layer: brain.layer, idea, confidence, tags, costMs: 0 };

@@ -69,7 +69,7 @@ export interface SmartScope {
   session?: string;
 }
 
-import { STOP, tokenize, tf, cosine } from "../rag/text.js";
+import { tokenize, tf, cosine } from "../rag/text.js";
 import { getEmbedder } from "../rag/embedder.js";
 
 function slug(s: string): string {

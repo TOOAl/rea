@@ -42,7 +42,7 @@ const GENERIC_EXAMPLE_PATTERNS = [
   /^This is a.*case\.$/,
   /^This is an example.*$/i,
 ];
-const GENERIC_CAUTION_PATTERNS = [/대조.*주의/i];
+const _GENERIC_CAUTION_PATTERNS = [/대조.*주의/i];
 
 function checkSynonymGeneric(synEn, exampleText = "") {
   // example이 "similar"로 시작하면 정상 진입 (예: "Similar to ...") — 오판 방지
@@ -160,7 +160,7 @@ function validateJsonContract(words) {
   // duplicate check
   const enCounts = {};
   for (const w of words) enCounts[w.en] = (enCounts[w.en] || 0) + 1;
-  const dups = Object.entries(enCounts).filter(([, v]) => v > 1);
+  const _dups = Object.entries(enCounts).filter(([, v]) => v > 1);
   // duplicate: 레벨간 재등장은 학습 설계상 허용 — 동일 레벨 내 중복만 FAIL
   const levelEnCounts = {};
   for (const w of words) {
@@ -181,7 +181,7 @@ function validateJsonContract(words) {
     );
   }
   // 전체 distinct는 Evidence로만 기록 (WARN 아님) — 레벨간 반복은 교육적 의도일 수 있음
-  const distinct = Object.keys(enCounts).length;
+  const _distinct = Object.keys(enCounts).length;
   // evidence용으로 저장 (issues 아님)
   // if needed, log as WARN in future
 

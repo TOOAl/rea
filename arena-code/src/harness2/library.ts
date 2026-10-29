@@ -27,7 +27,7 @@ import {
   rmSync,
   mkdtempSync,
   copyFileSync,
-  cpSync,
+  // removed unused: cpSync, (cpSync)
 } from "node:fs";
 import { tmpdir } from "node:os";
 import {
@@ -35,7 +35,7 @@ import {
   queryDocs as ctxQueryDocs,
   type ResolvedLibrary,
 } from "./context7.js";
-import { join, resolve, dirname } from "node:path";
+import { join, resolve } from "node:path";
 import type { Tree } from "./harness.js";
 import { writeTree, readTree, ARENA_SURFACE } from "./harness.js";
 import { assertNoGraderVerdictsInTree } from "./context.js";

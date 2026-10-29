@@ -54,8 +54,8 @@ export function checkGeometryStatic(html: string): GeometryEyeResult {
   // 모든 <svg ...> 블록 추출
   const svgRe = /<svg[^>]*>([\s\S]*?)<\/svg>/gi;
   const viewBoxRe = /viewBox\s*=\s*["']\s*0\s+0\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*["']/i;
-  const widthRe = /<rect[^>]*width\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
-  const heightRe = /<rect[^>]*height\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
+  const _widthRe = /<rect[^>]*width\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
+  const _heightRe = /<rect[^>]*height\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
 
   let m: RegExpExecArray | null;
   let figIndex = 0;
@@ -467,7 +467,7 @@ export async function inspectWithBrowser(htmlFilePath: string): Promise<TeamResu
   };
 
   // a11y는 static 결과 재사용 가능하나, browser hidden 카운트 반영
-  const placeholder: any = checkAccessibilityStatic("");
+  const _placeholder: any = checkAccessibilityStatic("");
   const accessibility: AccessibilityEyeResult = {
     eye: "accessibility",
     grade: "PASS",

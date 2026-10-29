@@ -15,13 +15,13 @@
 
 import { EvidenceLedger } from "../src/loop/evidenceLedger.js";
 import { classifyIntent } from "../src/loop/intent.js";
-import { qualityGate } from "../src/loop/outputQuality.js";
+// removed unused import: // removed unused import: import { qualityGate } from "../src/loop/outputQuality.js";  // qualityGate unused  // qualityGate unused
 import {
   COVID_CUTOFF,
   COVID_CUTOFF_TS,
   evaluateTimeCapsuleOutput,
-  detectTemporalLeak,
-  scoreReasoningStructure,
+  // removed unused: detectTemporalLeak, (detectTemporalLeak)
+  // removed unused: scoreReasoningStructure, (scoreReasoningStructure)
   filterByCutoff,
 } from "../src/rag/timeCapsule.js";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -136,7 +136,7 @@ const SAMPLE_OUTPUTS: Array<{ label: string; text: string; expectOk: boolean; ex
 // ── 실행 함수 ──
 function runCutoffFilterTest() {
   const entries = CUTOFF_FILTER_CASES.map((c) => ({ source: c.source, metadata: { date: c.date } as Record<string, unknown> }));
-  const { kept, blocked } = filterByCutoff(entries as never, COVID_CUTOFF_TS);
+  const { kept, _blocked } = filterByCutoff(entries as never, COVID_CUTOFF_TS);
   let pass = 0;
   const failures: string[] = [];
   for (const c of CUTOFF_FILTER_CASES) {

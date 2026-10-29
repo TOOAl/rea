@@ -15,7 +15,7 @@ import type { Message } from "./providers/types.js";
 
 // Load .env if exists
 function loadEnv() {
-  const envPaths = [resolve(process.cwd(), ".env"), resolve(process.cwd(), "arena-code", ".env"), resolve(process.cwd(), ".env.example")];
+  const _envPaths = [resolve(process.cwd(), ".env"), resolve(process.cwd(), "arena-code", ".env"), resolve(process.cwd(), ".env.example")];
   // Also check REA's .env
   for (const p of [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../.env")]) {
     if (existsSync(p)) {

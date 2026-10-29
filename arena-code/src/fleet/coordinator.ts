@@ -251,7 +251,7 @@ export class FleetCoordinator {
    */
   async ghCommand(args: string[], cwd?: string): Promise<{ stdout: string; stderr: string; exitCode: number }> {
     try {
-      const { stdout, stderr } = await execAsync(`gh ${args.map(a => `"${a.replace(/"/g, '\\"')}"`).join(" ")} 2>&1`, {
+      const { stdout, _stderr } = await execAsync(`gh ${args.map(a => `"${a.replace(/"/g, '\\"')}"`).join(" ")} 2>&1`, {
         cwd: cwd ?? this.root,
         timeout: 15000,
       });

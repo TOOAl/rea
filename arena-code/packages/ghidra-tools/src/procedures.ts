@@ -20,7 +20,7 @@ export const GhidraListProceduresTool: Tool = {
 
   async execute(input, ctx: ToolContext): Promise<string> {
     const binary = input.binary_path as string;
-    const avail = await checkGhidraAvailable(ctx.cwd);
+    const _avail = await checkGhidraAvailable(ctx.cwd);
     // 미설치여도 시도 — 에러 메시지에 설치 가이드 포함
 
     // REA CLI: analyze 후 function 목록은 inspect로 얻을 수 있음

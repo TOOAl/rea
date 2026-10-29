@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { checkUpdates, formatUpdateSummary } from "../src/updates/checker.js";
-import { loadStore, shouldCheck } from "../src/updates/store.js";
+import { formatUpdateSummary } from "../src/updates/checker.js";
+import { shouldCheck } from "../src/updates/store.js";
 
 describe("updates/checker", () => {
   it("shouldCheck respects interval", () => {

@@ -63,9 +63,9 @@ function checkUnderline(text: string, expected: number | null): QualityCheck {
   const uTags = (text.match(/<u[\s>]/gi) || []).length;
   const border = (text.match(/border-bottom/gi) || []).length;
   // 마크다운 밑줄 ** 또는 __ 도 카운트 (휴리스틱)
-  const mdBold = (text.match(/\*\*[^*]+\*\*|__[^_]+__/g) || []).length;
+  const _mdBold = (text.match(/\*\*[^*]+\*\*|__[^_]+__/g) || []).length;
 
-  const count = Math.max(ulSpans, uTags, border > 0 ? ulSpans || border : 0, 0);
+  const _count = Math.max(ulSpans, uTags, border > 0 ? ulSpans || border : 0, 0);
   // 실제로는 ulSpans가 가장 정확 — 그걸 기준으로
   const actual = ulSpans || uTags || 0;
   const passed = actual >= expected && actual <= expected + 3; // +3 여유 (추가 강조 허용)

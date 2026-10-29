@@ -2,7 +2,7 @@
  * OpenRouter Provider — 무료 모델 지원
  * https://openrouter.ai/docs
  */
-import type { Provider, ChatRequest, StreamEvent, Message, ContentBlock } from "./types.js";
+import type { Provider, ChatRequest, StreamEvent, Message, _ContentBlock } from "./types.js";
 
 function toOpenAITools(tools: ChatRequest["tools"]) {
   return tools.map((t) => ({

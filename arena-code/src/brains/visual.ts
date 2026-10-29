@@ -365,7 +365,7 @@ export class VisualEngine {
    각 두뇌는 VisualEngine을 내부에서 호출해 VisualPacket을 근거로 조언
    ──────────────────────────────────────────────────────────── */
 import { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer } from "./types.js";
-import { BrainMemory } from "./memory.js";
+// removed unused import: // removed unused import: import { BrainMemory } from "./memory.js";  // BrainMemory unused  // BrainMemory unused
 
 function mkOutput(input: BrainInput, brain: Brain, idea: string, confidence: number, tags: string[]): BrainOutput {
   return { brainId: brain.id, role: brain.role, layer: brain.layer, idea, confidence, tags, costMs: 0 };

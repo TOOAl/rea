@@ -1,4 +1,4 @@
-import type { Tool, ToolContext } from "./types.js";
+import type { Tool, _ToolContext } from "./types.js";
 
 export const WebFetchTool: Tool = {
   name: "WebFetch",

@@ -349,7 +349,7 @@ export async function evolveOneStep(cwd = process.cwd(), reason = "주간 진화
       // 카나리: 새 버전이 5점 이상 좋아야 교체
       const canary = await reg.canaryScore({ ...old, version: "4.1.0" } as any, async (shadow)=>{
         // 섀도우 레지스트리로 간단 벤치 재실행 (Gate 기여도만)
-        const mem = new BrainMemory();
+        const _mem = new BrainMemory();
         const council = new Council(shadow);
         const r = await council.deliberate("카나리 테스트 — 불확실성 3단계", "", { article: "AI 50% 전망 불명.", topic: "canary" });
         const has = r.outputs.some(o=> o.idea.includes("추정"));

@@ -67,7 +67,7 @@ export class ArenaProvider implements Provider {
 
   private async *httpStream(req: ChatRequest): AsyncGenerator<StreamEvent> {
     // OpenRouter와 동일한 OpenAI 호환 로직 — Arena Agent도 동일 규격이라 가정
-    const delegate = new OpenRouterProvider({ apiKey: this.apiKey, model: this.model });
+    const _delegate = new OpenRouterProvider({ apiKey: this.apiKey, model: this.model });
     // URL 오버라이드를 위해 직접 fetch
     const messages: { role: string; content: unknown }[] = [];
     if (req.system) messages.push({ role: "system", content: req.system });

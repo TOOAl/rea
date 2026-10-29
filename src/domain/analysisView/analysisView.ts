@@ -7,7 +7,7 @@ import {
 import { javaScriptSourceSelectionSchema } from "../javascript/javascriptSourceSelection.js";
 
 import {
-  AnalysisInputError,
+  // removed unused: AnalysisInputError, (AnalysisInputError)
   AnalysisUnsupportedTargetError,
 } from "../analysisErrorCore.js";
 import {

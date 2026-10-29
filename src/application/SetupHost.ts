@@ -1,10 +1,10 @@
 import { access } from "node:fs/promises";
-import { resolve } from "node:path";
+// removed unused import: // removed unused import: import { resolve } from "node:path";  // resolve unused  // resolve unused
 
 import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { ConfigurationError } from "../domain/configurationErrors.js";
-import { PRODUCT_IDENTITY } from "../identity.js";
+// removed unused import: // removed unused import: import { PRODUCT_IDENTITY } from "../identity.js";  // PRODUCT_IDENTITY unused  // PRODUCT_IDENTITY unused
 import {
   invokingPackageRunner,
   packageRunnerRegistrationCommand,

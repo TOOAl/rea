@@ -11,7 +11,7 @@
  * "왜 망했는지"를 노트에 적고, 다음엔 "불을 줄여볼까? 물을 더 넣어볼까?"를 연구하는 것!
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import type { Tree, DiffSummary } from "./harness.js";
 

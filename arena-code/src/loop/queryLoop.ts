@@ -21,7 +21,7 @@ import {
 } from "./permissions.js";
 import type { HookManager } from "../hooks/index.js";
 import {
-  classifyIntent,
+  // removed unused: classifyIntent, (classifyIntent)
   classifyIntentSync,
   classifyIntentWithJudge,
   formatIntentHintForPrompt,
@@ -36,7 +36,7 @@ import {
   ReasoningLedger,
   shouldForceTodoWrite,
   buildTodoPrompt,
-  scoreReasoningTrace,
+  // removed unused: scoreReasoningTrace, (scoreReasoningTrace)
 } from "./reasoning.js";
 import {
   COVID_CUTOFF,

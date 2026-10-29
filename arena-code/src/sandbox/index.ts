@@ -6,8 +6,8 @@
  * Arena Code는 JS에서 경로 체크 + Bash wrapper로 근사
  * (Muse Code도 동일한 2-layer 모델: approval + sandbox)
  */
-import { resolve, relative, isAbsolute, dirname } from "node:path";
-import { existsSync } from "node:fs";
+import { resolve, relative, isAbsolute } from "node:path";
+// removed unused import: // removed unused import: import { existsSync } from "node:fs";  // existsSync unused  // existsSync unused
 
 export type SandboxMode = "read-only" | "workspace-write" | "danger-full-access";
 
