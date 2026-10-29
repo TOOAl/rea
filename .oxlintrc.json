@@ -184,6 +184,26 @@
         "unicorn/no-useless-spread": "off",
         "no-unused-expressions": "off"
       }
+    },
+    {
+      "files": ["arena-code/src/tools/bash.ts", "arena-code/src/harness2/proposer.ts", "arena-code/src/sandbox/index.ts", "arena-code/src/tools/browser.ts", "arena-code/src/harness2/composer.ts", "arena-code/src/harness2/fleetProbe.ts", "arena-code/src/visual/externalEngines.ts"],
+      "rules": {
+        "no-useless-escape": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["tests/boundary/providers/hopper/hopperClient.externalExit.test.ts", "tests/boundary/mcp/evidenceImportCancellation.test.ts", "tests/boundary/pcap/pcapProvider.test.ts", "src/ghidra/GhidraLoadImageValues.test.ts"],
+      "rules": {
+        "no-this-alias": "off",
+        "no-unused-expressions": "off"
+      }
+    },
+    {
+      "files": ["experiments/**/*.mjs"],
+      "rules": {
+        "no-constant-condition": "off"
+      }
     }
   ],
   "env": {
