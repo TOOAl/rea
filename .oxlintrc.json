@@ -177,7 +177,15 @@
       }
     },
     {
-      "files": ["arena-code/src/loop/structuralContext.ts", "src/domain/process/processTraceSpecification.ts", "src/inspector/V8InspectorCaptureProjection.ts", "src/sqlite/SqliteDatabaseProvider.ts", "src/kuna/KunaProjectCache.ts", "src/kuna/KunaTargetCommands.ts", "src/domain/javascript/electronWrappedCallPaths.ts"],
+      "files": [
+        "arena-code/src/loop/structuralContext.ts",
+        "src/domain/process/processTraceSpecification.ts",
+        "src/inspector/V8InspectorCaptureProjection.ts",
+        "src/sqlite/SqliteDatabaseProvider.ts",
+        "src/kuna/KunaProjectCache.ts",
+        "src/kuna/KunaTargetCommands.ts",
+        "src/domain/javascript/electronWrappedCallPaths.ts"
+      ],
       "rules": {
         "no-useless-escape": "off",
         "unicorn/no-new-array": "off",
@@ -186,14 +194,27 @@
       }
     },
     {
-      "files": ["arena-code/src/tools/bash.ts", "arena-code/src/harness2/proposer.ts", "arena-code/src/sandbox/index.ts", "arena-code/src/tools/browser.ts", "arena-code/src/harness2/composer.ts", "arena-code/src/harness2/fleetProbe.ts", "arena-code/src/visual/externalEngines.ts"],
+      "files": [
+        "arena-code/src/tools/bash.ts",
+        "arena-code/src/harness2/proposer.ts",
+        "arena-code/src/sandbox/index.ts",
+        "arena-code/src/tools/browser.ts",
+        "arena-code/src/harness2/composer.ts",
+        "arena-code/src/harness2/fleetProbe.ts",
+        "arena-code/src/visual/externalEngines.ts"
+      ],
       "rules": {
         "no-useless-escape": "off",
         "no-unused-vars": "off"
       }
     },
     {
-      "files": ["tests/boundary/providers/hopper/hopperClient.externalExit.test.ts", "tests/boundary/mcp/evidenceImportCancellation.test.ts", "tests/boundary/pcap/pcapProvider.test.ts", "src/ghidra/GhidraLoadImageValues.test.ts"],
+      "files": [
+        "tests/boundary/providers/hopper/hopperClient.externalExit.test.ts",
+        "tests/boundary/mcp/evidenceImportCancellation.test.ts",
+        "tests/boundary/pcap/pcapProvider.test.ts",
+        "src/ghidra/GhidraLoadImageValues.test.ts"
+      ],
       "rules": {
         "no-this-alias": "off",
         "no-unused-expressions": "off"
@@ -206,21 +227,46 @@
       }
     },
     {
-      "files": ["src/gdb/GdbSessionManager.ts", "src/adb/AdbProvider.ts", "src/domain/native/nativeAotPe.ts", "src/domain/javascript/javascriptSemanticMemberMutations.ts", "src/process/capture/ProcessCaptureLifecycle.ts", "src/cutter/CutterBridgeClient.ts"],
+      "files": [
+        "src/gdb/GdbSessionManager.ts",
+        "src/adb/AdbProvider.ts",
+        "src/domain/native/nativeAotPe.ts",
+        "src/domain/javascript/javascriptSemanticMemberMutations.ts",
+        "src/process/capture/ProcessCaptureLifecycle.ts",
+        "src/cutter/CutterBridgeClient.ts"
+      ],
       "rules": {
-        "max-lines-per-function": ["warn", { "max": 150, "skipBlankLines": true, "skipComments": true }],
+        "max-lines-per-function": [
+          "warn",
+          { "max": 150, "skipBlankLines": true, "skipComments": true }
+        ],
         "complexity": ["warn", 30],
         "max-depth": ["warn", 6]
       }
     },
     {
-      "files": ["src/adb/AdbProvider.ts", "src/artifacts/apple/NibArchive.ts", "src/application/SetupSkill.ts", "src/ghidra/GhidraLoadImageValues.ts", "src/pcap/PcapProvider.ts", "src/windows/WindowsOwnedProcess.ts", "src/application/javascript/JavaScriptArtifactAnalysis.ts"],
+      "files": [
+        "src/adb/AdbProvider.ts",
+        "src/artifacts/apple/NibArchive.ts",
+        "src/application/SetupSkill.ts",
+        "src/ghidra/GhidraLoadImageValues.ts",
+        "src/pcap/PcapProvider.ts",
+        "src/windows/WindowsOwnedProcess.ts",
+        "src/application/javascript/JavaScriptArtifactAnalysis.ts"
+      ],
       "rules": {
         "max-params": ["warn", 6]
       }
     },
     {
-      "files": ["src/domain/javascript/javascriptSemanticMemberMutations.ts", "src/domain/javascript/javascriptSymbolicBindings.ts", "src/domain/native/nativeAotPe.ts", "src/application/javascript/JavaScriptArtifactPathResolution.ts", "src/domain/javascript/javascriptSemanticAnalysis.ts", "src/domain/javascript/javascriptSemanticGraph.ts"],
+      "files": [
+        "src/domain/javascript/javascriptSemanticMemberMutations.ts",
+        "src/domain/javascript/javascriptSymbolicBindings.ts",
+        "src/domain/native/nativeAotPe.ts",
+        "src/application/javascript/JavaScriptArtifactPathResolution.ts",
+        "src/domain/javascript/javascriptSemanticAnalysis.ts",
+        "src/domain/javascript/javascriptSemanticGraph.ts"
+      ],
       "rules": {
         "complexity": ["warn", 30]
       }
@@ -228,7 +274,17 @@
     {
       "files": ["src/process/capture/ProcessCaptureLifecycle.ts"],
       "rules": {
-        "max-lines-per-function": ["warn", { "max": 250, "skipBlankLines": true, "skipComments": true }]
+        "max-lines-per-function": [
+          "warn",
+          { "max": 250, "skipBlankLines": true, "skipComments": true }
+        ]
+      }
+    },
+    {
+      "files": ["arena-code/**", "scripts/**", "experiments/**"],
+      "rules": {
+        "max-lines": "off",
+        "max-lines-per-function": "off"
       }
     }
   ],

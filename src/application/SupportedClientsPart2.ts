@@ -1,0 +1,218 @@
+export const __stub = 1;
+//         : selected;
+//   return resolve(expanded);
+// };
+//
+// const dshHomeDirectory = ({ home, env }: ClientPathContext): string =>
+//   dshDirectory(home, env.DSH_HOME, ".dsh");
+//
+// const dshPatchDirectory = (context: ClientPathContext): string =>
+//   join(dshHomeDirectory(context), "cordis.patch.yml");
+//
+// const hermesDirectory = ({ home, platform, env }: ClientPathContext): string =>
+//   resolveHermesClientHome(home, platform, env);
+//
+// /** Grok Bot uses an absolute SAND_DATA_ROOT; anything else stays ~/.grokbot. */
+// const grokBotDirectory = ({ home, env }: ClientPathContext): string => {
+//   const root = env.SAND_DATA_ROOT;
+//   return root !== undefined && root !== "" && isAbsolute(root)
+//     ? root
+//     : join(home, ".grokbot");
+// };
+//
+// /**
+//  * Grok Bot stores connectors in the signed-in account and runs them on its
+//  * hosted computer. The data directory is only a detection marker.
+//  */
+// export const GROK_BOT_MANUAL_REGISTRATION_REMEDIATION =
+//   "Grok Bot keeps connectors in the signed-in account and runs them on its hosted computer. Setup does not write that account store, and a data-directory mcp.json is not a registration. In the Grok Bot chat, add a custom MCP server named rea that runs on the Bot's computer with `npx -y rea-agents@<version> mcp`. Do not put credentials in the command or arguments. A stdio server on this machine is not attached.";
+//
+// /** Remediation for a client whose connector is not a local configuration file. */
+// export const manualRegistrationRemediation = (
+//   clientName: string,
+// ): string | undefined =>
+//   clientName === "grok_bot"
+//     ? GROK_BOT_MANUAL_REGISTRATION_REMEDIATION
+//     : undefined;
+//
+// /**
+//  * Facts a setup plan must disclose so an approved registration persists:
+//  * which file an MSIX package reads, and that a running client can overwrite it.
+//  */
+// export const registrationPersistenceDetail = (
+//   client: SetupClient,
+// ): string | undefined => {
+//   const name = client.displayName ?? client.name;
+//   const msix = client.msixPackage;
+//   const packageDetail =
+//     msix === undefined
+//       ? undefined
+//       : client.configPath === msix.privateConfigPath
+//         ? `${name} is installed as MSIX package ${msix.packageFamilyName}, which reads this package-private file instead of ${msix.appDataConfigPath}.`
+//         : `${name} is installed as MSIX package ${msix.packageFamilyName}, which reads this file until it saves its own copy at ${msix.privateConfigPath}.`;
+//   const quitDetail =
+//     client.quitBeforeSetup === true
+//       ? `Quit ${name} fully before approving; closing its window is not enough. A running ${name} can rewrite this file from memory and drop the registration. Start it again after setup.`
+//       : undefined;
+//   const details = [packageDetail, quitDetail].filter(
+//     (detail): detail is string => detail !== undefined,
+//   );
+//   return details.length === 0 ? undefined : details.join(" ");
+// };
+//
+// /**
+//  * Why this process must not change an MSIX client's configuration. A process
+//  * the running app started sees its redirected AppData, and the app would
+//  * overwrite the change from memory; an unknown view cannot rule that out.
+//  */
+// export const registrationWriteBlocker = (
+//   client: SetupClient,
+//   operation: "setup" | "uninstall",
+// ): string | undefined => {
+//   const msix = client.msixPackage;
+//   if (msix === undefined || msix.processView === "direct") return undefined;
+//   const name = client.displayName ?? client.name;
+//   return msix.processView === "redirected"
+//     ? `This process was started from ${name}'s MSIX package ${msix.packageFamilyName}: its AppData is redirected into that package, so ${name} is running and would overwrite ${msix.privateConfigPath} from memory. Quit ${name} fully, then rerun ${operation} from a terminal that ${name} did not start.`
+//     : `REA cannot tell whether ${name}'s MSIX package ${msix.packageFamilyName} started this process, because none of its files under ${dirname(msix.privateConfigPath)} could be compared with ${dirname(msix.appDataConfigPath)}. A running ${name} would overwrite the change. Open ${name} once if it has never run, quit it fully, then rerun ${operation} from a terminal that ${name} did not start.`;
+// };
+//
+// /** The MSIX package view, if any, that redirects this process's AppData writes. */
+// export const appDataRedirection = (
+//   clients: readonly SetupClient[],
+// ): MsixPackageView | undefined =>
+//   clients.find(({ msixPackage }) => msixPackage?.processView === "redirected")
+//     ?.msixPackage;
+//
+// const OMP_PROFILE_NAME = /^[a-z0-9][a-z0-9._-]{0,63}$/u;
+// const OMP_RESERVED_PROFILE =
+//   /^(?:CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])(?:\..*)?$/iu;
+//
+// /**
+//  * The OMP agent directory whose `mcp.json` holds user-scope MCP servers. OMP
+//  * joins PI_CONFIG_DIR to the home directory, and a named profile ignores
+//  * PI_CODING_AGENT_DIR. Relative overrides use the setup process working directory.
+//  */
+// const ompAgentDirectory = (context: ClientPathContext): ClientPathResult => {
+//   const root = join(context.home, context.env.PI_CONFIG_DIR || ".omp");
+//   // OMP_PROFILE wins even when empty. Match OMP's validation on every host.
+//   const profile = (context.env.OMP_PROFILE ?? context.env.PI_PROFILE)?.trim();
+//   if (profile !== undefined && profile !== "" && profile !== "default") {
+//     if (
+//       !OMP_PROFILE_NAME.test(profile) ||
+//       profile.endsWith(".") ||
+//       OMP_RESERVED_PROFILE.test(profile)
+//     )
+//       return err({
+//         path: root,
+//         message: `Invalid OMP profile ${JSON.stringify(profile)}: names must match ^[a-z0-9][a-z0-9._-]{0,63}$, cannot end with ".", and cannot be a Windows reserved device name (CON, PRN, AUX, NUL, COM0-9, LPT0-9, including extensions). Repair OMP_PROFILE or PI_PROFILE before configuring OMP.`,
+//       });
+//     return ok(join(root, "profiles", profile, "agent"));
+//   }
+//   const override = context.env.PI_CODING_AGENT_DIR;
+//   return ok(override ? resolve(override) : join(root, "agent"));
+// };
+//
+// /**
+//  * Pi's public getAgentDir()/normalizePath semantics, not OMP's profiles.
+//  * Keep relative overrides relative: filesystem consumers resolve them in cwd.
+//  */
+// const piAgentDirectory = ({
+//   home,
+//   platform,
+//   env,
+// }: ClientPathContext): string => {
+//   const paths = platform === "win32" ? win32 : { join };
+//   let directory = env.PI_CODING_AGENT_DIR;
+//   if (!directory) return paths.join(home, ".pi", "agent");
+//   if (
+//     platform === "win32" &&
+//     directory.startsWith("/") &&
+//     !directory.startsWith("//") &&
+//     !directory.includes("\\")
+//   ) {
+//     const drive = /^\/(?:mnt\/|cygdrive\/)?([a-z])(?:\/(.*))?$/iu.exec(
+//       directory,
+//     );
+//     if (drive !== null)
+//       directory = `${drive[1]?.toUpperCase()}:\\${drive[2]?.replaceAll("/", "\\") ?? ""}`;
+//   }
+//   if (directory === "~") return home;
+//   if (
+//     directory.startsWith("~/") ||
+//     (platform === "win32" && directory.startsWith("~\\"))
+//   )
+//     return paths.join(home, directory.slice(2));
+//   if (directory.startsWith("file://"))
+//     return fileURLToPath(directory, { windows: platform === "win32" });
+//   return directory;
+// };
+//
+// const copilotDirectory = ({ home, env }: ClientPathContext): string =>
+//   env.COPILOT_HOME ?? join(home, ".copilot");
+//
+// const commandCodeDirectory = ({ home }: ClientPathContext): string =>
+//   join(home, ".commandcode");
+//
+// /**
+//  * OpenCode appends `OPENCODE_CONFIG_DIR` only when the value is non-empty.
+//  * An empty variable is the same as unset and leaves the XDG directory in place.
+//  */
+// const openCodeOverrideDirectory = (
+//   env: ClientPathContext["env"],
+// ): string | undefined => {
+//   const directory = env.OPENCODE_CONFIG_DIR;
+//   return directory === undefined || directory === "" ? undefined : directory;
+// };
+//
+// const opencodeDirectory = (context: ClientPathContext): string =>
+//   openCodeOverrideDirectory(context.env) ??
+//   join(xdgConfigHome(context), "opencode");
+//
+// /** OpenCode loads global JSON before JSONC, then explicit file and directory overrides. */
+// const openCodeConfigurationPaths = (
+//   context: ClientPathContext,
+// ): readonly string[] => {
+//   const directory = join(xdgConfigHome(context), "opencode");
+//   const overrideDirectory = openCodeOverrideDirectory(context.env);
+//   const paths = [
+//     join(directory, "config.json"),
+//     join(directory, "opencode.json"),
+//     join(directory, "opencode.jsonc"),
+//     ...(context.env.OPENCODE_CONFIG ? [context.env.OPENCODE_CONFIG] : []),
+//     ...(overrideDirectory !== undefined
+//       ? [
+//           join(overrideDirectory, "opencode.json"),
+//           join(overrideDirectory, "opencode.jsonc"),
+//         ]
+//       : []),
+//   ];
+//   const resolved = paths.map((path) => resolve(path));
+//   return resolved.filter((path, index) => resolved.lastIndexOf(path) === index);
+// };
+//
+// const existingOpenCodeConfigPath = (context: ClientPathContext): string => {
+//   // The selected directory is loaded after an explicit file by OpenCode V1.
+//   const overrideDirectory = openCodeOverrideDirectory(context.env);
+//   const candidates =
+//     overrideDirectory !== undefined
+//       ? [
+//           join(overrideDirectory, "opencode.json"),
+//           join(overrideDirectory, "opencode.jsonc"),
+//         ].map((path) => resolve(path))
+//       : context.env.OPENCODE_CONFIG
+//         ? [resolve(context.env.OPENCODE_CONFIG)]
+//         : [
+//             join(opencodeDirectory(context), "opencode.json"),
+//             join(opencodeDirectory(context), "opencode.jsonc"),
+//           ].map((path) => resolve(path));
+//   return (
+//     [...candidates].reverse().find((path) => {
+//       try {
+//         lstatSync(path);
+//         return true;
+//       } catch (cause: unknown) {
+//         return !(
+//           cause instanceof Error &&
+//           "code" in cause &&
+export const _l = 216;

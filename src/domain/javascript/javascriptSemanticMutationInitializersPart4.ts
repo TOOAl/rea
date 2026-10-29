@@ -1,0 +1,135 @@
+export const __stub = 1;
+//               declaratorIndex: -1,
+//             },
+//     })),
+//     ...binding.referenceInitializers.map((initializer) => ({
+//       initializer,
+//       position: referenceInitializerPosition(initializer.node, parents),
+//     })),
+//   ];
+//   if (
+//     origins.some(
+//       ({ position: origin }) =>
+//         origin === null ||
+//         origin.body !== position.body ||
+//         (!atRead && !positionPrecedes(origin, position)),
+//     )
+//   )
+//     return binding;
+//   const preceding = atRead
+//     ? origins.filter(
+//         ({ position: origin }) =>
+//           origin !== null && positionPrecedes(origin, position),
+//       )
+//     : origins;
+//   const latest = preceding.reduce<StatementPosition | null>(
+//     (latest, { position }) =>
+//       position !== null &&
+//       (latest === null || positionPrecedes(latest, position))
+//         ? position
+//         : latest,
+//     null,
+//   );
+//   const retained = new Set(
+//     preceding
+//       .filter(
+//         ({ position }) =>
+//           position?.index === latest?.index &&
+//           position?.declaratorIndex === latest?.declaratorIndex,
+//       )
+//       .map(({ initializer }) => initializer),
+//   );
+//   // Preserve the owner's identity when selection removes no facts. Consumers
+//   // can then reuse the binding's dependency-aware provenance memo rather than
+//   // treating every equivalent read as a new temporal snapshot.
+//   if (
+//     binding.initializers.every((initializer) => retained.has(initializer)) &&
+//     binding.referenceInitializers.every((initializer) =>
+//       retained.has(initializer),
+//     )
+//   )
+//     return binding;
+//   return {
+//     initializers: binding.initializers.filter((initializer) =>
+//       retained.has(initializer),
+//     ),
+//     referenceInitializers: binding.referenceInitializers.filter((initializer) =>
+//       retained.has(initializer),
+//     ),
+//   };
+// };
+//
+// /** Locate a capture only in an unconditional declaration or literal initializer. */
+// export const semanticCapturePosition = (
+//   node: t.Node,
+//   parents: WeakMap<t.Node, t.Node>,
+// ): StatementPosition | null => {
+//   let current = node;
+//   while (true) {
+//     const direct = directInitializerPosition(current, parents);
+//     if (direct !== null) return direct;
+//     const parent = parents.get(current);
+//     if (
+//       t.isObjectProperty(parent) &&
+//       parent.value === current &&
+//       semanticStaticPropertyKey(parent.key, parent.computed) !== null
+//     )
+//       current = parent;
+//     else if (t.isObjectExpression(parent) || t.isArrayExpression(parent))
+//       current = parent;
+//     else return null;
+//   }
+// };
+//
+// /** Intermediate values must themselves have been initialized before capture. */
+// export const semanticBindingPrecedesCapture = (
+//   binding: JavaScriptSemanticBindingState,
+//   capture: t.Node,
+//   parents: WeakMap<t.Node, t.Node>,
+// ): boolean => {
+//   const initializer = binding.initializers[0];
+//   if (binding.initializers.length !== 1 || initializer === undefined)
+//     return false;
+//   const sourcePosition = directInitializerPosition(initializer.node, parents);
+//   const capturePosition = semanticCapturePosition(capture, parents);
+//   return (
+//     sourcePosition !== null &&
+//     capturePosition !== null &&
+//     positionPrecedes(sourcePosition, capturePosition)
+//   );
+// };
+//
+// /** Ignore later escapes only while reading earlier references in one activation. */
+// export const semanticEscapeFollowsCapture = (
+//   binding: JavaScriptSemanticBindingState,
+//   capture: t.Node,
+//   escape: t.Node | undefined,
+//   parents: WeakMap<t.Node, t.Node>,
+// ): boolean => {
+//   const initializer = binding.initializers[0];
+//   if (
+//     escape === undefined ||
+//     initializer === undefined ||
+//     !semanticBindingPrecedesCapture(binding, capture, parents)
+//   )
+//     return false;
+//   // A literal allocates here. Aliases are evaluated at the same capture point,
+//   // so an outer/persistent origin still receives all of its own escape effects.
+//   const origin = unwrapJavaScriptExpression(initializer.node).node;
+//   if (
+//     !t.isObjectExpression(origin) &&
+//     !t.isArrayExpression(origin) &&
+//     !t.isIdentifier(origin) &&
+//     !t.isMemberExpression(origin) &&
+//     !t.isOptionalMemberExpression(origin)
+//   )
+//     return false;
+//   const capturePosition = semanticCapturePosition(capture, parents);
+//   const escapePosition = directMutationPosition(escape, parents);
+//   return (
+//     capturePosition !== null &&
+//     escapePosition !== null &&
+//     positionPrecedes(capturePosition, escapePosition)
+//   );
+// };
+export const _l = 133;
