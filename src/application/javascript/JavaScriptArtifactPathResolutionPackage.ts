@@ -1,4 +1,4 @@
-import { isBuiltin } from "node:module";
+// removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
 import { posix } from "node:path";
 
 import {
@@ -24,17 +24,17 @@ import {
 } from "../../domain/javascript/javascriptPackageImportAliases.js";
 import {
   typescriptEmittedSourceCandidates,
-  type TypeScriptEmittedSourceCandidate,
+  type _TypeScriptEmittedSourceCandidate,
 } from "../TypeScriptEmittedSourceCandidates.js";
-import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";
+// removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
 import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { err, ok, type Result } from "../../domain/result.js";
+// removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
-type ArtifactPathResolutionContext = "package-entrypoint";
+type _ArtifactPathResolutionContext = "package-entrypoint";
 
 // JavaScriptArtifactPathResolutionPackage.ts 852-1111
-const packageSelfCandidate = (
+const _packageSelfCandidate = (
   input: ResolveArtifactPathInput,
   request: BarePackageRequest,
 ): CandidateResolution | null => {
@@ -60,7 +60,7 @@ const packageSelfCandidate = (
 };
 
 /** Resolve an installed dependency using one parsed request and its metadata. */
-const resolvePackageDependency = (
+const _resolvePackageDependency = (
   input: ResolveArtifactPathInput,
   directory: string,
   request: BarePackageRequest,
@@ -235,7 +235,7 @@ interface BarePackageRequest {
   readonly dependencyExportsEligible: boolean;
 }
 
-const parseBarePackageRequest = (
+const _parseBarePackageRequest = (
   specifier: string,
   moduleKind: ResolveArtifactPathInput["moduleKind"],
 ): BarePackageRequest | null => {

@@ -24,17 +24,17 @@ import {
 } from "../../domain/javascript/javascriptPackageImportAliases.js";
 import {
   typescriptEmittedSourceCandidates,
-  type TypeScriptEmittedSourceCandidate,
+  type _TypeScriptEmittedSourceCandidate,
 } from "../TypeScriptEmittedSourceCandidates.js";
 import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";
 import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { err, ok, type Result } from "../../domain/result.js";
+// removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
-type ArtifactPathResolutionContext = "package-entrypoint";
+type _ArtifactPathResolutionContext = "package-entrypoint";
 
 // JavaScriptArtifactPathResolutionUrl.ts 465-851
-const contextualCandidate = (
+const _contextualCandidate = (
   input: ResolveArtifactPathInput,
 ): string | CandidateResolution => {
   const { context } = input;
@@ -209,7 +209,7 @@ const applyUrlReference = (
 };
 
 /** A relative reference replaces the base URL's final path segment. */
-const urlBaseDirectory = (base: UrlPathState): UrlPathState => ({
+const _urlBaseDirectory = (base: UrlPathState): UrlPathState => ({
   escapes: base.escapes,
   segments: base.segments.slice(0, -1),
 });
@@ -358,7 +358,7 @@ const enclosingPackageMetadata = (
  * Selected relative targets are exact files; patterns, recursive aliases, and
  * external-package targets stay unresolved without falling through.
  */
-const resolvePackageImportAlias = (
+const _resolvePackageImportAlias = (
   input: ResolveArtifactPathInput,
   specifier: string,
 ): CandidateResolution => {

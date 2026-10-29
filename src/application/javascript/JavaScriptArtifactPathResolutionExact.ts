@@ -1,4 +1,4 @@
-import { isBuiltin } from "node:module";
+// removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
 import { posix } from "node:path";
 
 import {
@@ -24,17 +24,17 @@ import {
 } from "../../domain/javascript/javascriptPackageImportAliases.js";
 import {
   typescriptEmittedSourceCandidates,
-  type TypeScriptEmittedSourceCandidate,
+  type _TypeScriptEmittedSourceCandidate,
 } from "../TypeScriptEmittedSourceCandidates.js";
-import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";
+// removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
 import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { err, ok, type Result } from "../../domain/result.js";
+// removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
-type ArtifactPathResolutionContext = "package-entrypoint";
+type _ArtifactPathResolutionContext = "package-entrypoint";
 
 // JavaScriptArtifactPathResolutionExact.ts 1449-1827
-const resolveFileCandidates = (
+const _resolveFileCandidates = (
   input: ResolveArtifactPathInput,
   candidates: readonly string[],
 ): CandidateResolution | null => {
@@ -96,13 +96,13 @@ const isRuntimeDeclarationPath = (
   input.moduleKind !== undefined && /\.d\.(?:ts|mts|cts)$/iu.test(path);
 
 const NODE_MODULE_EXTENSIONS = [".js", ".json", ".node"] as const;
-const NODE_PACKAGE_MAIN_SUFFIXES = [
+const _NODE_PACKAGE_MAIN_SUFFIXES = [
   "",
   ...NODE_MODULE_EXTENSIONS,
   ...NODE_MODULE_EXTENSIONS.map((extension) => `/index${extension}`),
 ];
 
-const fileCandidates = (
+const _fileCandidates = (
   candidate: string,
   moduleKind?: ResolveArtifactPathInput["moduleKind"],
 ): readonly string[] => [
@@ -112,7 +112,7 @@ const fileCandidates = (
   ),
 ];
 
-const indexCandidates = (
+const _indexCandidates = (
   candidate: string,
   moduleKind?: ResolveArtifactPathInput["moduleKind"],
 ): readonly string[] =>
@@ -129,7 +129,7 @@ type PackageExportOutcome =
   | { readonly status: "unmatched"; readonly declared: readonly string[] };
 
 /** Only exact non-directory keys participate; wildcard expansion is unsupported. */
-const selectPackageExport = (
+const _selectPackageExport = (
   value: unknown,
   subpath: string,
   moduleKind: ResolveArtifactPathInput["moduleKind"],
@@ -360,7 +360,7 @@ const packageExportConditions = (
     "default",
   ]);
 
-const notFoundCandidate = (): Extract<
+const _notFoundCandidate = (): Extract<
   CandidateResolution,
   { readonly resolvedPath: null }
 > => ({
@@ -371,7 +371,7 @@ const notFoundCandidate = (): Extract<
   ],
 });
 
-const exactPackageTargetNotFound = (
+const _exactPackageTargetNotFound = (
   path: string,
   targetKind: "exports" | "imports" | "ESM subpath",
 ): CandidateResolution => ({
@@ -382,7 +382,7 @@ const exactPackageTargetNotFound = (
   ],
 });
 
-const fileUrlPath = (value: string): string | null | undefined => {
+const _fileUrlPath = (value: string): string | null | undefined => {
   if (!/^file:\/\//iu.test(value)) return undefined;
   // URL parsing removes tabs and newlines and normalizes encoded dot segments.
   // Check the raw path first, excluding URL identity suffixes, then check the
@@ -409,7 +409,7 @@ const fileUrlPath = (value: string): string | null | undefined => {
   }
 };
 
-const unresolvedCandidate = (
+const _unresolvedCandidate = (
   status: UnresolvedArtifactPathStatus,
   limitations: readonly string[],
 ): CandidateResolution => ({ resolvedPath: null, status, limitations });

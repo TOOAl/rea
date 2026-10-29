@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+// removed unused import: import { createHash } from "node:crypto";  // createHash unused
 import { constants as fsConstants } from "node:fs";
 import {
   access,
@@ -11,23 +11,23 @@ import {
   stat,
   writeFile,
 } from "node:fs/promises";
-import { basename, dirname, extname, join, resolve } from "node:path";
+import { resolve } from "node:path";
 
 import type {
   ExecutionOptions,
   ProviderAvailability,
 } from "../application/AnalysisProvider.js";
-import { providerConfigurationRefusal } from "../domain/providerConfigurationRefusal.js";
+// removed unused import: import { providerConfigurationRefusal } from "../domain/providerConfigurationRefusal.js";  // providerConfigurationRefusal unused
 import {
   createAnalysisExecution,
-  type AnalysisExecution,
+  type _AnalysisExecution,
 } from "../application/AnalysisProvider.js";
 import type {
   AdbActivityStartPartialObservation,
   AdbAcquiredFilePartialObservation,
   AdbRequest,
 } from "../domain/adb/adbDeviceAnalysis.js";
-import { adbResultSchemas } from "../domain/adb/adbDeviceAnalysis.js";
+// removed unused import: import { adbResultSchemas } from "../domain/adb/adbDeviceAnalysis.js";  // adbResultSchemas unused
 import {
   AnalysisArtifactChangedError,
   AnalysisCancelledError,
@@ -39,10 +39,10 @@ import {
   AnalysisUnsupportedTargetError,
 } from "../domain/analysisErrorCore.js";
 import { AnalysisError } from "../domain/analysisErrorBase.js";
-import { analysisErrorWithCleanupFailure } from "../domain/analysisErrorCleanup.js";
+// removed unused import: import { analysisErrorWithCleanupFailure } from "../domain/analysisErrorCleanup.js";  // analysisErrorWithCleanupFailure unused
 import { err, ok, type Result } from "../domain/result.js";
 import { hashStableFile } from "../filesystem/StableFileHash.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
+// removed unused import: import { ProviderCleanupError } from "../domain/providerCleanupError.js";  // ProviderCleanupError unused
 import {
   execFileBytes,
   execFileOutputFailure,
@@ -62,7 +62,7 @@ import {
   parsePackageListOutput,
   parsePmPathOutput,
 } from "./AdbDeviceOutput.js";
-import { adbHostFileName } from "./AdbHostFileName.js";
+// removed unused import: import { adbHostFileName } from "./AdbHostFileName.js";  // adbHostFileName unused
 import {
   ADB_DIRECTORY_BATCH_SCRIPT,
   parseAdbDirectoryListing,

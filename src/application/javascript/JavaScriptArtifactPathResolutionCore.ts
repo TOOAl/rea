@@ -1,5 +1,5 @@
-import { isBuiltin } from "node:module";
-import { posix } from "node:path";
+// removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
+// removed unused import: import { posix } from "node:path";  // posix unused
 
 import {
   normalizeJoinedLogicalPath,
@@ -96,7 +96,7 @@ export const moduleResolutionModeProperties = (
 ): Readonly<Record<string, JavaScriptModuleResolutionMode>> =>
   mode === undefined ? {} : { resolution_mode: mode };
 
-const EXTENSIONS = [
+const _EXTENSIONS = [
   ".js",
   ".cjs",
   ".mjs",
@@ -118,7 +118,7 @@ const encodePackageMetadataUrl = (path: string): URL =>
 // URL identity cannot represent lone UTF-16 surrogates. Use request-local
 // opaque segments only for structural admission, never inventory lookup. A
 // target cannot spell these identities after URL's tab/newline preprocessing.
-const packageMetadataUrl = (
+const _packageMetadataUrl = (
   path: string,
   relativeTarget: string,
 ): Result<
@@ -164,7 +164,7 @@ const packageMetadataUrl = (
   }
 };
 
-interface PackageFileTarget {
+interface _PackageFileTarget {
   readonly value: string;
   /** Normalized URL retained until loader-specific validation and file lookup. */
   readonly url: URL;
@@ -457,7 +457,7 @@ const rejectDeclaration = (
  * main, so `%2e` and `%2f` there are literal filename bytes, not encoded dots
  * or separators. Root confinement still applies to the joined candidate.
  */
-const declaresLiteralPercent = (input: ResolveArtifactPathInput): boolean =>
+const _declaresLiteralPercent = (input: ResolveArtifactPathInput): boolean =>
   input.moduleKind === "require" &&
   (input.context === "module-specifier" ||
     input.context === "package-entrypoint");

@@ -1,6 +1,6 @@
 import { constants as fsConstants } from "node:fs";
 import { copyFile, lstat, mkdir, rmdir, rm } from "node:fs/promises";
-import { basename, dirname, extname, join } from "node:path";
+import { basename, extname, join } from "node:path";
 import { AnalysisOutputError } from "../domain/analysisErrorCore.js";
 import { displayDevicePath } from "./AdbDeviceOutput.js";
 

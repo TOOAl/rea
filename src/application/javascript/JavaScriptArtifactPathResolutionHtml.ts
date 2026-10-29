@@ -1,4 +1,4 @@
-import { isBuiltin } from "node:module";
+// removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
 import { posix } from "node:path";
 
 import {
@@ -26,15 +26,15 @@ import {
   typescriptEmittedSourceCandidates,
   type TypeScriptEmittedSourceCandidate,
 } from "../TypeScriptEmittedSourceCandidates.js";
-import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";
+// removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
 import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { err, ok, type Result } from "../../domain/result.js";
+// removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
-type ArtifactPathResolutionContext = "package-entrypoint";
+type _ArtifactPathResolutionContext = "package-entrypoint";
 
 // JavaScriptArtifactPathResolutionHtml.ts 1112-1448
-const htmlCandidate = (
+const _htmlCandidate = (
   input: ResolveArtifactPathInput,
 ): string | CandidateResolution => {
   const declared = stripQueryAndFragment(htmlUrlText(input.declaredPath));
