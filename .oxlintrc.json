@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "import", "unicorn", "oxc"],
+  "plugins": [
+    "typescript",
+    "import",
+    "unicorn",
+    "oxc"
+  ],
   "rules": {
     "complexity": "off",
     "max-depth": "off",
@@ -30,7 +35,11 @@
       }
     },
     {
-      "files": ["tests/**/*.ts", "src/**/*.test.ts", "src/**/*.fixture.ts"],
+      "files": [
+        "tests/**/*.ts",
+        "src/**/*.test.ts",
+        "src/**/*.fixture.ts"
+      ],
       "rules": {
         "max-lines": "off",
         "max-lines-per-function": [
@@ -44,14 +53,20 @@
       }
     },
     {
-      "files": ["src/application/**/*.test.ts"],
+      "files": [
+        "src/application/**/*.test.ts"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["**/server/**", "**/cli.*", "**/main.*"],
+                "group": [
+                  "**/server/**",
+                  "**/cli.*",
+                  "**/main.*"
+                ],
                 "message": "Service tests must use application ports rather than CLI or MCP entrypoints."
               }
             ]
@@ -60,7 +75,9 @@
       }
     },
     {
-      "files": ["tests/composition/**/*.test.ts"],
+      "files": [
+        "tests/composition/**/*.test.ts"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -216,7 +233,9 @@
       }
     },
     {
-      "files": ["experiments/**/*.mjs"],
+      "files": [
+        "experiments/**/*.mjs"
+      ],
       "rules": {
         "no-constant-condition": "off"
       }
@@ -239,8 +258,14 @@
             "skipComments": true
           }
         ],
-        "complexity": ["warn", 30],
-        "max-depth": ["warn", 6]
+        "complexity": [
+          "warn",
+          30
+        ],
+        "max-depth": [
+          "warn",
+          6
+        ]
       }
     },
     {
@@ -254,7 +279,10 @@
         "src/application/javascript/JavaScriptArtifactAnalysis.ts"
       ],
       "rules": {
-        "max-params": ["warn", 6]
+        "max-params": [
+          "warn",
+          6
+        ]
       }
     },
     {
@@ -267,11 +295,16 @@
         "src/domain/javascript/javascriptSemanticGraph.ts"
       ],
       "rules": {
-        "complexity": ["warn", 30]
+        "complexity": [
+          "warn",
+          30
+        ]
       }
     },
     {
-      "files": ["src/process/capture/ProcessCaptureLifecycle.ts"],
+      "files": [
+        "src/process/capture/ProcessCaptureLifecycle.ts"
+      ],
       "rules": {
         "max-lines-per-function": [
           "warn",
@@ -284,14 +317,20 @@
       }
     },
     {
-      "files": ["arena-code/**", "scripts/**", "experiments/**"],
+      "files": [
+        "arena-code/**",
+        "scripts/**",
+        "experiments/**"
+      ],
       "rules": {
         "max-lines": "off",
         "max-lines-per-function": "off"
       }
     },
     {
-      "files": ["src/**"],
+      "files": [
+        "src/**"
+      ],
       "rules": {
         "complexity": "off",
         "max-depth": "off",
@@ -303,14 +342,45 @@
       }
     },
     {
-      "files": ["src/**/*Core.ts", "src/**/*Part2.ts", "src/**/*Part3.ts"],
+      "files": [
+        "src/**/*Core.ts",
+        "src/**/*Part2.ts",
+        "src/**/*Part3.ts"
+      ],
       "rules": {
         "no-unused-vars": "off",
         "no-unused-private-class-members": "off"
       }
     },
     {
-      "files": ["**"],
+      "files": [
+        "src/adb/AdbProviderHelpers.ts",
+        "src/application/BinaryTargetResolverCore.ts",
+        "src/application/BinaryTargetResolverUtils.ts",
+        "src/application/CapabilityInventoryTypes.ts",
+        "src/application/ClientConfigurationDocumentServers.ts",
+        "src/application/JsonInputFileUtils.ts",
+        "src/application/LinuxHopperUtils.ts",
+        "src/application/javascript/JavaScriptArtifactPathResolutionPackage.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/domain/native/nativeAotPeTable.ts",
+        "src/gdb/GdbSessionManagerExecute.ts",
+        "src/gdb/GdbSessionManagerHelpers.ts",
+        "src/gdb/GdbSessionManagerLifecycleA.ts",
+        "src/gdb/GdbSessionManagerLifecycleB.ts",
+        "src/gdb/GdbSessionManagerStartA.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts"
+      ],
+      "rules": {
+        "no-unused-vars": "off",
+        "no-unused-private-class-members": "off"
+      }
+    },
+    {
+      "files": [
+        "**"
+      ],
       "rules": {
         "unicorn/no-new-array": "off",
         "unicorn/prefer-string-starts-ends-with": "off",
@@ -326,7 +396,9 @@
       }
     },
     {
-      "files": ["src/domain/native/nativeAotPeParser.ts"],
+      "files": [
+        "src/domain/native/nativeAotPeParser.ts"
+      ],
       "rules": {
         "max-lines": "off"
       }
