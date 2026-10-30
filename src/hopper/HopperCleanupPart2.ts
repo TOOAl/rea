@@ -6,9 +6,6 @@ import { HopperProcessError } from "../domain/hopperErrors.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { err, ok, type Result } from "../domain/result.js";
-import type { PrivateRuntimeRoot } from "../process/PrivateRuntimeRoot.js";
-import type { ProviderProcessSupervisor } from "../process/ProviderProcess.js";
-import type { BridgeLaunch } from "./BridgeLauncher.js";
 import {
   createOwnedHopperShutdownDiagnostic,
   providerCleanupFailure,

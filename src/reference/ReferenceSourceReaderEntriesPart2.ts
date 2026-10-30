@@ -1,7 +1,6 @@
 import type { BigIntStats, Dirent } from "node:fs";
 import { readlink, realpath } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
-import type { ArtifactCleanupAttempt } from "../artifacts/ArtifactResourceScope.js";
 import { err, ok } from "../domain/result.js";
 
 import {

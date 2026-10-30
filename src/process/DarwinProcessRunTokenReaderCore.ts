@@ -1,5 +1,3 @@
-import { rmSync } from "node:fs";
-import { isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 

@@ -1,6 +1,3 @@
-import { constants as fsConstants } from "node:fs";
-import { readFile, readlink, realpath, stat } from "node:fs/promises";
-
 import {
   AnalysisCapabilityUnavailableError,
   AnalysisCancelledError,
@@ -8,13 +5,6 @@ import {
   AnalysisTimeoutError,
 } from "../domain/analysisErrorCore.js";
 import { createEvidence } from "../domain/evidence.js";
-import {
-  ProviderProcessSupervisor,
-  spawnOwnedProviderProcess,
-  type OwnedProviderProcessSpawnOptions,
-  type SpawnedOwnedProviderProcess,
-} from "../process/ProviderProcess.js";
-import { parseLinuxProcessStartTime } from "../process/ProcessOwnershipObservation.js";
 
 export function request(
   session: GdbSession,

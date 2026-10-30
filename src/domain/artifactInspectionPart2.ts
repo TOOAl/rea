@@ -1,6 +1,5 @@
 import type { ArtifactInventoryResult } from "./artifactGraph.js";
 import { digestCanonicalValue } from "./canonicalDigest.js";
-import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
 import { jsonValueSchema } from "./jsonValue.js";
 
 const observation = (

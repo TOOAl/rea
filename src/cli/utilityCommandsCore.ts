@@ -1,10 +1,6 @@
 import { z } from "incur";
 
 import type { DirectAnalysis } from "../composition/directAnalysis.js";
-import { createHistoricalSourceSummary } from "../domain/referenceSourceSummary.js";
-import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
-import { projectReferenceSourceImportError } from "../application/ReferenceSourceImportTypes.js";
-import { parseConfig } from "../config/parseConfig.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { AnalysisInputError } from "../domain/analysisErrorCore.js";
 import { projectInputIssues } from "../domain/inputIssueProjection.js";

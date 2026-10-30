@@ -1,4 +1,3 @@
-import type { JsonValue } from "../../domain/jsonValue.js";
 import { compositeKey } from "../../domain/unicodeCodePointOrder.js";
 import {
   completeApplicationCoverage,
@@ -7,7 +6,6 @@ import {
 } from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
 import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
 import type { JavaScriptModuleArtifactAnalysis } from "./JavaScriptArtifactAnalysisTypes.js";
-import { HTML_INLINE_SCRIPT_LOCATION_LIMIT } from "../../domain/javascript/htmlArtifactReferences.js";
 import type {
   JavaScriptArtifactFile,
   JavaScriptArtifactFileKind,

@@ -3,7 +3,6 @@ import type {
   JavaScriptExportShapeComparisonChange,
   JavaScriptExportShapeComparisonResult,
 } from "./javascriptExportShapeComparisonSchemas.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { RetainedJavaScriptExportShapes } from "./javascriptExportShapeSelection.js";
 
 type Primitive = string | number | boolean | null;

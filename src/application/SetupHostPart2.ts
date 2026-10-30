@@ -5,10 +5,6 @@ import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { ConfigurationError } from "../domain/configurationErrors.js";
 // removed unused import: // removed unused import: import { PRODUCT_IDENTITY } from "../identity.js";  // PRODUCT_IDENTITY unused  // PRODUCT_IDENTITY unused
-import {
-  SUPPORTED_NODE_VERSION_PROSE,
-  supportsNodeVersion,
-} from "../domain/runtimeVersion.js";
 import { systemDoctorHost, type DoctorHost } from "./Doctor.js";
 import {
   LinuxHopperTemporaryCleanupOwner,
@@ -32,15 +28,10 @@ import {
   RegularFileCleanupFailure,
   retryRegularFileCleanup,
 } from "./RegularFileRead.js";
-import {
-  msixPackagesDirectory,
-  packagePrivateLauncherBlocker,
-} from "./MsixPackageStorage.js";
 import type {
   SetupInitialState,
   SetupProviderEnvironment,
 } from "./SetupTypes.js";
-import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 
 /** Resolve the executable and arguments used in a managed MCP registration. */
 

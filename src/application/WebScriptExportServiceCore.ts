@@ -12,7 +12,6 @@ import type { AnalysisError } from "../domain/analysisErrorBase.js";
 import { createEvidence, type Evidence } from "../domain/evidence.js";
 import { analysisInputErrorFromIssues } from "../domain/inputIssueProjection.js";
 import { jsonValueSchema } from "../domain/jsonValue.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { err, ok, type Result } from "../domain/result.js";
 import {
   exportWebScriptsInputSchema,
@@ -21,10 +20,6 @@ import {
 import { WebScriptExportError } from "../domain/webScriptExportError.js";
 import type { ExecutionOptions } from "./AnalysisProvider.js";
 import { WEB_SCRIPT_EXPORT_PROVIDER as PROVIDER } from "./InvestigationProviders.js";
-import {
-  NonRegularFileReadError,
-  RegularFileChangedError,
-} from "../filesystem/RegularFile.js";
 
 const OPERATION = "export_web_scripts";
 

@@ -1,14 +1,5 @@
 import { parse as parseToml } from "smol-toml";
 
-import {
-  editHermesConfigurationYaml,
-  parseHermesConfigurationYaml,
-  stringifyHermesConfigurationYaml,
-} from "./HermesConfigurationYaml.js";
-import { z } from "zod";
-
-import type { SetupClient } from "./SupportedClients.js";
-
 // ClientConfigurationDocumentDsh.ts 424-866
 
 const tomlInlineKey = (key: string): string =>

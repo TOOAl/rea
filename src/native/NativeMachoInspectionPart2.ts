@@ -1,11 +1,9 @@
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import type { EvidenceLocation } from "../domain/evidence.js";
-import { AnalysisOutputError } from "../domain/analysisErrorCore.js";
 import {
   inspectMachoSchema,
   type NativeCommandInvocation,
 } from "../domain/native/nativeInspection.js";
-import { err, ok, type Result } from "../domain/result.js";
 import type { NativeCommandCapture } from "./CommandRunner.js";
 import {
   MACHO_ARCHITECTURE_POLICIES,

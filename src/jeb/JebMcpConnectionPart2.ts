@@ -5,7 +5,6 @@ import {
   SdkErrorCode,
   StreamableHTTPClientTransport,
 } from "@modelcontextprotocol/client";
-import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import {
   AnalysisCancelledError,
   AnalysisProtocolError,

@@ -1,6 +1,4 @@
 import * as t from "@babel/types";
-
-import { proveJavaScriptBootstrapIntegrity } from "./javascriptBootstrapIntegrity.js";
 import {
   semanticStaticPropertyKey,
   unwrapJavaScriptExpression,
@@ -23,6 +21,7 @@ import {
 import { completeSemanticSteps } from "./javascriptSemanticTraversal.js";
 
 /** Loader bindings and literal externals proven for one standalone bootstrap. */
+
 interface BootstrapExternals {
   /** The runtime loader and every factory parameter it is passed as. */
   readonly loaderBindingIds: ReadonlySet<string>;

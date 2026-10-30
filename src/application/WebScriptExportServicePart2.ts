@@ -1,5 +1,3 @@
-import { isAbsolute } from "node:path";
-
 import { z } from "zod";
 
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
@@ -13,7 +11,6 @@ import {
 } from "../domain/analysisErrorCore.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
 import { analysisErrorWithCleanupFailure } from "../domain/analysisErrorCleanup.js";
-import { jsonValueSchema } from "../domain/jsonValue.js";
 import { ProviderAdapterError } from "../domain/providerAdapterError.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { err, ok, type Result } from "../domain/result.js";

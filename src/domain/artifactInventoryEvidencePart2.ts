@@ -13,10 +13,6 @@ import {
   artifactManifestId,
   occurrenceIdForLocation,
 } from "./artifactIdentity.js";
-import {
-  artifactInspectionResultSchema,
-  type ArtifactInspectionResult,
-} from "./artifactInspection.js";
 
 /** Complete or partially assembled inventory used by comparison workflows. */
 

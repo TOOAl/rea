@@ -1,7 +1,5 @@
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
-
-import type { Stats } from "node:fs";
 import type { RootInventorySource } from "./classify.js";
 
 import {

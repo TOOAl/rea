@@ -6,8 +6,6 @@ import {
   type GoBinaryContainer,
   type GoFileMapping,
 } from "./GoBinaryContainer.js";
-import { readGoElfImage } from "./GoElfImage.js";
-import { readGoPeImage } from "./GoPeImage.js";
 
 export {
   GoBinaryFormatFailure,

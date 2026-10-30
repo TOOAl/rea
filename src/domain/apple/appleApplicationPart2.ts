@@ -14,8 +14,6 @@ import {
   isSwiftRuntimeLibrary,
   nativeRuntimeConvention,
 } from "../nativeConvention.js";
-import { evidenceSchema } from "../evidence.js";
-import { prefixedDigestSchema } from "../digests.js";
 import { projectCartesianCandidates } from "../bridgeCandidateProjection.js";
 import { projectionDigest } from "../mobileApplicationGraphProjection.js";
 import { compareUnicodeCodePoints as compare } from "../unicodeCodePointOrder.js";

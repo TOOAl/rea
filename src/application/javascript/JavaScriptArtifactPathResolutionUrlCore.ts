@@ -1,9 +1,4 @@
 import { posix } from "node:path";
-
-import type {
-  JavaScriptArtifactFile,
-  JavaScriptUnanalyzedArtifactLookup,
-} from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   hasScheme,
   htmlUrlText,
@@ -11,9 +6,7 @@ import {
   percentDecodeUrlPath,
   stripQueryAndFragment,
 } from "../../domain/artifactPathSyntax.js";
-import type { _TypeScriptEmittedSourceCandidate } from "../TypeScriptEmittedSourceCandidates.js";
 import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";
-import type { JsonValue } from "../../domain/jsonValue.js";
 // removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
 type _ArtifactPathResolutionContext = "package-entrypoint";

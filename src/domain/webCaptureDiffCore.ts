@@ -11,7 +11,6 @@ import {
   type WebCaptureDiff,
   type WebCaptureDimension,
 } from "./webCaptureDiffSchemas.js";
-import { fingerprintWebCaptureFrames } from "./webCaptureFrameComparison.js";
 
 type Dimension = WebCaptureDimension;
 type Change = WebCaptureChange;

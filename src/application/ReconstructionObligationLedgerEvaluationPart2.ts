@@ -1,7 +1,3 @@
-import {
-  parseEvidenceBundle,
-  type EvidenceBundle,
-} from "../domain/evidenceBundle.js";
 import type {
   ReconstructionObligation,
   ReconstructionObligationManifest,
@@ -24,7 +20,6 @@ import {
   uniqueObligationDiagnostics as uniqueDiagnostics,
 } from "./ReconstructionObligationLedgerDiagnostics.js";
 import { originalCasesFor } from "./ReconstructionObligationOriginalCases.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 
 const evaluateBinding = (
   candidate: ReconstructionObligationCandidate,

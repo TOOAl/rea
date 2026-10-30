@@ -1,14 +1,12 @@
 import * as t from "@babel/types";
-
-import { semanticCallableIdForNode } from "./javascriptSemanticProjection.js";
 import { unwrapJavaScriptExpression } from "./javascriptAstValues.js";
 import {
   resolveSemanticBindingState,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
-import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 
 // src/domain/javascript/javascriptSemanticPromisesPart2.ts
+
 const resolvePromiseExpression = (
   rawNode: t.Node,
   context: PromiseExpressionResolutionContext,

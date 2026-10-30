@@ -3,8 +3,8 @@ import type {
   ProcessSample,
   RecordProcessCaptureEvent,
 } from "../../domain/process/processCapture.js";
-import { readProcessRunId } from "../ProcessOwnership.js";
 import { monotonicProcessCaptureClock } from "./ProcessCaptureClock.js";
+
 const PROC_READ_CONCURRENCY = 64;
 
 interface ProcessRow {

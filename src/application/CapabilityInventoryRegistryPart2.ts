@@ -1,5 +1,3 @@
-import { sqliteDatabaseCapability } from "./sqlite/SqliteDatabaseCapability.js";
-
 import type { ToolKind } from "../contracts/toolContractTypes.js";
 
 // CapabilityInventoryRegistry.ts 345-750

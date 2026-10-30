@@ -15,7 +15,6 @@ import {
 } from "../domain/evidenceErrors.js";
 import { AnalysisCancelledError } from "../domain/analysisErrorCore.js";
 import { err, ok, type Result } from "../domain/result.js";
-import { NonRegularFileReadError } from "../filesystem/RegularFile.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
 import { OwnedStagedOutput } from "../filesystem/OwnedStagedOutput.js";

@@ -12,12 +12,7 @@ import {
   percentDecodeUrlPath,
   stripQueryAndFragment,
 } from "../../domain/artifactPathSyntax.js";
-import {
-  typescriptEmittedSourceCandidates,
-  type TypeScriptEmittedSourceCandidate,
-} from "../TypeScriptEmittedSourceCandidates.js";
 // removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
-import type { JsonValue } from "../../domain/jsonValue.js";
 // removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
 type _ArtifactPathResolutionContext = "package-entrypoint";

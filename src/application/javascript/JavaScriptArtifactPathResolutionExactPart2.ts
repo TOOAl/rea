@@ -1,9 +1,4 @@
 // removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
-
-import type {
-  JavaScriptArtifactFile,
-  JavaScriptUnanalyzedArtifactLookup,
-} from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   admitsCanonicalPathSyntax,
   htmlUrlText,
@@ -11,9 +6,7 @@ import {
   stripQueryAndFragment,
 } from "../../domain/artifactPathSyntax.js";
 import { classifyPackageImportTargetString } from "../../domain/javascript/javascriptPackageImportAliases.js";
-import type { _TypeScriptEmittedSourceCandidate } from "../TypeScriptEmittedSourceCandidates.js";
 // removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
-import type { JsonValue } from "../../domain/jsonValue.js";
 // removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
 const invalidExportTarget = (

@@ -1,4 +1,3 @@
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import type {
   ManagedNativeBoundaryInspection,
   ManagedParseIssue,
@@ -11,7 +10,6 @@ import {
   metadataToken,
   readMetadataString,
 } from "./ManagedMetadataHeaps.js";
-import type { ManagedMetadataInventory } from "./ManagedMetadataInventory.js";
 import { readManagedValue } from "./ManagedReaderFailure.js";
 
 type ModuleRef = ManagedNativeBoundaryInspection["module_refs"][number];

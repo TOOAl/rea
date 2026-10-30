@@ -1,4 +1,3 @@
-import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { performance } from "node:perf_hooks";
 import { StringDecoder } from "node:string_decoder";
 
@@ -8,8 +7,6 @@ import {
   parseMcpInputSchemaProfile,
 } from "./config/mcpInputSchemaProfile.js";
 import { parseMcpOutputSchemaProfile } from "./config/mcpOutputSchemaProfile.js";
-import { TOOL_CONTRACTS } from "./contracts/toolContracts.js";
-import { PRODUCT_IDENTITY } from "./identity.js";
 import { MCP_STARTUP_POLICY } from "./mcpStartupPolicy.js";
 
 const OUTPUT_FORMATS = ["toon", "json", "yaml", "md", "jsonl"] as const;

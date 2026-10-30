@@ -6,7 +6,6 @@ import {
   type ArtifactOccurrence,
   type IntegrityContradiction,
 } from "./artifactGraph.js";
-import { canonicalJson } from "./comparisonSemantics.js";
 import {
   artifactEdgeId,
   artifactIdForContent,
@@ -19,6 +18,7 @@ import {
 } from "./artifactInspection.js";
 
 /** Complete or partially assembled inventory used by comparison workflows. */
+
 export interface InventorySet {
   readonly manifest: ArtifactInventoryResult["manifest"];
   readonly nodes: readonly ArtifactNode[];

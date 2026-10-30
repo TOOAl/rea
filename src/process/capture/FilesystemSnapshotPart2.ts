@@ -1,4 +1,3 @@
-import { constants as fsConstants } from "node:fs";
 import { lstat, opendir, readlink } from "node:fs/promises";
 import { join, relative } from "node:path";
 import type { ProcessScenario } from "../../domain/process/processScenario.js";

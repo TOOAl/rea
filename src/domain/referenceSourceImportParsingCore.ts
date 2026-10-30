@@ -4,10 +4,6 @@ import type {
   Node,
   StringLiteral,
 } from "@babel/types";
-import {
-  parseRecoveredJavaScript,
-  parserPluginsForPath,
-} from "./javascript/javascriptSourceParser.js";
 import { isRelativeJavaScriptModuleSpecifier } from "./javascript/javascriptModuleSpecifier.js";
 import {
   isCallExpression,

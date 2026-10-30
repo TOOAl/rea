@@ -1,8 +1,6 @@
 import { uniqueSorted } from "../canonicalOrdering.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
-
-import type { HistoricalSourceGraph } from "../referenceSourceGraph.js";
 import {
   sourceToBundleComparisonResultSchema,
   type SourceToBundleCandidate,

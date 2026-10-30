@@ -1,8 +1,5 @@
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-
-import { execFileOutput } from "../process/ExecFileOutput.js";
-import { hashStableFile } from "../filesystem/StableFileHash.js";
 import type { Result } from "../domain/result.js";
 import {
   HOPPER_RELEASES_URL,

@@ -10,7 +10,6 @@ import type { AnalysisCleanupObservation } from "../domain/analysisErrorBase.js"
 import { parseConfig } from "../config/parseConfig.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { AnalysisInputError } from "../domain/analysisErrorCore.js";
-import { safeParseJson } from "../domain/safeJson.js";
 import { PRODUCT_IDENTITY } from "../identity.js";
 import { logCliCommand } from "../cliLogging.js";
 import { CLI_COMMANDS } from "../cliCommandNames.js";

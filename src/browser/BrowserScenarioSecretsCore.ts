@@ -1,9 +1,3 @@
-import type {
-  BrowserScenarioUrl,
-  BrowserScenarioValue,
-} from "../domain/browserScenarioValues.js";
-import type { BrowserStorageValueFingerprint } from "../domain/browserScenarioCaptureValues.js";
-
 const REDACTION_PREFIX = "[REDACTED:";
 
 const encodedSecretValues = (secret: string): ReadonlySet<string> =>

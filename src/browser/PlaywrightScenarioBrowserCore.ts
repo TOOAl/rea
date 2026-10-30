@@ -1,5 +1,3 @@
-import { tmpdir } from "node:os";
-
 import type { Browser, BrowserContext, Page } from "playwright-core";
 
 import type { BrowserScenario } from "../domain/browserScenario.js";

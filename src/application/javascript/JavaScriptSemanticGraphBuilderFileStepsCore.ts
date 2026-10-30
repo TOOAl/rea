@@ -4,9 +4,6 @@ import type {
 } from "../../domain/javascript/javascriptSemanticGraphSchemas.js";
 import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
-import { projectSemanticChildProcesses } from "./JavaScriptSemanticGraphChildProcessProjection.js";
-import { projectSemanticResources } from "./JavaScriptSemanticGraphResourceProjection.js";
-import { projectSemanticValues } from "./JavaScriptSemanticGraphValueProjection.js";
 import { projectSemanticFunctionFingerprints } from "./JavaScriptSemanticGraphFingerprintProjection.js";
 import {
   createSemanticCallableOwnerLookup,

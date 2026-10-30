@@ -16,7 +16,6 @@ import {
   snapshotDocuments,
   walkFrameTrees,
 } from "./CdpCaptureDocuments.js";
-import { captureElectronScripts } from "./CdpElectronScripts.js";
 import { authorizedElectronFile } from "./ElectronFileScope.js";
 import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 

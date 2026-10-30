@@ -4,7 +4,6 @@ import {
   compareUnicodeCodePoints,
   compositeKey,
 } from "../unicodeCodePointOrder.js";
-import type { HistoricalSourceGraph } from "../referenceSourceGraph.js";
 import type {
   SourceToBundleCandidate,
   SourceToBundleSignal,

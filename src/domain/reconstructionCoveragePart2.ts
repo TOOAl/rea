@@ -17,7 +17,6 @@ import {
   recommendedReconstructionProbes,
   type ReconstructionEvaluationContext,
 } from "./reconstructionCoverageEvaluation.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 import { offsetDateTimeInstantFromEpochMilliseconds } from "./offsetDateTime.js";
 
 const closureReasonSchema = z.strictObject({

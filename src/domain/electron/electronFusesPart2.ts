@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { localPathStringSchema } from "../localPath.js";
-
 /** ASCII sentinel that introduces an Electron fuse wire in an Electron binary. */
 
 const describeSentinel = (

@@ -2,8 +2,6 @@ import {
   createIdaDiagnosticRedactor,
   IDA_DIAGNOSTIC_SOURCE_BYTES,
 } from "./IdaDiagnosticRedactor.js";
-import { ChildProcess } from "node:child_process";
-import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import {
   ProtocolError,
   SdkErrorCode,
@@ -15,6 +13,7 @@ import { err, ok, type Result } from "../domain/result.js";
 import { AnalysisProtocolError } from "../domain/analysisErrorCore.js";
 
 /** Injectable MCP boundary used by the provider and transport conformance tests. */
+
 export interface IdaMcpConnection {
   connect(): Promise<readonly string[]>;
   call(

@@ -3,13 +3,9 @@ import type {
   ParsedReconstructionCoverage,
 } from "./reconstructionCoverage.js";
 import { packageProofHasComparableEvidence } from "./reconstructionCoverageEvidence.js";
-import {
-  latestVerifierObservationsByVerifier,
-  sameVerifierAssessment,
-  type VerifierObservation,
-} from "./reconstructionCoverageVerifierResults.js";
 import type { ReconstructionEvaluationContext } from "./reconstructionCoverageEvaluationCore.js";
 import type { ClosureReason } from "./reconstructionCoverageEvaluationCore.js";
+
 export const evaluateReconstructionCoverageRisks = (
   context: ReconstructionEvaluationContext,
 ): void => {

@@ -5,15 +5,11 @@ import type {
   PowerPcElfMetadata,
 } from "./binaryTargetTypes.js";
 import { err, ok, type Result } from "./result.js";
-import { observeMzWindowsHeader, parseDosMzHeader } from "./dosMz.js";
-import {
-  classifyFatContainerIdentity,
-  readFatContainerHeader,
-} from "./apple/machoContainer.js";
 
 /** Format and architecture facts recovered from an executable header. */
 
 // src/domain/binaryTargetPart2.ts
+
 export const parsePeCodeViewFromBuffer = (
   fileBytes: Buffer,
   peOffset: number,

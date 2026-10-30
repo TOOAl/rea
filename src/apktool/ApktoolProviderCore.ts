@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { access, mkdir, opendir, open, stat } from "node:fs/promises";
 import { join } from "node:path";
-import { pipeline } from "node:stream/promises";
-
-import { providerConfigurationRefusal } from "../domain/providerConfigurationRefusal.js";
 import { androidLocaleQualifierSchema } from "../domain/apktool/apktoolResourceAnalysis.js";
 import {
   AnalysisCapabilityUnavailableError,
@@ -31,6 +28,7 @@ import {
 } from "./ApktoolConfiguration.js";
 
 /** Stable identity for the Apktool resource-decoding provider. */
+
 export const APKTOOL_PROVIDER_IDENTITY = {
   id: "apktool",
   name: "Apktool",

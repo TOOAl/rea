@@ -8,11 +8,11 @@ import {
   semanticResolutionBlocked,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
-import { semanticPropertyPathKeyMatches } from "./javascriptSemanticPropertyPaths.js";
 import { stringValue } from "./javascriptStaticAnalysisHelpers.js";
 import { semanticTopLevelEffectFollowsCapture } from "./javascriptSemanticMutationInitializers.js";
 
 // src/domain/javascript/javascriptSemanticRequireOriginPart2.ts
+
 export const semanticRequireOrigin = (
   node: t.Node | null | undefined,
   state: JavaScriptSemanticAnalysisState,

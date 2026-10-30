@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { emptyArraySchema } from "./emptyArraySchema.js";
 import { sanitizedBrowserUrlSchema } from "./browserObservation.js";
-import { digestSchema } from "./../domain/digests.js";
 
 export type BrowserScenarioEvent = z.infer<typeof browserScenarioEventSchema>;
 

@@ -1,9 +1,6 @@
 import { setImmediate } from "node:timers/promises";
-
-import { analyzeParsedJavaScriptSemanticsSteps } from "../../domain/javascript/javascriptSemanticAnalysis.js";
 import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import { projectJavaScriptModuleSemantics } from "../../domain/javascript/javascriptModuleSemanticIr.js";
-import { failedJavaScriptStaticAnalysis } from "../../domain/javascript/javascriptStaticAnalysisHelpers.js";
 import type {
   JavaScriptArtifactFile,
   JavaScriptArtifactFileSet,
@@ -14,8 +11,6 @@ import type {
   JavaScriptModuleSemanticIr,
 } from "./JavaScriptArtifactAnalysisTypes.js";
 import { completeJavaScriptAnalysisSteps } from "./JavaScriptAnalysisControl.js";
-import type { JavaScriptSemanticGraphProjection } from "./JavaScriptSemanticGraphBuilder.js";
-import { projectAnalysisError } from "../../domain/analysisErrorProjection.js";
 import {
   addSourceMap,
   emptyArtifactAnalysis,

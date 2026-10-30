@@ -1,7 +1,6 @@
 import type { WebPageInspection } from "../domain/browserObservationSchemas.js";
 import type { ProgressReporter } from "../application/ProgressReporter.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
-import { stableWebResources } from "../domain/webInventory.js";
 import type { CdpEndpointTarget } from "./CdpEndpoint.js";
 import { CdpConnection } from "./CdpConnection.js";
 import { authorizedMainFrame } from "./CdpAuthorizedMainFrame.js";
@@ -19,7 +18,6 @@ import {
   allowedSanitizedUrl,
   delayWithCancellation,
 } from "./CdpCaptureValues.js";
-import { captureWorkers } from "./CdpPageCaptureWorkers.js";
 
 const authorizeObservationWindow = async (
   state: CaptureState,

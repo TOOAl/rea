@@ -1,12 +1,7 @@
 import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
-import { createReadStream } from "node:fs";
 import { realpath } from "node:fs/promises";
 
 import { err, ok, type Result } from "../domain/result.js";
-import {
-  OwnedCommandFailure,
-  runOwnedCommand,
-} from "../process/OwnedCommand.js";
 import type {
   OwnedProviderProcessSpawnOptions,
   ProviderProcessSupervisor,
@@ -15,6 +10,7 @@ import type {
 import { boundedUtf8Text } from "../process/boundedUtf8Text.js";
 
 /** Maximum wall-clock duration for one native command. */
+
 export const NATIVE_COMMAND_TIMEOUT_MS = 60_000;
 /** Retain complete command output up to a bounded aggregate size. */
 export const NATIVE_COMMAND_OUTPUT_BUDGET_BYTES = 64 * 1024 * 1024;

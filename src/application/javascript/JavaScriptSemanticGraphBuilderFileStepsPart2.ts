@@ -25,7 +25,6 @@ import {
   addSemanticGraphRelation as addRelation,
 } from "./JavaScriptSemanticGraphConstruction.js";
 import type { FileContext } from "./JavaScriptSemanticGraphBuilderTypes.js";
-import { inferredSemanticEvidenceAt } from "./JavaScriptSemanticGraphEvidence.js";
 
 const projectCalls = (context: FileContext): void => {
   for (const call of context.ir.callSites) {

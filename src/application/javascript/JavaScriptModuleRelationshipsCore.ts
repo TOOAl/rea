@@ -3,10 +3,6 @@ import {
   compositeKey,
 } from "../../domain/unicodeCodePointOrder.js";
 import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
-import {
-  semanticCoverageResourceLimits,
-  semanticResourceLimitCoverage,
-} from "../../domain/javascript/javascriptSemanticCoverage.js";
 import type {
   JavaScriptModuleOrigin,
   JavaScriptSemanticModuleLink,

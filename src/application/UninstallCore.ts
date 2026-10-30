@@ -18,7 +18,6 @@ import {
   readSkillFile,
   skillDestinations,
 } from "./SetupSkill.js";
-import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 import { dshDocument } from "./DshCordisPatch.js";
 import {
   InvalidUtf8FileError,
@@ -37,6 +36,7 @@ import {
   redirectedWriteBlocker,
   type MsixPackageView,
 } from "./MsixPackageStorage.js";
+
 export { isUninstallFailure } from "./UninstallFailure.js";
 
 interface ManagedPathStats {

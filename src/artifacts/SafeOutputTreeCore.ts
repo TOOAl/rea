@@ -1,12 +1,5 @@
-import { constants } from "node:fs";
-import { basename, dirname, isAbsolute, join } from "node:path";
-import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
-
-import { absoluteCallerPath } from "../filesystem/callerPath.js";
-import { SafeOutputTreeCreationFailure } from "./SafeOutputTreeCreationFailure.js";
-import { removeOwnedTree } from "./SafeOutputTreeCleanup.js";
-
 /** One file durably written to an operation-owned output tree. */
+
 export interface SafeOutputFile {
   readonly relativePath: string;
   readonly sha256: string;

@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { constants } from "node:fs";
 import type { ExecutionOptions } from "../application/AnalysisProvider.js";
 import type {
   WasmArtifactExecution,
@@ -14,14 +13,12 @@ import {
   AnalysisOutputError,
 } from "../domain/analysisErrorCore.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import type { InspectWasmArtifactInput } from "../domain/wasm/wasmArtifact.js";
 import { err, type Result } from "../domain/result.js";
 import { runOwnedCommand } from "../process/OwnedCommand.js";
 import { PrivateRuntimeRoot } from "../process/PrivateRuntimeRoot.js";
 import { WABT_PROVIDER_IDENTITY } from "./WabtRelease.js";
 import { wabtFailure } from "./WabtFailures.js";
-import { parseWabtWat } from "./WabtWat.js";
 
 type Launcher = NonNullable<Parameters<typeof runOwnedCommand>[2]>["launcher"];
 const OPERATION = "inspect_wasm_artifact";

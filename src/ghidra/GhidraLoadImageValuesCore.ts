@@ -7,7 +7,6 @@ import {
 } from "../domain/native/nativeLoadImage.js";
 import { parseDosMzHeader, type DosMzHeader } from "../domain/dosMz.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import { validateDosComLength } from "../domain/dosCom.js";
 import { err, ok, type Result } from "../domain/result.js";
 
 const sha256 = (bytes: Buffer): string =>

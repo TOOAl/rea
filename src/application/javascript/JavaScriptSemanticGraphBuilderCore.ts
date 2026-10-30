@@ -5,19 +5,9 @@ import {
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import {
-  partialApplicationCoverage,
-  type ApplicationCoverage,
-} from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
-import {
   JAVASCRIPT_ANALYSIS_RESOURCE_DEFAULTS,
   javaScriptAnalysisCoverageLimits,
 } from "../../domain/javascript/javascriptAnalysisResourceControls.js";
-import {
-  addSemanticFallbackRoot as addFallbackRoot,
-  retainSemanticGraphNode as retainNode,
-  createSemanticGraphProjectionState as emptyState,
-  bindSemanticGraphApplicationNodes,
-} from "./JavaScriptSemanticGraphConstruction.js";
 import type { ElectronCallPath } from "../../domain/javascript/electronStaticAnalysisTypes.js";
 import type { BuilderInput } from "./JavaScriptSemanticGraphBuilderTypes.js";
 /**
@@ -38,6 +28,7 @@ import type { BuilderInput } from "./JavaScriptSemanticGraphBuilderTypes.js";
  * parent result admission independently constrain actual retained memory. The
  * result uses incremental serialization rather than a single JSON string.
  */
+
 export const SEMANTIC_GRAPH_NODE_CEILING =
   JAVASCRIPT_ANALYSIS_RESOURCE_DEFAULTS.semanticNodes;
 

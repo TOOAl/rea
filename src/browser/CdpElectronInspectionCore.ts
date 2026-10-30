@@ -18,7 +18,6 @@ import {
 } from "./CdpElectronScriptEvents.js";
 import { captureElectronScripts } from "./CdpElectronScripts.js";
 import { captureElectronWorkers } from "./CdpElectronWorkers.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 
 interface ElectronContext {
   readonly connection: CdpConnection;

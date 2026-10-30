@@ -1,10 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
-import type {
-  ProcessSample,
-  RecordProcessCaptureEvent,
-} from "../../domain/process/processCapture.js";
 import { execFileOutput } from "../ExecFileOutput.js";
 import { readProcessRunId } from "../ProcessOwnership.js";
+
 const PROC_READ_CONCURRENCY = 64;
 
 interface ProcessRow {

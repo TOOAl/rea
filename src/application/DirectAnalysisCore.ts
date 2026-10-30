@@ -18,9 +18,7 @@ import {
 } from "../contracts/managed/managedToolContracts.js";
 import { EvidenceFileError } from "../domain/evidenceErrors.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
-import { readAnalysisSnapshot } from "./binary/AnalysisSnapshotFiles.js";
 import { requiresNativeSourceAdmissionBeforeReplay } from "./binary/AnalysisSnapshotCache.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import { snapshotEvidenceForQuery } from "../domain/analysisSnapshot.js";
 import { ok, type Result } from "../domain/result.js";
 import type { AnalysisExecution } from "./AnalysisProvider.js";
@@ -31,7 +29,6 @@ import {
   recordWorkflowUnknowns,
 } from "./WorkflowEvidence.js";
 import type { AnalysisProviderSelector } from "../contracts/providerSelection.js";
-import { resolveXrefsAddress } from "./XrefsAddressResolution.js";
 import {
   directAnalysisCleanupFailure,
   managedAnalysisCleanupFailure,

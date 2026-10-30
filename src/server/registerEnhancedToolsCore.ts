@@ -10,11 +10,11 @@ import { toolContract } from "../contracts/toolContracts.js";
 import type { AnalysisProfileCommitment } from "../domain/analysisProfile.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import type { Logger } from "pino";
-import { logToolExecution } from "./toolLogging.js";
 import { toolRegistrationOptions } from "./toolRegistrationOptions.js";
 import type { WithAdmittedAnalysis } from "./analysisAdmission.js";
 
 /** Optional session services used by enhanced tool registration. */
+
 export interface EnhancedToolRegistration {
   readonly withAdmittedAnalysis: WithAdmittedAnalysis;
   readonly logger: Logger;

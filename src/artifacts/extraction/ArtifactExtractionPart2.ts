@@ -31,7 +31,6 @@ import type {
   ArtifactResourceScope,
 } from "../ArtifactResourceScope.js";
 import { isMachOFormat } from "../../domain/binaryTargetTypes.js";
-import { scanArtifactInventoryInScope } from "../inventory/ArtifactInventory.js";
 
 /** Local extraction input with the output root chosen by the adapter. */
 

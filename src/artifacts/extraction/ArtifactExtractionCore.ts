@@ -1,18 +1,9 @@
 import { realpath } from "node:fs/promises";
-
-import { digestCanonicalValue } from "../../domain/canonicalDigest.js";
-import {
-  ArtifactPathRegistry,
-  normalizeArtifactPath,
-} from "../ArtifactPaths.js";
 import {
   ArtifactReaderFailure,
   type ArtifactReader,
 } from "../ArtifactReader.js";
 import { abortIfNeeded } from "../ArtifactHash.js";
-import { SafeOutputTree } from "../SafeOutputTree.js";
-import { ZipArtifactReader } from "../ZipArtifactReader.js";
-import { MachOSliceArtifactReader } from "../MachOSliceArtifactReader.js";
 import type {
   ArtifactExtractionResult,
   ArtifactNode,
@@ -26,6 +17,7 @@ import { scanArtifactInventoryInScope } from "../inventory/ArtifactInventory.js"
 import type { ArtifactIntegrityPolicyName } from "../../domain/artifactIntegrityPolicy.js";
 
 /** Local extraction input with the output root chosen by the adapter. */
+
 export interface ArtifactExtractionInput {
   readonly inputPath: string;
   readonly inputFormat: BinaryTarget["format"];

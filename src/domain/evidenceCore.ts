@@ -1,6 +1,4 @@
 import { z } from "zod";
-
-import { canonicalJsonDigestSteps } from "./canonicalJsonDigestSteps.js";
 import { nulFreeStringSchema } from "./localPath.js";
 
 import { analysisProfileSchema } from "./analysisProfile.js";
@@ -20,6 +18,7 @@ import { prefixedDigestSchema } from "./../domain/digests.js";
 import { relationshipCoverageSchema } from "./relationshipCoverage.js";
 
 /** Provider identity schema shared by evidence-bearing persistence formats. */
+
 export const providerSchema = z.strictObject({
   id: z.string().min(1),
   name: z.string().min(1),

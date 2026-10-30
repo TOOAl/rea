@@ -1,14 +1,6 @@
-import { access, readdir, stat } from "node:fs/promises";
-import { homeDirectoryFromEnvironment } from "../config/homeDirectory.js";
-
-import { BinaryTargetError } from "../domain/configurationErrors.js";
 import { execFileOutput } from "../process/ExecFileOutput.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import type { JavaScriptRuntime } from "../domain/runtimeVersion.js";
-import {
-  macHopperApplicationRoots,
-  macHopperRenamedLauncherCandidates,
-} from "./MacHopperPaths.js";
 import {
   linuxSharedLibrariesAvailable,
   type LinuxDistribution,
@@ -16,10 +8,7 @@ import {
 import type { Result } from "../domain/result.js";
 import type { HopperReleaseError } from "./HopperReleaseFeed.js";
 import type { VerifiedLinuxHopperLauncher } from "./LinuxHopperPublisher.js";
-import type {
-  InstalledSkillIdentity,
-  SkillPathIssue,
-} from "./SetupSkill.js";
+import type { InstalledSkillIdentity, SkillPathIssue } from "./SetupSkill.js";
 import { CATALOG_IDENTITY } from "../catalogIdentity.js";
 import { PRODUCT_IDENTITY, SDK_IDENTITY } from "../identity.js";
 import type {
@@ -38,6 +27,7 @@ import {
 } from "./DoctorScope.js";
 
 /** One actionable environment diagnostic. */
+
 export interface DoctorCheck {
   readonly name: string;
   readonly ok: boolean;

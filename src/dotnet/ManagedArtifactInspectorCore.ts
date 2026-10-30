@@ -14,7 +14,6 @@ import {
   type ManagedMetadataInventory,
 } from "./ManagedMetadataInventory.js";
 import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
-import { ManagedReaderFailure } from "./ManagedReaderFailure.js";
 
 const flagNames = (flags: number): string[] => {
   const names: string[] = [];

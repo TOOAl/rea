@@ -2,9 +2,7 @@ import {
   AnalysisCancelledError,
   AnalysisTimeoutError,
 } from "../domain/analysisErrorCore.js";
-import { stat } from "node:fs/promises";
 import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
-import { ProviderStartupDeadline } from "../process/ProviderDeadline.js";
 
 import { randomUUID } from "node:crypto";
 import {

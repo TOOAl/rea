@@ -14,7 +14,6 @@ import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
 import { isProcessEvidenceProvider } from "./process/processEvidenceProvider.js";
 import type { JsonValue } from "./jsonValue.js";
 import { processCaptureComparisonSchema } from "./process/processComparison.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 
 const correlate = (
   mapping: Mapping,

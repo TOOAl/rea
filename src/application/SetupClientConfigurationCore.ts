@@ -3,7 +3,6 @@ import {
   readClientConfigurationFiles,
   readConfigurationText,
 } from "./ClientConfigurationFiles.js";
-import { ConfigurationError } from "../domain/configurationErrors.js";
 import {
   clientConfigurationValuesEqual,
   clientServerPath,

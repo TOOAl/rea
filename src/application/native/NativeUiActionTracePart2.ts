@@ -1,17 +1,16 @@
 import { z } from "zod";
 
 import type { AnalysisOperationPort } from "../AnalysisProvider.js";
-import type { enhancedInputSchemas } from "../../contracts/enhancedInputs.js";
 import {
   nativeInvestigationGraphSchema,
   nativeInvestigationTraceSchema,
   joinInterfaceBuilderDispatch,
 } from "../../domain/native/nativeInvestigationGraph.js";
-import { inspectNativeDispatch } from "./NativeDispatchMetadataInspection.js";
 import { readNativeCallRoutes } from "./NativeCallRoutes.js";
 import type { SourceLimitation } from "../SourceLimitations.js";
 
 // src/application/native/NativeUiActionTracePart2.ts
+
 const addDirectCallees = async (input: {
   readonly analysis: AnalysisOperationPort;
   readonly graph: z.infer<typeof nativeInvestigationGraphSchema>;

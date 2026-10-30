@@ -3,7 +3,6 @@ import * as t from "@babel/types";
 import { javascriptBootstrapAt } from "./javascriptBootstrap.js";
 import { proveJavaScriptBootstrapIntegrity } from "./javascriptBootstrapIntegrity.js";
 import { semanticStaticPropertyKey } from "./javascriptAstValues.js";
-import { createSemanticModuleInterop } from "./javascriptModuleInterop.js";
 import { semanticRequireOrigin } from "./javascriptSemanticRequireOrigin.js";
 import {
   resolveSemanticBindingState,

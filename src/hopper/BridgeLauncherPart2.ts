@@ -1,17 +1,15 @@
-import { chmod, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join } from "node:path";
 
 import {
   HopperCancelledError,
   HopperStartError,
 } from "../domain/hopperErrors.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import { cleanupOwnedProcessGroup } from "../process/ProcessOwnership.js";
 import { execFileOutput } from "../process/ExecFileOutput.js";
 import { spawnOwnedProviderProcess } from "../process/ProviderProcess.js";
 import { waitForAbortableDelay } from "../process/ProviderDeadline.js";
 
 // src/hopper/BridgeLauncherPart2.ts
+
 const bridgeBootstrapSource = (
   session: BridgeSession,
   options: SharedHopperApplicationLauncherOptions,

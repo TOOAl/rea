@@ -1,8 +1,6 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import type { z } from "zod";
-import { SafeOutputTreeCreationFailure } from "../artifacts/SafeOutputTreeCreationFailure.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { firmwareResultSchemas } from "../domain/firmware/firmwareAnalysis.js";
 import type { normalizeUnblobReport } from "./FirmwareReports.js";
 

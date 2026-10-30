@@ -11,13 +11,6 @@ import {
   readManagedMetadataInventory,
 } from "./ManagedMetadataInventory.js";
 import { readManagedMetadataLayout } from "./ManagedMetadataLayout.js";
-import {
-  parseTypes,
-  typeRanges,
-  type TypeRange,
-} from "./ManagedMemberInspectorCore.js";
-import { managedTypeNameDigests } from "./ManagedTypeNameDigests.js";
-import { managedTypeReferences } from "./ManagedTypeReferences.js";
 import { readTypeMemberListFacts } from "./ManagedTypeMemberLists.js";
 
 const unavailable = (

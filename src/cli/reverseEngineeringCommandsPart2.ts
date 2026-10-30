@@ -3,7 +3,6 @@ import type { Logger } from "pino";
 
 import { createReverseEngineeringService } from "../composition/reverseEngineering.js";
 import { AnalysisInputError } from "../domain/analysisErrorCore.js";
-import type { Result } from "../domain/result.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { logCliCommand } from "../cliLogging.js";
 import type { CliInstance } from "./types.js";

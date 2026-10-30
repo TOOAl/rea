@@ -1,7 +1,3 @@
-import {
-  createJavaScriptApplicationEdge,
-  createJavaScriptApplicationNode,
-} from "./javascriptApplicationGraph.js";
 import type {
   ApplicationEdge,
   ApplicationNode,

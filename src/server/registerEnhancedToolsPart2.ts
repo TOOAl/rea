@@ -1,9 +1,5 @@
 import type { ToolResultDelivery } from "./toolResult.js";
 import type {
-  EvidenceWriter,
-  UnknownRegistryPort,
-} from "../application/investigation/InvestigationRecordPort.js";
-import type {
   CallToolResult,
   ServerContext,
 } from "@modelcontextprotocol/server";
@@ -18,7 +14,6 @@ import {
   recordWorkflowUnknowns,
 } from "../application/WorkflowEvidence.js";
 import type { ToolContract } from "../contracts/toolContractTypes.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import { mcpProgressReporter } from "./mcpProgress.js";
 import { logToolExecution } from "./toolLogging.js";

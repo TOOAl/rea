@@ -1,6 +1,3 @@
-import { constants as fsConstants } from "node:fs";
-import { readFile, readlink, realpath, stat } from "node:fs/promises";
-
 import {
   AnalysisCapabilityUnavailableError,
   AnalysisInputError,
@@ -11,12 +8,6 @@ import {
   type AnalysisErrorOptions,
 } from "../domain/analysisErrorBase.js";
 import { createEvidence } from "../domain/evidence.js";
-import {
-  ProviderProcessSupervisor,
-  spawnOwnedProviderProcess,
-  type OwnedProviderProcessSpawnOptions,
-  type SpawnedOwnedProviderProcess,
-} from "../process/ProviderProcess.js";
 import {
   stopOwnedDebuggerProcess,
   type OwnedDebuggerDetachResult,

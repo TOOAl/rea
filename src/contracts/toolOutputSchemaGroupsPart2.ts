@@ -1,21 +1,13 @@
 import { z } from "zod";
-import {
-  artifactInventorySummaryViewResultSchema,
-  interfaceBuilderSummaryViewResultSchema,
-  machoSummaryViewResultSchema,
-  managedArtifactSummaryViewResultSchema,
-  managedMemberSummaryViewResultSchema,
-} from "../domain/analysisView/analysisView.js";
 import { evidenceBundleSummarySchema } from "../domain/evidenceRecordSummary.js";
 import { BINARY_ARCHITECTURES } from "../domain/binaryTargetTypes.js";
 import {
   binaryArchitectureSchema,
   rawBinaryEntryPointSchema,
 } from "../domain/rawBinary.js";
-import { nativeLoadImageSchema } from "../domain/native/nativeLoadImage.js";
-import { nativeValueTraceSchema } from "../domain/native/nativeValueTrace.js";
 
 // src/contracts/toolOutputSchemaGroupsPart2.ts
+
 export const managedWorkflowOutputSchemas: Readonly<
   Record<string, z.ZodObject>
 > = {

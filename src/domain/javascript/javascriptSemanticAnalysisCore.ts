@@ -16,7 +16,6 @@ import {
   completeSemanticSteps,
   traverseJavaScriptAstSteps,
 } from "./javascriptSemanticTraversal.js";
-import { semanticBundledRequireOrigin } from "./javascriptBundledRequireOrigin.js";
 import { collectSemanticMemberMutationsSteps } from "./javascriptSemanticMemberMutations.js";
 import { indexJavaScriptAmbientWritesSteps } from "./javascriptSemanticAmbientWrites.js";
 import { hasUncertainTypeOnlyModuleSideEffect } from "./javascriptModuleDeclaration.js";
@@ -25,12 +24,6 @@ import {
   resolveSemanticModuleCallables,
 } from "./javascriptSemanticReturns.js";
 import { collectJavaScriptDerivedSemanticsSteps } from "./javascriptSemanticDerivedAnalysis.js";
-import {
-  collectJavaScriptIdentityWritesSteps,
-  electronExportPath,
-  electronMemberPath,
-  ELECTRON_MODULE,
-} from "./javascriptElectronMemberWrites.js";
 import { semanticCoverage } from "./javascriptSemanticCoverage.js";
 import {
   parseJavaScriptSource,
@@ -48,7 +41,6 @@ import {
   type JavaScriptReceiverIndex,
   type JavaScriptOpenReceiverFact,
 } from "./javascriptSemanticAnalysisReceivers.js";
-import { semanticStableInitializer } from "./javascriptSemanticState.js";
 
 export type {
   JavaScriptOpenReceiverFact,

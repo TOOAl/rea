@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import { constants as fsConstants } from "node:fs";
 import { lstat, open, readlink } from "node:fs/promises";
 import type { FileHandle } from "node:fs/promises";
-import type { FilesystemCoverage } from "../../domain/process/processCaptureCoverage.js";
 import type { Stats } from "node:fs";
 
 const hasSameIdentity = (

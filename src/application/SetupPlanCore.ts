@@ -1,6 +1,5 @@
 import { classifyClientRegistrationCommand } from "./ClientRegistrationIdentity.js";
 import type { LinuxPackageFamily } from "./LinuxHopper.js";
-import { macHopperInstallDisclosure } from "./MacHopper.js";
 import type { SetupAction, SetupClientState, SetupHost } from "./SetupTypes.js";
 import {
   registrationPersistenceDetail,
@@ -10,6 +9,7 @@ import type { DoctorReport } from "./Doctor.js";
 import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 
 /** Read-only setup facts shared by client selection and preflight. */
+
 export interface SetupDiscovery {
   readonly initialDoctor: Awaited<ReturnType<SetupHost["doctor"]>>;
   readonly installHopper: boolean;

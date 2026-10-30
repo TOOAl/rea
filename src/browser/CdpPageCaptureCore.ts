@@ -18,10 +18,6 @@ import {
   type DomCapture,
   mainFrameUrl,
 } from "./CdpCaptureDocuments.js";
-import {
-  allowedSanitizedUrl,
-  delayWithCancellation,
-} from "./CdpCaptureValues.js";
 import { captureScripts } from "./CdpPageCaptureScripts.js";
 import { captureWorkers } from "./CdpPageCaptureWorkers.js";
 import type { WebSourceMapRequest } from "./WebSourceMapFetcher.js";

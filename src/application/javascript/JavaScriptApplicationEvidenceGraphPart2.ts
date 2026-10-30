@@ -6,7 +6,6 @@ import {
   javascriptApplicationAnalysisResultSchema,
   type JavaScriptApplicationAnalysisResult,
 } from "../../domain/javascript/javascriptApplicationAnalysis.js";
-import type { JavaScriptSemanticGraph } from "../../domain/javascript/javascriptSemanticGraph.js";
 import { managedApplicationGraphResultSchema } from "../../domain/managed/managedApplicationGraph.js";
 
 /** Supported immutable source for an application-level graph workflow. */

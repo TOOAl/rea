@@ -7,13 +7,10 @@ import {
 } from "../application/AnalysisContextQueries.js";
 import { readAnalysisSnapshot } from "../application/binary/AnalysisSnapshotFiles.js";
 import type { BinarySessionPort } from "../application/binary/BinarySessionPort.js";
-import { captureProcessScenario } from "../process/capture/ProcessHarness.js";
 import { ProcessCaptureResourceScope } from "../process/capture/ProcessCaptureLifecycle.js";
 import { ProcessCaptureError } from "../process/capture/ProcessCaptureError.js";
 import { toolContract } from "../contracts/toolContracts.js";
 import { binaryTargetSummary } from "../application/binary/BinaryTargetSummary.js";
-import type { AnalysisError } from "../domain/analysisErrorBase.js";
-import type { ProcessCapture } from "../domain/process/processCaptureParsing.js";
 import { err, ok } from "../domain/result.js";
 import type { Logger } from "pino";
 import type { ProviderAvailability } from "../application/AnalysisProvider.js";
@@ -31,7 +28,6 @@ import { sessionAvailabilityPolicy } from "./sessionAvailabilityPolicy.js";
 import type { AvailabilityPolicy } from "../application/CapabilityInventory.js";
 import { logToolExecution } from "./toolLogging.js";
 import { toolRegistrationOptions } from "./toolRegistrationOptions.js";
-import { runAdmittedToolOperation } from "./admittedToolOperation.js";
 
 const registerOpenLifecycleTool = (
   { server, session, logger, openContract }: LifecycleToolRegistration,

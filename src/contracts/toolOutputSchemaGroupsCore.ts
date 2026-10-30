@@ -7,7 +7,6 @@ import {
   managedArtifactSummaryViewResultSchema,
   managedMemberSummaryViewResultSchema,
 } from "../domain/analysisView/analysisView.js";
-import { BINARY_ARCHITECTURES } from "../domain/binaryTargetTypes.js";
 import { nativeFunctionAnnotationsSchema } from "../domain/native/nativeFunctionAnnotations.js";
 import { nativeLoadImageSchema } from "../domain/native/nativeLoadImage.js";
 import { nativeUiResultSchema } from "../domain/native/nativeUiObservation.js";
@@ -19,7 +18,6 @@ import {
   nativeCallTargetsSchema,
 } from "../domain/native/nativeInstruction.js";
 import { jsonValueSchema } from "../domain/jsonValue.js";
-import { evidenceBundleSchema } from "../domain/evidenceBundle.js";
 
 import {
   analysisBookmarkSchema,
@@ -48,11 +46,6 @@ import {
   managedMemberInspectionSchema,
   managedNativeBoundaryInspectionSchema,
 } from "../domain/managed/managedArtifact.js";
-import { managedNativeVerificationResultSchema } from "../domain/managed/managedNativeVerificationSchemas.js";
-import { managedApplicationGraphResultSchema } from "../domain/managed/managedApplicationGraph.js";
-import { functionComparisonResultSchema } from "../domain/functionComparisonSchemas.js";
-import { changedBehaviorResultSchema } from "../domain/changedBehavior.js";
-import { staticRuntimeCorrelationResultSchema } from "../domain/staticRuntimeCorrelation.js";
 import { analysisErrorProjectionSchema } from "./errorSchemas.js";
 import { relationshipCoverageSchema } from "../domain/relationshipCoverage.js";
 import { nativeDispatchMetadataResultSchema } from "../domain/native/objcSwiftMetadata.js";
@@ -72,7 +65,6 @@ import {
   targetKindSchema,
 } from "./toolOutputSchemaPrimitives.js";
 
-import { electronFuseReportSchema } from "../domain/electron/electronFuses.js";
 const contextFacetSchema = z.discriminatedUnion("state", [
   z.object({ state: z.literal("available"), value: jsonValueSchema }),
   z.object({

@@ -1,17 +1,10 @@
 import { isBuiltin } from "node:module";
 import { posix } from "node:path";
-
-import type {
-  JavaScriptArtifactFile,
-  JavaScriptUnanalyzedArtifactLookup,
-} from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   classifyPackageImportSpecifier,
   classifyPackageImportTargetString,
   lookupExactPackageImport,
 } from "../../domain/javascript/javascriptPackageImportAliases.js";
-import type { _TypeScriptEmittedSourceCandidate } from "../TypeScriptEmittedSourceCandidates.js";
-import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 // removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 
 const bareModuleCandidate = (

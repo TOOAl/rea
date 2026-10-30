@@ -3,7 +3,6 @@ import { createHash } from "node:crypto";
 import canonicalize from "canonicalize";
 
 import type { Evidence } from "../domain/evidence.js";
-import { parseProcessCapture } from "../domain/process/processCaptureParsing.js";
 import type {
   ReconstructionObligation,
   ReviewedReconstructionObligation,

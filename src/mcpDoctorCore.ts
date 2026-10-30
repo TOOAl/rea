@@ -5,7 +5,6 @@ import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
 
 import { createCatalogIdentity } from "./catalogIdentity.js";
-import { parseMcpOutputSchemaProfile } from "./config/mcpOutputSchemaProfile.js";
 import { PROMPT_CONTRACTS } from "./contracts/promptContracts.js";
 import { TOOL_CONTRACTS } from "./contracts/toolContracts.js";
 import { err, ok } from "./domain/result.js";

@@ -4,10 +4,7 @@ import { digestCanonicalValue } from "./canonicalDigest.js";
 import { canonicalJsonDigestSteps } from "./canonicalJsonDigestSteps.js";
 
 import type { AnalysisProfileCommitment } from "./analysisProfile.js";
-import type {
-  BinaryArchitecture,
-  BinaryTarget,
-} from "./binaryTargetTypes.js";
+import type { BinaryArchitecture, BinaryTarget } from "./binaryTargetTypes.js";
 import {
   jsonValueSchema,
   jsonValueValidationSteps,
@@ -17,7 +14,6 @@ import {
   freezeJsonSnapshot,
   isImmutableJsonSnapshot,
 } from "./immutableJson.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 import type { RelationshipCoverage } from "./relationshipCoverage.js";
 
 /** Provider identity schema shared by evidence-bearing persistence formats. */

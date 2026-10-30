@@ -9,10 +9,8 @@ import {
 import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import { err, ok, type Result } from "../domain/result.js";
 import type { NativeCommandCapture } from "./CommandRunner.js";
-import { parseDyldSymbols } from "./parsers/dyldInfo.js";
 import { parseLipoOutput } from "./parsers/lipo.js";
 import { parseOtoolLoadCommands } from "./parsers/otool.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 
 interface NativeMachoObservation {
   readonly result: JsonValue;

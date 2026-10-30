@@ -1,12 +1,5 @@
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 
-import {
-  editHermesConfigurationYaml,
-  parseHermesConfigurationYaml,
-  stringifyHermesConfigurationYaml,
-} from "./HermesConfigurationYaml.js";
-import { z } from "zod";
-
 import { PRODUCT_IDENTITY } from "../identity.js";
 
 // ClientConfigurationDocumentToml.ts 867-1286

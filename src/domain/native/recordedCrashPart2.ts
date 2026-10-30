@@ -1,6 +1,4 @@
 import { z } from "zod";
-
-import { localPathStringSchema } from "../localPath.js";
 import { recordedNoteCoverageIssues } from "./recordedCrashNoteCoverage.js";
 
 export const recordedCrashPayloadSchema = recordedCrashObjectSchema.omit({

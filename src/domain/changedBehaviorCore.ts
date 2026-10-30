@@ -2,10 +2,6 @@ import { z } from "zod";
 
 import { artifactComparisonResultSchema } from "./artifactComparison.js";
 import { uniqueSorted } from "./canonicalOrdering.js";
-import {
-  assertComparisonFindingLinks,
-  comparisonSourceEvidenceIds,
-} from "./comparisonSourceEvidence.js";
 import { evidenceSchema, type Evidence } from "./evidence.js";
 import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
 import { PROCESS_PROVIDER } from "./process/processEvidenceProvider.js";

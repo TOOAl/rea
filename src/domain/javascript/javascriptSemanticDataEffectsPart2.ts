@@ -27,7 +27,6 @@ import {
   type DataEffectTraversalContext as TraversalContext,
 } from "./javascriptSemanticDataEffectHelpers.js";
 import { range } from "./javascriptStaticAnalysisHelpers.js";
-import type { JavaScriptSemanticValue } from "./javascriptSemanticValueTypes.js";
 
 const collectRequests = (
   program: t.Program,

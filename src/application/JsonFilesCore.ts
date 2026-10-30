@@ -15,9 +15,9 @@ import { NonRegularFileReadError } from "../filesystem/RegularFile.js";
 import { RegularFileCleanupFailure } from "./RegularFileRead.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
-import { OwnedStagedOutput } from "../filesystem/OwnedStagedOutput.js";
 
 /** Request control and its owning operation for an interruptible atomic write. */
+
 export interface TextWriteCancellation {
   readonly signal: AbortSignal;
   readonly operation: string;

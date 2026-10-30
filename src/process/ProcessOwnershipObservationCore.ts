@@ -1,11 +1,5 @@
-import { AnalysisCapabilityUnavailableError } from "../domain/analysisErrorCore.js";
-
 import { launcherIdentityFailure } from "./ProcessOwnershipIdentity.js";
 import { descendantsOf, liveProcesses } from "./ProcessOwnershipProcessTree.js";
-import {
-  createDarwinProcessRunTokenReader,
-  type DarwinProcessReaderCompiler,
-} from "./DarwinProcessRunTokenReader.js";
 import { readProcessRunTokens } from "./ProcessRunTokenObservations.js";
 import type {
   OwnedProcessGroup,
@@ -17,6 +11,7 @@ import type {
 } from "./ProcessOwnership.js";
 
 /** Observe multiple groups from one process snapshot and one token batch. */
+
 export const observeOwnedProcessGroups = async (
   runId: string,
   processGroupIds: readonly number[],

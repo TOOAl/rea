@@ -1,7 +1,5 @@
 import type { EvidenceMcpServer } from "./EvidenceMcpServer.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
-
-import { readAnalysisSnapshot } from "../application/binary/AnalysisSnapshotFiles.js";
 import type { BinarySessionPort } from "../application/binary/BinarySessionPort.js";
 import { createProcessCaptureEvidence } from "../application/process/ProcessEvidence.js";
 import { captureProcessScenario } from "../process/capture/ProcessHarness.js";
@@ -14,13 +12,7 @@ import type { ProcessCapture } from "../domain/process/processCaptureParsing.js"
 import { ok, type Result } from "../domain/result.js";
 import type { Logger } from "pino";
 import { mcpProgressReporter } from "./mcpProgress.js";
-import { registerBundleComparisonTool } from "./registerBundleComparisonTool.js";
 import { registerCloseLifecycleTool } from "./registerCloseLifecycleTool.js";
-import { registerInvestigationTools } from "./registerInvestigationTools.js";
-import {
-  registerEvidenceTools,
-  registerUnknownTools,
-} from "./registerSessionRecordTools.js";
 import {
   registerSessionStatusTool,
   type SessionAvailabilityProbes,

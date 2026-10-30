@@ -1,7 +1,4 @@
-import { basename } from "node:path";
-
 import { parseEvidence } from "../evidence.js";
-import { inspectMachoSchema } from "../native/nativeInspection.js";
 import type { ManagedNativeBoundaryInspection } from "./managedArtifact.js";
 import {
   pinvokeVerificationSchema,

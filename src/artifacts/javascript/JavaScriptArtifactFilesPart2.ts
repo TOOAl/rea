@@ -2,7 +2,6 @@ import { isAbsolute } from "node:path";
 import type { Readable } from "node:stream";
 
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
-import type { ArtifactResourceScope } from "../ArtifactResourceScope.js";
 import {
   ArtifactReaderFailure,
   type ArtifactEntry,
@@ -12,6 +11,7 @@ import type { ArtifactOccurrence } from "../../domain/artifactGraph.js";
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 
 // src/artifacts/javascript/JavaScriptArtifactFilesPart2.ts
+
 const expectedInventory = (
   snapshot: ArtifactInventorySnapshot,
 ): {
