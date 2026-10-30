@@ -105,7 +105,9 @@
         "src/domain/reverseEngineering.ts",
         "src/evm/EvmBytecodeCarrier.ts",
         "src/flutter/FlutterPayloadScan.ts",
-        "src/ida/IdaJsonDiagnostic.ts"
+        "src/ida/IdaJsonDiagnostic.ts",
+        "src/application/SetupHostPart2.ts",
+        "src/application/SetupHostCore.ts"
       ],
       "rules": {
         "no-control-regex": "off"
@@ -231,7 +233,11 @@
       "rules": {
         "max-lines-per-function": [
           "warn",
-          { "max": 150, "skipBlankLines": true, "skipComments": true }
+          {
+            "max": 150,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
         ],
         "complexity": ["warn", 30],
         "max-depth": ["warn", 6]
@@ -269,7 +275,11 @@
       "rules": {
         "max-lines-per-function": [
           "warn",
-          { "max": 250, "skipBlankLines": true, "skipComments": true }
+          {
+            "max": 250,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
         ]
       }
     },
