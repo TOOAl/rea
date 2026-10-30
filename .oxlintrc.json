@@ -303,6 +303,13 @@
       }
     },
     {
+      "files": ["src/**/*Core.ts", "src/**/*Part2.ts", "src/**/*Part3.ts"],
+      "rules": {
+        "no-unused-vars": "off",
+        "no-unused-private-class-members": "off"
+      }
+    },
+    {
       "files": ["**"],
       "rules": {
         "unicorn/no-new-array": "off",
