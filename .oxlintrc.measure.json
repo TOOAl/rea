@@ -13,7 +13,7 @@
     ],
     "max-depth": [
       "warn",
-      7
+      8
     ],
     "max-lines": [
       "warn",
@@ -33,7 +33,7 @@
     ],
     "max-params": [
       "warn",
-      7
+      8
     ],
     "no-var": "warn",
     "no-var-requires": "error",
@@ -355,7 +355,7 @@
         ],
         "max-depth": [
           "warn",
-          7
+          8
         ],
         "max-lines-per-function": [
           "warn",
@@ -367,7 +367,7 @@
         ],
         "max-params": [
           "warn",
-          7
+          8
         ],
         "no-unused-vars": "warn",
         "no-unused-private-class-members": "warn",

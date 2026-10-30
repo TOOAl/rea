@@ -10,24 +10,16 @@ import {
 } from "./GoBinaryContainer.js";
 import { readElfFixedHeader } from "../domain/elfFixedHeader.js";
 
-/** Read ELF build-info sections and file-backed program mappings. */
-export const readGoElfImage = (bytes: Buffer): GoBinaryContainer => {
-  const fixedHeader = readElfFixedHeader(bytes);
-  if (!fixedHeader.ok)
-    throw new GoBinaryFormatFailure("malformed", fixedHeader.error);
-  const { elfClass: bits, headerSize } = fixedHeader.value;
-  const reader = new GoBinaryReader(
-    bytes,
-    fixedHeader.value.byteOrder === "little",
-  );
-  const wide = bits === 64;
-  const phOffset = reader.word(wide ? 32 : 28, bits);
-  const shOffset = reader.word(wide ? 40 : 32, bits);
-  const phWidth = reader.u16(wide ? 54 : 42);
-  const shWidth = reader.u16(wide ? 58 : 46);
-  let phCount = reader.u16(wide ? 56 : 44);
-  let shCount = reader.u16(wide ? 60 : 48);
-  let namesIndex = reader.u16(wide ? 62 : 50);
+/** Ghidra: ELF 확장 헤더 검증 블록 */
+const validateElfHeaderTables = (input: {
+  readonly headerSize: number;
+  readonly phOffset: bigint;
+  readonly shOffset: bigint;
+  readonly phCount: number;
+  readonly shCount: number;
+  readonly namesIndex: number;
+}): void => {
+  const { headerSize, phOffset, shOffset, phCount, shCount, namesIndex } = input;
   if (
     (phCount !== 0 && phOffset < BigInt(headerSize)) ||
     (shOffset !== 0n && shOffset < BigInt(headerSize))
@@ -37,50 +29,6 @@ export const readGoElfImage = (bytes: Buffer): GoBinaryContainer => {
       "ELF header table overlaps the native header",
     );
   if (
-    shOffset !== 0n &&
-    (shCount === 0 || phCount === 0xffff || namesIndex === 0xffff)
-  ) {
-    if (shWidth < (wide ? 64 : 40))
-      throw new GoBinaryFormatFailure(
-        "malformed",
-        "ELF extended section header width is invalid",
-      );
-    const first = reader.fileRange(
-      shOffset,
-      BigInt(shWidth),
-      "ELF section zero",
-    ).offset;
-    if (reader.u32(first + 4) !== 0)
-      throw new GoBinaryFormatFailure(
-        "malformed",
-        "ELF initial section for extended numbering must have SHT_NULL type",
-      );
-    if (shCount === 0) {
-      const count = reader.word(first + (wide ? 32 : 20), bits);
-      if (count < 0xff00n || count > BigInt(Number.MAX_SAFE_INTEGER))
-        throw new GoBinaryFormatFailure(
-          "malformed",
-          "ELF extended section count is invalid",
-        );
-      shCount = Number(count);
-    }
-    if (phCount === 0xffff) {
-      phCount = reader.u32(first + (wide ? 44 : 28));
-      if (phCount < 0xffff)
-        throw new GoBinaryFormatFailure(
-          "malformed",
-          "ELF extended program count is below its reserved range",
-        );
-    }
-    if (namesIndex === 0xffff) {
-      namesIndex = reader.u32(first + (wide ? 40 : 24));
-      if (namesIndex < 0xff00)
-        throw new GoBinaryFormatFailure(
-          "malformed",
-          "ELF extended section name index is below its reserved range",
-        );
-    }
-  } else if (
     shOffset === 0n &&
     (shCount !== 0 || namesIndex !== 0 || phCount === 0xffff)
   ) {
@@ -89,20 +37,82 @@ export const readGoElfImage = (bytes: Buffer): GoBinaryContainer => {
       "ELF section table is missing",
     );
   }
-  if (phCount !== 0 && phWidth < (wide ? 56 : 32))
+};
+
+/** Ghidra: ELF 확장 카운트 해석 블록 */
+const resolveElfExtendedCounts = (input: {
+  readonly reader: GoBinaryReader;
+  readonly bits: 32 | 64;
+  readonly wide: boolean;
+  readonly shWidth: number;
+  readonly shOffset: bigint;
+  readonly phCount: number;
+  readonly shCount: number;
+  readonly namesIndex: number;
+}): { phCount: number; shCount: number; namesIndex: number } => {
+  const { reader, bits, wide, shWidth, shOffset, phCount, shCount, namesIndex } = input;
+  if (
+    shOffset === 0n ||
+    (shCount !== 0 && phCount !== 0xffff && namesIndex !== 0xffff)
+  )
+    return { phCount, shCount, namesIndex };
+  if (shWidth < (wide ? 64 : 40))
     throw new GoBinaryFormatFailure(
       "malformed",
-      "ELF program header width is invalid",
+      "ELF extended section header width is invalid",
     );
-  const phStart = reader.table(
-    phOffset,
-    phCount,
-    phWidth,
-    "ELF program headers",
-  );
+  const first = reader.fileRange(
+    shOffset,
+    BigInt(shWidth),
+    "ELF section zero",
+  ).offset;
+  if (reader.u32(first + 4) !== 0)
+    throw new GoBinaryFormatFailure(
+      "malformed",
+      "ELF initial section for extended numbering must have SHT_NULL type",
+    );
+  let resolvedPhCount = phCount;
+  let resolvedShCount = shCount;
+  let resolvedNamesIndex = namesIndex;
+  if (shCount === 0) {
+    const count = reader.word(first + (wide ? 32 : 20), bits);
+    if (count < 0xff00n || count > BigInt(Number.MAX_SAFE_INTEGER))
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF extended section count is invalid",
+      );
+    resolvedShCount = Number(count);
+  }
+  if (phCount === 0xffff) {
+    resolvedPhCount = reader.u32(first + (wide ? 44 : 28));
+    if (resolvedPhCount < 0xffff)
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF extended program count is below its reserved range",
+      );
+  }
+  if (namesIndex === 0xffff) {
+    resolvedNamesIndex = reader.u32(first + (wide ? 40 : 24));
+    if (resolvedNamesIndex < 0xff00)
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF extended section name index is below its reserved range",
+      );
+  }
+  return { phCount: resolvedPhCount, shCount: resolvedShCount, namesIndex: resolvedNamesIndex };
+};
+
+/** Ghidra: PT_LOAD 세그먼트 수집 블록 */
+const collectLoadSegments = (
+  reader: GoBinaryReader,
+  bits: 32 | 64,
+  wide: boolean,
+  phStart: number,
+  phCount: number,
+  phWidth: number,
+): { mappings: GoFileMapping[]; zeroFills: GoZeroFillMapping[]; fallback: GoFileMapping[] } => {
   const mappings: GoFileMapping[] = [];
   const zeroFills: GoZeroFillMapping[] = [];
-  const sections: GoImageSection[] = [];
   const fallback: GoFileMapping[] = [];
   for (let index = 0; index < phCount; index++) {
     const offset = phStart + index * phWidth;
@@ -128,105 +138,160 @@ export const readGoElfImage = (bytes: Buffer): GoBinaryContainer => {
       zeroFills.push({ address: address + size, size: memorySize - size });
     if (mapping.size !== 0 && (flags & 3) === 2) fallback.push(mapping);
   }
+  return { mappings, zeroFills, fallback };
+};
+
+/** Ghidra: 섹션 헤더 및 build-info 탐색 블록 */
+const resolveBuildInfoSection = (input: {
+  readonly bytes: Buffer;
+  readonly reader: GoBinaryReader;
+  readonly bits: 32 | 64;
+  readonly wide: boolean;
+  readonly shOffset: bigint;
+  readonly shCount: number;
+  readonly shWidth: number;
+  readonly namesIndex: number;
+  readonly sections: GoImageSection[];
+  readonly mappings: GoFileMapping[];
+  readonly zeroFills: GoZeroFillMapping[];
+}): GoFileMapping | null => {
+  const { bytes, reader, bits, wide, shOffset, shCount, shWidth, namesIndex, sections, mappings, zeroFills } = input;
+  if (shCount === 0) return null;
+  if (shWidth < (wide ? 64 : 40) || namesIndex >= shCount)
+    throw new GoBinaryFormatFailure(
+      "malformed",
+      "ELF section width or name-table index is invalid",
+    );
+  const shStart = reader.table(
+    shOffset,
+    shCount,
+    shWidth,
+    "ELF section headers",
+  );
+  if (namesIndex === 0) return null;
+  const namesHeader = shStart + namesIndex * shWidth;
+  if (reader.u32(namesHeader + 4) !== 3)
+    throw new GoBinaryFormatFailure(
+      "malformed",
+      "ELF section name table is not a string table",
+    );
+  const names = reader.fileRange(
+    reader.word(namesHeader + (wide ? 24 : 16), bits),
+    reader.word(namesHeader + (wide ? 32 : 20), bits),
+    "ELF section names",
+  );
   let search: GoFileMapping | null = null;
-  if (shCount !== 0) {
-    if (shWidth < (wide ? 64 : 40) || namesIndex >= shCount)
+  for (let index = 0; index < shCount; index++) {
+    const offset = shStart + index * shWidth;
+    const nameOffset = reader.u32(offset);
+    if (nameOffset >= names.size)
       throw new GoBinaryFormatFailure(
         "malformed",
-        "ELF section width or name-table index is invalid",
+        "ELF section name offset is outside its string table",
       );
-    const shStart = reader.table(
-      shOffset,
-      shCount,
-      shWidth,
-      "ELF section headers",
-    );
-    if (namesIndex !== 0) {
-      const namesHeader = shStart + namesIndex * shWidth;
-      if (reader.u32(namesHeader + 4) !== 3)
-        throw new GoBinaryFormatFailure(
-          "malformed",
-          "ELF section name table is not a string table",
-        );
-      const names = reader.fileRange(
-        reader.word(namesHeader + (wide ? 24 : 16), bits),
-        reader.word(namesHeader + (wide ? 32 : 20), bits),
-        "ELF section names",
+    recordElfSection(sections, {
+      bytes,
+      names,
+      nameOffset,
+      reader,
+      bits,
+      wide,
+      header: offset,
+    });
+    const expectedName = Buffer.from(".go.buildinfo\0");
+    if (
+      expectedName.length > names.size - nameOffset ||
+      !bytes
+        .subarray(
+          names.offset + nameOffset,
+          names.offset + nameOffset + expectedName.length,
+        )
+        .equals(expectedName)
+    )
+      continue;
+    if (search !== null)
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF contains ambiguous build-info sections",
       );
-      for (let index = 0; index < shCount; index++) {
-        const offset = shStart + index * shWidth;
-        const nameOffset = reader.u32(offset);
-        if (nameOffset >= names.size)
-          throw new GoBinaryFormatFailure(
-            "malformed",
-            "ELF section name offset is outside its string table",
-          );
-        recordElfSection(sections, {
-          bytes,
-          names,
-          nameOffset,
-          reader,
-          bits,
-          wide,
-          header: offset,
-        });
-        // Comparing the complete fixed name avoids quadratic scans through malicious string tables.
-        const expectedName = Buffer.from(".go.buildinfo\0");
-        if (
-          expectedName.length > names.size - nameOffset ||
-          !bytes
-            .subarray(
-              names.offset + nameOffset,
-              names.offset + nameOffset + expectedName.length,
-            )
-            .equals(expectedName)
-        )
-          continue;
-        if (search !== null)
-          throw new GoBinaryFormatFailure(
-            "malformed",
-            "ELF contains ambiguous build-info sections",
-          );
-        if (reader.u32(offset + 4) !== 1)
-          throw new GoBinaryFormatFailure(
-            "malformed",
-            "ELF build-info section is not file-backed data",
-          );
-        if ((reader.word(offset + 8, bits) & 0x800n) !== 0n)
-          throw new GoBinaryFormatFailure(
-            "unsupported",
-            "Compressed ELF build-info sections are unsupported",
-          );
-        const address = reader.word(offset + (wide ? 16 : 12), bits);
-        search = {
-          ...reader.fileRange(
-            reader.word(offset + (wide ? 24 : 16), bits),
-            reader.word(offset + (wide ? 32 : 20), bits),
-            "ELF build-info section",
-          ),
-          address,
-        };
-        if (
-          mappedFileOffset(mappings, address, search.size, zeroFills) !==
-          search.offset
-        )
-          throw new GoBinaryFormatFailure(
-            "malformed",
-            "ELF build-info section disagrees with its load mapping",
-          );
-      }
-    }
+    if (reader.u32(offset + 4) !== 1)
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF build-info section is not file-backed data",
+      );
+    if ((reader.word(offset + 8, bits) & 0x800n) !== 0n)
+      throw new GoBinaryFormatFailure(
+        "unsupported",
+        "Compressed ELF build-info sections are unsupported",
+      );
+    const address = reader.word(offset + (wide ? 16 : 12), bits);
+    search = {
+      ...reader.fileRange(
+        reader.word(offset + (wide ? 24 : 16), bits),
+        reader.word(offset + (wide ? 32 : 20), bits),
+        "ELF build-info section",
+      ),
+      address,
+    };
+    if (
+      mappedFileOffset(mappings, address, search.size, zeroFills) !==
+      search.offset
+    )
+      throw new GoBinaryFormatFailure(
+        "malformed",
+        "ELF build-info section disagrees with its load mapping",
+      );
   }
+  return search;
+};
+
+/** Read ELF build-info sections and file-backed program mappings. */
+export const readGoElfImage = (bytes: Buffer): GoBinaryContainer => {
+  const fixedHeader = readElfFixedHeader(bytes);
+  if (!fixedHeader.ok)
+    throw new GoBinaryFormatFailure("malformed", fixedHeader.error);
+  const { elfClass: bits, headerSize } = fixedHeader.value;
+  const reader = new GoBinaryReader(
+    bytes,
+    fixedHeader.value.byteOrder === "little",
+  );
+  const wide = bits === 64;
+  const phOffset = reader.word(wide ? 32 : 28, bits);
+  const shOffset = reader.word(wide ? 40 : 32, bits);
+  const phWidth = reader.u16(wide ? 54 : 42);
+  const shWidth = reader.u16(wide ? 58 : 46);
+  let phCount = reader.u16(wide ? 56 : 44);
+  let shCount = reader.u16(wide ? 60 : 48);
+  let namesIndex = reader.u16(wide ? 62 : 50);
+  validateElfHeaderTables({ headerSize, phOffset, shOffset, phCount, shCount, namesIndex });
+  const extended = resolveElfExtendedCounts({ reader, bits, wide, shWidth, shOffset, phCount, shCount, namesIndex });
+  phCount = extended.phCount;
+  shCount = extended.shCount;
+  namesIndex = extended.namesIndex;
+  if (phCount !== 0 && phWidth < (wide ? 56 : 32))
+    throw new GoBinaryFormatFailure(
+      "malformed",
+      "ELF program header width is invalid",
+    );
+  const phStart = reader.table(
+    phOffset,
+    phCount,
+    phWidth,
+    "ELF program headers",
+  );
+  const load = collectLoadSegments(reader, bits, wide, phStart, phCount, phWidth);
+  const sections: GoImageSection[] = [];
+  const search = resolveBuildInfoSection({ bytes, reader, bits, wide, shOffset, shCount, shWidth, namesIndex, sections, mappings: load.mappings, zeroFills: load.zeroFills });
   const machine = reader.u16(18);
   return {
     format: "elf",
     architecture: elfArchitecture(machine),
     bits,
     byte_order: reader.little ? "little" : "big",
-    mappings,
-    zero_fills: zeroFills,
+    mappings: load.mappings,
+    zero_fills: load.zeroFills,
     sections,
-    search: search === null ? fallback : [search],
+    search: search === null ? load.fallback : [search],
   };
 };
 
@@ -254,8 +319,6 @@ const recordElfSection = (
       sections.push(elfImageSection({ ...header, name: decoded.name }));
       return;
     case "truncated": {
-      // Names past this window stay out of .dep-v0 matching. Read-only
-      // bytes can still hold the only compiler path.
       const section = elfImageSection({ ...header, name: "" });
       if (section.read_only) sections.push(section);
       return;
@@ -308,7 +371,6 @@ const elfImageSection = ({
     reader.word(header + (wide ? 24 : 16), bits),
     reader.word(header + (wide ? 32 : 20), bits),
   );
-  // SHT_NOBITS offsets and sizes do not describe stored bytes.
   const range =
     type === SHT_NOBITS ? { ...declared, file_backed: false } : declared;
   const compressed = (flags & 0x800n) !== 0n;
