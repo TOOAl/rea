@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { mkdtempSync, rmSync, existsSync, readFileSync } from "node:fs";
+import { mkdtempSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 import { guardHarness } from "../src/harness2/guard.js";
 import { RecurrentDepthRunner } from "../src/harness2/depth.js";
-import { ARENA_SURFACE } from "../src/harness2/harness.js";
+// removed unused import: // removed unused import: import { ARENA_SURFACE } from "../src/harness2/harness.js";  // ARENA_SURFACE unused  // ARENA_SURFACE unused
 
 describe("Guard", () => {
   it("detects TODO placeholder", () => {

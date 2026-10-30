@@ -5,7 +5,7 @@
 import { resolve } from "node:path";
 import { FleetCoordinator } from "./coordinator.js";
 import { WorkerAgent } from "./worker.js";
-import { FleetStore } from "./store.js";
+// removed unused import: // removed unused import: import { FleetStore } from "./store.js";  // FleetStore unused  // FleetStore unused
 
 export interface FleetCliOptions {
   cwd?: string;

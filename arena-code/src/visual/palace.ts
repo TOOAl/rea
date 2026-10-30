@@ -63,7 +63,7 @@ export function generatePalaceHtml(entries: MemoryEntry[], opts: PalaceRenderOpt
       const pos = PALACE_POSITIONS[pi];
       const y = 105 + pi * posH;
       const locusId = ri * PALACE_POSITIONS.length + pi;
-      const locusLabel = `${room}-${pos}`;
+      const _locusLabel = `${room}-${pos}`;
       const hits = entries.filter(e => e.spaceMeta?.locusId === locusId);
 
       // 위치 셀

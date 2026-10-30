@@ -61,12 +61,12 @@ async function fetchBasic(item = ITEM) {
   return fetchJson(url);
 }
 
-function ymdKST(d = new Date()) {
+function _ymdKST(d = new Date()) {
   // KST 기준 YYYY-MM-DD
   const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-  const iso = kst.toISOString().slice(0, 10);
+  const _iso = kst.toISOString().slice(0, 10);
   // 실제로는 KST 날짜를 그대로
-  const off = new Date().getTimezoneOffset();
+  const _off = new Date().getTimezoneOffset();
   // 간단: UTC+9 변환
   const utc = new Date(d);
   utc.setHours(utc.getHours() + 9);

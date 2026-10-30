@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { deriveDomain, retrieveLessons, formatLessonsForPrompt, recordLesson } from "../src/loop/learningBridge.js";
 import { EvidenceLedger } from "../src/loop/evidenceLedger.js";
 import { classifyIntent } from "../src/loop/intent.js";
-import { mkdtempSync, existsSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 

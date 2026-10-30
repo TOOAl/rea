@@ -10,7 +10,7 @@ import { createInterface } from "node:readline";
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { queryLoop } from "./loop/queryLoop.js";
-import { buildRegistry, buildRegistryAsync } from "./tools/index.js";
+import { buildRegistryAsync } from "./tools/index.js";
 import type { Message } from "./providers/types.js";
 import { resolveConfig } from "./config/resolve.js";
 import { bootstrapSession } from "./session/bootstrap.js";

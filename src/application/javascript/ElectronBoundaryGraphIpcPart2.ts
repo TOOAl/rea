@@ -1,0 +1,223 @@
+import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
+import type { ElectronSenderValidationFinding } from "../../domain/javascript/electronStaticAnalysisTypes.js";
+import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
+import {
+  artifactLocalIdentity,
+  javascriptAnalysisCoverage,
+  type JavaScriptArtifactGraphContext,
+  type JavaScriptArtifactGraphCoverage,
+} from "./JavaScriptArtifactGraphContext.js";
+import {
+  astObservationEvidence,
+  staticInferenceEvidence,
+} from "./JavaScriptArtifactGraphEvidence.js";
+import {
+  collectElectronIpcRecords,
+  unambiguousElectronIpcPairings,
+  type ElectronIpcRecord,
+} from "./ElectronBoundaryAnalysis.js";
+import {
+  addElectronAstEdge,
+  addElectronInferenceEdge,
+  electronFindingSourceNode,
+  electronObservationIdentity,
+  electronRangeContains,
+  electronRangeKey,
+} from "./ElectronBoundaryGraphContext.js";
+
+const addHandlerNode = (input: IpcHandlerInput): ApplicationNode => {
+  const { context, record, source, channel, coverage } = input;
+  const { finding, file } = record;
+  const handlerRange = finding.handler_location ?? finding.location;
+  const handler = context.accumulator.addNode({
+    kind: "ipc-handler",
+    identity: artifactLocalIdentity(
+      file.sha256,
+      "electron-ipc-handler",
+      `${finding.side}:${finding.operation}:${finding.channel ?? finding.channel_expression}:${electronRangeKey(handlerRange)}`,
+    ),
+    observations: [
+      {
+        label: finding.channel,
+        properties: {
+          side: finding.side,
+          operation: finding.operation,
+          mode: finding.mode,
+          channel: finding.channel,
+          channel_expression: finding.channel_expression,
+          handler_kind: finding.handler_kind,
+          handler_location: finding.handler_location,
+          ...(finding.invocation_location === undefined
+            ? {}
+            : { invocation_location: finding.invocation_location }),
+        },
+        evidence: (finding.resolution_basis === "wrapper-substitution"
+          ? staticInferenceEvidence
+          : astObservationEvidence)({
+          sha256: file.sha256,
+          path: file.path,
+          range: handlerRange,
+          operation: "observe-ipc-handler",
+          coverage,
+        }),
+      },
+    ],
+  });
+  addElectronAstEdge(context, {
+    source,
+    target: handler,
+    file,
+    range: handlerRange,
+    coverage,
+    relation: "contains",
+    operation: "locate-ipc-handler",
+    properties: { side: finding.side, operation: finding.operation },
+  });
+  addElectronInferenceEdge(context, {
+    source: handler,
+    target: channel,
+    file,
+    range: finding.location,
+    coverage,
+    relation: "handles",
+    operation: "map-ipc-handler-registration",
+    properties: {
+      channel: finding.channel,
+      channel_expression: finding.channel_expression,
+      resolution: finding.channel === null ? "dynamic" : "literal",
+      ...(finding.invocation_location === undefined
+        ? {}
+        : { invocation_location: finding.invocation_location }),
+    },
+  });
+  return handler;
+};
+
+const addLiteralPairings = (state: IpcGraphState): void => {
+  for (const pairing of unambiguousElectronIpcPairings(state.records)) {
+    const source = state.sources.get(pairing.transmission.key);
+    const handler = state.handlers.get(pairing.handler.key);
+    const coverage = coverageFor(state.context, pairing.transmission.file);
+    if (source === undefined || handler === undefined || coverage === undefined)
+      continue;
+    addElectronInferenceEdge(state.context, {
+      source,
+      target: handler,
+      file: pairing.transmission.file,
+      range: pairing.transmission.finding.location,
+      coverage,
+      relation:
+        pairing.transmission.finding.mode === "invoke" ? "invokes" : "sends",
+      operation: "pair-ipc-literal-channel",
+      properties: {
+        channel: pairing.transmission.finding.channel,
+        pairing_basis: "unique-exact-literal-channel",
+        handler_path: pairing.handler.file.path,
+        handler_operation: pairing.handler.finding.operation,
+      },
+      limitations: [
+        "Literal channel equality does not prove that the handler is registered or reachable at runtime.",
+      ],
+    });
+  }
+};
+
+const addValidationObservations = (state: IpcGraphState): void => {
+  for (const analyzed of state.context.analysis.files) {
+    const { file, javascript } = analyzed;
+    if (javascript === null) continue;
+    const coverage = javascriptAnalysisCoverage(javascript);
+    for (const validation of javascript.electron.sender_validations) {
+      const handlerRecord = containingHandler(state.records, file, validation);
+      const target =
+        handlerRecord === undefined
+          ? electronFindingSourceNode(
+              state.context,
+              file,
+              validation.module_key,
+              validation.module_runtime,
+            )
+          : state.handlers.get(handlerRecord.key);
+      if (target !== undefined)
+        addValidationObservation({
+          context: state.context,
+          file,
+          validation,
+          target,
+          coverage,
+        });
+    }
+  }
+};
+
+const addValidationObservation = (input: ValidationObservationInput): void => {
+  const { context, file, validation, target, coverage } = input;
+  context.accumulator.addNode({
+    kind: target.kind,
+    identity: target.identity,
+    observations: [
+      {
+        label: `${validation.subject} validation candidate`,
+        properties: {
+          fact_kind: "sender-validation-candidate",
+          subject: validation.subject,
+          mechanism: validation.mechanism,
+          expected: validation.expected,
+          enforcement: validation.enforcement,
+        },
+        evidence: astObservationEvidence({
+          sha256: file.sha256,
+          path: file.path,
+          range: validation.location,
+          operation: "observe-ipc-sender-validation-candidate",
+          coverage,
+          limitations: [
+            "A comparison or string check is visible, but static syntax alone does not prove rejection, ordering, or complete sender validation.",
+          ],
+        }),
+      },
+    ],
+  });
+};
+
+const containingHandler = (
+  records: readonly ElectronIpcRecord[],
+  file: JavaScriptArtifactFile,
+  validation: ElectronSenderValidationFinding,
+): ElectronIpcRecord | undefined =>
+  records
+    .filter(
+      (record) =>
+        record.file.path === file.path &&
+        record.finding.handler_location !== null &&
+        electronRangeContains(
+          record.finding.handler_location,
+          validation.location,
+        ),
+    )
+    .sort(
+      (left, right) =>
+        rangeMagnitude(left.finding.handler_location) -
+        rangeMagnitude(right.finding.handler_location),
+    )[0];
+
+const rangeMagnitude = (
+  range: ElectronIpcRecord["finding"]["handler_location"],
+): number =>
+  range === null
+    ? Number.MAX_SAFE_INTEGER
+    : (range.end.line - range.start.line) * 1_000_000 +
+      range.end.column -
+      range.start.column;
+
+const coverageFor = (
+  context: JavaScriptArtifactGraphContext,
+  file: JavaScriptArtifactFile,
+): JavaScriptArtifactGraphCoverage | undefined => {
+  const javascript = context.analysis.files.find(
+    ({ file: candidate }) => candidate.path === file.path,
+  )?.javascript;
+  return javascript === null || javascript === undefined
+    ? undefined
+    : javascriptAnalysisCoverage(javascript);
+};

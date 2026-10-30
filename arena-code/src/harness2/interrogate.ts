@@ -1,4 +1,5 @@
-export function interrogate(tree:Record<string,string>, opts?:{models?:string[]; roles?:string[]}): { opinions:any[]; finalVerdict:"PASS"|"FAIL"; commonIssues:string[]; uniqueIssues:string[] } {
+export interface InterrogateOpinion { model: string; role: string; ok: boolean; }
+export function interrogate(tree:Record<string,string>, opts?:{models?:string[]; roles?:string[]}): { opinions:InterrogateOpinion[]; finalVerdict:"PASS"|"FAIL"; commonIssues:string[]; uniqueIssues:string[] } {
   const all=Object.values(tree).join("\n");
   const hasTODO=/TODO|FIXME/.test(all);
   const hasAny=/:\s*any\b/.test(all);

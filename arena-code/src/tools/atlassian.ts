@@ -6,7 +6,7 @@
  *
  * 참고: Atlassian MCP는 Jira/Confluence REST API를 MCP 툴로 노출.
  */
-import type { Tool, ToolContext } from "./types.js";
+import type { Tool, _ToolContext } from "./types.js";
 
 async function atlassianFetch(path: string, opts: { method?: string; body?: unknown } = {}): Promise<{ ok: boolean; data?: unknown; error?: string }> {
   const site = process.env.ATLASSIAN_SITE;

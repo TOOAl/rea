@@ -1,5 +1,5 @@
 import fg from "fast-glob";
-import { relative } from "node:path";
+// removed unused import: // removed unused import: import { relative } from "node:path";  // relative unused  // relative unused
 import type { Tool, ToolContext } from "./types.js";
 
 export const GlobTool: Tool = {

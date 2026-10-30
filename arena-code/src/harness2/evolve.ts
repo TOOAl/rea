@@ -61,7 +61,7 @@ const BENCH_CASES: BenchCase[] = [
   { name: "역사 음악 (Bach·Armstrong)", task: "바흐의 대위 규칙과 암스트롱의 즉흥 — 제약 속에서 새로 만들기", article: "바흐는 성부 독립 규칙으로 흐름을 만들고, 암스트롱은 정해진 리듬 위에서 음색을 바꿨다.", topic: "history-music", expect: { needSeparation:false, needUncertainMark:false, bucket:"history" } },
 ];
 
-function scoreUncertainty(article: string, outputs: any[]): { passed: boolean; calibration: number; note: string } {
+function scoreUncertainty(article: string, outputs: {idea:string}[]): { passed: boolean; calibration: number; note: string } {
   // 불확실성 문장(전망/추측)을 [추정]으로 올바르게 마킹했는가? + 사실을 [추정]로 오표기(over-caution)하지 않았는가?
   const hasUncertain = /전망|추측|것이다|예언/.test(article);
   const hasCertainFact = /발표|거래소/.test(article);
@@ -205,7 +205,7 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
   // 주간 집계 1회 기록 (트렌드 주 단위 유지)
   for (const [id, arr] of Object.entries(weekly)) {
     const avg = Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
-    reg.recordScore(id as any, avg);
+    reg.recordScore(id as unknown as Parameters<typeof reg.recordScore>[0], avg);
   }
 
   // 드리프트 감지: 전주 대비 평균 변화
@@ -219,8 +219,8 @@ export async function evaluateWeekly(cwd = process.cwd()): Promise<BenchResult[]
     if (files.length>=2) {
       const prev = JSON.parse(readFileSync(join(outDir, files[files.length-2]), "utf-8")) as BenchResult[];
       const avgNow = results.reduce((a,b)=>a+b.score,0)/results.length;
-      const avgPrev = prev.reduce((a:any,b:any)=>a+b.score,0)/prev.length;
-      (results as any).__driftDelta = Math.round(avgNow-avgPrev);
+      const avgPrev = prev.reduce((a:{score:number},b:{score:number})=>a+b.score,0 as unknown as number)/prev.length as unknown as number;
+      (results as unknown as {__driftDelta?:number}).__driftDelta = Math.round(avgNow-avgPrev);
     }
   } catch {}
 
@@ -349,7 +349,7 @@ export async function evolveOneStep(cwd = process.cwd(), reason = "주간 진화
       // 카나리: 새 버전이 5점 이상 좋아야 교체
       const canary = await reg.canaryScore({ ...old, version: "4.1.0" } as any, async (shadow)=>{
         // 섀도우 레지스트리로 간단 벤치 재실행 (Gate 기여도만)
-        const mem = new BrainMemory();
+        const _mem = new BrainMemory();
         const council = new Council(shadow);
         const r = await council.deliberate("카나리 테스트 — 불확실성 3단계", "", { article: "AI 50% 전망 불명.", topic: "canary" });
         const has = r.outputs.some(o=> o.idea.includes("추정"));

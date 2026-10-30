@@ -89,7 +89,7 @@ Reviewer3(유의성): “n이 작아 운 좋게 나온 것 아닌가? 재현 데
 export class PhdEthicsBrain extends PhdBase {
   id="genius-phd-ethics"; role="critical" as const; layer=3 as const;
   name="윤리 박사"; description="편향·오용·재현윤리 — 연구가 세상을 아프게 하지 않게";
-  async think(input: BrainInput): Promise<BrainOutput>{
+  async think(_input: BrainInput): Promise<BrainOutput>{
     return out(this,
 `⚖️ 윤리 박사(PhD, 책임):
 데이터 편향: 누구 데이터가 빠졌는가? (성별·연령·지역)
@@ -103,7 +103,7 @@ FAIR: Findable·Accessible·Interoperable·Reusable — 남이 재현 가능하�
 export class PhdWritingBrain extends PhdBase {
   id="genius-phd-writing"; role="design" as const; layer=2 as const;
   name="글쓰기 박사"; description="Abstract→Contribution→Limit→Future — 논문을 이야기로 쓰는 박사";
-  async think(input: BrainInput): Promise<BrainOutput>{
+  async think(_input: BrainInput): Promise<BrainOutput>{
     return out(this,
 `✍️ 글쓰기 박사(PhD, 논문):
 Abstract 4문장: 문제(왜?)→방법(어떻게?)→결과(얼마나?)→의미(그래서?)

@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   mkdtempSync,
   rmSync,
-  writeFileSync,
-  mkdirSync,
+  // removed unused: writeFileSync, (writeFileSync)
+  // removed unused: mkdirSync, (mkdirSync)
   existsSync,
   readFileSync,
 } from "node:fs";

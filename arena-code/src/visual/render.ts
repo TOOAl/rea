@@ -4,8 +4,8 @@
  * 이 렌더러는 우리가 만든 HTML을 크롬 헤드리스로 직접 캡처해 1080x1080 PNG를 만든다.
  * 폰트: Noto Sans KR / Pretendard / Gowun Dodum CDN으로 고정.
  */
-import { writeFileSync, existsSync, mkdirSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+import { existsSync, mkdirSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 
 export interface RenderOpts {
   width?: number; // 1080

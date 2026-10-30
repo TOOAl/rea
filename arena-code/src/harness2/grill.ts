@@ -13,7 +13,7 @@ export function grillSpec(spec: string, opts?: { maxQuestions?: number; includeO
   ];
   let out = base.slice(0, max);
   // security 강제 포함 if spec lacks auth
-  const lower=(spec||"").toLowerCase();
+  const _lower=(spec||"").toLowerCase();
   if (!/auth|인증|권한|로그인/i.test(spec||"") && !out.some(o=>o.category==="security")) {
     out[2]={id:"q3-sec", question:"보안: 인증 없는 기능인데 익명 접근 제어는 어떻게 하나?", category:"security"};
   }

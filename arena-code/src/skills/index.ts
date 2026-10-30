@@ -18,7 +18,7 @@ import {
   mkdirSync,
   cpSync,
 } from "node:fs";
-import { join, resolve, dirname, basename } from "node:path";
+import { join, resolve, basename } from "node:path";
 
 export interface Skill {
   name: string; // /plan, /grill 등

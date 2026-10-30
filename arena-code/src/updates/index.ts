@@ -9,8 +9,8 @@ export * from "./apply.js";
 import type { ArenaConfig } from "../config/schema.js";
 import { checkUpdates, formatUpdateSummary } from "./checker.js";
 import type { UpdateInfo } from "./checker.js";
-import { loadStore, saveStore, shouldCheck, recordCheck } from "./store.js";
-import { existsSync, readFileSync } from "node:fs";
+import { loadStore, shouldCheck, recordCheck } from "./store.js";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 function detectLocalVersions(cwd: string): Record<string, string> {

@@ -22,10 +22,10 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import type { Tree } from "./harness.js";
-import { ARENA_SURFACE, writeTree as writeHarnessTree } from "./harness.js";
+import { writeTree as _writeHarnessTree } from "./harness.js";
 import { Harness2Engine, type EngineOptions, type EngineResult } from "./engine.js";
 import { guardHarness, guardHint } from "./guard.js";
-import type { FailureStore } from "./failures.js";
+import type { _FailureStore } from "./failures.js";
 import type { Provider } from "../providers/types.js";
 
 // ---------------------------------------------------------------------------
@@ -213,7 +213,7 @@ export class RecurrentDepthRunner {
     // 전체 harness도 최종 depth 결과의 final-harness 위치에 best를 덮어쓰기 (재현용)
     if (bestDepth > 0 && bestDepth !== executedDepth) {
       try {
-        const bestEvidenceDir = join(evidenceRoot, `${opts.taskId}#d${bestDepth}-step-1`, "final-harness");
+        const _bestEvidenceDir = join(evidenceRoot, `${opts.taskId}#d${bestDepth}-step-1`, "final-harness");
         // bestHarness를 최상위 summary 옆에도 저장
         const bestPath = join(evidenceRoot, `${opts.taskId}-best-harness.json`);
         writeFileSync(bestPath, JSON.stringify({ bestDepth, bestScore, harness: bestHarness }, null, 2), "utf-8");

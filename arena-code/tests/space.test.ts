@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { MemoryBank } from "../src/memory/bank.js";
-import { coordForText, PALACE_LOCI, distance, vector, palaceWalkOrder, planPath, buildSpatialEdges, gridKeyForCoord } from "../src/memory/space.js";
+import { coordForText, PALACE_LOCI, distance, vector, planPath, buildSpatialEdges, gridKeyForCoord } from "../src/memory/space.js";
 import { BrainMemory } from "../src/brains/memory.js";
 import { SpacePalaceBrain, SpaceNavigatorBrain, SpaceGrapherBrain } from "../src/brains/spaceGenius.js";
 import { BrainRegistry } from "../src/brains/registry.js";

@@ -147,7 +147,7 @@ function runContextPreservation(): { rate: number; passed: number; total: number
   const summary = ledger.summarizeForPrompt();
   // 잘림 플래그가 요약에 포함되는지
   const hasFlag = (summary.match(/TRUNCATED/g) || []).length;
-  const passed = hasFlag >= 5 ? 10 : hasFlag; // 최소 5개 이상 플래그면 모두 인지한 것으로 간주 — 보수적
+  const _passed = hasFlag >= 5 ? 10 : hasFlag; // 최소 5개 이상 플래그면 모두 인지한 것으로 간주 — 보수적
   // 더 정확히: 각 entry가 truncated true로 저장됐는지
   const entries = ledger.list();
   const truncatedEntries = entries.filter(e => e.truncated).length;

@@ -80,7 +80,7 @@ export function qaCheck(html: string): QaReport {
 }
 
 // ── Auto-repair (휴리스틱, 브라우저 없이 문자열 치환) ──
-const REPAIRS: Array<{ id: string; re: RegExp; replace: string; desc: string }> = [
+const _REPAIRS: Array<{ id: string; re: RegExp; replace: string; desc: string }> = [
   { id: "overflow", re: /word-break:\s*normal/g, replace: "word-break: break-word; overflow-wrap: anywhere", desc: "줄넘침 방지 CSS 추가" },
 ];
 

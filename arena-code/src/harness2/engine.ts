@@ -21,7 +21,7 @@
  * 참조: docs/HARNESS2_REA_ANALYSIS.md §4, §7.2
  */
 
-import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 
@@ -223,7 +223,7 @@ export class Harness2Engine {
 
     // Probe 함수 결정 — Fleet hybrid 지원 (Harness²×Fleet)
     let fleetRunId: string | undefined = opts.fleet?.runId;
-    let fleetCoordinator: unknown = opts.fleet?.coordinator;
+    let _fleetCoordinator: unknown = opts.fleet?.coordinator;
     let fleetTaskIds: string[] = [];
     let globalRagHits: Array<{ slug: string; score: number; cue: string }> | undefined;
     let probeFn: ProbeFn;

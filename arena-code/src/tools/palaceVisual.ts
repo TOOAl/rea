@@ -3,7 +3,7 @@
  * 12살 설명: 궁전 평면도를 그려주는 카메라 — "기억궁전 보여줘" 하면 25칸 도면 PNG/HTML을 만들어줌
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { join, resolve, dirname } from "node:path";
+import { resolve, dirname } from "node:path";
 import { MemoryBank } from "../memory/bank.js";
 import { generatePalaceHtml } from "../visual/palace.js";
 import type { Tool, ToolContext } from "./types.js";

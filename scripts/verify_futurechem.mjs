@@ -46,7 +46,7 @@ function main() {
   if (isNaN(close)) { console.error("close 숫자 필요"); process.exit(1); }
 
   const hit = hitWhich(close);
-  const date = new Date().toISOString().slice(0, 10);
+  const _date = new Date().toISOString().slice(0, 10);
   // 내일 날짜로 파일 생성 (오늘 실행하면 내일 날짜로)
   // 사용자가 10-27 종가를 10-27 저녁에 입력한다고 가정
   const d = new Date();

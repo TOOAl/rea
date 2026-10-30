@@ -10,7 +10,7 @@
  * 12살 설명: 요리 대회에서 각 요리사를 별도 주방(worktree)으로 보내고, 심판(코디네이터)이 결과를 모으는 것
  */
 
-import { resolve, join } from "node:path";
+import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 import type { Tree } from "./harness.js";
 import type { RolloutView } from "./context.js";
@@ -93,7 +93,7 @@ export function createFleetProbeFn(opts: {
     try {
       const task = coordinator.taskCreate(fleetRunId, spec);
       taskId = task.id;
-    } catch (e: unknown) {
+    } catch (_e: unknown) {
       // Task 생성 실패 시 fallback to direct probe
       return directProbe(harness, label, opts.provider, opts.taskPrompt, cwd);
     }

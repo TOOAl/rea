@@ -381,7 +381,7 @@ export class FleetStore {
   }
 
   // Stats for CLI
-  status(workspaceRoot?: string): { runs: number; tasks: number; dispatches: number; messages: number; gates: number; path: string } {
+  status(_workspaceRoot?: string): { runs: number; tasks: number; dispatches: number; messages: number; gates: number; path: string } {
     const s = this.load();
     return {
       runs: Object.keys(s.runs).length,

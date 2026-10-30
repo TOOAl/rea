@@ -3,7 +3,7 @@
  * dispatchTask: Dispatch 생성 + preamble 주입
  * runWorker: queryLoop()를 worker로 실행 (Provider 추상화 재활용)
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { exec as execCb } from "node:child_process";
 import { promisify } from "node:util";

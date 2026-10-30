@@ -14,11 +14,11 @@
  * 참조: docs/HARNESS2_REA_ANALYSIS.md §4.1, §5
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, rmSync } from "node:fs";
-import { join, resolve, relative } from "node:path";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
 import type { Provider } from "../providers/types.js";
 import type { Tree } from "./harness.js";
-import { readTree, writeTree, ARENA_SURFACE } from "./harness.js";
+import { readTree, ARENA_SURFACE } from "./harness.js";
 import { assertNoGraderVerdictsInTree } from "./context.js";
 
 // ---------------------------------------------------------------------------

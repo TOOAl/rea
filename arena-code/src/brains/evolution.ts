@@ -10,8 +10,8 @@
  * 1등은 상장을 주는 선생님. 직접 시험문제는 안 내고, “어떻게 하면 더 잘할까?”를 설계.
  */
 import type { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer } from "./types.js";
-import { BrainRegistry } from "./registry.js";
-import { BrainMemory } from "./memory.js";
+// removed unused import: // removed unused import: import { BrainRegistry } from "./registry.js";  // BrainRegistry unused  // BrainRegistry unused
+// removed unused import: // removed unused import: import { BrainMemory } from "./memory.js";  // BrainMemory unused  // BrainMemory unused
 
 function out(brain: Brain, idea: string, conf: number, tags: string[]): BrainOutput {
   return { brainId: brain.id, role: brain.role, layer: brain.layer, idea, confidence: conf, tags, costMs: 0 };

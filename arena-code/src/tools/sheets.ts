@@ -5,7 +5,7 @@ export const SheetsTool: Tool = {
   async execute(input: Record<string,unknown>): Promise<string> {
     const op=(input.operation as string)||""; const data=(input.data as string)||"";
     if (op==="extract") {
-      const col=(input.column as string)||""; const lines=data.split("\n"); const h=lines[0].split(",").map(s=>s.trim()); const idx=h.indexOf(col); const pat=(input.pattern as string)||"email";
+      const col=(input.column as string)||""; const lines=data.split("\n"); const h=lines[0].split(",").map(s=>s.trim()); const _idx=h.indexOf(col); const pat=(input.pattern as string)||"email";
       if (pat==="email") { const emails=data.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi)||[]; return emails.join(", "); }
       return `extract ${pat}`;
     }

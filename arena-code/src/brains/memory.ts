@@ -46,10 +46,11 @@ export class BrainMemory {
     return { errors: this.errors, lessons: Object.fromEntries(this.lessons) };
   }
 
-  static deserialize(data: any): BrainMemory {
+  static deserialize(data: unknown): BrainMemory {
     const m = new BrainMemory();
     m.errors = data.errors ?? [];
-    for (const [k, v] of Object.entries(data.lessons ?? {})) m.lessons.set(k, v as any);
+    const typed = data as { errors?: typeof m.errors; lessons?: Record<string, BrainFeedback[]> };
+    for (const [k, v] of Object.entries(typed.lessons ?? {})) m.lessons.set(k, v as BrainFeedback[]);
     return m;
   }
 }

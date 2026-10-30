@@ -25,7 +25,7 @@ export interface MathVerifyReport {
 
 // ── 1. 수치 검증기 — FunSearch 실행기 시뮬 ───────────────────────────────
 function numericalVerifier(idea: string): VerificationResult {
-  const lower = idea.toLowerCase();
+  const _lower = idea.toLowerCase();
   // 숫자 일관성: 같은 숫자 반복+다름 오류
   const nums = idea.match(/\d+/g) || [];
   let valid = true;
@@ -208,7 +208,7 @@ export function simulateMathRounds(
 
     // 상위 2개 교차(crossover) — FunSearch 섬 모델 시뮬
     const ranked = kept
-      .map((idea, idx) => ({ idea, score: reports[currentIdeas.indexOf(idea)]?.results.reduce((s, r) => s + r.score, 0) ?? 0 }))
+      .map((idea, _idx) => ({ idea, score: reports[currentIdeas.indexOf(idea)]?.results.reduce((s, r) => s + r.score, 0) ?? 0 }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 2);
 

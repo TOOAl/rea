@@ -57,7 +57,7 @@ export async function applyUpdate(opts: ApplyOptions): Promise<ApplyResult> {
     // cwd가 REA repo 내부인지 판단: .git/rea 인지
     const { readFileSync, existsSync } = await import("node:fs");
     const { join } = await import("node:path");
-    const isReaRepo = existsSync(join(cwd, ".git")) || existsSync(join(cwd, "..", ".git"));
+    const _isReaRepo = existsSync(join(cwd, ".git")) || existsSync(join(cwd, "..", ".git"));
     let pkgVersion = "unknown";
     try {
       const pkg = JSON.parse(readFileSync(join(cwd, "package.json"), "utf-8"));

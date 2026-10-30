@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { RizinDebugSessionManager } from "../../../src/rizin/RizinDebugSessionManager.js";
+// removed unused import: // removed unused import: import { RizinDebugSessionManager } from "../../../src/rizin/RizinDebugSessionManager.js";  // RizinDebugSessionManager unused  // RizinDebugSessionManager unused
 import {
   createRizinTestManager,
   rizinTestInferiorTty,

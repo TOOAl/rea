@@ -171,7 +171,7 @@ export const BrowserNavigateTool: Tool = {
           browserState = { url, html, title, viewport, mode: "playwright" };
           return fmtOk(`Browser navigated to ${url} (playwright, title: ${title})`, { url, title, mode: "playwright", viewport });
         }
-      } catch (e) {
+      } catch (_e) {
         // fallback
       }
     }

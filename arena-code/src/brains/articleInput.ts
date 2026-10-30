@@ -10,8 +10,8 @@ import {
   BrainInput,
   BrainOutput,
   BrainFeedback,
-  BrainRole,
-  BrainLayer,
+  // removed unused: BrainRole, (BrainRole)
+  // removed unused: BrainLayer, (BrainLayer)
 } from "./types.js";
 import { BrainMemory } from "./memory.js";
 

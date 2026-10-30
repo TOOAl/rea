@@ -15,7 +15,7 @@
  */
 
 import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync, readdirSync, statSync, copyFileSync } from "node:fs";
-import { join, relative, dirname, resolve } from "node:path";
+import { join, dirname, resolve } from "node:path";
 import type { Tree } from "./harness.js";
 import { writeTree as writeHarnessTree } from "./harness.js";
 import { ARENA_SURFACE } from "./harness.js";

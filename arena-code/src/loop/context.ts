@@ -2,9 +2,9 @@
  * Context Assembly — System Prompt 조립 + AGENT.md 로드 + Compaction
  * Claude Code의 context assembly + Codex/Muse의 AGENTS.md 계층 표준 통합
  */
-import { readFile } from "node:fs/promises";
-import { join, resolve, dirname } from "node:path";
-import { existsSync } from "node:fs";
+// removed unused import: // removed unused import: import { readFile } from "node:fs/promises";  // readFile unused  // readFile unused
+// removed unused import: // removed unused import: import { dirname } from "node:path";  // dirname unused  // dirname unused
+// removed unused import: // removed unused import: import { existsSync } from "node:fs";  // existsSync unused  // existsSync unused
 import type { Message } from "../providers/types.js";
 import type { Provider } from "../providers/types.js";
 import {

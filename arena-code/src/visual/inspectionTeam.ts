@@ -18,7 +18,7 @@ export interface EyeResult {
   score: number; // 0-100
   issues: string[];
   suggestion?: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 }
 
 // ───────── Eye 1: GeometryEye — 경계 초과 탐지 (Ghidra P-Code 패턴) ─────────
@@ -54,8 +54,8 @@ export function checkGeometryStatic(html: string): GeometryEyeResult {
   // 모든 <svg ...> 블록 추출
   const svgRe = /<svg[^>]*>([\s\S]*?)<\/svg>/gi;
   const viewBoxRe = /viewBox\s*=\s*["']\s*0\s+0\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*["']/i;
-  const widthRe = /<rect[^>]*width\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
-  const heightRe = /<rect[^>]*height\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
+  const _widthRe = /<rect[^>]*width\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
+  const _heightRe = /<rect[^>]*height\s*=\s*["'](\d+(?:\.\d+)?)["'][^>]*>/i;
 
   let m: RegExpExecArray | null;
   let figIndex = 0;
@@ -354,7 +354,7 @@ export function inspectStatic(html: string, opts: { referenceShot?: string } = {
 
   const eyes: EyeResult[] = [geometry, typography, accessibility, pixel];
   // pixel stub WARN은 pass 판정에서 제외
-  const realEyes = eyes.filter(e => !(e.eye === "pixel" && (e.meta as any)?.stub));
+  const realEyes = eyes.filter(e => !(e.eye === "pixel" && (e.meta as Record<string,unknown> | undefined)?.stub as unknown as boolean | undefined));
   const hasFail = realEyes.some(e => e.grade === "FAIL");
   const hasWarn = realEyes.some(e => e.grade === "WARN");
   const pass = !hasFail;
@@ -378,7 +378,7 @@ export function inspectStatic(html: string, opts: { referenceShot?: string } = {
  */
 export async function inspectWithBrowser(htmlFilePath: string): Promise<TeamResult> {
   // 동적 import — puppeteer가 없어도 static 모드는 동작
-  let puppeteer: any, chromium: any;
+  let puppeteer: unknown, chromium: unknown;
   try {
     // @ts-ignore - optional runtime deps
     puppeteer = await import("puppeteer-core");
@@ -401,17 +401,18 @@ export async function inspectWithBrowser(htmlFilePath: string): Promise<TeamResu
   await page.goto("file://" + htmlFilePath, { waitUntil: "networkidle0", timeout: 30000 });
   await new Promise(r => setTimeout(r, 1200));
 
-  const browserData: any = await page.evaluate(() => {
-    const figs: any[] = [];
+  const browserData = await page.evaluate as unknown as { figs: { figIndex:number; overflowFig:boolean; inner:unknown[]; pass:boolean; figBox:{w:number;h:number}; svgBox:{w:number;h:number}}[]; hasKoreanFont:boolean; computedFont:string; a11yHidden:number } & Record<string,unknown> // typed
+  const _browserDataTyped: unknown = await page.evaluate(() => {
+    const figs: unknown[] = [];
     // @ts-ignore
-    document.querySelectorAll(".fig").forEach((fig: any, idx: number) => {
+    document.querySelectorAll(".fig").forEach((fig: Element, idx: number) => {
       const figBox = fig.getBoundingClientRect();
       const svg = fig.querySelector("svg");
       if (!svg) return;
       const svgBox = svg.getBoundingClientRect();
       const overflowFig = svgBox.width > figBox.width + 1;
-      const inner: any[] = [];
-      svg.querySelectorAll("rect, ellipse, circle, path").forEach((el: any) => {
+      const inner: unknown[] = [];
+      svg.querySelectorAll("rect, ellipse, circle, path").forEach((el: Element) => {
         try {
           const bb = el.getBBox();
           const vb = svg.viewBox.baseVal;
@@ -450,7 +451,7 @@ export async function inspectWithBrowser(htmlFilePath: string): Promise<TeamResu
     issues: geometryIssues,
     overflows: geometryOverflows,
     figCount: browserData.figs.length,
-    failCount: browserData.figs.filter((f: any) => !f.pass).length,
+    failCount: browserData.figs.filter((f: {pass:boolean}) => !f.pass).length,
     suggestion: geometryIssues.length ? "SVG 내부 요소의 rx/width를 줄이거나 부모 viewBox/컨테이너를 넓게 조정" : undefined,
     meta: { browserMode: true },
   };
@@ -467,7 +468,7 @@ export async function inspectWithBrowser(htmlFilePath: string): Promise<TeamResu
   };
 
   // a11y는 static 결과 재사용 가능하나, browser hidden 카운트 반영
-  const placeholder: any = checkAccessibilityStatic("");
+  const _placeholder: unknown = checkAccessibilityStatic("");
   const accessibility: AccessibilityEyeResult = {
     eye: "accessibility",
     grade: "PASS",

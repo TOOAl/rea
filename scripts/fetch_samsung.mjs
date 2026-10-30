@@ -19,7 +19,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ITEM_SAMSUNG = "005930"; // 삼성전자
-const ITEM_FUTURECHEM = "220100"; // 퓨쳐켐 (기존 호환)
+const _ITEM_FUTURECHEM = "220100"; // 퓨쳐켐 (기존 호환)
 const US_INDICES = [
   { id: "SPX", name: "S&P500", naverCode: ".INX" }, // Naver overseas codes vary, fallback to manual symbol
   { id: "IXIC", name: "NASDAQ", naverCode: ".IXIC" },

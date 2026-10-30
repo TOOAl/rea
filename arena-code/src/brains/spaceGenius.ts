@@ -14,7 +14,7 @@
 import { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer } from "./types.js";
 import { BrainMemory } from "./memory.js";
 import { MemoryBank } from "../memory/bank.js";
-import { PALACE_LOCI, coordForText, palaceWalkOrder, buildSpatialEdges } from "../memory/space.js";
+import { PALACE_LOCI, coordForText, palaceWalkOrder } from "../memory/space.js";
 
 function mk(input: BrainInput, brain: Brain, idea: string, confidence: number, tags: string[]): BrainOutput {
   return { brainId: brain.id, role: brain.role, layer: brain.layer, idea, confidence, tags, costMs: 0 };

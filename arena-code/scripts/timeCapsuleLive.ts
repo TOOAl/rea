@@ -11,7 +11,7 @@
  * 이 스크립트는 mock에서도 동일한 채점 파이프라인을 돌려 `benchmarks/results/covidTimeCapsuleLive.json`을 생성한다.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
-import { EvidenceLedger } from "../src/loop/evidenceLedger.js";
+// removed unused import: // removed unused import: import { EvidenceLedger } from "../src/loop/evidenceLedger.js";  // EvidenceLedger unused  // EvidenceLedger unused
 import { queryLoop } from "../src/loop/queryLoop.js";
 import { createProvider } from "../src/providers/index.js";
 import { COVID_CUTOFF, evaluateTimeCapsuleOutput, COVID_CUTOFF_TS } from "../src/rag/timeCapsule.js";

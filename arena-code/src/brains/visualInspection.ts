@@ -5,7 +5,7 @@
  * - TypographyVerifierBrain: 폰트 깨짐·대비·a11y를 잡는 눈
  */
 import { Brain, BrainInput, BrainOutput, BrainFeedback, BrainRole, BrainLayer } from "./types.js";
-import { BrainMemory } from "./memory.js";
+// removed unused import: // removed unused import: import { BrainMemory } from "./memory.js";  // BrainMemory unused  // BrainMemory unused
 import { inspectStatic } from "../visual/inspectionTeam.js";
 
 function mk(input: BrainInput, brain: Brain, idea: string, confidence: number, tags: string[]): BrainOutput {

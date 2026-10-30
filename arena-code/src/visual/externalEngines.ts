@@ -10,17 +10,17 @@ export interface ExternalOcrResult {
 }
 
 // ── 1. 외부 OCR 추상화 — REA 흡수: tesseract.js 격리 실행 (Codex 샌드박스 패턴) ──
+interface TesseractModule { createWorker?: (langs: string)=>Promise<{recognize:(p:string)=>Promise<{data:{text:string; confidence:number}}>; terminate:()=>Promise<void>}>; default?: {createWorker: TesseractModule["createWorker"]} }
 export async function runExternalOcr(imagePath: string): Promise<ExternalOcrResult> {
   try {
-    // @ts-ignore - 동적 import, 설치 안되면 catch로 fallback
-    const mod: any = await import("tesseract.js");
+    const mod = await import("tesseract.js") as unknown as TesseractModule;
     const createWorker = mod.createWorker ?? mod.default?.createWorker;
     if (!createWorker) throw new Error("no createWorker");
-    const worker: any = await createWorker("kor+eng");
+    const worker = await createWorker("kor+eng");
     const { data } = await worker.recognize(imagePath);
     await worker.terminate();
     return { text: data.text ?? "", confidence: data.confidence ?? 0, engine: "tesseract" };
-  } catch (e: any) {
+  } catch (_e: unknown) {
     return { text: "", confidence: 0, engine: "heuristic" };
   }
 }
@@ -28,13 +28,12 @@ export async function runExternalOcr(imagePath: string): Promise<ExternalOcrResu
 // ── 1b. hanspell 흡수 — 부산대 맞춤법 검사기 외부 프로그램 ──
 export async function runHanspell(text: string): Promise<string[]> {
   try {
-    // @ts-ignore
-    const hanspell: any = await import("hanspell");
+    const hanspell = await import("hanspell") as unknown as HanspellModule;
     return await new Promise<string[]>((resolve) => {
-      hanspell.spellCheckByPNU(text, 6000, (result: any[]) => {
-        const issues = (result || []).filter((r: any) => r.token !== r.suggestions?.[0]).map((r: any) => `맞춤법: "${r.token}" → "${r.suggestions?.[0]}"`);
+      hanspell.spellCheckByPNU(text, 6000, (result: HanspellResult[]) => {
+        const issues = (result || []).filter((r) => r.token !== r.suggestions?.[0]).map((r) => `맞춤법: "${r.token}" → "${r.suggestions?.[0]}"`);
         resolve(issues);
-      }, () => resolve([]), (err: any) => resolve([`hanspell 오류: ${err}`]));
+      }, () => resolve([]), (err: unknown) => resolve([`hanspell 오류: ${String(err)}`]));
     });
   } catch {
     return [];

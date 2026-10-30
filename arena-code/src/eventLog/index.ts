@@ -3,7 +3,7 @@
  * 모든 model call, tool run, approval, edit을 순차 기록
  * crash-safe, replay-exact, resume 가능
  */
-import { mkdirSync, existsSync, appendFileSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, existsSync, appendFileSync, readFileSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { randomBytes } from "node:crypto";
 

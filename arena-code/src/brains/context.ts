@@ -157,7 +157,7 @@ export class ContextEngine {
   }
   /** ⑩ 함축(Conversational Implicature, Grice): 말한 것 vs 의도한 것 — 협조 원리 4대격률 위배 탐지 */
   implicature(scriptLine: string): { literal: string; implicated: string; maxim: string; trigger: string } {
-    const lower = scriptLine.toLowerCase();
+    const _lower = scriptLine.toLowerCase();
     const hasIrony = /그래.*잘했|대단.*하네|ㅋㅋ.*진짜/.test(scriptLine);
     const hasHedge = /아마|아마도|것 같다|추정|아닌가/.test(scriptLine);
     const isBald = /빨리|지금 당장|무조건|반드시/.test(scriptLine);

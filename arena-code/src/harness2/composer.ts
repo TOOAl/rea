@@ -345,7 +345,7 @@ export async function selectAnonymousWithLLM(
     for (const l of labeled) if (text.includes(l.anon) && text.length < 1000) {
       return { chosenLabel: l.label, reason: `[LLM ${provider.name} fallback] text mentions ${l.anon}: ${text.slice(0,120)}`, isBase: l.label === input.baseLabel };
     }
-  } catch (e) {
+  } catch (_e) {
     // fall through to heuristic
   }
   // heuristic fallback

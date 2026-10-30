@@ -8,7 +8,7 @@ import { EvidenceLedger } from "../src/loop/evidenceLedger.js";
 import { queryLoop } from "../src/loop/queryLoop.js";
 import type { Provider, StreamEvent } from "../src/providers/types.js";
 
-function mockProvider(scriptedText: string): Provider {
+function _mockProvider(scriptedText: string): Provider {
   return {
     name: "mock-demo",
     model: "mock",

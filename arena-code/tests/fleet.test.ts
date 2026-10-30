@@ -3,7 +3,7 @@
  * Orca ADE 포팅 검증: Run→Task→Dispatch→worker_done, DAG unblock, circuit breaker, lifecycle 검증
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import { mkdtempSync, rmSync, existsSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { FleetStore } from "../src/fleet/store.js";
@@ -88,8 +88,8 @@ describe("FleetStore", () => {
   it("status aggregation", () => {
     const run = store.createRun("status test");
     const t1 = store.createTask(run.id, "a");
-    const t2 = store.createTask(run.id, "b");
-    const d = store.createDispatch(t1.id);
+    const _t2 = store.createTask(run.id, "b");
+    const _d = store.createDispatch(t1.id);
     const s = store.status();
     expect(s.runs).toBe(1);
     expect(s.tasks).toBe(2);

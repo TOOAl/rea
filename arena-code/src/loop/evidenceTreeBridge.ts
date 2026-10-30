@@ -12,7 +12,7 @@
  * 설계: additive — 기존 ledger 동작 유지, REA_EVIDENCE_TREE=1 일 때만 디스크 영속화
  */
 
-import { existsSync, mkdirSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { buildEvidenceTree, buildMission, type BuildOptions, type ContextTree } from "../harness2/context.js";
 import type { EvidenceLedger } from "./evidenceLedger.js";

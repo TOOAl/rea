@@ -30,12 +30,12 @@ export class MahaVolumeBrain extends BaseVolumeBrain {
 
   async think(input: BrainInput): Promise<BrainOutput> {
     const article = (input as any).article ?? input.context ?? input.task;
-    const text = article.toLowerCase();
+    const _text = article.toLowerCase();
 
     // ─ 마하세븐 3기준 체크리스트 (종목 선정) ─
     const hasPrice = /시가|고가|저가|종가|호가|원|9,?\d{3}/.test(article);
     const hasVolume = /거래량|거래대금|억|만주|454만|452억/.test(article);
-    const volNum = (() => {
+    const _volNum = (() => {
       const m = article.match(/거래량[^0-9]*([0-9,]+)/);
       return m ? parseInt(m[1].replace(/,/g, ""), 10) : 0;
     })();
@@ -110,7 +110,7 @@ export class VolumeSurgeBrain extends BaseVolumeBrain {
   description = "마하세븐 ‘단기간 급증’ 유형을 3가지(돌파/눌림/허매수)로 분류 — 수급의 질 판단";
 
   async think(input: BrainInput): Promise<BrainOutput> {
-    const article = (input as any).article ?? input.context ?? "";
+    const _article = (input as any).article ?? input.context ?? "";
     const idea = [
       `📈 거래량 급증 3유형 판별 (마하세븐 3기준 세분화)`,
       `1) 돌파형 급증: 고가 10,770 경신 + 거래대금 452억 동반 → 추격매수 진짜 (퓨쳐켐 10/26 해당) ✅`,

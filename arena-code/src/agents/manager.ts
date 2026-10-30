@@ -2,7 +2,7 @@
  * AgentManager — 외부 에이전트 등록/해제/연결/프록시
  */
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join, resolve, dirname } from "node:path";
+import { resolve, dirname } from "node:path";
 import type { Provider } from "../providers/types.js";
 import type { Tool } from "../tools/types.js";
 import type { AgentDefinition, AgentConnection } from "./types.js";

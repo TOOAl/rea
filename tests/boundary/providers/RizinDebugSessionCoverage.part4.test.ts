@@ -1,13 +1,13 @@
 import { afterEach, expect, it } from "vitest";
 import { evidenceSchema } from "../../../src/domain/evidence.js";
-import { rizinTestInferiorTty } from "./RizinTestInferiorTty.js";
+// removed unused import: // removed unused import: import { rizinTestInferiorTty } from "./RizinTestInferiorTty.js";  // rizinTestInferiorTty unused  // rizinTestInferiorTty unused
 import {
   createRizinCoverageHarness,
   createInjectedProcess,
   incompleteStop,
 } from "./RizinDebugSessionCoverage.fixtures.js";
 
-const { cleanup, makeProvider, start, startInjected, createManager } =
+const { cleanup, makeProvider, start, startInjected, _createManager } =
   createRizinCoverageHarness();
 afterEach(cleanup);
 

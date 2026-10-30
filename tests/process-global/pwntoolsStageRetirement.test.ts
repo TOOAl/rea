@@ -10,7 +10,7 @@ import {
   onTestFinished,
   vi,
 } from "vitest";
-import { z } from "zod";
+// removed unused import: // removed unused import: import { z } from "zod";  // z unused  // z unused
 import { projectAnalysisError } from "../../src/domain/analysisErrorProjection.js";
 import { PwntoolsRecordedCrashProvider } from "../../src/native/pwntools/PwntoolsRecordedCrashProvider.js";
 import type { PwntoolsLauncher } from "../../src/native/pwntools/PwntoolsDecoder.js";

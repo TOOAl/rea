@@ -375,7 +375,7 @@ export function proposeIntentVariants(
   base: Intent,
 ): { invariant: IntentVariant; domain: IntentVariant } {
   // domain 결정: 텍스트 키워드로 매핑, 없으면 base.kind 기반 fallback
-  const lower = text.toLowerCase();
+  const _lower = text.toLowerCase();
   let domainKey = "generic";
   if (/davinci|resolve|캡컷|capcut|영상.*편집/i.test(text)) domainKey = "video";
   else if (/밑줄|어법|수능|모의고사|exam/i.test(text)) domainKey = "exam";

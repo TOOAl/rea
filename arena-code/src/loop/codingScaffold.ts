@@ -114,7 +114,7 @@ export interface VerifyResult {
 }
 
 export function evaluateVerifyOutput(output: string, command: string): VerifyResult {
-  const lower = output.toLowerCase();
+  const _lower = output.toLowerCase();
   const hasError = /error|failed|fail\b|ERR!|exception|TypeError|ReferenceError/i.test(output);
   const hasPass = /pass|ok\b|success|done\b|✓|✔/i.test(output);
   const truncated = output.length > 2000;

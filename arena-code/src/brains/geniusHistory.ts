@@ -63,7 +63,7 @@ export const HISTORY_30: HistoryGenius[] = [
   { id: "hist-jang", name: "장영실", field: "기술·천문", period: "1390년대~1450년대", achievement: "자격루·옥루·측우기·천문의기 제작", interpretation: "관측 필요→기구 설계→국가 표준화로 연결", condition: "세종 후원·천문·농정 수요·장인 조직", limit: "기록 한계로 개별 기여 범위 신중 — 원전 주의 그대로, 과장 금지" },
 ];
 
-function mkOutput(input: any, brain: any, idea: string, confidence: number, tags: string[]) {
+function mkOutput(input: BrainInput, brain: Brain, idea: string, confidence: number, tags: string[]) {
   return { brainId: brain.id, role: brain.role, layer: brain.layer, idea, confidence, tags, costMs: 0 };
 }
 abstract class BaseHistBrain implements Brain {
