@@ -42,6 +42,96 @@ type AmbientPath = readonly (string | null)[];
 /** Undefined means a cyclic or conflicting projection can select any depth. */
 type AmbientProjection = AmbientPath | undefined;
 
+// Ghidra basic-block: identifier branch
+const handleIdentifierBranch = (input: {
+  readonly root: t.Identifier;
+  readonly state: JavaScriptSemanticAnalysisState;
+  readonly suffix: AmbientProjection;
+  readonly current: { readsAtSelf?: true };
+  readonly possibleWrites: boolean;
+  readonly capture: t.Node | undefined;
+  readonly pending: { node: t.Node; suffix: AmbientProjection; readsAtSelf?: true }[];
+  readonly retain: (path: AmbientPath) => void;
+}): boolean => {
+  const { root, state, suffix, current, possibleWrites, capture, pending, retain } = input;
+  if (isUnshadowedGlobal(root, state, "module")) {
+    retain(["commonjs-module", ...(suffix ?? [])]);
+    return true;
+  }
+  if (globalObjectName(root, state) !== undefined) {
+    retain(["global", ...(suffix ?? [])]);
+    return true;
+  }
+  if (isUnshadowedGlobal(root, state, root.name)) {
+    retain(["global", root.name, ...(suffix ?? [])]);
+    return true;
+  }
+  const binding = resolveSemanticBindingState(state, root, root.name);
+  if (binding === undefined) return true;
+  const stable = semanticStableInitializer(binding, state);
+  const readAt = current.readsAtSelf ? root : capture;
+  const initializers = possibleWrites
+    ? readAt === undefined
+      ? binding.initializers
+      : semanticMutationInitializers(binding, readAt, state.parentsByNode).initializers
+    : stable === undefined ? [] : [stable];
+  for (const initializer of initializers)
+    pending.push({
+      node: initializer.node,
+      readsAtSelf: true,
+      suffix: suffix === undefined ? undefined : [...initializer.projection.map((key) => (key === null ? null : String(key))), ...suffix],
+    });
+  return true;
+};
+
+// Ghidra: object expression branch
+const handleObjectExpression = (input: {
+  readonly root: t.ObjectExpression;
+  readonly suffix: AmbientProjection;
+  readonly key: string | null | undefined;
+  readonly possibleWrites: boolean;
+  readonly continueWith: (node: t.Node, path?: AmbientProjection) => void;
+}): boolean => {
+  if (input.possibleWrites) {
+    for (const property of input.root.properties) {
+      if (t.isSpreadElement(property)) input.continueWith(property.argument);
+      else if (t.isObjectProperty(property) && t.isExpression(property.value)) {
+        const ownKey = semanticStaticPropertyKey(property.key, property.computed);
+        if (input.suffix === undefined || input.key === null || ownKey === null || ownKey === input.key)
+          input.continueWith(property.value, input.suffix?.slice(1));
+      }
+    }
+    return true;
+  }
+  if (input.suffix !== undefined && input.key !== null && input.root.properties.every((p) => t.isObjectProperty(p) && semanticStaticPropertyKey(p.key, p.computed) !== null)) {
+    const property = input.root.properties.findLast((p) => t.isObjectProperty(p) && semanticStaticPropertyKey(p.key, p.computed) === input.key);
+    if (t.isObjectProperty(property) && t.isExpression(property.value)) input.continueWith(property.value, input.suffix.slice(1));
+  }
+  return true;
+};
+
+// Ghidra: array expression branch
+const handleArrayExpression = (input: {
+  readonly root: t.ArrayExpression;
+  readonly suffix: AmbientProjection;
+  readonly key: string | null | undefined;
+  readonly possibleWrites: boolean;
+  readonly continueWith: (node: t.Node, path?: AmbientProjection) => void;
+}): boolean => {
+  if (input.suffix === undefined) {
+    for (const element of input.root.elements) if (t.isSpreadElement(element)) input.continueWith(element.argument); else if (t.isExpression(element)) input.continueWith(element);
+  } else if (!input.root.elements.some(t.isSpreadElement)) {
+    const index = Number(input.key);
+    if (input.key === null && input.possibleWrites) {
+      for (const element of input.root.elements) if (t.isExpression(element)) input.continueWith(element, input.suffix.slice(1));
+    } else if (input.key !== null && Number.isInteger(index) && index >= 0 && String(index) === input.key) {
+      const element = input.root.elements[index];
+      if (t.isExpression(element)) input.continueWith(element, input.suffix.slice(1));
+    }
+  }
+  return true;
+};
+
 /**
  * Follow local object identities without equating shallow copies with their
  * sources. Write lookup retains every visible initializer: reassigning an alias
@@ -56,29 +146,17 @@ const createAmbientPathResolver = (
     const prior = possibleWrites ? undefined : cached.get(node);
     if (prior !== undefined) return prior;
     const result = new Map<string, AmbientPath>();
-    // The caller's write site selects initializers for the written target.
-    // Reads reached through an initializer occur at their own position.
     const pending: {
       node: t.Node;
       suffix: AmbientProjection;
       readsAtSelf?: true;
     }[] = [{ node, suffix: [] }];
-    // Join projections at their producing expression, rather than enumerating
-    // alias histories. Each key can only widen to a wildcard, and conflicting
-    // depths widen to unknown, so diamonds and cycles have finite state.
     const expanded = new WeakMap<t.Node, AmbientProjection>();
     const retain = (path: AmbientPath) => {
       let canonical = canonicalAmbientPath(path);
       for (;;) {
         result.set(JSON.stringify(canonical), canonical);
-        // An unknown key may select a global self reference as well as a
-        // distinct property. Retain both possible object identities for writes.
-        if (
-          !possibleWrites ||
-          canonical[0] !== "global" ||
-          canonical[1] !== null
-        )
-          break;
+        if (!possibleWrites || canonical[0] !== "global" || canonical[1] !== null) break;
         canonical = canonicalAmbientPath(["global", ...canonical.slice(2)]);
       }
     };
@@ -86,17 +164,12 @@ const createAmbientPathResolver = (
       const current = pending.pop();
       if (current === undefined) break;
       const { root, members } = electronMemberPath(current.node);
-      let suffix: AmbientProjection =
-        current.suffix === undefined
-          ? undefined
-          : [...members, ...current.suffix];
+      let suffix: AmbientProjection = current.suffix === undefined ? undefined : [...members, ...current.suffix];
       if (expanded.has(root)) {
         const previous = expanded.get(root);
         if (previous === undefined) continue;
         if (suffix !== undefined && previous.length === suffix.length) {
-          const joined: AmbientPath = previous.map((key, index) =>
-            key === suffix?.[index] ? key : null,
-          );
+          const joined: AmbientPath = previous.map((key, index) => (key === suffix?.[index] ? key : null));
           if (joined.every((key, index) => key === previous[index])) continue;
           suffix = joined;
         } else suffix = undefined;
@@ -106,63 +179,15 @@ const createAmbientPathResolver = (
         }
       }
       expanded.set(root, suffix);
-      // A widened projection is a possible write, never proof of an intrinsic.
       if (suffix === undefined && !possibleWrites) continue;
       const continueWith = (node: t.Node, path: AmbientProjection = suffix) =>
-        pending.push({
-          node,
-          suffix: path,
-          ...(current.readsAtSelf && { readsAtSelf: true }),
-        });
-      if (
-        t.isMetaProperty(root) &&
-        root.meta.name === "import" &&
-        root.property.name === "meta"
-      ) {
+        pending.push({ node, suffix: path, ...(current.readsAtSelf && { readsAtSelf: true }) });
+      if (t.isMetaProperty(root) && root.meta.name === "import" && root.property.name === "meta") {
         retain(["import-meta", ...(suffix ?? [])]);
         continue;
       }
       if (t.isIdentifier(root)) {
-        // The wrapper module object is distinct from globalThis.module. Keep
-        // its identity through the same alias/projection owner used for writes.
-        if (isUnshadowedGlobal(root, state, "module")) {
-          retain(["commonjs-module", ...(suffix ?? [])]);
-          continue;
-        }
-        if (globalObjectName(root, state) !== undefined) {
-          retain(["global", ...(suffix ?? [])]);
-          continue;
-        }
-        if (isUnshadowedGlobal(root, state, root.name)) {
-          retain(["global", root.name, ...(suffix ?? [])]);
-          continue;
-        }
-        const binding = resolveSemanticBindingState(state, root, root.name);
-        if (binding === undefined) continue;
-        const stable = semanticStableInitializer(binding, state);
-        const readAt = current.readsAtSelf ? root : capture;
-        const initializers = possibleWrites
-          ? readAt === undefined
-            ? binding.initializers
-            : semanticMutationInitializers(binding, readAt, state.parentsByNode)
-                .initializers
-          : stable === undefined
-            ? []
-            : [stable];
-        for (const initializer of initializers)
-          pending.push({
-            node: initializer.node,
-            readsAtSelf: true,
-            suffix:
-              suffix === undefined
-                ? undefined
-                : [
-                    ...initializer.projection.map((key) =>
-                      key === null ? null : String(key),
-                    ),
-                    ...suffix,
-                  ],
-          });
+        handleIdentifierBranch({ root, state, suffix, current, possibleWrites, capture, pending, retain });
         continue;
       }
       if (possibleWrites && t.isConditionalExpression(root)) {
@@ -178,66 +203,9 @@ const createAmbientPathResolver = (
       const key = suffix?.[0];
       if (suffix !== undefined && key === undefined) continue;
       if (t.isObjectExpression(root)) {
-        if (possibleWrites) {
-          for (const property of root.properties) {
-            if (t.isSpreadElement(property)) continueWith(property.argument);
-            else if (
-              t.isObjectProperty(property) &&
-              t.isExpression(property.value)
-            ) {
-              const ownKey = semanticStaticPropertyKey(
-                property.key,
-                property.computed,
-              );
-              if (
-                suffix === undefined ||
-                key === null ||
-                ownKey === null ||
-                ownKey === key
-              )
-                continueWith(property.value, suffix?.slice(1));
-            }
-          }
-        } else if (
-          suffix !== undefined &&
-          key !== null &&
-          root.properties.every(
-            (property) =>
-              t.isObjectProperty(property) &&
-              semanticStaticPropertyKey(property.key, property.computed) !==
-                null,
-          )
-        ) {
-          const property = root.properties.findLast(
-            (property) =>
-              t.isObjectProperty(property) &&
-              semanticStaticPropertyKey(property.key, property.computed) ===
-                key,
-          );
-          if (t.isObjectProperty(property) && t.isExpression(property.value))
-            continueWith(property.value, suffix.slice(1));
-        }
+        handleObjectExpression({ root, suffix, key, possibleWrites, continueWith });
       } else if (t.isArrayExpression(root)) {
-        if (suffix === undefined) {
-          for (const element of root.elements)
-            if (t.isSpreadElement(element)) continueWith(element.argument);
-            else if (t.isExpression(element)) continueWith(element);
-        } else if (!root.elements.some(t.isSpreadElement)) {
-          const index = Number(key);
-          if (key === null && possibleWrites) {
-            for (const element of root.elements)
-              if (t.isExpression(element))
-                continueWith(element, suffix.slice(1));
-          } else if (
-            key !== null &&
-            Number.isInteger(index) &&
-            index >= 0 &&
-            String(index) === key
-          ) {
-            const element = root.elements[index];
-            if (t.isExpression(element)) continueWith(element, suffix.slice(1));
-          }
-        }
+        handleArrayExpression({ root, suffix, key, possibleWrites, continueWith });
       }
     }
     const paths = [...result.values()];
@@ -270,12 +238,8 @@ export function* indexJavaScriptAmbientWritesSteps(
     program,
     (root, kind, writeSite) => {
       if (kind === "opaque-call") return [];
-      // Reassigning a local alias changes the binding, not the referenced object.
       if (kind === "binding")
-        return t.isIdentifier(root) &&
-          isUnshadowedGlobal(root, state, root.name)
-          ? [["global", root.name]]
-          : [];
+        return t.isIdentifier(root) && isUnshadowedGlobal(root, state, root.name) ? [["global", root.name]] : [];
       return ambientWrites(root, writeSite);
     },
     interop.intrinsicInvocation,
@@ -301,17 +265,10 @@ export const isUnmodifiedGlobalReference = (
   const node = unwrapJavaScriptExpression(callee).node;
   if (state.ambientWrites.covers(["global", name])) return false;
   if (isUnshadowedGlobal(node, state, name)) return true;
-  if (
-    !t.isMemberExpression(node) ||
-    semanticStaticPropertyKey(node.property, node.computed) !== name
-  )
-    return false;
+  if (!t.isMemberExpression(node) || semanticStaticPropertyKey(node.property, node.computed) !== name) return false;
   const root = unwrapJavaScriptExpression(node.object).node;
   const namespace = globalObjectName(root, state);
-  return (
-    namespace !== undefined &&
-    !state.ambientWrites.covers(["global", namespace])
-  );
+  return namespace !== undefined && !state.ambientWrites.covers(["global", namespace]);
 };
 
 /** A module URL base is known only while its property has no visible write. */

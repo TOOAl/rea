@@ -379,6 +379,142 @@
     },
     {
       "files": [
+        "src/application/ClientConfigurationDocumentTomlCore.ts",
+        "src/application/ClientRegistrationStatusCore.ts",
+        "src/application/DirectAnalysisCore.ts",
+        "src/application/HermesConfigurationYamlCore.ts",
+        "src/application/MipsElfSharedLoad.ts",
+        "src/application/WebModuleTraceService.ts",
+        "src/application/javascript/JavaScriptArtifactAnalysisPart2.ts",
+        "src/application/javascript/JavaScriptArtifactReconstruction.ts",
+        "src/application/javascript/JavaScriptSemanticGraphBuilderPart2.ts",
+        "src/application/native/NativeUiActionTraceCore.ts",
+        "src/application/native/NativeValueTrace.ts",
+        "src/application/wasm/WasmInterfaceComparisonService.ts",
+        "src/artifacts/MachOSliceArtifactReader.ts",
+        "src/browser/history/HistoricalCaptureDecoder.ts",
+        "src/cli/adbCommands.ts",
+        "src/cli/coreNativeCommandsCore.ts",
+        "src/cli/reverseEngineeringCommandsPart2.ts",
+        "src/domain/analysisErrorPresentationCore.ts",
+        "src/domain/javascript/javascriptBundledRequireOriginCore.ts",
+        "src/domain/javascript/javascriptElectronMemberWrites.ts",
+        "src/domain/javascript/javascriptSemanticAnalysisReceivers.ts",
+        "src/domain/javascript/javascriptSemanticReturnedReferences.ts",
+        "src/domain/native/binaryLayoutPart2.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/domain/native/nativeInvestigationGraphPart2.ts",
+        "src/domain/process/processCaptureValidationCore.ts",
+        "src/flutter/ElfBuildId.ts",
+        "src/gdb/GdbSessionManagerCore.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/ghidra/GhidraLoadImageValuesPart2.ts",
+        "src/hopper/HopperMachOImage.ts",
+        "src/javascript/analysis/JavaScriptAnalysisTransferPart2.ts",
+        "src/javascript/recovery/WakaruProvider.ts",
+        "src/jeb/JebMcpConnectionPart2.ts",
+        "src/native/AppleDispatchCoverage.ts",
+        "src/native/pe/PeResourceParser.ts",
+        "src/native/pwndbg/PwndbgCoreContext.ts",
+        "src/process/OwnedCommand.ts",
+        "src/process/ProcessOwnershipObservationPart2.ts",
+        "src/sqlite/SqliteDatabaseInspectionCore.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts",
+        "src/wasm/WabtInterface.ts",
+        "src/wasm/WabtWat.ts"
+      ],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "src/artifacts/apple/InterfaceBuilderDecodeBudget.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/application/SetupCore.ts",
+        "src/browser/history/CaptureFailures.ts",
+        "src/ghidra/GhidraMipsProfileCore.ts",
+        "src/pcap/PcapOutput.ts",
+        "src/ghidra/GhidraAnalysisProfile.ts",
+        "src/pcap/PcapCommand.ts",
+        "src/evm/EvmoleFailures.ts",
+        "src/domain/native/recordedCrashPart2.ts",
+        "src/go/GoMachoImage.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/browser/PngVisualDiffCore.ts",
+        "src/domain/javascript/javascriptSemanticRequireOriginCore.ts",
+        "src/application/CapabilityInventoryRegistryCore.ts",
+        "src/application/MipsElfMetadata.ts",
+        "src/domain/native/nativeAotPeImagePart2.ts",
+        "src/process/DarwinProcessRunTokenReaderPart2.ts",
+        "src/gdb/GdbSessionManagerProtocolPart2.ts",
+        "src/cli/fridaCommands.ts",
+        "src/cli/adbCommands.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts",
+        "src/server/registerFridaTools.ts",
+        "src/native/AppleObjcDispatchFacets.ts"
+      ],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/agents/transports/openaiCompat.ts",
+        "arena-code/src/brains/council.ts",
+        "arena-code/src/brains/visual.ts",
+        "arena-code/src/cli.ts",
+        "arena-code/src/config/resolve.ts",
+        "arena-code/src/fleet/cli.ts",
+        "arena-code/src/harness2/depth.ts",
+        "arena-code/src/harness2/engine.ts",
+        "arena-code/src/harness2/evolve.ts",
+        "arena-code/src/loop/queryLoop.ts",
+        "arena-code/src/providers/arena.ts",
+        "arena-code/src/providers/ollama.ts"
+      ],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "src/cli/adbCommands.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts"
+      ],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "experiments/analysis-efficiency/measure.mjs",
+        "scripts/fetch_samsung.mjs",
+        "scripts/lib/clean-linux-hopper-runtime.mjs",
+        "scripts/validate-vocab-contract.mjs",
+        "scripts/verify/apple/dispatch.mjs",
+        "tests/conformance/ghidra/mips-relocatable-checks.mjs",
+        "tests/fixtures/go/image.ts",
+        "website/public/assets/dino-demo.js"
+      ],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
         "**"
       ],
       "rules": {
