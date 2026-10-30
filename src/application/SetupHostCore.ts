@@ -1,8 +1,6 @@
-import { access } from "node:fs/promises";
 // removed unused import: // removed unused import: import { resolve } from "node:path";  // resolve unused  // resolve unused
 
 import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
-import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { ConfigurationError } from "../domain/configurationErrors.js";
 // removed unused import: // removed unused import: import { PRODUCT_IDENTITY } from "../identity.js";  // PRODUCT_IDENTITY unused  // PRODUCT_IDENTITY unused
 import {
@@ -20,33 +18,18 @@ import {
   LinuxHopperTemporaryCleanupOwner,
   readLinuxDistribution,
   systemLinuxHopperInstallHost,
-  type LinuxHopperInstallHost,
 } from "./LinuxHopper.js";
 import { installMacHopper, systemMacHopperInstallHost } from "./MacHopper.js";
 import { linuxHopperReleaseCacheDirectory } from "./LinuxHopperPublisher.js";
-import {
-  clientEvidencePaths,
-  supportedClients,
-  type SetupClient,
-} from "./SupportedClients.js";
+import { supportedClients, type SetupClient } from "./SupportedClients.js";
 import {
   skillDestinations,
   canonicalSkillNeedsInstall,
   installCanonicalSkill,
   validateCanonicalSkillDirectories,
 } from "./SetupSkill.js";
-import {
-  clientConfigurationAligned,
-  ClientConfigurationCleanupRollbackFailure,
-  configureClientConfiguration,
-  inspectClientConfiguration,
-} from "./SetupClientConfiguration.js";
 import { failedConfigurationMessage } from "./SetupClients.js";
 import { setupInstallFailure } from "./SetupInstallFailure.js";
-import {
-  RegularFileCleanupFailure,
-  retryRegularFileCleanup,
-} from "./RegularFileRead.js";
 import {
   explicitSetupRegistrationEnvironment,
   providerRegistrationEnvironment,

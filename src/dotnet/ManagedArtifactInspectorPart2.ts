@@ -10,7 +10,6 @@ import {
 } from "../domain/managed/managedArtifact.js";
 import {
   managedCli32BitRequirement,
-  managedCliIsMixedClrNative,
   readManagedPeLayout,
   type ManagedCliHeader,
   type ManagedPeLayout,
@@ -18,7 +17,6 @@ import {
 import {
   managedTableRowCounts,
   readManagedMetadataInventory,
-  type ManagedMetadataInventory,
   readManagedResourceDirectory,
 } from "./ManagedMetadataInventory.js";
 import {

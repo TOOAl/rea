@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { NativeMetadataRecovery } from "./nativeMetadataRecovery.js";
 
 const discoverTables = (

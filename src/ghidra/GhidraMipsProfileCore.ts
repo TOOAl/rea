@@ -3,7 +3,6 @@ import type {
   BinaryTarget,
   MipsElfMetadata,
 } from "../domain/binaryTargetTypes.js";
-import type { JsonValue } from "../domain/jsonValue.js";
 
 const MIPS_FP_ABI_SOFT = 3;
 const MIPS_ET_REL = 1;

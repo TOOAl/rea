@@ -1,9 +1,6 @@
 import type { ManagedParseIssue } from "../domain/managed/managedArtifact.js";
 import { decodePeMachine } from "../domain/peMachine.js";
-import {
-  managedFailure,
-  ManagedReaderFailure,
-} from "./ManagedReaderFailure.js";
+import { managedFailure } from "./ManagedReaderFailure.js";
 
 interface PeSection {
   readonly virtualAddress: number;

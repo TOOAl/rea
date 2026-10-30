@@ -6,7 +6,6 @@ import {
   compareUnicodeCodePoints,
   compositeKey,
 } from "./unicodeCodePointOrder.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 import { functionComparisonDimensionNameSchema } from "./functionComparisonSchemas.js";
 
 const residualUnknownValidatedSchema = residualUnknownObjectSchema.superRefine(

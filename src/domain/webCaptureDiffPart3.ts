@@ -1,17 +1,10 @@
 import { digestCanonicalValue } from "./canonicalDigest.js";
-import {
-  compareUnicodeCodePoints,
-  compositeKey,
-} from "./unicodeCodePointOrder.js";
 import type { WebPageInspection } from "./browserObservationSchemas.js";
-import {
-  webCaptureDiffSchema,
-  type CompareWebCapturesInput,
-  type WebCaptureChange,
-  type WebCaptureDiff,
-  type WebCaptureDimension,
+import type {
+  CompareWebCapturesInput,
+  WebCaptureChange,
+  WebCaptureDimension,
 } from "./webCaptureDiffSchemas.js";
-import type { WebMcpDiscovery } from "./webMcpDiscovery.js";
 import { fingerprintWebCaptureFrames } from "./webCaptureFrameComparison.js";
 
 type Dimension = WebCaptureDimension;

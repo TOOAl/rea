@@ -3,7 +3,6 @@ import { setImmediate } from "node:timers/promises";
 
 import { analyzeParsedJavaScriptStaticSourceSteps } from "../../domain/javascript/javascriptStaticAnalysis.js";
 import { analyzeParsedJavaScriptSemanticsSteps } from "../../domain/javascript/javascriptSemanticAnalysis.js";
-import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import { projectJavaScriptModuleSemantics } from "../../domain/javascript/javascriptModuleSemanticIr.js";
 import { parseJavaScriptSource } from "../../domain/javascript/javascriptSourceParser.js";
 import { failedJavaScriptStaticAnalysis } from "../../domain/javascript/javascriptStaticAnalysisHelpers.js";
@@ -34,7 +33,6 @@ import {
   parseHtmlScripts,
   findingCount,
   finalizeArtifactAnalysis,
-  type MutableArtifactAnalysis,
 } from "./JavaScriptArtifactAnalysisHelpers.js";
 
 export const analyzeAndAdoptJavaScriptArtifactFiles = async (

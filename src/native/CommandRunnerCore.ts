@@ -1,17 +1,14 @@
 import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
-import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { realpath } from "node:fs/promises";
 
 import { err, ok, type Result } from "../domain/result.js";
-import { DarwinProcessOwnershipInspectionError } from "../process/DarwinProcessRunTokenReader.js";
 import {
   OwnedCommandFailure,
   runOwnedCommand,
 } from "../process/OwnedCommand.js";
 import type {
   OwnedProviderProcessSpawnOptions,
-  ProviderProcessSnapshot,
   ProviderProcessSupervisor,
   SpawnedOwnedProviderProcess,
 } from "../process/ProviderProcess.js";
@@ -414,4 +411,3 @@ export const failureCapture = (
     truncated: truncated || stdout.truncated || stderr.truncated,
   };
 };
-

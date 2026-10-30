@@ -1,7 +1,3 @@
-import { createHash } from "node:crypto";
-
-import canonicalize from "canonicalize";
-
 import type { Evidence } from "../domain/evidence.js";
 import {
   parseEvidenceBundle,
@@ -16,7 +12,6 @@ import { parseApplicationGraphEvidence } from "./javascript/JavaScriptApplicatio
 import {
   applicationObligationPolicy,
   semanticObligationPolicy,
-  type ReconstructionObligationCandidatePolicy,
 } from "./ReconstructionObligationPolicies.js";
 import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 

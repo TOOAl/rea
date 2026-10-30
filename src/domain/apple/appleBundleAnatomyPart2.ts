@@ -1,6 +1,3 @@
-import { z } from "zod";
-
-import { digestSchema, prefixedDigestSchema } from "../digests.js";
 import { compareUnicodeCodePoints as compare } from "../unicodeCodePointOrder.js";
 
 const indexTree = (entries: readonly Entry[]): Tree => {

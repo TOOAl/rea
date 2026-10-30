@@ -1,14 +1,7 @@
-import { createHash } from "node:crypto";
-
-import type { BrowserScenario } from "../domain/browserScenario.js";
 import type {
   BrowserScenarioUrl,
   BrowserScenarioValue,
 } from "../domain/browserScenarioValues.js";
-import {
-  sanitizeBrowserUrl,
-  type SanitizedBrowserUrl,
-} from "../domain/browserObservation.js";
 import type { BrowserStorageValueFingerprint } from "../domain/browserScenarioCaptureValues.js";
 
 const REDACTION_PREFIX = "[REDACTED:";

@@ -1,12 +1,8 @@
 import {
-  isMap,
   isNode,
   isScalar,
-  isSeq,
   parseDocument,
-  Document,
   Schema,
-  type ParsedNode,
   type Node,
   type ScalarTag,
   type Tags,

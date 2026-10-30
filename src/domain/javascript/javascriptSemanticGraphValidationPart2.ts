@@ -1,12 +1,7 @@
-import { z } from "zod";
 import { canonicalJson } from "../comparisonSemantics.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import { applicationGraphEvidenceSchema } from "./javascriptApplicationEvidenceSchemas.js";
-import {
-  JAVASCRIPT_SEMANTIC_RELATION_FAMILIES,
-  JAVASCRIPT_SEMANTIC_RELATION_FAMILY,
-} from "./javascriptSemanticGraphSchemas.js";
+import { JAVASCRIPT_SEMANTIC_RELATION_FAMILY } from "./javascriptSemanticGraphSchemas.js";
 
 export function* checkNodesSteps(
   graph: GraphRecord,

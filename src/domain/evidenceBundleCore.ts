@@ -1,5 +1,4 @@
 import { z } from "zod";
-import canonicalize from "canonicalize";
 
 import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
 

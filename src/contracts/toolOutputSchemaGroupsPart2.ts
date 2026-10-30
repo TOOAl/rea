@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { byteSearchResultSchema } from "../domain/native/bytePattern.js";
 import {
   artifactInventorySummaryViewResultSchema,
   interfaceBuilderSummaryViewResultSchema,
@@ -13,11 +12,8 @@ import {
   binaryArchitectureSchema,
   rawBinaryEntryPointSchema,
 } from "../domain/rawBinary.js";
-import { nativeFunctionAnnotationsSchema } from "../domain/native/nativeFunctionAnnotations.js";
 import { nativeLoadImageSchema } from "../domain/native/nativeLoadImage.js";
-import { nativeUiResultSchema } from "../domain/native/nativeUiObservation.js";
 import { nativeValueTraceSchema } from "../domain/native/nativeValueTrace.js";
-import { nativeDataTypeSchema } from "../domain/native/nativeDataType.js";
 
 // src/contracts/toolOutputSchemaGroupsPart2.ts
 export const managedWorkflowOutputSchemas: Readonly<

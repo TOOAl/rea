@@ -11,12 +11,10 @@ import { ArtifactOperationError } from "./artifactOperationError.js";
 import {
   BinaryTargetError,
   ConfigurationError,
-  NoBinaryOpenError,
 } from "./configurationErrors.js";
 import { BrowserObservationError } from "./browserObservationError.js";
 import {
   EvidenceFileError,
-  EvidenceIntegrityError,
   EvidenceReferenceError,
   AnalysisSnapshotMismatchError,
 } from "./evidenceErrors.js";
@@ -28,7 +26,6 @@ import {
 } from "./hopperErrors.js";
 import { ProviderSelectionError } from "./providerSelectionError.js";
 import { UnknownRegistryError } from "./unknownRegistryError.js";
-import { providerRetryAction } from "./providerOperationHealth.js";
 import type { AnalysisError, AnalysisErrorTag } from "./analysisErrorBase.js";
 import type { AnalysisErrorProjection } from "./analysisErrorProjection.js";
 

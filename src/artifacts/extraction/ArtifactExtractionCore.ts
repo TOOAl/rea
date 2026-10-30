@@ -1,41 +1,26 @@
-import { lstat, realpath } from "node:fs/promises";
+import { realpath } from "node:fs/promises";
 
-import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
 import { digestCanonicalValue } from "../../domain/canonicalDigest.js";
-import { AsarArtifactReader } from "../AsarArtifactReader.js";
 import {
   ArtifactPathRegistry,
   normalizeArtifactPath,
 } from "../ArtifactPaths.js";
 import {
   ArtifactReaderFailure,
-  type ArtifactEntry,
   type ArtifactReader,
 } from "../ArtifactReader.js";
 import { abortIfNeeded } from "../ArtifactHash.js";
-import { DirectoryArtifactReader } from "../DirectoryArtifactReader.js";
 import { SafeOutputTree } from "../SafeOutputTree.js";
-import { SafeOutputTreeCreationFailure } from "../SafeOutputTreeCreationFailure.js";
 import { ZipArtifactReader } from "../ZipArtifactReader.js";
-import { isZipPackageFormat } from "../../domain/zipPackageFormat.js";
 import { MachOSliceArtifactReader } from "../MachOSliceArtifactReader.js";
-import {
-  artifactExtractionResultSchema,
-  type ArtifactExtractionResult,
-  type ArtifactGraphManifest,
-  type ArtifactNode,
-  type ArtifactOccurrence,
-  type IntegrityContradiction,
+import type {
+  ArtifactExtractionResult,
+  ArtifactNode,
+  ArtifactOccurrence,
 } from "../../domain/artifactGraph.js";
 import { AnalysisUnsupportedTargetError } from "../../domain/analysisErrorCore.js";
-import type {
-  ArtifactResourceOwner,
-  ArtifactResourceScope,
-} from "../ArtifactResourceScope.js";
-import {
-  isMachOFormat,
-  type BinaryTarget,
-} from "../../domain/binaryTargetTypes.js";
+import type { ArtifactResourceScope } from "../ArtifactResourceScope.js";
+import type { BinaryTarget } from "../../domain/binaryTargetTypes.js";
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import { scanArtifactInventoryInScope } from "../inventory/ArtifactInventory.js";
 import type { ArtifactIntegrityPolicyName } from "../../domain/artifactIntegrityPolicy.js";

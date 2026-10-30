@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
-import { open, stat } from "node:fs/promises";
+import { open } from "node:fs/promises";
 import { z } from "zod";
 import { AnalysisResourceConstraintError } from "../../domain/analysisErrorCore.js";
 

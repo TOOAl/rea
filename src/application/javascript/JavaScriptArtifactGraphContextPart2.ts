@@ -1,36 +1,25 @@
-import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
 import { compositeKey } from "../../domain/unicodeCodePointOrder.js";
 import {
   completeApplicationCoverage,
   partialApplicationCoverage,
   truncatedApplicationCoverage,
-  type ApplicationGraphEvidence,
 } from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
 import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
-import type { JavaScriptSourceRange } from "../../domain/javascript/javascriptStaticAnalysisTypes.js";
-import type {
-  JavaScriptHtmlInlineScriptsObservation,
-  JavaScriptModuleArtifactAnalysis,
-} from "./JavaScriptArtifactAnalysisTypes.js";
-import type { JavaScriptUnanalyzedArtifactLookup } from "../../domain/javascript/javascriptArtifactFiles.js";
+import type { JavaScriptModuleArtifactAnalysis } from "./JavaScriptArtifactAnalysisTypes.js";
 import { HTML_INLINE_SCRIPT_LOCATION_LIMIT } from "../../domain/javascript/htmlArtifactReferences.js";
 import type {
   JavaScriptArtifactFile,
-  JavaScriptArtifactFileSet,
   JavaScriptArtifactFileKind,
 } from "../../domain/javascript/javascriptArtifactFiles.js";
-import { JavaScriptArtifactGraphAccumulator } from "./JavaScriptArtifactGraphAccumulator.js";
 import {
   artifactObservationEvidence,
-  astObservationEvidence,
   staticInferenceEvidence,
   unavailableAstEvidence,
 } from "./JavaScriptArtifactGraphEvidence.js";
 import {
   artifactPathResolutionProperties,
   resolveArtifactPathByContext,
-  type ArtifactPathResolution,
 } from "./JavaScriptArtifactPathResolution.js";
 
 /** Mutable graph-construction state scoped to one reconstruction. */

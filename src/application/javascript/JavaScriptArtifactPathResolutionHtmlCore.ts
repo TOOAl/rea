@@ -5,29 +5,18 @@ import {
   normalizeJoinedLogicalPath,
   logicalPathEscapesRoot,
 } from "../../domain/artifactIdentity.js";
-import type {
-  JavaScriptArtifactFile,
-  JavaScriptUnanalyzedArtifactLookup,
-} from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   admitsCanonicalPathSyntax,
-  hasScheme,
   htmlUrlText,
   looksExternal,
   percentDecodeUrlPath,
   stripQueryAndFragment,
 } from "../../domain/artifactPathSyntax.js";
 import {
-  classifyPackageImportSpecifier,
-  classifyPackageImportTargetString,
-  lookupExactPackageImport,
-} from "../../domain/javascript/javascriptPackageImportAliases.js";
-import {
   typescriptEmittedSourceCandidates,
   type TypeScriptEmittedSourceCandidate,
 } from "../TypeScriptEmittedSourceCandidates.js";
 // removed unused import: import { isRelativeJavaScriptModuleSpecifier } from "../../domain/javascript/javascriptModuleSpecifier.js";  // isRelativeJavaScriptModuleSpecifier unused
-import type { JavaScriptModuleResolutionMode } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
 // removed unused import: import { type Result } from "../../domain/result.js";  // Result unused
 

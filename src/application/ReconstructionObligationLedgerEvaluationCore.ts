@@ -15,17 +15,11 @@ import {
   reconstructionObligationDependencyGraph,
   reconstructionObligationLedgerClosureDigest,
   reconstructionObligationLedgerStatus,
-  hasReconstructionObligationDiagnostic as hasDiagnostic,
   reconstructionObligationOwnershipGraph,
   reconstructionObligationReports,
   summarizeReconstructionObligations,
 } from "../domain/reconstructionObligationLedgerIntegrity.js";
 import type { ReconstructionObligationCandidate } from "./ReconstructionObligationCandidates.js";
-import {
-  evidenceAuthoritySupportsProof,
-  evidenceSupportsOriginalAuthority,
-  proofAuthoritySatisfies,
-} from "./ReconstructionObligationAuthority.js";
 import {
   addObligationDiagnostic as addDiagnostic,
   contradictionDiagnostics,

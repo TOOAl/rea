@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { NativeMetadataRecovery } from "./nativeMetadataRecovery.js";
 
 const RTR_SIGNATURE = 0x00525452;

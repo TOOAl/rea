@@ -2,20 +2,13 @@ import { z } from "incur";
 import type { Logger } from "pino";
 
 import { createReverseEngineeringService } from "../composition/reverseEngineering.js";
-import { AnalysisError } from "../domain/analysisErrorBase.js";
-import {
-  AnalysisInputError,
-  AnalysisOutputError,
-} from "../domain/analysisErrorCore.js";
-import { evidenceSchema, type Evidence } from "../domain/evidence.js";
+import { AnalysisInputError } from "../domain/analysisErrorCore.js";
 import type { Result } from "../domain/result.js";
-import { err } from "../domain/result.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { logCliCommand } from "../cliLogging.js";
 import type { CliInstance } from "./types.js";
 import { withCommandCancellation } from "./commandCancellation.js";
 import { CLI_COMMANDS } from "../cliCommandNames.js";
-import type { ReverseEngineeringService } from "../application/reverse/ReverseEngineeringService.js";
 import {
   GdbSessionManager,
   gdbOneShotCommandMayInvalidateDetachProof,

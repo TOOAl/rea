@@ -1,42 +1,27 @@
-import { randomUUID, createHash } from "node:crypto";
-import { access, realpath, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { constants } from "node:fs";
-import { isAbsolute, join } from "node:path";
 import type { ExecutionOptions } from "../application/AnalysisProvider.js";
-import { createAnalysisExecution } from "../application/AnalysisProvider.js";
 import type {
   WasmArtifactExecution,
   WasmArtifactPort,
 } from "../application/wasm/WasmArtifactPort.js";
-import { readStableArtifact } from "../artifacts/readStableArtifact.js";
 import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
-import type {
-  AnalysisError,
-  AnalysisCapturedOutput,
-} from "../domain/analysisErrorBase.js";
+import type { AnalysisError } from "../domain/analysisErrorBase.js";
 import {
-  AnalysisCancelledError,
   AnalysisArtifactChangedError,
   AnalysisCapabilityUnavailableError,
-  AnalysisInputError,
   AnalysisOutputError,
 } from "../domain/analysisErrorCore.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import { createEvidence } from "../domain/evidence.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
-import {
-  wasmArtifactSchema,
-  type InspectWasmArtifactInput,
-} from "../domain/wasm/wasmArtifact.js";
-import { err, ok, type Result } from "../domain/result.js";
+import type { InspectWasmArtifactInput } from "../domain/wasm/wasmArtifact.js";
+import { err, type Result } from "../domain/result.js";
 import { runOwnedCommand } from "../process/OwnedCommand.js";
 import { PrivateRuntimeRoot } from "../process/PrivateRuntimeRoot.js";
-import { WABT_PROVIDER_IDENTITY, WABT_LIMITS } from "./WabtRelease.js";
+import { WABT_PROVIDER_IDENTITY } from "./WabtRelease.js";
 import { wabtFailure } from "./WabtFailures.js";
-import { parseWabtOutput } from "./WabtOutput.js";
 import { parseWabtWat } from "./WabtWat.js";
-import { associateWasmGlue } from "./WasmGlueAdapter.js";
 
 type Launcher = NonNullable<Parameters<typeof runOwnedCommand>[2]>["launcher"];
 const OPERATION = "inspect_wasm_artifact";

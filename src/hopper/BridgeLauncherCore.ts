@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { chmod, rm, writeFile } from "node:fs/promises";
-import { basename, dirname, extname, join } from "node:path";
+import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 
 import {
@@ -12,12 +12,7 @@ import { err, ok, type Result } from "../domain/result.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { cleanupOwnedProcessGroup } from "../process/ProcessOwnership.js";
-import { execFileOutput } from "../process/ExecFileOutput.js";
-import {
-  type ProviderProcessLaunch,
-  spawnOwnedProviderProcess,
-} from "../process/ProviderProcess.js";
-import { waitForAbortableDelay } from "../process/ProviderDeadline.js";
+import type { ProviderProcessLaunch } from "../process/ProviderProcess.js";
 import {
   selectLinuxPrivateDisplayStrategy,
   type LinuxPrivateDisplayRunnableStrategy,
@@ -34,7 +29,6 @@ import {
   acquireLinuxHopperApplicationLease,
 } from "../process/HopperLease.js";
 import type { HopperTargetLease } from "../process/HopperLease.js";
-import { HOPPER_SHUTDOWN_TIMEOUT_MS } from "./HopperSessionValues.js";
 import { verifyMacHopperNativeHelper } from "./HopperMacPublisher.js";
 import { inspectLinuxHopperLauncher } from "../application/LinuxHopper.js";
 import { retryLinuxHopperPublisherCleanup } from "../application/LinuxHopperPublisher.js";
@@ -447,4 +441,3 @@ export class HopperApplicationLauncher implements BridgeLauncher {
         };
   }
 }
-

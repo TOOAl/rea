@@ -1,8 +1,7 @@
 import { realpath, stat } from "node:fs/promises";
 import { homeDirectoryFromEnvironment } from "../config/homeDirectory.js";
-import { basename, dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import spawn from "cross-spawn";
 import { lt, valid } from "semver";
 
 import { PRODUCT_IDENTITY } from "../identity.js";
@@ -11,15 +10,12 @@ import { err, ok, type Result } from "../domain/result.js";
 import { safeParseJson } from "../domain/safeJson.js";
 import {
   updateInstallCommand,
-  type BunInstallation,
   type NpmInstallation,
   type ReleaseLookupFailure,
   type UpdateHost,
   type UpdateInstallation,
-  type UpdateOutput,
 } from "./Update.js";
 import { planIntegrationMaintenance } from "./UpdateMaintenance.js";
-import { withoutPackageRunnerIdentity } from "./ClientRegistrationIdentity.js";
 
 /** npm filesystem queries used to identify the installation being updated. */
 

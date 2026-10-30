@@ -8,16 +8,8 @@ import {
   type ManagedMemberInspection,
   type ManagedParseIssue,
 } from "../domain/managed/managedArtifact.js";
-import {
-  readManagedPeLayout,
-  type ManagedPeLayout,
-} from "./ManagedPeReader.js";
-import {
-  readManagedResourceDirectory,
-  managedTableRowCounts,
-  readManagedMetadataInventory,
-} from "./ManagedMetadataInventory.js";
-import { readManagedMetadataLayout } from "./ManagedMetadataLayout.js";
+import { readManagedPeLayout } from "./ManagedPeReader.js";
+import { managedTableRowCounts } from "./ManagedMetadataInventory.js";
 import {
   appendManagedParseIssues,
   ManagedReaderFailure,
@@ -33,7 +25,6 @@ import { managedTypeNameDigests } from "./ManagedTypeNameDigests.js";
 import { typeNameLookup } from "./ManagedTypeNames.js";
 import { managedTypeReferences } from "./ManagedTypeReferences.js";
 import { parseUserStrings } from "./ManagedUserStrings.js";
-import { readTypeMemberListFacts } from "./ManagedTypeMemberLists.js";
 import {
   edges,
   parseExportedTypes,

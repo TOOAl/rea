@@ -1,11 +1,9 @@
 import { z } from "zod";
 
 import {
-  nativeMetadataEvidenceSchema,
   nativeMetadataLocationSchema,
   type ObjcSwiftMetadata,
 } from "./objcSwiftMetadata.js";
-import { jsonValueSchema } from "../jsonValue.js";
 
 /** Entity kinds shared by decoded Interface Builder archives and native code. */
 

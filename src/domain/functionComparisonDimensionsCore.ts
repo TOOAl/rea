@@ -1,14 +1,10 @@
-import { canonicalJson } from "./comparisonSemantics.js";
 import { diffLines } from "diff";
 
 import type { FunctionSnapshot } from "./functionDossierEvidence.js";
 import {
   commentProjection,
-  identityProjection,
   isAutoName,
-  normalizeCfg,
   referenceKindProjection,
-  referenceProjection,
   sorted,
   stringAndNameProjection,
   swiftLiteralSitesConflict,

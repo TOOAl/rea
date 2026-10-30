@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-import type {
-  ConformancePackage,
-  VerifierContract,
-} from "./conformancePackage.js";
-
 /** Result of comparing a single dimension. */
 export const dimensionResultSchema = z.strictObject({
   name: z.string().min(1),

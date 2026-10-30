@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 
 export type ArtifactInventoryCoverage = z.infer<
   typeof artifactInventoryCoverageSchema

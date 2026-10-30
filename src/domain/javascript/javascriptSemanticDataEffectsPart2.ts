@@ -2,19 +2,15 @@ import * as t from "@babel/types";
 
 import type {
   JavaScriptSemanticBoundaryOperation,
-  JavaScriptSemanticCallable,
   JavaScriptSemanticConfigurationOperation,
   JavaScriptSemanticRequestOperation,
 } from "./javascriptSemanticIr.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import {
-  readExactJavaScriptLiteral,
   semanticStaticPropertyKey,
   semanticStaticPropertyName,
-  unwrapJavaScriptExpression,
 } from "./javascriptAstValues.js";
 import {
-  recordSemanticValueLimit,
   resolveSemanticBindingState,
   semanticResolutionBlocked,
   type JavaScriptSemanticAnalysisState,
@@ -24,7 +20,6 @@ import {
   dataEffectArgumentBindingId as argumentBindingId,
   dataEffectLiteralString as literalString,
   dataEffectMemberCallee as memberCallee,
-  isSemanticProcessObject as isProcessObject,
   outerDataEffectBinding as outerAssignedBinding,
   assignedSemanticResultBindings,
   semanticProjectedBindingFacts,
@@ -32,7 +27,6 @@ import {
   type DataEffectTraversalContext as TraversalContext,
 } from "./javascriptSemanticDataEffectHelpers.js";
 import { range } from "./javascriptStaticAnalysisHelpers.js";
-import { semanticPrimitiveSet } from "./javascriptSemanticPrimitives.js";
 import type { JavaScriptSemanticValue } from "./javascriptSemanticValueTypes.js";
 
 const collectRequests = (

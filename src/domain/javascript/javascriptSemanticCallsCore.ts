@@ -9,18 +9,14 @@ import type {
   JavaScriptSemanticClosureCapture,
   JavaScriptSemanticFrontier,
 } from "./javascriptSemanticIr.js";
-import { semanticReferenceRole } from "./javascriptSemanticProjection.js";
 import { createSemanticCallableStack } from "./javascriptSemanticCallableStack.js";
-import { semanticStaticPropertyKey } from "./javascriptAstValues.js";
 import {
-  resolveSemanticBindingState,
   isUnshadowedGlobal,
   type JavaScriptSemanticAnalysisState,
   type JavaScriptSemanticBindingState,
 } from "./javascriptSemanticState.js";
 import {
   type LocalCallableResolution,
-  parameterBindings,
   resolveLocalCallables,
 } from "./javascriptSemanticCallResolution.js";
 import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";

@@ -1,14 +1,7 @@
-import { createHash } from "node:crypto";
-
 import { z } from "zod";
 
 import { emptyArraySchema } from "./emptyArraySchema.js";
-import {
-  browserNetworkBodySchema,
-  browserNetworkHeadersSchema,
-} from "./browserNetworkEvidence.js";
 import { sanitizedBrowserUrlSchema } from "./browserObservation.js";
-import { webScreenshotArtifactSchema } from "./webScreenshot.js";
 import { digestSchema } from "./../domain/digests.js";
 
 export type BrowserScenarioEvent = z.infer<typeof browserScenarioEventSchema>;

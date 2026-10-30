@@ -1,21 +1,13 @@
-import { createHash } from "node:crypto";
 import { isAbsolute } from "node:path";
 import type { Readable } from "node:stream";
 
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
-import { AsarArtifactReader } from "../AsarArtifactReader.js";
 import type { ArtifactResourceScope } from "../ArtifactResourceScope.js";
-import {
-  ArtifactPathRegistry,
-  normalizeArtifactPath,
-} from "../ArtifactPaths.js";
 import {
   ArtifactReaderFailure,
   type ArtifactEntry,
-  type ArtifactReader,
 } from "../ArtifactReader.js";
 import { streamChunkToBuffer } from "../StreamBytes.js";
-import { hashReadable } from "../ArtifactHash.js";
 import type { ArtifactOccurrence } from "../../domain/artifactGraph.js";
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 

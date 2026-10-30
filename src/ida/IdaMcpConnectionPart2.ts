@@ -1,14 +1,10 @@
-import {
-  createIdaDiagnosticRedactor,
-  IDA_DIAGNOSTIC_SOURCE_BYTES,
-} from "./IdaDiagnosticRedactor.js";
+import { createIdaDiagnosticRedactor } from "./IdaDiagnosticRedactor.js";
 import { IdaDiagnosticResourceError } from "./IdaDiagnosticWriter.js";
 import { ChildProcess } from "node:child_process";
 import { Socket } from "node:net";
 import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import {
   Client,
-  ProtocolError,
   SdkError,
   SdkErrorCode,
   SdkHttpError,

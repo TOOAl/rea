@@ -1,6 +1,6 @@
 import { copyFile, lstat, mkdir, readFile, rm } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import writeFileAtomic from "write-file-atomic";
 import { err, ok, type Result } from "../domain/result.js";
 import { readBoundedFileBytes } from "../process/BoundedFileBytes.js";
@@ -17,7 +17,6 @@ import {
   withRegularFile,
 } from "./RegularFileRead.js";
 import { clientSkillDirectories } from "./SupportedClients.js";
-import { selectCurrentRecoveryBackup } from "./SetupRecoveryBackup.js";
 
 export const MANAGED_SKILL_FILES = [
   "SKILL.md",
@@ -370,4 +369,3 @@ interface SkillInspectionFailure {
   readonly cause: unknown;
   readonly manifest: string | undefined;
 }
-

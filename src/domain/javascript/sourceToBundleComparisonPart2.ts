@@ -1,26 +1,14 @@
 import { uniqueSorted } from "../canonicalOrdering.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
-import { absenceClaimable } from "../comparisonSemantics.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
 
-import type { JavaScriptApplicationGraph } from "./javascriptApplicationGraph.js";
 import type { HistoricalSourceGraph } from "../referenceSourceGraph.js";
 import {
-  SOURCE_TO_BUNDLE_SIGNAL_WEIGHTS,
   sourceToBundleComparisonResultSchema,
   type SourceToBundleCandidate,
   type SourceToBundleComparisonItem,
   type SourceToBundleComparisonResult,
 } from "./sourceToBundleComparisonSchemas.js";
-import {
-  buildSourceToBundleCandidateIndex,
-  candidateHasDigest,
-  candidateIdsForSource,
-  historicalSourceFiles,
-  scoreSourceToBundleCandidate,
-  sourceBearingNodes,
-  type SourceToBundleCandidateIndex,
-} from "./sourceToBundleSignals.js";
 
 const classifyMapping = (
   candidates: readonly SourceToBundleCandidate[],

@@ -1,11 +1,9 @@
 import * as t from "@babel/types";
 
 import type {
-  JavaScriptSemanticCallable,
   JavaScriptSemanticChildProcessInteraction,
   JavaScriptSemanticChildProcessSpawn,
 } from "./javascriptSemanticIr.js";
-import { createSemanticCallableIdStack } from "./javascriptSemanticCallableStack.js";
 import {
   semanticStaticPropertyName,
   unwrapJavaScriptExpression,
@@ -17,15 +15,12 @@ import {
   type JavaScriptSemanticBindingState,
 } from "./javascriptSemanticState.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
-import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 import { range } from "./javascriptStaticAnalysisHelpers.js";
 import {
   builtinDataEffectMethod,
   dataEffectLiteralString,
   dataEffectMemberCallee,
-  assignedSemanticResultBindings,
   scalarAssignedResultBinding,
-  semanticProjectedBindingFacts,
 } from "./javascriptSemanticDataEffectHelpers.js";
 
 const childInteraction = (

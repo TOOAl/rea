@@ -5,14 +5,12 @@ import {
   SdkErrorCode,
   StreamableHTTPClientTransport,
 } from "@modelcontextprotocol/client";
-import { z } from "zod";
 import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import {
   AnalysisCancelledError,
   AnalysisProtocolError,
   AnalysisTimeoutError,
 } from "../domain/analysisErrorCore.js";
-import type { JebOperation } from "../domain/jeb/jebAnalysis.js";
 import { ProviderStartupDeadline } from "../process/ProviderDeadline.js";
 
 /** Upstream protocol names for the operations REA exposes. */

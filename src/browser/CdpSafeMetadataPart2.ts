@@ -1,6 +1,4 @@
-import type { WebPageInspection } from "../domain/browserObservationSchemas.js";
 import { sanitizeBrowserUrl } from "../domain/browserObservation.js";
-import { cdpStringValue, type UnknownRecord } from "./CdpCaptureValues.js";
 
 const parseLinks = (
   value: string | undefined,

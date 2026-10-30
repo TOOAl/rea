@@ -3,7 +3,6 @@ import { z } from "zod";
 import {
   cyclicDependencyIndices,
   type RustAuditableMetadata,
-  type RustPackage,
 } from "../domain/rust/rustBinary.js";
 
 /** Selected-file admission limit shared with the stable artifact reader. */

@@ -3,22 +3,14 @@ import { z } from "zod";
 import { artifactComparisonResultSchema } from "./artifactComparison.js";
 import { uniqueSorted } from "./canonicalOrdering.js";
 import {
-  compositeKey,
-  compareUnicodeCodePoints,
-} from "./unicodeCodePointOrder.js";
-import {
   assertComparisonFindingLinks,
   comparisonSourceEvidenceIds,
 } from "./comparisonSourceEvidence.js";
-import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
+import { evidenceSchema, type Evidence } from "./evidence.js";
 import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
-import {
-  PROCESS_PROVIDER,
-  isProcessEvidenceProvider,
-} from "./process/processEvidenceProvider.js";
+import { PROCESS_PROVIDER } from "./process/processEvidenceProvider.js";
 import {
   comparisonStatusSchema,
-  deriveProcessComparisonStatus,
   PROCESS_COMPARISON_DIMENSIONS,
   processCaptureComparisonSchema,
 } from "./process/processComparison.js";

@@ -1,9 +1,6 @@
 import { posix } from "node:path";
 
-import {
-  compareUnicodeCodePoints,
-  compositeKey,
-} from "../unicodeCodePointOrder.js";
+import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { ApplicationNode } from "./javascriptApplicationGraphSchemas.js";
 import type { HistoricalSourceGraph } from "../referenceSourceGraph.js";
 import {

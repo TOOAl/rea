@@ -1,11 +1,5 @@
 import { z } from "zod";
 import { providerSchema } from "../evidence.js";
-import { isSwiftMangledSymbolName } from "../swiftSymbolClassification.js";
-
-import {
-  compareUnicodeCodePoints,
-  compositeKey,
-} from "../unicodeCodePointOrder.js";
 
 /** Objective-C method type. */
 export const objcMethodTypeSchema = z.enum([

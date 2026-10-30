@@ -1,6 +1,6 @@
 import { constants } from "node:fs";
 import { access, realpath, stat } from "node:fs/promises";
-import { delimiter, isAbsolute, join, resolve } from "node:path";
+import { isAbsolute, resolve } from "node:path";
 import { inspectWindowsNativeReadiness } from "../process/WindowsAuthority.js";
 import { systemWindowsNativeAuthority } from "../windows/WindowsNativeLoader.js";
 import { AnalysisCapabilityUnavailableError } from "../domain/analysisErrorCore.js";
@@ -8,10 +8,6 @@ import type { AndroidOperation } from "../domain/android/androidAnalysis.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import type { ProviderAvailability } from "../application/AnalysisProvider.js";
 import { ZipArtifactReader } from "../artifacts/ZipArtifactReader.js";
-import {
-  execFileOutput,
-  execFileOutputFailure,
-} from "../process/ExecFileOutput.js";
 import type { DoctorProviderCheck } from "../application/Doctor.js";
 import {
   JADX_JAR_CONFIGURATION_REMEDIATION,
@@ -393,4 +389,3 @@ const resolveJar = async (
     );
   }
 };
-

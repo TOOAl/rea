@@ -1,13 +1,6 @@
-import type {
-  JavaScriptSemanticFingerprint,
-  JavaScriptSemanticGraphNode,
-} from "../../domain/javascript/javascriptSemanticGraphSchemas.js";
-import type {
-  JavaScriptSemanticCallArgument,
-  JavaScriptSemanticIr,
-} from "../../domain/javascript/javascriptSemanticIr.js";
+import type { JavaScriptSemanticGraphNode } from "../../domain/javascript/javascriptSemanticGraphSchemas.js";
+import type { JavaScriptSemanticCallArgument } from "../../domain/javascript/javascriptSemanticIr.js";
 import { sourceRangesEqual as rangesEqual } from "../../domain/javascript/javascriptStaticAnalysisHelpers.js";
-import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   projectSemanticEvents,
   projectSemanticTimers,
@@ -21,7 +14,6 @@ import {
 import { projectSemanticResources } from "./JavaScriptSemanticGraphResourceProjection.js";
 import { projectSemanticObjects } from "./JavaScriptSemanticGraphObjectProjection.js";
 import { projectSemanticValues } from "./JavaScriptSemanticGraphValueProjection.js";
-import { projectSemanticFunctionFingerprints } from "./JavaScriptSemanticGraphFingerprintProjection.js";
 import {
   projectSemanticClosureCaptures,
   projectSemanticFrontiers,
@@ -29,21 +21,11 @@ import {
   projectSemanticReturnValues,
 } from "./JavaScriptSemanticGraphFlowProjection.js";
 import {
-  createSemanticCallableOwnerLookup,
-  createSemanticCallSiteLookup,
-  createSemanticNodeRangeLookup,
-} from "./JavaScriptSemanticGraphProjection.js";
-import {
   retainSemanticGraphNode as retainNode,
   addSemanticGraphRelation as addRelation,
 } from "./JavaScriptSemanticGraphConstruction.js";
-import type {
-  BuilderState,
-  FileContext,
-} from "./JavaScriptSemanticGraphBuilderTypes.js";
-import { projectElectronSemanticCallPaths } from "./JavaScriptSemanticGraphElectronProjection.js";
+import type { FileContext } from "./JavaScriptSemanticGraphBuilderTypes.js";
 import { inferredSemanticEvidenceAt } from "./JavaScriptSemanticGraphEvidence.js";
-import type { ElectronCallPath } from "../../domain/javascript/electronStaticAnalysisTypes.js";
 
 const projectCalls = (context: FileContext): void => {
   for (const call of context.ir.callSites) {

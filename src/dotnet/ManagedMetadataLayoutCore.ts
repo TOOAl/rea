@@ -1,12 +1,5 @@
-import {
-  attachManagedDecodeBudget,
-  ManagedDecodeBudget,
-} from "./ManagedDecodeBudget.js";
+import { ManagedDecodeBudget } from "./ManagedDecodeBudget.js";
 import { managedFailure } from "./ManagedReaderFailure.js";
-import {
-  computeRowSize,
-  type RowSizeContext,
-} from "./ManagedMetadataRowSizes.js";
 
 export const METADATA_TABLE_NAMES = [
   "Module",

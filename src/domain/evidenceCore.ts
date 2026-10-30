@@ -1,36 +1,23 @@
-import { basename } from "node:path";
 import { z } from "zod";
 
-import { digestCanonicalValue } from "./canonicalDigest.js";
 import { canonicalJsonDigestSteps } from "./canonicalJsonDigestSteps.js";
 import { nulFreeStringSchema } from "./localPath.js";
 
-import {
-  analysisProfileSchema,
-  type AnalysisProfileCommitment,
-} from "./analysisProfile.js";
+import { analysisProfileSchema } from "./analysisProfile.js";
 import {
   BINARY_ARCHITECTURES,
   type BinaryArchitecture,
-  type BinaryTarget,
 } from "./binaryTargetTypes.js";
 import {
   jsonObjectSchema,
   jsonValueSchema,
   jsonValueValidationIssue,
-  jsonValueValidationSteps,
   type JsonValue,
 } from "./jsonValue.js";
-import {
-  freezeJsonSnapshot,
-  isImmutableJsonSnapshot,
-} from "./immutableJson.js";
+import { isImmutableJsonSnapshot } from "./immutableJson.js";
 import { digestSchema } from "./../domain/digests.js";
 import { prefixedDigestSchema } from "./../domain/digests.js";
-import {
-  relationshipCoverageSchema,
-  type RelationshipCoverage,
-} from "./relationshipCoverage.js";
+import { relationshipCoverageSchema } from "./relationshipCoverage.js";
 
 /** Provider identity schema shared by evidence-bearing persistence formats. */
 export const providerSchema = z.strictObject({

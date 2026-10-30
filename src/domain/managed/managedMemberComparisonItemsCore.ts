@@ -3,7 +3,6 @@ import canonicalize from "canonicalize";
 import type { ManagedMemberInspection } from "./managedArtifact.js";
 import type { ManagedMemberComparisonResult } from "./managedMemberComparison.js";
 import {
-  type ManagedFieldMatches,
   type ManagedMethodMatches,
   sha256,
 } from "./managedMemberComparisonMatch.js";
@@ -411,4 +410,3 @@ const ambiguityLimitation = (
         : members === "methods"
           ? "Multiple managed methods share the same structural shape; REA did not guess a token remap."
           : "Multiple managed fields share the same signature; REA did not guess a token remap.";
-

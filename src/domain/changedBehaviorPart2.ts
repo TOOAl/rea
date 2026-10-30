@@ -10,19 +10,14 @@ import {
   assertComparisonFindingLinks,
   comparisonSourceEvidenceIds,
 } from "./comparisonSourceEvidence.js";
-import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
+import { parseEvidence, type Evidence } from "./evidence.js";
 import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
+import { isProcessEvidenceProvider } from "./process/processEvidenceProvider.js";
 import {
-  PROCESS_PROVIDER,
-  isProcessEvidenceProvider,
-} from "./process/processEvidenceProvider.js";
-import {
-  comparisonStatusSchema,
   deriveProcessComparisonStatus,
   PROCESS_COMPARISON_DIMENSIONS,
   processCaptureComparisonSchema,
 } from "./process/processComparison.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 
 const parseComparisonEvidence = (input: unknown): ParsedComparison => {
   const evidence = parseEvidence(input);

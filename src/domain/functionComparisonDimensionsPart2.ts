@@ -1,16 +1,13 @@
 import { canonicalJson } from "./comparisonSemantics.js";
-import { diffLines } from "diff";
 
 import type { FunctionSnapshot } from "./functionDossierEvidence.js";
 import {
-  commentProjection,
   identityProjection,
   isAutoName,
   normalizeCfg,
   referenceKindProjection,
   referenceProjection,
   sorted,
-  stringAndNameProjection,
   swiftLiteralSitesConflict,
 } from "./functionComparisonNormalization.js";
 import type {
@@ -20,7 +17,6 @@ import type {
 import {
   dimensionResult,
   unresolvedDimension,
-  type DimensionResultInput,
 } from "./functionComparisonResults.js";
 
 const swiftLiteralCoverage = (

@@ -1,32 +1,22 @@
 import type { EvidenceMcpServer } from "./EvidenceMcpServer.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 
-import {
-  getNavigationContext,
-  inspectAddressContext,
-} from "../application/AnalysisContextQueries.js";
 import { readAnalysisSnapshot } from "../application/binary/AnalysisSnapshotFiles.js";
 import type { BinarySessionPort } from "../application/binary/BinarySessionPort.js";
 import { createProcessCaptureEvidence } from "../application/process/ProcessEvidence.js";
 import { captureProcessScenario } from "../process/capture/ProcessHarness.js";
 import { ProcessCaptureResourceScope } from "../process/capture/ProcessCaptureLifecycle.js";
-import { ProcessCaptureError } from "../process/capture/ProcessCaptureError.js";
 import { toolContract } from "../contracts/toolContracts.js";
-import { binaryTargetSummary } from "../application/binary/BinaryTargetSummary.js";
 import { UnknownRegistryError } from "../domain/unknownRegistryError.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
 import type { Evidence } from "../domain/evidence.js";
 import type { ProcessCapture } from "../domain/process/processCaptureParsing.js";
-import { err, ok, type Result } from "../domain/result.js";
+import { ok, type Result } from "../domain/result.js";
 import type { Logger } from "pino";
-import type { ProviderAvailability } from "../application/AnalysisProvider.js";
 import { mcpProgressReporter } from "./mcpProgress.js";
-import { registerArtifactComparisonTool } from "./registerArtifactComparisonTool.js";
 import { registerBundleComparisonTool } from "./registerBundleComparisonTool.js";
 import { registerCloseLifecycleTool } from "./registerCloseLifecycleTool.js";
-import { registerFunctionComparisonTool } from "./registerFunctionComparisonTool.js";
 import { registerInvestigationTools } from "./registerInvestigationTools.js";
-import { registerProcessComparisonTool } from "./registerProcessComparisonTool.js";
 import {
   registerEvidenceTools,
   registerUnknownTools,
@@ -35,7 +25,6 @@ import {
   registerSessionStatusTool,
   type SessionAvailabilityProbes,
 } from "./registerSessionStatusTool.js";
-import { sessionAvailabilityPolicy } from "./sessionAvailabilityPolicy.js";
 import type { AvailabilityPolicy } from "../application/CapabilityInventory.js";
 import { logToolExecution } from "./toolLogging.js";
 import { toolRegistrationOptions } from "./toolRegistrationOptions.js";

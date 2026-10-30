@@ -2,7 +2,6 @@ import type { z } from "zod";
 import type { AndroidRequest } from "../domain/android/androidAnalysis.js";
 import { androidResultSchemas } from "../domain/android/androidAnalysis.js";
 import {
-  AnalysisCapabilityUnavailableError,
   AnalysisInputError,
   AnalysisOutputError,
 } from "../domain/analysisErrorCore.js";
@@ -12,11 +11,9 @@ import {
   jadxClassPageSchema,
   jadxClassSchema,
   jadxLoadSchema,
-  jadxMethodSchema,
   jadxXrefsSchema,
   normalizeJadxText,
 } from "./JadxProtocol.js";
-import { JADX_RELEASE } from "./JadxRelease.js";
 
 /** The adapter consumes tool payloads, never provider RPC details outside this layer. */
 export interface JadxToolPort {

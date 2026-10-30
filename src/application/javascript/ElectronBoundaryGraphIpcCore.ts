@@ -3,7 +3,6 @@ import type { ElectronSenderValidationFinding } from "../../domain/javascript/el
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   artifactLocalIdentity,
-  javascriptAnalysisCoverage,
   type JavaScriptArtifactGraphContext,
   type JavaScriptArtifactGraphCoverage,
 } from "./JavaScriptArtifactGraphContext.js";
@@ -13,15 +12,12 @@ import {
 } from "./JavaScriptArtifactGraphEvidence.js";
 import {
   collectElectronIpcRecords,
-  unambiguousElectronIpcPairings,
   type ElectronIpcRecord,
 } from "./ElectronBoundaryAnalysis.js";
 import {
-  addElectronAstEdge,
   addElectronInferenceEdge,
   electronFindingSourceNode,
   electronObservationIdentity,
-  electronRangeContains,
   electronRangeKey,
 } from "./ElectronBoundaryGraphContext.js";
 

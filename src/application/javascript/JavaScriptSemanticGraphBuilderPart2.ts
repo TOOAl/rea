@@ -2,7 +2,6 @@ import {
   createJavaScriptSemanticGraph,
   createJavaScriptSemanticGraphUnknown,
   sealTransferredJavaScriptSemanticGraphSteps,
-  type JavaScriptSemanticGraph,
 } from "../../domain/javascript/javascriptSemanticGraph.js";
 import {
   JAVASCRIPT_SEMANTIC_RELATION_FAMILIES,
@@ -17,7 +16,6 @@ import {
   type ApplicationCoverage,
 } from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
 import {
-  JAVASCRIPT_ANALYSIS_RESOURCE_DEFAULTS,
   JAVASCRIPT_SEMANTIC_NODE_MAXIMUM,
   javaScriptAnalysisCoverageLimits,
 } from "../../domain/javascript/javascriptAnalysisResourceControls.js";

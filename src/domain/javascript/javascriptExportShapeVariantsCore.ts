@@ -1,7 +1,4 @@
-import {
-  canonicalExportShapeValue,
-  digestExportShapeValue,
-} from "./javascriptExportShapeComparisonIdentity.js";
+import { canonicalExportShapeValue } from "./javascriptExportShapeComparisonIdentity.js";
 import type {
   JavaScriptExportShapeComparisonChange,
   JavaScriptExportShapeComparisonResult,
@@ -446,4 +443,3 @@ const fieldAvailability = (field: Field | undefined): ValueAvailability => {
         reason: "Static literal field failed its projection boundary.",
       };
 };
-

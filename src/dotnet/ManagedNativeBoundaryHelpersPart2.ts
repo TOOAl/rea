@@ -9,13 +9,6 @@ import {
   type ManagedParseIssue,
 } from "../domain/managed/managedArtifact.js";
 import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
-import {
-  metadataRowCursor,
-  metadataCodedToken,
-  metadataCodedTokenInvalidReason,
-  metadataToken,
-  readMetadataString,
-} from "./ManagedMetadataHeaps.js";
 import { managedTableRowCounts } from "./ManagedMetadataInventory.js";
 import type { ManagedMetadataInventory } from "./ManagedMetadataInventory.js";
 import {
@@ -24,7 +17,6 @@ import {
   type ManagedCliHeader,
   type ManagedPeLayout,
 } from "./ManagedPeReader.js";
-import { readManagedValue } from "./ManagedReaderFailure.js";
 
 type ModuleRef = ManagedNativeBoundaryInspection["module_refs"][number];
 type NativeImport = ManagedNativeBoundaryInspection["pinvoke_imports"][number];

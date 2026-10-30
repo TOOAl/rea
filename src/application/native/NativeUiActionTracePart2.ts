@@ -1,23 +1,15 @@
 import { z } from "zod";
 
 import type { AnalysisOperationPort } from "../AnalysisProvider.js";
-import type { EnhancedResult } from "../EnhancedToolTypes.js";
 import type { enhancedInputSchemas } from "../../contracts/enhancedInputs.js";
-import { interfaceBuilderAnalysisSchema } from "../../domain/apple/interfaceBuilderGraph.js";
 import {
   nativeInvestigationGraphSchema,
   nativeInvestigationTraceSchema,
-  traceNativeInvestigationGraph,
   joinInterfaceBuilderDispatch,
 } from "../../domain/native/nativeInvestigationGraph.js";
-import { nativeDispatchMetadataResultSchema } from "../../domain/native/objcSwiftMetadata.js";
 import { inspectNativeDispatch } from "./NativeDispatchMetadataInspection.js";
-import { jsonValueSchema } from "../../domain/jsonValue.js";
 import { readNativeCallRoutes } from "./NativeCallRoutes.js";
-import {
-  renderSourceLimitations,
-  type SourceLimitation,
-} from "../SourceLimitations.js";
+import type { SourceLimitation } from "../SourceLimitations.js";
 
 // src/application/native/NativeUiActionTracePart2.ts
 const addDirectCallees = async (input: {

@@ -1,18 +1,8 @@
 import type {
-  ReconstructionClosureResult,
   ReconstructionCoverageData,
-  ReconstructionVerifierContract,
   ParsedReconstructionCoverage,
 } from "./reconstructionCoverage.js";
-import {
-  packageProofHasComparableEvidence,
-  verifierHasComparableEvidence,
-} from "./reconstructionCoverageEvidence.js";
-import {
-  compareOffsetDateTimeInstants,
-  offsetDateTimeInstantFromEpochMilliseconds,
-  type OffsetDateTimeInstant,
-} from "./offsetDateTime.js";
+import { packageProofHasComparableEvidence } from "./reconstructionCoverageEvidence.js";
 import {
   latestVerifierObservationsByVerifier,
   sameVerifierAssessment,

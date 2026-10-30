@@ -6,19 +6,15 @@ import {
   effectiveClientServer,
   type ClientConfigurationDocument,
 } from "./ClientConfigurationDocument.js";
-import { access } from "node:fs/promises";
 import { isAbsolute, resolve } from "node:path";
 
 import { z } from "zod";
-import { valid } from "semver";
 
 import { PRODUCT_IDENTITY } from "../identity.js";
 import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 import {
   MCP_STARTUP_POLICY,
-  mcpProviderDeadlineAllowanceMs,
   recommendedMcpToolTimeoutMs,
-  recommendedMcpToolTimeoutSeconds,
   type McpToolTimeoutInputs,
 } from "../mcpStartupPolicy.js";
 import {
@@ -27,7 +23,6 @@ import {
   packageRunnerRegistrationCommand,
 } from "./ClientRegistrationIdentity.js";
 import {
-  clientEvidencePaths,
   manualRegistrationRemediation,
   supportedClients,
 } from "./SupportedClients.js";
@@ -425,4 +420,3 @@ const registrationAligned = ({
     return "aligned";
   return "stale";
 };
-

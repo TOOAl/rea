@@ -1,11 +1,9 @@
-import { createHash } from "node:crypto";
 import {
   nativeLoadImageSchema,
   type NativeLoadImage,
   type NativeLoadImageCheck,
   type NativeLoadImageObservation,
 } from "../domain/native/nativeLoadImage.js";
-import { parseDosMzHeader, type DosMzHeader } from "../domain/dosMz.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import { validateDosComLength } from "../domain/dosCom.js";

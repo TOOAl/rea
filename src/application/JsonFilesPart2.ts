@@ -13,20 +13,10 @@ import {
   EvidenceFileError,
   type PublishedEvidenceFile,
 } from "../domain/evidenceErrors.js";
-import {
-  AnalysisCancelledError,
-  AnalysisResourceConstraintError,
-} from "../domain/analysisErrorCore.js";
+import { AnalysisCancelledError } from "../domain/analysisErrorCore.js";
 import { err, ok, type Result } from "../domain/result.js";
-import {
-  readJsonInputFile,
-  readJsonObjectFile,
-  type JsonObjectMemberReader,
-} from "./JsonInputFile.js";
 import { NonRegularFileReadError } from "../filesystem/RegularFile.js";
-import { RegularFileCleanupFailure } from "./RegularFileRead.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
-import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
 import { OwnedStagedOutput } from "../filesystem/OwnedStagedOutput.js";
 

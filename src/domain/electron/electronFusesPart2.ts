@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { digestSchema } from "../digests.js";
 import { localPathStringSchema } from "../localPath.js";
 
 /** ASCII sentinel that introduces an Electron fuse wire in an Electron binary. */

@@ -1,16 +1,12 @@
 import * as t from "@babel/types";
 import {
   unwrapJavaScriptExpression,
-  semanticStaticPropertyKey,
   semanticFinalObjectProperty,
   semanticFinalObjectStringProperty,
 } from "./javascriptAstValues.js";
-import { range } from "./javascriptStaticAnalysisHelpers.js";
 import type { JavaScriptSemanticReference } from "./javascriptSemanticIr.js";
 import {
-  resolveSemanticBindingState,
   semanticStableInitializer,
-  type JavaScriptSemanticAnalysisState,
   type JavaScriptBindingIndex,
 } from "./javascriptSemanticState.js";
 import type {

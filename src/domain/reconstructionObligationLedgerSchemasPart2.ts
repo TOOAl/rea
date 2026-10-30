@@ -1,11 +1,8 @@
 import { z } from "zod";
 
-import { STABLE_IDENTIFIER_PATTERN } from "./stringPatterns.js";
-
 import { evidenceBundleSchema } from "./evidenceBundle.js";
 import { digestSchema } from "./../domain/digests.js";
 import { prefixedDigestSchema } from "./../domain/digests.js";
-import { canonicalJson } from "./comparisonSemantics.js";
 import {
   reconstructionObligationCoverage,
   reconstructionObligationDependencyGraph,

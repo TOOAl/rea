@@ -9,15 +9,9 @@ import {
 import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import { err, ok, type Result } from "../domain/result.js";
 import type { NativeCommandCapture } from "./CommandRunner.js";
-import {
-  MACHO_ARCHITECTURE_POLICIES,
-  selectMachoArchitectureName,
-} from "./MachoArchitectureSelection.js";
 import { parseDyldSymbols } from "./parsers/dyldInfo.js";
-import { parseLipoOutput, type LipoArchitecture } from "./parsers/lipo.js";
-import { withoutEchoedPathHeader } from "./parsers/echoedPath.js";
+import { parseLipoOutput } from "./parsers/lipo.js";
 import { parseOtoolLoadCommands } from "./parsers/otool.js";
-import { reconcileMachoUuid } from "./parsers/machoUuid.js";
 import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 
 interface NativeMachoObservation {

@@ -1,31 +1,19 @@
-import {
-  admitManagedProjection,
-  managedDecodeBudget,
-} from "./ManagedDecodeBudget.js";
+import { admitManagedProjection } from "./ManagedDecodeBudget.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import {
   managedArtifactInspectionSchema,
   type ManagedArtifactInspection,
-  type ManagedParseIssue,
 } from "../domain/managed/managedArtifact.js";
 import {
-  managedCli32BitRequirement,
   managedCliIsMixedClrNative,
-  readManagedPeLayout,
   type ManagedCliHeader,
   type ManagedPeLayout,
 } from "./ManagedPeReader.js";
 import {
-  managedTableRowCounts,
   readManagedMetadataInventory,
   type ManagedMetadataInventory,
-  readManagedResourceDirectory,
 } from "./ManagedMetadataInventory.js";
-import {
-  readManagedMetadataLayout,
-  type ManagedMetadataLayout,
-} from "./ManagedMetadataLayout.js";
-import { readTypeMemberListFacts } from "./ManagedTypeMemberLists.js";
+import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
 import { ManagedReaderFailure } from "./ManagedReaderFailure.js";
 
 const flagNames = (flags: number): string[] => {

@@ -13,10 +13,7 @@ import {
   type JavaScriptSemanticAnalysisState,
   type JavaScriptBindingIndex,
 } from "./javascriptSemanticState.js";
-import type {
-  JavaScriptRpcEndpoint,
-  JavaScriptRpcScan,
-} from "./javascriptRpcEndpoints.js";
+import type { JavaScriptRpcEndpoint } from "./javascriptRpcEndpoints.js";
 
 /**
  * Find source-body string values owned by a GraphQL Source-shaped literal.

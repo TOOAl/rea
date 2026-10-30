@@ -1,18 +1,6 @@
-import {
-  link,
-  lstat,
-  mkdtemp,
-  open,
-  realpath,
-  rename,
-  type FileHandle,
-} from "node:fs/promises";
-import { basename, dirname, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 
-import {
-  EvidenceFileError,
-  type PublishedEvidenceFile,
-} from "../domain/evidenceErrors.js";
+import { EvidenceFileError } from "../domain/evidenceErrors.js";
 import {
   AnalysisCancelledError,
   AnalysisResourceConstraintError,
@@ -27,7 +15,6 @@ import { NonRegularFileReadError } from "../filesystem/RegularFile.js";
 import { RegularFileCleanupFailure } from "./RegularFileRead.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
-import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
 import { OwnedStagedOutput } from "../filesystem/OwnedStagedOutput.js";
 
 /** Request control and its owning operation for an interruptible atomic write. */

@@ -1,25 +1,6 @@
-import { z } from "zod";
 import { sqliteDatabaseCapability } from "./sqlite/SqliteDatabaseCapability.js";
-import type {
-  OptionalProviderLoadFailures,
-  OptionalProviderLoadFailure,
-} from "./OptionalObservationProviders.js";
 
-import {
-  expandProviderCapabilities,
-  providerCapabilitySet,
-  toolAvailabilityInventory,
-  TOOL_ANNOTATION_NAMES,
-  TOOL_EFFECT_NAMES,
-  type ClientFeatureAvailability,
-  type ProviderCapability,
-  type ToolAvailabilityInventory,
-  type ToolAvailability,
-  type ToolAvailabilityMode,
-  type ToolUnavailabilityReason,
-} from "../contracts/toolOutputSchemaPrimitives.js";
 import type { ToolKind } from "../contracts/toolContractTypes.js";
-import type { JsonValue } from "../domain/jsonValue.js";
 
 // CapabilityInventoryRegistry.ts 345-750
 

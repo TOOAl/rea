@@ -1,23 +1,12 @@
 import * as t from "@babel/types";
 
-import type {
-  JavaScriptSemanticCallable,
-  JavaScriptSemanticPromiseOperation,
-} from "./javascriptSemanticIr.js";
 import { semanticCallableIdForNode } from "./javascriptSemanticProjection.js";
-import { createSemanticCallableIdStack } from "./javascriptSemanticCallableStack.js";
-import {
-  semanticStaticPropertyName,
-  unwrapJavaScriptExpression,
-} from "./javascriptAstValues.js";
+import { unwrapJavaScriptExpression } from "./javascriptAstValues.js";
 import {
   resolveSemanticBindingState,
-  semanticResolutionBlocked,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
-import { range } from "./javascriptStaticAnalysisHelpers.js";
 
 // src/domain/javascript/javascriptSemanticPromisesPart2.ts
 const resolvePromiseExpression = (

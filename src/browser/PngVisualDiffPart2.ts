@@ -1,5 +1,4 @@
-import { constants as zlibConstants } from "node:zlib";
-import type { DecodedPng, ParsedPng } from "./PngVisualDiffCore.js";
+import type { DecodedPng } from "./PngVisualDiffCore.js";
 
 const parseHeader = (data: Buffer) => {
   if (data.byteLength !== 13) throw new TypeError("Invalid PNG header");

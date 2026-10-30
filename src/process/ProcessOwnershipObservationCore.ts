@@ -1,9 +1,7 @@
-import { readFile } from "node:fs/promises";
 import { AnalysisCapabilityUnavailableError } from "../domain/analysisErrorCore.js";
 
 import { launcherIdentityFailure } from "./ProcessOwnershipIdentity.js";
 import { descendantsOf, liveProcesses } from "./ProcessOwnershipProcessTree.js";
-import { execFileOutput } from "./ExecFileOutput.js";
 import {
   createDarwinProcessRunTokenReader,
   type DarwinProcessReaderCompiler,
@@ -14,7 +12,6 @@ import type {
   ProcessGroupObservation,
   ProcessLineageObservation,
   ProcessOwnershipHost,
-  ProcessIdentityObservation,
   ProcessOwnershipBaseline,
   ProcessTableEntry,
 } from "./ProcessOwnership.js";

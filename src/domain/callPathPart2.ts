@@ -1,16 +1,10 @@
 import { relationshipCoverageLimitations } from "./relationshipCoverage.js";
 import {
-  callPathInputSchema,
   callPathResultSchema,
-  parseCallPathAddress,
   type CallPathInput,
-  type CallPathResult,
   type OutputCallPath,
 } from "./callPathSchemas.js";
-import {
-  parseFunctionEvidence,
-  type FunctionSnapshot,
-} from "./functionDossierEvidence.js";
+import type { FunctionSnapshot } from "./functionDossierEvidence.js";
 import { isCallerOnlyIncompleteCoverage } from "./functionCallCoverage.js";
 import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
 

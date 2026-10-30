@@ -3,19 +3,14 @@ import type {
   SetupAction,
   SetupClientState,
   SetupConfirmation,
-  SetupConfirmationDecision,
   SetupDoctorSummary,
   SetupHost,
   SetupOptions,
-  SetupProgressEvent,
   SetupProviderEnvironment,
   SetupResult,
 } from "./SetupTypes.js";
-import {
-  manualRegistrationRemediation,
-  type SetupClient,
-} from "./SupportedClients.js";
-import type { DoctorReport, DoctorScope } from "./Doctor.js";
+import type { SetupClient } from "./SupportedClients.js";
+import type { DoctorScope } from "./Doctor.js";
 import { configureDetectedClients } from "./SetupClients.js";
 import { discoverSetupState, planSetupActions } from "./SetupPlan.js";
 import {
@@ -442,4 +437,3 @@ const installHopperAction = async (input: {
     ),
   };
 };
-

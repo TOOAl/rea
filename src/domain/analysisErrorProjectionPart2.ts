@@ -1,22 +1,11 @@
 import { jsonValueSchema, type JsonValue } from "./jsonValue.js";
-import { isImmutableJsonSnapshot } from "./immutableJson.js";
 
 import {
-  analysisErrorCategory,
-  analysisErrorRemediationAction,
-  analysisErrorUserMessage,
-  assertKnownAnalysisErrorTag,
-} from "./analysisErrorPresentation.js";
-import {
-  AnalysisAccessDeniedError,
   AnalysisArtifactChangedError,
   AnalysisCancelledError,
-  AnalysisCapabilityUnavailableError,
   AnalysisUnsupportedTargetError,
-  AnalysisInputError,
   AnalysisOutputError,
   AnalysisTimeoutError,
-  AnalysisResourceConstraintError,
 } from "./analysisErrorCore.js";
 
 // src/domain/analysisErrorProjectionPart2.ts

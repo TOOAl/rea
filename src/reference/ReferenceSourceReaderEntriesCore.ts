@@ -1,6 +1,5 @@
 import type { BigIntStats, Dir, Dirent } from "node:fs";
-import { opendir, readlink, realpath } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { opendir, realpath } from "node:fs/promises";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import type { ArtifactCleanupAttempt } from "../artifacts/ArtifactResourceScope.js";
 import { OwnedDirectoryHandle } from "../filesystem/OwnedDirectoryHandle.js";
@@ -11,11 +10,8 @@ import {
   entryFailure,
   failure,
   filesystemFailureDetail,
-  safeSize,
 } from "./ReferenceSourceReaderErrors.js";
-import { isPathWithinRoot } from "../domain/localPath.js";
 import { pathFromRoot } from "./ReferenceSourceReaderPaths.js";
-import { readStableFile } from "./ReferenceSourceReaderFile.js";
 import {
   isAborted,
   sameFile,
@@ -24,7 +20,6 @@ import {
 } from "./ReferenceSourceReaderValidate.js";
 import type {
   PendingDirectory,
-  ReferenceSourceEntry,
   ReferenceSourceExclusionKind,
   ReferenceSourceResult,
   TraversalState,

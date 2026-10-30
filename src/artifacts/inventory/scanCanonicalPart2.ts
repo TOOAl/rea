@@ -1,18 +1,13 @@
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
 
-import { AsarArtifactReader } from "../AsarArtifactReader.js";
-
-import { lstat } from "node:fs/promises";
 import type { Stats } from "node:fs";
 import type { RootInventorySource } from "./classify.js";
 
 import {
   ArtifactReaderFailure,
-  type ArtifactReader,
   type ArtifactReaderTraversal,
 } from "../ArtifactReader.js";
-import type { ArtifactResourceOwner } from "../ArtifactResourceScope.js";
 import {
   artifactInventoryResultSchema,
   type ArtifactInventoryResult,
@@ -33,22 +28,15 @@ import {
   artifactGraphDigest,
   artifactManifestId,
 } from "../../domain/artifactIdentity.js";
-import { classifyAndHashRootForInventory } from "./classify.js";
 import { hostExecutableMarking } from "../hostExecutableMarking.js";
 import type { HashResult } from "../ArtifactHash.js";
 import {
   hashStableRootArtifact,
   hashStableRootArtifactHandle,
 } from "./hashStableRootArtifact.js";
-import { createReader, inventoryCoverage } from "./reader.js";
-import {
-  scanReader,
-  type PendingIntegrityContradiction,
-} from "./scanReader.js";
-import {
-  STRICT_INTEGRITY_POLICY,
-  type ArtifactInventoryOptions,
-} from "./types.js";
+import { inventoryCoverage } from "./reader.js";
+import type { PendingIntegrityContradiction } from "./scanReader.js";
+import type { ArtifactInventoryOptions } from "./types.js";
 
 const buildInventorySnapshot = async (
   input: SnapshotBuildInput,

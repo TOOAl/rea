@@ -2,32 +2,12 @@ import type {
   JavaScriptSemanticFingerprint,
   JavaScriptSemanticGraphNode,
 } from "../../domain/javascript/javascriptSemanticGraphSchemas.js";
-import type {
-  JavaScriptSemanticCallArgument,
-  JavaScriptSemanticIr,
-} from "../../domain/javascript/javascriptSemanticIr.js";
-import { sourceRangesEqual as rangesEqual } from "../../domain/javascript/javascriptStaticAnalysisHelpers.js";
+import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
-import {
-  projectSemanticEvents,
-  projectSemanticTimers,
-} from "./JavaScriptSemanticGraphAsyncProjection.js";
 import { projectSemanticChildProcesses } from "./JavaScriptSemanticGraphChildProcessProjection.js";
-import {
-  projectSemanticBoundaries,
-  projectSemanticConfiguration,
-  projectSemanticRequests,
-} from "./JavaScriptSemanticGraphDataProjection.js";
 import { projectSemanticResources } from "./JavaScriptSemanticGraphResourceProjection.js";
-import { projectSemanticObjects } from "./JavaScriptSemanticGraphObjectProjection.js";
 import { projectSemanticValues } from "./JavaScriptSemanticGraphValueProjection.js";
 import { projectSemanticFunctionFingerprints } from "./JavaScriptSemanticGraphFingerprintProjection.js";
-import {
-  projectSemanticClosureCaptures,
-  projectSemanticFrontiers,
-  projectSemanticPromises,
-  projectSemanticReturnValues,
-} from "./JavaScriptSemanticGraphFlowProjection.js";
 import {
   createSemanticCallableOwnerLookup,
   createSemanticCallSiteLookup,

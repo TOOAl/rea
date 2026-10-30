@@ -8,16 +8,12 @@ import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import { ABORTED, waitForAbortable } from "../process/AbortablePromise.js";
 import { ProviderStartupDeadline } from "../process/ProviderDeadline.js";
 
-import { randomUUID } from "node:crypto";
 import {
   OwnedCommandFailure,
   runOwnedCommand,
 } from "../process/OwnedCommand.js";
-import type { ProviderProcessSupervisor } from "../process/ProviderProcess.js";
 import type { ProviderAvailability } from "../application/AnalysisProvider.js";
-import type { ProviderRejectionCode } from "../contracts/providerSelection.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import { gte, valid } from "semver";
 import {
   isWindowsBatchFile,
   windowsBatchCommand,

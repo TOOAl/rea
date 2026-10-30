@@ -1,11 +1,8 @@
-import { createHash } from "node:crypto";
 import { constants as fsConstants } from "node:fs";
-import { lstat, open, opendir, readlink } from "node:fs/promises";
+import { lstat, opendir, readlink } from "node:fs/promises";
 import { join, relative } from "node:path";
-import type { FileHandle } from "node:fs/promises";
 import type { ProcessScenario } from "../../domain/process/processScenario.js";
 import type { FilesystemCoverage } from "../../domain/process/processCaptureCoverage.js";
-import type { Stats } from "node:fs";
 import type {
   FileState,
   ProcessFilesystemSnapshot,

@@ -13,14 +13,11 @@ import { optionalCdpCommand } from "./CdpOptionalCommand.js";
 import { CdpCommandRejection } from "./CdpCommandRejection.js";
 import {
   captureAccessibility,
-  captureDom,
   captureFrames,
   captureResources,
-  type CapturedResource,
   type DomCapture,
   mainFrameUrl,
 } from "./CdpCaptureDocuments.js";
-import { capturedSvgNodeKind } from "./CdpCaptureDomSvg.js";
 import {
   allowedSanitizedUrl,
   delayWithCancellation,

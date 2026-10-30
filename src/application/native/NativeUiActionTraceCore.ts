@@ -13,11 +13,7 @@ import {
 import { nativeDispatchMetadataResultSchema } from "../../domain/native/objcSwiftMetadata.js";
 import { inspectNativeDispatch } from "./NativeDispatchMetadataInspection.js";
 import { jsonValueSchema } from "../../domain/jsonValue.js";
-import { readNativeCallRoutes } from "./NativeCallRoutes.js";
-import {
-  renderSourceLimitations,
-  type SourceLimitation,
-} from "../SourceLimitations.js";
+import { renderSourceLimitations } from "../SourceLimitations.js";
 import { err, ok } from "../../domain/result.js";
 import { AnalysisOutputError } from "../../domain/analysisErrorCore.js";
 import { projectAnalysisError } from "../../domain/analysisErrorProjection.js";
@@ -364,4 +360,3 @@ const resolveUiAction = (
     reason: "ui_action_or_object_not_found",
   };
 };
-

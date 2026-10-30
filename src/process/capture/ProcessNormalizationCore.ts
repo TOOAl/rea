@@ -1,9 +1,3 @@
-import { isIP } from "node:net";
-
-import type { ProcessScenario } from "../../domain/process/processScenario.js";
-
-import type { ProcessSample } from "../../domain/process/processCapture.js";
-
 export type BoundedProcessTextNormalization =
   | {
       readonly state: "normalized";

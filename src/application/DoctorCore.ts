@@ -1,43 +1,30 @@
-import { constants } from "node:fs";
 import { access, readdir, stat } from "node:fs/promises";
-import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { homeDirectoryFromEnvironment } from "../config/homeDirectory.js";
-import { join } from "node:path";
 
-import { analysisErrorRemediationAction } from "../domain/analysisErrorPresentation.js";
 import { BinaryTargetError } from "../domain/configurationErrors.js";
-import { parseBinaryTarget } from "./BinaryTargetResolver.js";
 import { execFileOutput } from "../process/ExecFileOutput.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import {
-  javaScriptRuntime,
-  type JavaScriptRuntime,
-} from "../domain/runtimeVersion.js";
-import { installedCaskAppdir, probeHomebrew } from "./homebrew.js";
+import type { JavaScriptRuntime } from "../domain/runtimeVersion.js";
 import {
   macHopperApplicationRoots,
   macHopperRenamedLauncherCandidates,
 } from "./MacHopperPaths.js";
 import {
-  inspectLinuxHopperLauncher,
   linuxSharedLibrariesAvailable,
-  readLinuxDistribution,
   type LinuxDistribution,
 } from "./LinuxHopper.js";
 import type { Result } from "../domain/result.js";
 import type { HopperReleaseError } from "./HopperReleaseFeed.js";
 import type { VerifiedLinuxHopperLauncher } from "./LinuxHopperPublisher.js";
-import {
-  readInstalledSkillIdentity,
-  type InstalledSkillIdentity,
-  type SkillPathIssue,
+import type {
+  InstalledSkillIdentity,
+  SkillPathIssue,
 } from "./SetupSkill.js";
 import { CATALOG_IDENTITY } from "../catalogIdentity.js";
 import { PRODUCT_IDENTITY, SDK_IDENTITY } from "../identity.js";
-import {
-  readClientRegistrationStatuses,
-  type ClientRegistrationStatus,
-  type UnhealthyClientRegistrationStatus,
+import type {
+  ClientRegistrationStatus,
+  UnhealthyClientRegistrationStatus,
 } from "./ClientRegistrationStatus.js";
 import type { ProviderRequestBudgetResolver } from "./ClientRegistrationEnvironment.js";
 import {

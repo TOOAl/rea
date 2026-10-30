@@ -1,14 +1,7 @@
-import { z } from "zod";
-
-import {
-  artifactInventoryResultSchema,
-  type ArtifactInventoryResult,
-} from "./artifactGraph.js";
+import type { ArtifactInventoryResult } from "./artifactGraph.js";
 import { digestCanonicalValue } from "./canonicalDigest.js";
-import { uniqueSorted } from "./canonicalOrdering.js";
 import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
 import { jsonValueSchema } from "./jsonValue.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 
 const observation = (
   kind: ArtifactInspectionResult["observations"][number]["kind"],

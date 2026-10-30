@@ -1,26 +1,10 @@
-import { createHash } from "node:crypto";
-
-import canonicalize from "canonicalize";
 import { z } from "zod";
 
-import { artifactComparisonResultSchema } from "./artifactComparison.js";
 import { uniqueSorted } from "./canonicalOrdering.js";
 import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
-import {
-  comparisonSourceEvidenceIds,
-  assertComparisonFindingLinks,
-} from "./comparisonSourceEvidence.js";
-import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
-import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
-import {
-  PROCESS_PROVIDER,
-  isProcessEvidenceProvider,
-} from "./process/processEvidenceProvider.js";
-import type { JsonValue } from "./jsonValue.js";
-import {
-  comparisonStatusSchema,
-  processCaptureComparisonSchema,
-} from "./process/processComparison.js";
+import { evidenceSchema, type Evidence } from "./evidence.js";
+import { PROCESS_PROVIDER } from "./process/processEvidenceProvider.js";
+import { comparisonStatusSchema } from "./process/processComparison.js";
 import { PROCESS_COMPARISON_DIMENSIONS } from "./process/processComparison.js";
 import { prefixedDigestSchema } from "./../domain/digests.js";
 

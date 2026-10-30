@@ -1,5 +1,4 @@
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
-import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
 
 import { AsarArtifactReader } from "../AsarArtifactReader.js";
 
@@ -13,34 +12,19 @@ import {
   type ArtifactReaderTraversal,
 } from "../ArtifactReader.js";
 import type { ArtifactResourceOwner } from "../ArtifactResourceScope.js";
-import {
-  artifactInventoryResultSchema,
-  type ArtifactInventoryResult,
-  type ArtifactNode,
-  type ArtifactOccurrence,
-  type IntegrityContradiction,
+import type {
+  ArtifactInventoryResult,
+  ArtifactNode,
+  ArtifactOccurrence,
 } from "../../domain/artifactGraph.js";
 import {
-  createArtifactEdges,
   createRootNode,
-  materializeDirectoryNodes,
   rekeyOccurrences,
-  rootOccurrenceFor,
   type MutableOccurrence,
 } from "./ArtifactGraphConstruction.js";
-import {
-  artifactContradictionId,
-  artifactGraphDigest,
-  artifactManifestId,
-} from "../../domain/artifactIdentity.js";
 import { classifyAndHashRootForInventory } from "./classify.js";
-import { hostExecutableMarking } from "../hostExecutableMarking.js";
 import type { HashResult } from "../ArtifactHash.js";
-import {
-  hashStableRootArtifact,
-  hashStableRootArtifactHandle,
-} from "./hashStableRootArtifact.js";
-import { createReader, inventoryCoverage } from "./reader.js";
+import { createReader } from "./reader.js";
 import {
   scanReader,
   type PendingIntegrityContradiction,

@@ -1,30 +1,21 @@
 import * as t from "@babel/types";
-import { runtimeFunctionParameters } from "./javascriptAstValues.js";
 import { javascriptBootstrapAt } from "./javascriptBootstrap.js";
 import {
   resolveSemanticBindingState,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
-import { semanticFactoryLoaderMemberAt } from "./javascriptSemanticRequireOrigin.js";
 
 import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 
-import {
-  collectJavaScriptExports,
-  fingerprintJavaScriptAst,
-} from "./javascriptAstFingerprint.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import { addFindingOnce } from "./javascriptStaticAnalysisFindings.js";
 import {
   argumentValue,
   calleeName,
   chunkRuntime,
-  factoryRequireName,
   moduleFactory,
-  modulePropertyName,
   range,
   registrationKey,
-  sha256Text,
   sourceSlice,
   staticArrayValues,
 } from "./javascriptStaticAnalysisHelpers.js";
@@ -33,7 +24,6 @@ import type {
   JavaScriptBundlerModule,
   JavaScriptBundlerRegistration,
 } from "./javascriptStaticAnalysisTypes.js";
-import { JAVASCRIPT_AST_FINGERPRINT_ALGORITHM } from "./javascriptStaticAnalysisTypes.js";
 
 /** Inspect a bundler registration call and recover its module table. */
 export const inspectBundlerRegistration = (

@@ -1,6 +1,5 @@
 import { constants } from "node:buffer";
 import { createHash } from "node:crypto";
-import type { FileHandle } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
 import { getHeapStatistics } from "node:v8";
 
@@ -13,11 +12,7 @@ import streamArray from "stream-json/streamers/stream-array.js";
 import { RegularFileChangedError } from "../filesystem/RegularFile.js";
 import type { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { withRegularFile } from "./RegularFileRead.js";
-import {
-  JSON_BYTE_ORDER_MARK_MESSAGE,
-  JSON_INPUT_RESOURCE_REMEDIATION,
-  parseUtf8Json,
-} from "./Utf8JsonInput.js";
+import { JSON_INPUT_RESOURCE_REMEDIATION } from "./Utf8JsonInput.js";
 import {
   AnalysisInputError,
   AnalysisResourceConstraintError,

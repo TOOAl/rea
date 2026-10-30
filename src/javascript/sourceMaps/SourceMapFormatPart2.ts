@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { WEB_SOURCE_MAP_LIMITS } from "../../domain/webSourceLocation.js";
 import { sourceMapJsonText } from "../../domain/sourceMapEnvelope.js";
-import type { EncodedSourceMapXInput } from "@jridgewell/trace-mapping";
 
 const inspectMappingLayout = (
   mappings: string,

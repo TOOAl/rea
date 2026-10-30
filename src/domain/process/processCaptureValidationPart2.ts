@@ -1,13 +1,7 @@
-import {
-  digestProcessCommitment,
-  processScenarioOutputBudgetProjectionSchema,
-} from "./processScenario.js";
+import { processScenarioOutputBudgetProjectionSchema } from "./processScenario.js";
 import { hasCaptureTruncation } from "./processCaptureCoverage.js";
 
-import type {
-  ProcessCaptureFinalization,
-  UnverifiedProcessCapture,
-} from "./processCapture.js";
+import type { UnverifiedProcessCapture } from "./processCapture.js";
 /** One pure semantic validation failure in a shaped process capture. */
 
 const validateLifecycle = (

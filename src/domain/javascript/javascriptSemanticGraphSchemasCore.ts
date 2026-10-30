@@ -3,9 +3,7 @@ import { z } from "zod";
 import {
   applicationGraphEvidenceContextSchema,
   applicationGraphEvidenceLocationSchema,
-  applicationGraphEvidenceSchema,
 } from "./javascriptApplicationEvidenceSchemas.js";
-import { jsonValueSchema } from "../jsonValue.js";
 import { digestSchema } from "../digests.js";
 import { prefixedDigestSchema } from "../digests.js";
 

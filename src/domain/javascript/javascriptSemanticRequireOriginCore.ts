@@ -1,7 +1,6 @@
 import * as t from "@babel/types";
 import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 
-import { BUILTIN_RESOURCE_METHODS } from "./javascriptBuiltinResourceMethods.js";
 import type { JavaScriptModuleOrigin } from "./javascriptSemanticIr.js";
 import {
   resolveSemanticBindingState,
@@ -15,7 +14,6 @@ import {
   unwrapJavaScriptExpression,
 } from "./javascriptAstValues.js";
 import { semanticPropertyPathKeyMatches } from "./javascriptSemanticPropertyPaths.js";
-import { stringValue } from "./javascriptStaticAnalysisHelpers.js";
 import { semanticTopLevelEffectFollowsCapture } from "./javascriptSemanticMutationInitializers.js";
 import { createSemanticModuleInterop } from "./javascriptModuleInterop.js";
 

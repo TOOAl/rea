@@ -1,39 +1,28 @@
-import { posix } from "node:path";
-
 import {
   compareUnicodeCodePoints,
   compositeKey,
 } from "../../domain/unicodeCodePointOrder.js";
 import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
 import {
-  completeApplicationCoverage,
-  partialApplicationCoverage,
-} from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
-import {
   semanticCoverageResourceLimits,
   semanticResourceLimitCoverage,
 } from "../../domain/javascript/javascriptSemanticCoverage.js";
-import { semanticResourceLimitReason } from "../../domain/javascript/javascriptSemanticResourceLimits.js";
 import type {
   JavaScriptModuleOrigin,
   JavaScriptSemanticModuleLink,
 } from "../../domain/javascript/javascriptSemanticIr.js";
-import { moduleResolutionModeForJavaScriptReference } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
   addAstContainsEdge,
   artifactLocalIdentity,
   type JavaScriptArtifactGraphContext,
-  type JavaScriptArtifactGraphCoverage,
 } from "./JavaScriptArtifactGraphContext.js";
 import {
   astObservationEvidence,
   staticInferenceEvidence,
 } from "./JavaScriptArtifactGraphEvidence.js";
 import {
-  artifactPathResolutionProperties,
   moduleResolutionModeProperties,
-  resolveArtifactPathByContext,
   type ArtifactPathResolution,
 } from "./JavaScriptArtifactPathResolution.js";
 import { projectJavaScriptExportReturnShapes } from "../../domain/javascript/javascriptExportReturnShapeProjection.js";
