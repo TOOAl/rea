@@ -1,6 +1,5 @@
 import type { JsonValue } from "../../domain/jsonValue.js";
 import { hasNibArchiveSignature } from "../../domain/apple/appleArchiveFormat.js";
-import { TextDecoder } from "node:util";
 import {
   InterfaceBuilderDecodeBudget,
   InterfaceBuilderDecodeBudgetExceeded,
@@ -424,4 +423,3 @@ const readValue = (
       );
   }
 };
-

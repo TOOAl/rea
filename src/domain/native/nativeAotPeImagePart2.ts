@@ -1,6 +1,3 @@
-import { createHash } from "node:crypto";
-import type { NativeMetadataRecovery } from "./nativeMetadataRecovery.js";
-
 const discoverTables = (
   image: PeImage,
   hydrated: { readonly base: bigint; readonly sizeBytes: number } | null,

@@ -1,13 +1,8 @@
-import {
-  AnalysisInputError,
-  type AnalysisInputIssue,
-} from "../analysisErrorCore.js";
 import type { AnalysisError } from "../analysisErrorBase.js";
-import { jsonObjectSchema, type JsonValue } from "../jsonValue.js";
+import { jsonObjectSchema } from "../jsonValue.js";
 import type { JavaScriptApplicationAnalysisResult } from "../javascript/javascriptApplicationAnalysis.js";
 import type { ApplicationNode } from "../javascript/javascriptApplicationGraphSchemas.js";
 import { err, ok, type Result } from "../result.js";
-import type { JavaScriptModuleReference } from "./javascriptModuleReferences.js";
 import {
   boundedViewMessages,
   completeWithinViewCoverage as completeCoverage,

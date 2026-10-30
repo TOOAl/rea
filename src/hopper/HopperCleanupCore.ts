@@ -3,11 +3,9 @@ import type { Socket } from "node:net";
 import type { ProgressReporter } from "../application/ProgressReporter.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
 import type { HopperError } from "../domain/hopperErrors.js";
-import { HopperProcessError } from "../domain/hopperErrors.js";
 
 import type { JsonValue } from "../domain/jsonValue.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import { err, ok, type Result } from "../domain/result.js";
+import { err, type Result } from "../domain/result.js";
 import type { Logger } from "pino";
 import type { PrivateRuntimeRoot } from "../process/PrivateRuntimeRoot.js";
 import type {
@@ -18,7 +16,6 @@ import type { ProviderProcessSupervisor } from "../process/ProviderProcess.js";
 import { observeProcessStartIdentityExit } from "../process/ProcessOwnershipObservation.js";
 import type { BridgeLaunch } from "./BridgeLauncher.js";
 import {
-  createOwnedHopperShutdownDiagnostic,
   type HopperDiagnostic,
   providerCleanupFailure,
 } from "./HopperDiagnostics.js";

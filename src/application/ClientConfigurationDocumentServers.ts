@@ -1,32 +1,24 @@
-import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
-import { isDeepStrictEqual } from "node:util";
-
 import {
-  parseDshCordisDocument,
   serializeDshDocument,
-  editDshDocument,
   dshClientRegistrationEntry,
 } from "./DshCordisPatch.js";
 import {
   editHermesConfigurationYaml,
-  parseHermesConfigurationYaml,
   stringifyHermesConfigurationYaml,
 } from "./HermesConfigurationYaml.js";
 import {
   applyEdits,
   findNodeAtLocation,
   modify,
-  parse as parseJsonc,
   parseTree,
-  printParseErrorCode,
   type ParseError,
 } from "jsonc-parser";
 import { z } from "zod";
 
 import { PRODUCT_IDENTITY } from "../identity.js";
-import type { SetupClient } from "./SupportedClients.js";
 
 // ClientConfigurationDocumentServers.ts 1287-1565
+
 const deleteJsonPropertyPreservingComments = (
   text: string,
   path: readonly string[],

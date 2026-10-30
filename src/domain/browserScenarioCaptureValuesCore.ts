@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 
 import { z } from "zod";
 
-import { emptyArraySchema } from "./emptyArraySchema.js";
 import {
   browserNetworkBodySchema,
   browserNetworkHeadersSchema,

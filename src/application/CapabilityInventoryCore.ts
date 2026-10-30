@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { sqliteDatabaseCapability } from "./sqlite/SqliteDatabaseCapability.js";
 import type {
   OptionalProviderLoadFailures,
   OptionalProviderLoadFailure,
@@ -20,7 +19,6 @@ import {
 } from "../contracts/toolOutputSchemaPrimitives.js";
 import type { ToolKind } from "../contracts/toolContractTypes.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import { isMachOFormat } from "../domain/binaryTargetTypes.js";
 import type { ProviderAvailability } from "./AnalysisProvider.js";
 import type { JebAnalysisAvailability } from "./jeb/JebAnalysisPort.js";
 import { TOOL_CONTRACTS } from "../contracts/toolContracts.js";
@@ -341,4 +339,3 @@ const javascriptApplicationAvailability = ({
     ? { reason: "available", remediation: null }
     : null;
 };
-

@@ -3,12 +3,10 @@ import type { BinaryArchitecture } from "../domain/binaryTargetTypes.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import type { DirectAnalysisDependencies } from "./DirectAnalysisDependencies.js";
 import type { BinarySession } from "./binary/BinarySession.js";
-import type { SessionProviderRoute } from "./binary/SessionProviderRouter.js";
 import type { ResolvedSessionOpen } from "./binary/BinarySessionOpen.js";
 import { silentLogger } from "../logger.js";
 import type { Logger } from "pino";
 import { createEvidence } from "../domain/evidence.js";
-import type { Evidence } from "../domain/evidence.js";
 import type { NativeToolName } from "../contracts/native/nativeToolContracts.js";
 import {
   ARTIFACT_ANALYSIS_OPERATIONS,
@@ -18,42 +16,19 @@ import {
   isManagedToolName,
   type ManagedToolName,
 } from "../contracts/managed/managedToolContracts.js";
-import {
-  EvidenceFileError,
-  EvidenceIntegrityError,
-} from "../domain/evidenceErrors.js";
-import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
+import { EvidenceFileError } from "../domain/evidenceErrors.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
-import { access } from "node:fs/promises";
-import { readAnalysisSnapshot } from "./binary/AnalysisSnapshotFiles.js";
 import { requiresNativeSourceAdmissionBeforeReplay } from "./binary/AnalysisSnapshotCache.js";
-import { parseBinaryTarget } from "./BinaryTargetResolver.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
+import { snapshotEvidenceForQuery } from "../domain/analysisSnapshot.js";
+import { ok, type Result } from "../domain/result.js";
+import type { AnalysisExecution } from "./AnalysisProvider.js";
+import { REA_WORKFLOW_PROVIDER } from "./InvestigationProviders.js";
 import {
-  snapshotEvidenceForQuery,
-  snapshotMatchesTarget,
-} from "../domain/analysisSnapshot.js";
-import type { AnalysisProfileCommitment } from "../domain/analysisProfile.js";
-import { err, ok, type Result } from "../domain/result.js";
-import type { AnalysisSnapshot } from "../domain/analysisSnapshot.js";
-import type {
-  AnalysisExecution,
-  ProviderIdentity,
-} from "./AnalysisProvider.js";
-import {
-  REA_WORKFLOW_PROVIDER,
-  workflowAnalysisProfile,
-} from "./InvestigationProviders.js";
-import {
-  executeComposedWorkflow,
   createWorkflowEvidence,
   workflowSnapshotRecord,
   recordWorkflowUnknowns,
 } from "./WorkflowEvidence.js";
 import type { AnalysisProviderSelector } from "../contracts/providerSelection.js";
-import { artifactInspectionResultSchema } from "../domain/artifactInspection.js";
-import { resolveXrefsAddress } from "./XrefsAddressResolution.js";
-import { AnalysisInputError } from "../domain/analysisErrorCore.js";
 import {
   directAnalysisCleanupFailure,
   managedAnalysisCleanupFailure,
@@ -389,4 +364,3 @@ const runAnalysis = async (
     directAnalysisCleanupFailure,
   );
 };
-

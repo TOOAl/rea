@@ -1,23 +1,14 @@
-import { absenceClaimable, canonicalJson } from "../comparisonSemantics.js";
+import { absenceClaimable } from "../comparisonSemantics.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { Evidence } from "../evidence.js";
-import type {
-  ApplicationEdge,
-  ApplicationNode,
-} from "./javascriptApplicationGraphSchemas.js";
-import type { JavaScriptApplicationGraph } from "./javascriptApplicationGraph.js";
+import type { ApplicationNode } from "./javascriptApplicationGraphSchemas.js";
 import type { ApplicationVersionComparisonItem } from "./javascriptApplicationVersionComparisonSchemas.js";
-import type {
-  ApplicationVersionMatchingProjection,
-  ApplicationVersionNodePair,
-} from "./javascriptApplicationVersionKeys.js";
+import type { ApplicationVersionNodePair } from "./javascriptApplicationVersionKeys.js";
 
 /** All classified entities and their complete ambiguity candidate sets. */
 export interface ApplicationVersionItemProjection {
   readonly items: ApplicationVersionComparisonItem[];
 }
-
 
 // src/domain/javascript/javascriptApplicationVersionItemsPart2.ts
 const nativeLinks = (

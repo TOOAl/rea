@@ -6,7 +6,6 @@ import type {
   JavaScriptSemanticConfigurationOperation,
   JavaScriptSemanticRequestOperation,
 } from "./javascriptSemanticIr.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import {
   readExactJavaScriptLiteral,
   semanticStaticPropertyKey,
@@ -15,18 +14,14 @@ import {
 } from "./javascriptAstValues.js";
 import {
   recordSemanticValueLimit,
-  resolveSemanticBindingState,
   semanticResolutionBlocked,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
 import {
   builtinDataEffectMethod as builtinMethod,
-  dataEffectArgumentBindingId as argumentBindingId,
   dataEffectLiteralString as literalString,
-  dataEffectMemberCallee as memberCallee,
   isSemanticProcessObject as isProcessObject,
   outerDataEffectBinding as outerAssignedBinding,
-  assignedSemanticResultBindings,
   semanticProjectedBindingFacts,
   traverseDataEffects as traverseWithContext,
   type DataEffectTraversalContext as TraversalContext,

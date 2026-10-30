@@ -1,9 +1,6 @@
-import type { BigIntStats, Dir, Dirent } from "node:fs";
-import { opendir, readlink, realpath } from "node:fs/promises";
+import type { BigIntStats, Dirent } from "node:fs";
+import { readlink, realpath } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
-import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
-import type { ArtifactCleanupAttempt } from "../artifacts/ArtifactResourceScope.js";
-import { OwnedDirectoryHandle } from "../filesystem/OwnedDirectoryHandle.js";
 import { err, ok } from "../domain/result.js";
 
 import {
@@ -19,7 +16,6 @@ import { readStableFile } from "./ReferenceSourceReaderFile.js";
 import {
   isAborted,
   sameFile,
-  validateDirectory,
   bigLstat,
 } from "./ReferenceSourceReaderValidate.js";
 import type {

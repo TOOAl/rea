@@ -1,33 +1,23 @@
-import type { InspectWebPageInput } from "../domain/browserObservation.js";
 import type { WebPageInspection } from "../domain/browserObservationSchemas.js";
 import type { ProgressReporter } from "../application/ProgressReporter.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
-import type { BrowserObservationOperation } from "../domain/browserObservationErrors.js";
-import { stableWebResources } from "../domain/webInventory.js";
-import type { CdpEndpointDiscovery, CdpEndpointTarget } from "./CdpEndpoint.js";
+import type { CdpEndpointTarget } from "./CdpEndpoint.js";
 import { CdpConnection } from "./CdpConnection.js";
-import { CdpCaptureEvents } from "./CdpCaptureEvents.js";
 import { authorizedMainFrame } from "./CdpAuthorizedMainFrame.js";
-import { captureStorage } from "./CdpCaptureStorage.js";
 import { optionalCdpCommand } from "./CdpOptionalCommand.js";
 import { CdpCommandRejection } from "./CdpCommandRejection.js";
 import {
   captureAccessibility,
   captureDom,
   captureFrames,
-  captureResources,
   type CapturedResource,
   type DomCapture,
-  mainFrameUrl,
 } from "./CdpCaptureDocuments.js";
 import { capturedSvgNodeKind } from "./CdpCaptureDomSvg.js";
 import {
   allowedSanitizedUrl,
   delayWithCancellation,
 } from "./CdpCaptureValues.js";
-import { captureScripts } from "./CdpPageCaptureScripts.js";
-import { captureWorkers } from "./CdpPageCaptureWorkers.js";
-import type { WebSourceMapRequest } from "./WebSourceMapFetcher.js";
 
 const authorizeObservationWindow = async (
   state: CaptureState,

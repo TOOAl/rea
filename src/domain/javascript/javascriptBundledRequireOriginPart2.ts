@@ -2,31 +2,17 @@ import * as t from "@babel/types";
 
 import { javascriptBootstrapAt } from "./javascriptBootstrap.js";
 import { proveJavaScriptBootstrapIntegrity } from "./javascriptBootstrapIntegrity.js";
-import {
-  semanticStaticPropertyKey,
-  unwrapJavaScriptExpression,
-} from "./javascriptAstValues.js";
-import { collectJavaScriptIdentityWritesSteps } from "./javascriptElectronMemberWrites.js";
-import { createSemanticModuleInterop } from "./javascriptModuleInterop.js";
-import {
-  semanticMemberChain,
-  semanticRequireOrigin,
-  type JavaScriptRequireOrigin,
-} from "./javascriptSemanticRequireOrigin.js";
+import { semanticStaticPropertyKey } from "./javascriptAstValues.js";
+import { semanticRequireOrigin } from "./javascriptSemanticRequireOrigin.js";
 import {
   resolveSemanticBindingState,
-  semanticResolutionBlocked,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
 import {
-  argumentValue,
   moduleFactory,
   modulePropertyName,
 } from "./javascriptStaticAnalysisHelpers.js";
-import {
-  completeSemanticSteps,
-  traverseJavaScriptAst,
-} from "./javascriptSemanticTraversal.js";
+import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 
 /** Loader bindings and literal externals proven for one standalone bootstrap. */
 

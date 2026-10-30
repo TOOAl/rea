@@ -1,9 +1,5 @@
 import * as t from "@babel/types";
 
-import {
-  semanticStaticPropertyKey,
-  unwrapJavaScriptExpression,
-} from "./javascriptAstValues.js";
 import type { JavaScriptSemanticBindingState } from "./javascriptSemanticState.js";
 
 interface StatementPosition {
@@ -389,4 +385,3 @@ export const semanticReadInitializers = (
   }
   return selectInitializers(binding, position, parents, true);
 };
-

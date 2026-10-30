@@ -1,10 +1,5 @@
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { hasNibArchiveSignature } from "../../domain/apple/appleArchiveFormat.js";
 import { TextDecoder } from "node:util";
-import {
-  InterfaceBuilderDecodeBudget,
-  InterfaceBuilderDecodeBudgetExceeded,
-} from "./InterfaceBuilderDecodeBudget.js";
 
 const DEFAULT_DECODE_BUDGET_BYTES = 128 * 1024 * 1024;
 

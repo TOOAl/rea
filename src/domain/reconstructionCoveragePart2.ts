@@ -8,11 +8,7 @@ import {
   compositeKey,
 } from "./unicodeCodePointOrder.js";
 
-import {
-  authenticateParsedEvidenceBundle,
-  evidenceBundleSchema,
-} from "./evidenceBundle.js";
-import type { Evidence } from "./evidence.js";
+import { authenticateParsedEvidenceBundle } from "./evidenceBundle.js";
 import {
   evaluateReconstructionClaims,
   evaluateReconstructionPackageProofs,
@@ -21,12 +17,7 @@ import {
   recommendedReconstructionProbes,
   type ReconstructionEvaluationContext,
 } from "./reconstructionCoverageEvaluation.js";
-import { digestSchema } from "./../domain/digests.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
-import {
-  offsetDateTimeInstantFromEpochMilliseconds,
-  offsetDateTimeSchema,
-} from "./offsetDateTime.js";
+import { offsetDateTimeInstantFromEpochMilliseconds } from "./offsetDateTime.js";
 
 const closureReasonSchema = z.strictObject({
   code: z.enum([

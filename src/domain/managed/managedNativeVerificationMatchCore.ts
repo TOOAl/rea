@@ -8,12 +8,10 @@ import { functionDossierSchema } from "../hopperValues.js";
 import { inspectMachoSchema } from "../native/nativeInspection.js";
 import type { ManagedNativeBoundaryInspection } from "./managedArtifact.js";
 import type { JsonValue } from "../jsonValue.js";
-import {
-  pinvokeVerificationSchema,
-  type ManagedNativeVerificationInput,
-  type ManagedNativeVerificationResult,
-  type NativeSymbol,
-  type PinvokeVerification,
+import type {
+  ManagedNativeVerificationInput,
+  NativeSymbol,
+  PinvokeVerification,
 } from "./managedNativeVerificationSchemas.js";
 
 const digest = (value: JsonValue): string => {

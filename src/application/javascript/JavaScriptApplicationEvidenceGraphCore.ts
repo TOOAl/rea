@@ -3,18 +3,12 @@ import {
   JAVASCRIPT_RUNTIME_RECONCILIATION_PROVIDER,
   MANAGED_WORKFLOW_PROVIDER,
 } from "../InvestigationProviders.js";
-import {
-  isImmutableEvidence,
-  parseEvidence,
-  type Evidence,
-} from "../../domain/evidence.js";
+import { isImmutableEvidence, type Evidence } from "../../domain/evidence.js";
 import {
   type AnalysisInputIssue,
   AnalysisInputError,
 } from "../../domain/analysisErrorCore.js";
-import { projectInputIssues } from "../../domain/inputIssueProjection.js";
-import { err, ok, type Result } from "../../domain/result.js";
-import { z } from "zod";
+import { ok, type Result } from "../../domain/result.js";
 import {
   analyzeJavaScriptApplicationInputSchema,
   javascriptApplicationAnalysisResultSchema,
@@ -23,7 +17,6 @@ import {
 import type { JavaScriptApplicationGraph } from "../../domain/javascript/javascriptApplicationGraph.js";
 import type { JavaScriptSemanticGraph } from "../../domain/javascript/javascriptSemanticGraph.js";
 import { javascriptRuntimeReconciliationResultSchema } from "../../domain/javascript/javascriptRuntimeReconciliationSchemas.js";
-import { managedApplicationGraphResultSchema } from "../../domain/managed/managedApplicationGraph.js";
 
 /** Supported immutable source for an application-level graph workflow. */
 export interface ApplicationGraphEvidenceSource {

@@ -1,8 +1,5 @@
 import type { GhidraLanguageOverride } from "../config/ghidraLanguageOverride.js";
-import type {
-  BinaryTarget,
-  MipsElfMetadata,
-} from "../domain/binaryTargetTypes.js";
+import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 
 export const isLegacyMipsAdmission = (target: BinaryTarget): boolean =>

@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 import { browserCompletenessSchema } from "./browserCompleteness.js";
-import { webTextArtifactSchema } from "./webContentArtifact.js";
 import { jsonShapeSchema } from "./jsonShape.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
 
 /** Shared CDP/browser version identity carried on observation Evidence. */
 

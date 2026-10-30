@@ -1,12 +1,6 @@
 import type { JavaScriptSourceRange } from "./javascriptStaticAnalysisTypes.js";
-import type {
-  JavaScriptSemanticResourceLimit,
-  JavaScriptSemanticValue,
-} from "./javascriptSemanticValueTypes.js";
-import type {
-  JavaScriptSemanticCoverage,
-  JavaScriptSemanticReturnCoverage,
-} from "./javascriptSemanticCoverage.js";
+import type { JavaScriptSemanticResourceLimit } from "./javascriptSemanticValueTypes.js";
+import type { JavaScriptSemanticCoverage } from "./javascriptSemanticCoverage.js";
 import type { JavaScriptModuleResolutionMode } from "./javascriptModuleResolutionMode.js";
 
 /** One exact module origin followed through imports, requires, or aliases. */

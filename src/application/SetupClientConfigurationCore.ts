@@ -1,42 +1,29 @@
 import { readClientPolicyBlock } from "./GeminiClientSettings.js";
 import {
   readClientConfigurationFiles,
-  effectiveClientConfiguration,
   readConfigurationText,
-  type ClientConfigurationSource,
 } from "./ClientConfigurationFiles.js";
-import { err, ok, type Result } from "../domain/result.js";
-import { ConfigurationError } from "../domain/configurationErrors.js";
 import {
-  clientRegistrationEntry,
   clientConfigurationValuesEqual,
-  clientServerListedDisabled,
   clientServerPath,
   legacyClientServerPath,
   OMP_DISABLED_SERVERS_KEY,
   parseClientConfiguration,
-  parseZcodeFallbackConfiguration,
   serializeClientConfiguration,
   withClientServers,
   type ClientConfigurationDocument,
 } from "./ClientConfigurationDocument.js";
-import { dshDocument, DshCordisDocument } from "./DshCordisPatch.js";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { dshDocument } from "./DshCordisPatch.js";
+import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import writeFileAtomic from "write-file-atomic";
 import {
-  clientRegistrationEnvironment,
   clientRegistrationEnvironmentDetails,
   type ProviderRequestBudgetResolver,
 } from "./ClientRegistrationEnvironment.js";
 
 import { PRODUCT_IDENTITY } from "../identity.js";
 import { npxRegistrationCommand } from "./ClientRegistrationIdentity.js";
-import {
-  MCP_STARTUP_POLICY,
-  recommendedMcpToolTimeoutMs,
-  recommendedMcpToolTimeoutSeconds,
-} from "../mcpStartupPolicy.js";
 import { resolveClientConfigTransactionPath } from "./ClientConfigPath.js";
 import { packageReadTargetChanged } from "./MsixPackageStorage.js";
 import {
@@ -47,7 +34,6 @@ import {
   preserveRecoveryBackup,
   selectCurrentRecoveryBackup,
 } from "./SetupRecoveryBackup.js";
-import type { ClientConfigurationFileError } from "./ClientConfigurationFiles.js";
 import type {
   ClientConfigurationInspection,
   ClientConfigurationResult,
@@ -435,4 +421,3 @@ export const inspectClientConfiguration = async (
     ? inspection
     : { status: "invalid", remediation: blocker };
 };
-

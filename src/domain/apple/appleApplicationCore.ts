@@ -1,22 +1,16 @@
 import { z } from "zod";
 
 import {
-  anatomyNameIs,
   anatomyTailMatches,
   appleBundleSchema,
   appleComponentSchema,
   applicationRoots,
   detectBundles,
-  isMachOFormat,
   isSidecar,
   isWithin,
   platformsOf,
   type AppleInventoryEntry,
 } from "./appleBundleAnatomy.js";
-import {
-  isSwiftRuntimeLibrary,
-  nativeRuntimeConvention,
-} from "../nativeConvention.js";
 import {
   hasCompleteInventoryCoverage,
   parseArtifactInventoryEvidence,
@@ -24,11 +18,7 @@ import {
 import { evidenceSchema } from "../evidence.js";
 import { digestSchema } from "../digests.js";
 import { prefixedDigestSchema } from "../digests.js";
-import {
-  bridgeCandidateCoverageSchema,
-  projectCartesianCandidates,
-} from "../bridgeCandidateProjection.js";
-import { projectionDigest } from "../mobileApplicationGraphProjection.js";
+import { bridgeCandidateCoverageSchema } from "../bridgeCandidateProjection.js";
 import { compareUnicodeCodePoints as compare } from "../unicodeCodePointOrder.js";
 
 const evidenceIdSchema = prefixedDigestSchema("ev");

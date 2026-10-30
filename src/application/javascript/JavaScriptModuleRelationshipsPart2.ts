@@ -1,9 +1,5 @@
 import { posix } from "node:path";
 
-import {
-  compareUnicodeCodePoints,
-  compositeKey,
-} from "../../domain/unicodeCodePointOrder.js";
 import type { ApplicationNode } from "../../domain/javascript/javascriptApplicationGraphSchemas.js";
 import {
   completeApplicationCoverage,
@@ -21,22 +17,17 @@ import type {
 import { moduleResolutionModeForJavaScriptReference } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import {
-  addAstContainsEdge,
   artifactLocalIdentity,
   type JavaScriptArtifactGraphContext,
   type JavaScriptArtifactGraphCoverage,
 } from "./JavaScriptArtifactGraphContext.js";
-import {
-  astObservationEvidence,
-  staticInferenceEvidence,
-} from "./JavaScriptArtifactGraphEvidence.js";
+import { staticInferenceEvidence } from "./JavaScriptArtifactGraphEvidence.js";
 import {
   artifactPathResolutionProperties,
   moduleResolutionModeProperties,
   resolveArtifactPathByContext,
   type ArtifactPathResolution,
 } from "./JavaScriptArtifactPathResolution.js";
-import { projectJavaScriptExportReturnShapes } from "../../domain/javascript/javascriptExportReturnShapeProjection.js";
 
 import type { JavaScriptModuleSemanticIr } from "./JavaScriptArtifactAnalysisTypes.js";
 

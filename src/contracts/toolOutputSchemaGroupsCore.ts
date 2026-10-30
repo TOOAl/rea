@@ -7,12 +7,6 @@ import {
   managedArtifactSummaryViewResultSchema,
   managedMemberSummaryViewResultSchema,
 } from "../domain/analysisView/analysisView.js";
-import { evidenceBundleSummarySchema } from "../domain/evidenceRecordSummary.js";
-import { BINARY_ARCHITECTURES } from "../domain/binaryTargetTypes.js";
-import {
-  binaryArchitectureSchema,
-  rawBinaryEntryPointSchema,
-} from "../domain/rawBinary.js";
 import { nativeFunctionAnnotationsSchema } from "../domain/native/nativeFunctionAnnotations.js";
 import { nativeLoadImageSchema } from "../domain/native/nativeLoadImage.js";
 import { nativeUiResultSchema } from "../domain/native/nativeUiObservation.js";
@@ -24,10 +18,7 @@ import {
   nativeCallTargetsSchema,
 } from "../domain/native/nativeInstruction.js";
 import { jsonValueSchema } from "../domain/jsonValue.js";
-import { residualUnknownSchema } from "../domain/residualUnknown.js";
-import { evidenceBundleSchema } from "../domain/evidenceBundle.js";
 
-import { processCaptureComparisonSchema } from "../domain/process/processComparison.js";
 import {
   analysisBookmarkSchema,
   functionInstructionWindowSchema,
@@ -55,17 +46,6 @@ import {
   managedMemberInspectionSchema,
   managedNativeBoundaryInspectionSchema,
 } from "../domain/managed/managedArtifact.js";
-import { managedMemberComparisonResultSchema } from "../domain/managed/managedMemberComparison.js";
-import { managedNativeVerificationResultSchema } from "../domain/managed/managedNativeVerificationSchemas.js";
-import { managedReconstructionImportResultSchema } from "../domain/managed/managedReconstruction.js";
-import { managedApplicationGraphResultSchema } from "../domain/managed/managedApplicationGraph.js";
-import { artifactComparisonResultSchema } from "../domain/artifactComparison.js";
-import { functionComparisonResultSchema } from "../domain/functionComparisonSchemas.js";
-import { bundleComparisonResultSchema } from "../domain/bundleComparison.js";
-import { changedBehaviorResultSchema } from "../domain/changedBehavior.js";
-import { callPathResultSchema } from "../domain/callPathSchemas.js";
-import { staticRuntimeCorrelationResultSchema } from "../domain/staticRuntimeCorrelation.js";
-import { reconstructionVerificationResultSchema } from "../domain/reconstructionVerificationSchemas.js";
 import { analysisErrorProjectionSchema } from "./errorSchemas.js";
 import { relationshipCoverageSchema } from "../domain/relationshipCoverage.js";
 import { nativeDispatchMetadataResultSchema } from "../domain/native/objcSwiftMetadata.js";
@@ -77,19 +57,14 @@ import {
   containingProcedureResolution,
   functionDossierOutput,
   graphNode,
-  lifecycleResultOf,
   nullableText,
   procedureInfoOutput,
   evidenceResultOf,
   segmentOutput,
-  sessionProvider,
   symbolDiscoveryOutput,
-  targetFormatSchema,
   targetKindSchema,
 } from "./toolOutputSchemaPrimitives.js";
 
-import { processCaptureSchema } from "../domain/process/processCapture.js";
-import { electronFuseReportSchema } from "../domain/electron/electronFuses.js";
 const contextFacetSchema = z.discriminatedUnion("state", [
   z.object({ state: z.literal("available"), value: jsonValueSchema }),
   z.object({

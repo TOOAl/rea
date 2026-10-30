@@ -1,17 +1,6 @@
-import { chmod, mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
-
-import type {
-  Browser,
-  BrowserContext,
-  CDPSession,
-  Page,
-  chromium,
-} from "playwright-core";
+import type { Browser, BrowserContext, Page } from "playwright-core";
 
 import type { BrowserScenario } from "../domain/browserScenario.js";
-import { AnalysisError } from "../domain/analysisErrorBase.js";
 import { isLiteralLoopbackHostname } from "../domain/browserObservation.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
 import { withPlaywrightExecutionBoundary } from "./PlaywrightExecutionBoundary.js";
@@ -319,4 +308,3 @@ const findConnectedPage = async (
     }
   throw new BrowserObservationError(OPERATION, "target_not_found");
 };
-

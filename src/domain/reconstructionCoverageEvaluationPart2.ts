@@ -1,25 +1,11 @@
 import type {
-  ReconstructionClosureResult,
   ReconstructionCoverageData,
-  ReconstructionVerifierContract,
   ParsedReconstructionCoverage,
 } from "./reconstructionCoverage.js";
-import {
-  packageProofHasComparableEvidence,
-  verifierHasComparableEvidence,
-} from "./reconstructionCoverageEvidence.js";
-import {
-  compareOffsetDateTimeInstants,
-  offsetDateTimeInstantFromEpochMilliseconds,
-  type OffsetDateTimeInstant,
-} from "./offsetDateTime.js";
-import {
-  latestVerifierObservationsByVerifier,
-  sameVerifierAssessment,
-  type VerifierObservation,
-} from "./reconstructionCoverageVerifierResults.js";
+import { packageProofHasComparableEvidence } from "./reconstructionCoverageEvidence.js";
 import type { ReconstructionEvaluationContext } from "./reconstructionCoverageEvaluationCore.js";
 import type { ClosureReason } from "./reconstructionCoverageEvaluationCore.js";
+
 export const evaluateReconstructionCoverageRisks = (
   context: ReconstructionEvaluationContext,
 ): void => {

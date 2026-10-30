@@ -6,7 +6,6 @@ import type { ExecutionOptions } from "../application/AnalysisProvider.js";
 import { createAnalysisExecution } from "../application/AnalysisProvider.js";
 import type { WasmArtifactExecution } from "../application/wasm/WasmArtifactPort.js";
 import { readStableArtifact } from "../artifacts/readStableArtifact.js";
-import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import type {
   AnalysisError,
@@ -15,7 +14,6 @@ import type {
 import {
   AnalysisCancelledError,
   AnalysisArtifactChangedError,
-  AnalysisCapabilityUnavailableError,
   AnalysisInputError,
   AnalysisOutputError,
 } from "../domain/analysisErrorCore.js";

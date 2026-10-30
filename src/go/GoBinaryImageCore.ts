@@ -2,19 +2,10 @@ import {
   GoBinaryFormatFailure,
   GoBinaryResourceFailure,
   GoBinaryReader,
-  goUtf8,
   mappedFileOffset,
-  isZeroFilledSpan,
   type GoBinaryContainer,
   type GoFileMapping,
 } from "./GoBinaryContainer.js";
-import {
-  classifyFatContainerIdentity,
-  readFatContainerHeader,
-} from "../domain/apple/machoContainer.js";
-import { readGoElfImage } from "./GoElfImage.js";
-import { readGoMachoImage } from "./GoMachoImage.js";
-import { readGoPeImage } from "./GoPeImage.js";
 
 export {
   GoBinaryFormatFailure,

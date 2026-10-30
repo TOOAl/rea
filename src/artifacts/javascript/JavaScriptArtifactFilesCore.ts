@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { isAbsolute } from "node:path";
 import type { Readable } from "node:stream";
 
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
@@ -14,18 +13,15 @@ import {
   type ArtifactEntry,
   type ArtifactReader,
 } from "../ArtifactReader.js";
-import { streamChunkToBuffer } from "../StreamBytes.js";
 import { hashReadable } from "../ArtifactHash.js";
 import type { ArtifactOccurrence } from "../../domain/artifactGraph.js";
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import { AnalysisInputError } from "../../domain/analysisErrorCore.js";
-import { isJavaScriptSourcePath } from "../../domain/javascript/javascriptArtifactFiles.js";
 
 import type {
   JavaScriptArtifactFileKind,
   JavaScriptArtifactFile,
   JavaScriptArtifactContainer,
-  JavaScriptUnanalyzedArtifactFile,
   JavaScriptUnanalyzedArtifactLookup,
   JavaScriptArtifactFileSet,
 } from "../../domain/javascript/javascriptArtifactFiles.js";
@@ -388,4 +384,3 @@ const verifyEntryBytes = async (
     throw cause;
   }
 };
-

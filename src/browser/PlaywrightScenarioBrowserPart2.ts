@@ -12,7 +12,6 @@ import type {
 
 import type { BrowserScenario } from "../domain/browserScenario.js";
 import { AnalysisError } from "../domain/analysisErrorBase.js";
-import { isLiteralLoopbackHostname } from "../domain/browserObservation.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
 import { withPlaywrightExecutionBoundary } from "./PlaywrightExecutionBoundary.js";
 

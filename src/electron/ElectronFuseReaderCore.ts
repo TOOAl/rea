@@ -1,17 +1,11 @@
 import type { ResolvedElectronFuseFile } from "./ElectronFusePath.js";
-import { createHash } from "node:crypto";
 import { lstat } from "node:fs/promises";
 
-import {
-  hasMachoMagic,
-  readMachoImage,
-} from "../artifacts/apple/MachoLoadCommandReader.js";
+import { hasMachoMagic } from "../artifacts/apple/MachoLoadCommandReader.js";
 import type { ReadAt } from "../artifacts/apple/MachoLoadCommandReader.js";
 import {
-  electronFuseName,
   electronFuseState,
   ELECTRON_FUSE_SENTINEL,
-  type ElectronFuseSentinel,
   type ElectronFuseSlice,
 } from "../domain/electron/electronFuses.js";
 import {

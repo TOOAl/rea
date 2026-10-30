@@ -1,37 +1,13 @@
 // removed unused import: import { createHash } from "node:crypto";  // createHash unused
 import { constants as fsConstants } from "node:fs";
-import {
-  access,
-  copyFile,
-  lstat,
-  mkdtemp,
-  mkdir,
-  rmdir,
-  rm,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { access, lstat, mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import type {
-  ExecutionOptions,
-  ProviderAvailability,
-} from "../application/AnalysisProvider.js";
 // removed unused import: import { providerConfigurationRefusal } from "../domain/providerConfigurationRefusal.js";  // providerConfigurationRefusal unused
-import {
-  createAnalysisExecution,
-  type _AnalysisExecution,
-} from "../application/AnalysisProvider.js";
-import type {
-  AdbActivityStartPartialObservation,
-  AdbAcquiredFilePartialObservation,
-  AdbRequest,
-} from "../domain/adb/adbDeviceAnalysis.js";
+import type { _AnalysisExecution } from "../application/AnalysisProvider.js";
 // removed unused import: import { adbResultSchemas } from "../domain/adb/adbDeviceAnalysis.js";  // adbResultSchemas unused
 import {
-  AnalysisArtifactChangedError,
   AnalysisCancelledError,
-  AnalysisInputError,
   AnalysisOutputError,
   AnalysisProtocolError,
   AnalysisResourceConstraintError,
@@ -48,40 +24,20 @@ import {
   execFileOutputFailure,
 } from "../process/ExecFileOutput.js";
 import {
-  AdbConfigurationFailure,
   adbConfigurationAvailability,
-  inspectAdbClient,
   resolveAdbBinary,
   type AdbBinarySelection,
   type AdbClientIdentity,
 } from "./AdbConfiguration.js";
-import {
-  displayDevicePath,
-  parseAdbDevicesOutput,
-  parseGetpropOutput,
-  parsePackageListOutput,
-  parsePmPathOutput,
-} from "./AdbDeviceOutput.js";
 // removed unused import: import { adbHostFileName } from "./AdbHostFileName.js";  // adbHostFileName unused
 import {
-  ADB_DIRECTORY_BATCH_SCRIPT,
-  parseAdbDirectoryListing,
-} from "./AdbDirectoryListing.js";
-import {
-  parseAmStartOutput,
   parseBugreportCopiedPath,
-  parseDumpsysPackageOutput,
   parseFeatureListOutput,
   packageChangeFailureReason,
-  parsePackageChangeOutput,
   parseProcessListOutput,
-  parsePngDimensions,
   parseResolveActivityOutput,
-  parseServiceListOutput,
   parseSettingsGetOutput,
-  parseWindowFocusOutput,
   parseWmDensityOutput,
-  parseWmSizeOutput,
 } from "./AdbShellOutput.js";
 
 /** Stable identity for the ADB device-acquisition provider. */

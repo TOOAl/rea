@@ -1,22 +1,17 @@
 import { z } from "zod";
 import {
-  bytePatternFields,
   validateBytePattern,
   byteSearchResultSchema,
 } from "../domain/native/bytePattern.js";
 import { nativeLoadImageObservationSchema } from "../domain/native/nativeLoadImage.js";
 
-import {
-  type AnalysisInputError,
-  AnalysisOutputError,
-} from "../domain/analysisErrorCore.js";
+import { AnalysisOutputError } from "../domain/analysisErrorCore.js";
 import {
   functionBodySchema,
   functionBodyEntryAgrees,
 } from "../domain/hopperValues.js";
 import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import { err, ok, type Result } from "../domain/result.js";
-import { analysisInputErrorFromIssues } from "../domain/inputIssueProjection.js";
 
 /**
  * Direct inventory operations admitted by the Ghidra adapter. All are reads

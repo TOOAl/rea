@@ -6,14 +6,9 @@ import {
   type ArtifactOccurrence,
   type IntegrityContradiction,
 } from "./artifactGraph.js";
-import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
-import { canonicalJson } from "./comparisonSemantics.js";
 import {
-  artifactContradictionId,
   artifactEdgeId,
-  artifactGraphDigest,
   artifactIdForContent,
-  artifactManifestId,
   occurrenceIdForLocation,
 } from "./artifactIdentity.js";
 import { parseEvidence, type Evidence } from "./evidence.js";
@@ -23,6 +18,7 @@ import {
 } from "./artifactInspection.js";
 
 /** Complete or partially assembled inventory used by comparison workflows. */
+
 export interface InventorySet {
   readonly manifest: ArtifactInventoryResult["manifest"];
   readonly nodes: readonly ArtifactNode[];

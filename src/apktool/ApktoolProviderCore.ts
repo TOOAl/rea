@@ -1,76 +1,34 @@
-import { createHash, randomUUID } from "node:crypto";
-import { createWriteStream } from "node:fs";
-import {
-  access,
-  chmod,
-  mkdir,
-  mkdtemp,
-  opendir,
-  open,
-  rm,
-  stat,
-} from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { randomUUID } from "node:crypto";
+import { access, mkdir, opendir, open, stat } from "node:fs/promises";
 import { join } from "node:path";
-import { Transform, type TransformCallback } from "node:stream";
-import { pipeline } from "node:stream/promises";
-import type { FileHandle } from "node:fs/promises";
-
-import type {
-  ExecutionOptions,
-  ProviderAvailability,
-} from "../application/AnalysisProvider.js";
-import { providerConfigurationRefusal } from "../domain/providerConfigurationRefusal.js";
-import {
-  createAnalysisExecution,
-  type AnalysisExecution,
-} from "../application/AnalysisProvider.js";
-import {
-  androidLocaleQualifierSchema,
-  type ApktoolRequest,
-} from "../domain/apktool/apktoolResourceAnalysis.js";
+import { androidLocaleQualifierSchema } from "../domain/apktool/apktoolResourceAnalysis.js";
 import {
   AnalysisCapabilityUnavailableError,
   AnalysisCancelledError,
-  AnalysisInputError,
   AnalysisProtocolError,
   AnalysisResourceConstraintError,
   AnalysisTimeoutError,
   AnalysisUnsupportedTargetError,
 } from "../domain/analysisErrorCore.js";
 import type { AnalysisError } from "../domain/analysisErrorBase.js";
-import { analysisErrorWithCleanupFailure } from "../domain/analysisErrorCleanup.js";
 import { err, ok, type Result } from "../domain/result.js";
 import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import {
-  openRegularFile,
-  sameRegularFileState,
-} from "../filesystem/RegularFile.js";
 import {
   OwnedCommandFailure,
   runOwnedCommand,
 } from "../process/OwnedCommand.js";
 import type { ProviderProcessSupervisor } from "../process/ProviderProcess.js";
-import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import { WindowsBatchCommandError } from "../process/WindowsBatchCommand.js";
 import {
-  APKTOOL_COMMAND_ENV,
   ApktoolConfigurationFailure,
   type ApktoolProbeCleanup,
-  apktoolConfigurationAvailability,
   apktoolInvocation,
-  inspectApktoolClient,
   resolveApktoolCommand,
   type ApktoolCommandSelection,
-  type ApktoolClientIdentity,
 } from "./ApktoolConfiguration.js";
-import {
-  parseApktoolYml,
-  parseDecodedStrings,
-  parseManifestPackage,
-} from "./ApktoolDecodeOutput.js";
 
 /** Stable identity for the Apktool resource-decoding provider. */
+
 export const APKTOOL_PROVIDER_IDENTITY = {
   id: "apktool",
   name: "Apktool",

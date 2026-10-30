@@ -2,11 +2,7 @@ import { dirname, isAbsolute, join, resolve, win32 } from "node:path";
 import { fileURLToPath } from "node:url";
 import { lstatSync } from "node:fs";
 import { err, ok, type Result } from "../domain/result.js";
-import {
-  HermesClientPathError,
-  resolveHermesClientHome,
-} from "./HermesClientHome.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
+import { resolveHermesClientHome } from "./HermesClientHome.js";
 import { resolveWindowsClaudeDesktopLocation } from "./ClaudeDesktopConfigLocation.js";
 import type { MsixPackageView } from "./MsixPackageStorage.js";
 
@@ -442,4 +438,3 @@ const existingOpenCodeConfigPath = (context: ClientPathContext): string => {
     )
   );
 };
-

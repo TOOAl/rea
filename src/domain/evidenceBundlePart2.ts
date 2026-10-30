@@ -1,20 +1,9 @@
-import { z } from "zod";
 import canonicalize from "canonicalize";
 
 import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
 
-import {
-  evidenceSchema,
-  immutableEvidence,
-  parseEvidence,
-  providerSchema,
-  type Evidence,
-} from "./evidence.js";
-import {
-  residualUnknownSchema,
-  type ResidualUnknown,
-} from "./residualUnknown.js";
-import { freezeJsonSnapshot } from "./immutableJson.js";
+import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
+import type { ResidualUnknown } from "./residualUnknown.js";
 
 const [detectedSubjectSchema, rawSubjectSchema] =
   evidenceSchema.shape.subject.unwrap().options;

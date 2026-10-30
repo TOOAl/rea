@@ -1,8 +1,4 @@
-import {
-  digestProcessCommitment,
-  processScenarioOutputBudgetProjectionSchema,
-} from "./processScenario.js";
-import { hasCaptureTruncation } from "./processCaptureCoverage.js";
+import { digestProcessCommitment } from "./processScenario.js";
 
 import type {
   ProcessCaptureFinalization,

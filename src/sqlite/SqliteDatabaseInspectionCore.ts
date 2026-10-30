@@ -2,7 +2,6 @@ import { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
 import { jsonParts } from "../domain/jsonSerialization.js";
 import {
-  SQLITE_ROW_LIMIT_DEFAULT,
   sqliteSchemaScope,
   type InspectSqliteDatabaseInput,
   type SqliteDatabase,
@@ -399,4 +398,3 @@ const readSchema = (
   }
   return { schema, selectedTable };
 };
-

@@ -2,11 +2,9 @@ import {
   addMissingEvidenceFindings,
   readinessFinding as finding,
 } from "./reconstructionReadinessFindingHelpers.js";
-import {
-  readinessStageIdSchema,
-  type ReadinessFinding,
-  type ReadinessStageId,
-  type ReconstructionReadinessInput,
+import type {
+  ReadinessFinding,
+  ReconstructionReadinessInput,
 } from "./reconstructionReadinessSchemas.js";
 
 const capabilityFindings = (

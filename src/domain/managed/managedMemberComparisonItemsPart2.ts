@@ -1,5 +1,3 @@
-import canonicalize from "canonicalize";
-
 import type { ManagedMemberInspection } from "./managedArtifact.js";
 import type { ManagedMemberComparisonResult } from "./managedMemberComparison.js";
 import {
@@ -17,7 +15,6 @@ type UnmatchedComparison = Extract<
   MethodItem["match"],
   { readonly status: "unmatched" }
 >;
-
 
 // src/domain/managed/managedMemberComparisonItemsPart2.ts
 export const buildMethodItems = (

@@ -1,8 +1,4 @@
 import { z } from "zod";
-
-import type { BinaryArchitecture } from "../binaryTargetTypes.js";
-import { localPathStringSchema } from "../localPath.js";
-import { CANONICAL_BASE64_PATTERN } from "../stringPatterns.js";
 import { recordedNoteCoverageIssues } from "./recordedCrashNoteCoverage.js";
 
 export const recordedCrashPayloadSchema = recordedCrashObjectSchema.omit({

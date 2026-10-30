@@ -1,5 +1,3 @@
-import { posix } from "node:path";
-
 const SOURCE_CLASSIFICATIONS = [
   "source",
   "test",

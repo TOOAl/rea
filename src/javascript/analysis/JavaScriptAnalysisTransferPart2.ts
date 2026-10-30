@@ -1,17 +1,13 @@
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { open, stat } from "node:fs/promises";
+import { stat } from "node:fs/promises";
 import { z } from "zod";
-import { AnalysisResourceConstraintError } from "../../domain/analysisErrorCore.js";
 
 import type { JavaScriptArtifactFile } from "../../domain/javascript/javascriptArtifactFiles.js";
 import type { JavaScriptModuleSemanticIr } from "../../domain/javascript/javascriptModuleSemanticIr.js";
 import type { JavaScriptSemanticFileProjection } from "../../domain/javascript/javascriptSemanticFileProjection.js";
-import { digestSchema } from "../../domain/digests.js";
 import {
-  javaScriptWorkerGraphRecordSchema,
   javaScriptWorkerModuleHeaderSchema,
-  javaScriptWorkerModuleRecordSchema,
   javaScriptWorkerProjectionHeaderSchema,
 } from "./JavaScriptAnalysisWorkerSchemas.js";
 

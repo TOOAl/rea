@@ -1,5 +1,4 @@
 import { absenceClaimable, canonicalJson } from "../comparisonSemantics.js";
-import { digestCanonicalValue } from "../canonicalDigest.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { Evidence } from "../evidence.js";
 import type {
@@ -447,4 +446,3 @@ const itemEvidenceLinks = (
       ...nativeLinks(right, context.rightNativeEvidenceByDigest),
     ]),
   ].sort(compareUnicodeCodePoints);
-

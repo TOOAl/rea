@@ -1,37 +1,20 @@
-import type { ToolResultDelivery } from "./toolResult.js";
 import type { EvidenceMcpServer } from "./EvidenceMcpServer.js";
 import type {
   EvidenceWriter,
   UnknownRegistryPort,
 } from "../application/investigation/InvestigationRecordPort.js";
-import type {
-  CallToolResult,
-  ServerContext,
-} from "@modelcontextprotocol/server";
 
-import type { AnalysisOperationPort } from "../application/AnalysisProvider.js";
 import type { BinarySessionPort } from "../application/binary/BinarySessionPort.js";
-import { EnhancedTools } from "../application/EnhancedTools.js";
 import type { ValidatedEnhancedCall } from "../application/EnhancedToolTypes.js";
-import {
-  executeComposedWorkflow,
-  createWorkflowEvidence,
-  workflowSnapshotRecord,
-  recordWorkflowUnknowns,
-} from "../application/WorkflowEvidence.js";
 import { toolContract } from "../contracts/toolContracts.js";
-import type { ToolContract } from "../contracts/toolContractTypes.js";
 import type { AnalysisProfileCommitment } from "../domain/analysisProfile.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
-import type { JsonValue } from "../domain/jsonValue.js";
 import type { Logger } from "pino";
-import { mcpProgressReporter } from "./mcpProgress.js";
-import { logToolExecution } from "./toolLogging.js";
 import { toolRegistrationOptions } from "./toolRegistrationOptions.js";
-import { executeFunctionAnalysisEvidence } from "../application/FunctionAnalysisEvidence.js";
 import type { WithAdmittedAnalysis } from "./analysisAdmission.js";
 
 /** Optional session services used by enhanced tool registration. */
+
 export interface EnhancedToolRegistration {
   readonly withAdmittedAnalysis: WithAdmittedAnalysis;
   readonly logger: Logger;

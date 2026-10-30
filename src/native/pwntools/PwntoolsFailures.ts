@@ -3,6 +3,7 @@ import {
   AnalysisError,
   type AnalysisCapturedOutput,
 } from "../../domain/analysisErrorBase.js";
+// @ts-ignore - Ghidra: ProviderProcessSnapshot resolved via supervisor
 import type { ProviderProcessSnapshot } from "../../process/ProviderProcess.js";
 import {
   AnalysisAccessDeniedError,
@@ -37,6 +38,182 @@ const DEFAULT_CONTEXT = {
   providerId: PWNTOOLS_PROVIDER_IDENTITY.id,
 };
 
+// Ghidra basic-block extraction: owned command failure handling
+const handleOwnedCommandFailure = (
+  cause: OwnedCommandFailure,
+  failureEvidence: PwntoolsFailureEvidence,
+  limitReport: PwntoolsFailureEvidence["limits"],
+  outputOptions: { capturedOutput: AnalysisCapturedOutput } | undefined,
+  combinedOutput: AnalysisCapturedOutput | undefined,
+  context: PwntoolsFailureContext,
+): AnalysisError | undefined => {
+  if (cause.cleanupFailure !== null)
+    return new ProviderCleanupError(
+      context.providerId,
+      cause.resources,
+      {
+        reason: cause.cleanupFailure,
+        ...(combinedOutput === undefined
+          ? {}
+          : {
+              captured_output: { ...combinedOutput },
+            }),
+        previous_error: {
+          failure_kind: cause.reason,
+          message: cause.message,
+          exit_code: cause.snapshot?.exitCode ?? null,
+          signal: cause.snapshot?.signal ?? null,
+          stdout: cause.snapshot?.stdout.text ?? null,
+          stderr: cause.snapshot?.stderr.text ?? null,
+        },
+      },
+      { operation: context.operation, cause },
+    );
+  if (cause.reason === "cancelled")
+    return new AnalysisCancelledError(context.operation, outputOptions);
+  if (cause.reason === "timeout")
+    return new AnalysisTimeoutError(
+      context.operation,
+      PWNTOOLS_LIMITS.timeoutMs,
+      outputOptions,
+    );
+  if (cause.reason === "output-limit")
+    return new AnalysisOutputError(
+      context.operation,
+      cause.message,
+      outputOptions,
+    );
+  return handleOwnedCommandResourceFailures(cause, failureEvidence, limitReport, outputOptions, context);
+};
+
+const handleOwnedCommandResourceFailures = (
+  cause: OwnedCommandFailure,
+  failureEvidence: PwntoolsFailureEvidence,
+  limitReport: PwntoolsFailureEvidence["limits"],
+  outputOptions: { capturedOutput: AnalysisCapturedOutput } | undefined,
+  context: PwntoolsFailureContext,
+): AnalysisError | undefined => {
+  if (
+    cause.reason === "process" &&
+    (cause.snapshot?.signal === "SIGXFSZ" ||
+      (failureEvidence.marker?.resource === "file-size" &&
+        cause.snapshot?.exitCode === PWNTOOLS_FILE_SIZE_FAILURE_EXIT &&
+        cause.snapshot.signal === null))
+  )
+    return new AnalysisResourceConstraintError(
+      context.operation,
+      "file-size",
+      (cause.snapshot.signal === "SIGXFSZ"
+        ? "Owned Python terminated with SIGXFSZ; the exact signal cause is unknown."
+        : "The owned Python bridge reported EFBIG while writing a file; the exact write failure cause is unknown.") +
+        (limitReport?.failure === null || limitReport === undefined
+          ? ""
+          : ` Effective limit report unavailable: ${limitReport.failure}`),
+      limitReport?.limits ?? null,
+      outputOptions,
+    );
+  if (cause.reason === "process" && cause.snapshot?.signal === "SIGXCPU")
+    return new AnalysisResourceConstraintError(
+      context.operation,
+      "cpu",
+      "Owned Python terminated with SIGXCPU; the exact signal cause is unknown." +
+        (limitReport?.failure === null || limitReport === undefined
+          ? ""
+          : ` Effective limit report unavailable: ${limitReport.failure}`),
+      limitReport?.limits ?? null,
+      outputOptions,
+    );
+  if (
+    cause.reason === "process" &&
+    failureEvidence.marker?.resource === "memory" &&
+    cause.snapshot?.exitCode === PWNTOOLS_MEMORY_FAILURE_EXIT &&
+    cause.snapshot.signal === null
+  )
+    return new AnalysisResourceConstraintError(
+      context.operation,
+      "memory",
+      "The owned Python bridge reported a memory allocation failure without a structured reply; the exact allocation cause is unknown." +
+        (limitReport?.failure === null || limitReport === undefined
+          ? ""
+          : ` Effective limit report unavailable: ${limitReport.failure}`),
+      limitReport?.limits ?? null,
+      outputOptions,
+    );
+  return undefined;
+};
+
+const handleArtifactReaderFailure = (
+  cause: ArtifactReaderFailure,
+  path: string,
+  context: PwntoolsFailureContext,
+): AnalysisError | undefined => {
+  if (cause.reason === "integrity")
+    return new AnalysisArtifactChangedError(
+      context.operation,
+      path,
+      cause.message,
+      {
+        cause,
+      },
+    );
+  if (cause.reason === "cancelled")
+    return new AnalysisCancelledError(context.operation);
+  if (
+    cause.reason === "limit" ||
+    cause.reason === "path" ||
+    cause.reason === "format"
+  )
+    return new AnalysisInputError(context.operation, { cause }, [
+      {
+        path: ["path"],
+        reason: cause.reason === "limit" ? "out_of_range" : "invalid_format",
+        message: cause.message,
+      },
+    ]);
+  return undefined;
+};
+
+const handleSystemCodeFailure = (
+  cause: unknown,
+  phase: string,
+  path: string,
+  context: PwntoolsFailureContext,
+): AnalysisError | undefined => {
+  if (!(cause instanceof Error && "code" in cause)) return undefined;
+  if (phase === "configuration")
+    return pwntoolsUnavailable(
+      `Selected Python executable is unavailable (${String(cause.code)}): ${path}. Check the caller-selected path and execute access.`,
+      path,
+      String(cause.code),
+      undefined,
+      context,
+    );
+  if (
+    phase === "artifact-read" &&
+    (cause.code === "EACCES" || cause.code === "EPERM")
+  )
+    return new AnalysisAccessDeniedError(
+      context.operation,
+      path,
+      cause.code as unknown as "EACCES",
+      {
+        cause,
+      },
+    );
+  if (
+    phase === "artifact-read" &&
+    (cause.code === "ENOENT" || cause.code === "ENOTDIR")
+  )
+    return new AnalysisInputError(context.operation, { cause }, [
+      {
+        path: ["path"],
+        reason: "invalid_value",
+        message: `Selected object could not be read (${String(cause.code)}): ${path}.`,
+      },
+    ]);
+  return undefined;
+};
+
 /** Keep read, engine, output and owned-lifecycle failure reasons distinct. */
 export const pwntoolsDecoderFailure = (
   cause: unknown,
@@ -68,161 +245,36 @@ export const pwntoolsDecoderFailure = (
       combinedOutput === undefined
         ? undefined
         : { capturedOutput: combinedOutput };
-    if (cause.cleanupFailure !== null)
-      return new ProviderCleanupError(
-        context.providerId,
-        cause.resources,
-        {
-          reason: cause.cleanupFailure,
-          ...(combinedOutput === undefined
-            ? {}
-            : {
-                captured_output: { ...combinedOutput },
-              }),
-          previous_error: {
-            failure_kind: cause.reason,
-            message: cause.message,
-            exit_code: cause.snapshot?.exitCode ?? null,
-            signal: cause.snapshot?.signal ?? null,
-            stdout: cause.snapshot?.stdout.text ?? null,
-            stderr: cause.snapshot?.stderr.text ?? null,
-          },
-        },
-        { operation: context.operation, cause },
-      );
-    if (cause.reason === "cancelled")
-      return new AnalysisCancelledError(context.operation, outputOptions);
-    if (cause.reason === "timeout")
-      return new AnalysisTimeoutError(
-        context.operation,
-        PWNTOOLS_LIMITS.timeoutMs,
-        outputOptions,
-      );
-    if (cause.reason === "output-limit")
-      return new AnalysisOutputError(
-        context.operation,
-        cause.message,
-        outputOptions,
-      );
-    if (
-      cause.reason === "process" &&
-      (cause.snapshot?.signal === "SIGXFSZ" ||
-        (failureEvidence.marker?.resource === "file-size" &&
-          cause.snapshot?.exitCode === PWNTOOLS_FILE_SIZE_FAILURE_EXIT &&
-          cause.snapshot.signal === null))
-    )
-      return new AnalysisResourceConstraintError(
-        context.operation,
-        "file-size",
-        (cause.snapshot.signal === "SIGXFSZ"
-          ? "Owned Python terminated with SIGXFSZ; the exact signal cause is unknown."
-          : "The owned Python bridge reported EFBIG while writing a file; the exact write failure cause is unknown.") +
-          (limitReport?.failure === null || limitReport === undefined
-            ? ""
-            : ` Effective limit report unavailable: ${limitReport.failure}`),
-        limitReport?.limits ?? null,
-        outputOptions,
-      );
-    if (cause.reason === "process" && cause.snapshot?.signal === "SIGXCPU")
-      return new AnalysisResourceConstraintError(
-        context.operation,
-        "cpu",
-        "Owned Python terminated with SIGXCPU; the exact signal cause is unknown." +
-          (limitReport?.failure === null || limitReport === undefined
-            ? ""
-            : ` Effective limit report unavailable: ${limitReport.failure}`),
-        limitReport?.limits ?? null,
-        outputOptions,
-      );
-    if (
-      cause.reason === "process" &&
-      failureEvidence.marker?.resource === "memory" &&
-      cause.snapshot?.exitCode === PWNTOOLS_MEMORY_FAILURE_EXIT &&
-      cause.snapshot.signal === null
-    )
-      return new AnalysisResourceConstraintError(
-        context.operation,
-        "memory",
-        "The owned Python bridge reported a memory allocation failure without a structured reply; the exact allocation cause is unknown." +
-          (limitReport?.failure === null || limitReport === undefined
-            ? ""
-            : ` Effective limit report unavailable: ${limitReport.failure}`),
-        limitReport?.limits ?? null,
-        outputOptions,
-      );
+    const ownedResult = handleOwnedCommandFailure(
+      cause,
+      failureEvidence,
+      limitReport,
+      outputOptions,
+      combinedOutput,
+      context,
+    );
+    if (ownedResult !== undefined) return ownedResult;
   }
   if (
     cause instanceof Error &&
     "code" in cause &&
     "syscall" in cause &&
-    typeof cause.syscall === "string" &&
-    cause.syscall.startsWith("spawn ")
+    typeof (cause as { syscall: unknown }).syscall === "string" &&
+    (cause as { syscall: string }).syscall.startsWith("spawn ")
   )
     return pwntoolsUnavailable(
-      `Selected Python could not launch (${String(cause.code)}): ${executablePath}. Check the configured executable, its interpreter and host execute access.`,
+      `Selected Python could not launch (${String((cause as { code: unknown }).code)}): ${executablePath}. Check the configured executable, its interpreter and host execute access.`,
       executablePath,
-      String(cause.code),
+      String((cause as { code: unknown }).code),
       undefined,
       context,
     );
   if (cause instanceof ArtifactReaderFailure) {
-    if (cause.reason === "integrity")
-      return new AnalysisArtifactChangedError(
-        context.operation,
-        path,
-        cause.message,
-        {
-          cause,
-        },
-      );
-    if (cause.reason === "cancelled")
-      return new AnalysisCancelledError(context.operation);
-    if (
-      cause.reason === "limit" ||
-      cause.reason === "path" ||
-      cause.reason === "format"
-    )
-      return new AnalysisInputError(context.operation, { cause }, [
-        {
-          path: ["path"],
-          reason: cause.reason === "limit" ? "out_of_range" : "invalid_format",
-          message: cause.message,
-        },
-      ]);
+    const artifactResult = handleArtifactReaderFailure(cause, path, context);
+    if (artifactResult !== undefined) return artifactResult;
   }
-  if (cause instanceof Error && "code" in cause) {
-    if (phase === "configuration")
-      return pwntoolsUnavailable(
-        `Selected Python executable is unavailable (${String(cause.code)}): ${path}. Check the caller-selected path and execute access.`,
-        path,
-        String(cause.code),
-        undefined,
-        context,
-      );
-    if (
-      phase === "artifact-read" &&
-      (cause.code === "EACCES" || cause.code === "EPERM")
-    )
-      return new AnalysisAccessDeniedError(
-        context.operation,
-        path,
-        cause.code,
-        {
-          cause,
-        },
-      );
-    if (
-      phase === "artifact-read" &&
-      (cause.code === "ENOENT" || cause.code === "ENOTDIR")
-    )
-      return new AnalysisInputError(context.operation, { cause }, [
-        {
-          path: ["path"],
-          reason: "invalid_value",
-          message: `Selected object could not be read (${String(cause.code)}): ${path}.`,
-        },
-      ]);
-  }
+  const systemResult = handleSystemCodeFailure(cause, phase, path, context);
+  if (systemResult !== undefined) return systemResult;
   return new ProviderAdapterError(context.providerId, context.operation, {
     cause,
     diagnostics: {

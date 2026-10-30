@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-import { localPathStringSchema } from "../localPath.js";
-import { CANONICAL_BASE64_PATTERN } from "../stringPatterns.js";
-
 export const binaryLayoutSchema = binaryLayoutObjectSchema.superRefine(
   (value, context) => {
     const size = BigInt(value.artifact.bytes);

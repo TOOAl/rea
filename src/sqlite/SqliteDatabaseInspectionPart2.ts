@@ -1,12 +1,9 @@
 import { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
-import { jsonParts } from "../domain/jsonSerialization.js";
 import {
   SQLITE_ROW_LIMIT_DEFAULT,
-  sqliteSchemaScope,
   type InspectSqliteDatabaseInput,
   type SqliteDatabase,
-  type SqliteValue,
 } from "../domain/sqlite/sqliteDatabase.js";
 import {
   SQLITE_DATABASE_LIMITS,

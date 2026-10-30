@@ -6,17 +6,9 @@ import {
   recordedBrowserObservationEndpointSchema,
 } from "../browserObservation.js";
 import {
-  webPageInspectionSchema,
-  type WebPageInspection,
-} from "../browserObservationSchemas.js";
-import {
   classifyBrowserCompleteness,
   type BrowserCompleteness,
 } from "../browserCompleteness.js";
-import {
-  electronPageInspectionSchema,
-  type ElectronPageInspection,
-} from "./electronObservation.js";
 import {
   javascriptRuntimeObservationSchema,
   javascriptRuntimeKindSchema,
@@ -24,9 +16,7 @@ import {
   type JavaScriptRuntimeTargetLocation,
 } from "./javascriptRuntimeObservation.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
-import { parseEvidence, type Evidence } from "../evidence.js";
-import { parseActiveElectronCapture } from "./javascriptRuntimeReconciliationActive.js";
+import type { Evidence } from "../evidence.js";
 import {
   assertEvidenceIdentity,
   invalidInput,

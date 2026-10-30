@@ -1,4 +1,4 @@
-import { lstat, realpath } from "node:fs/promises";
+import { lstat } from "node:fs/promises";
 
 import { compareUnicodeCodePoints } from "../../domain/unicodeCodePointOrder.js";
 import { digestCanonicalValue } from "../../domain/canonicalDigest.js";
@@ -12,7 +12,6 @@ import {
   type ArtifactEntry,
   type ArtifactReader,
 } from "../ArtifactReader.js";
-import { abortIfNeeded } from "../ArtifactHash.js";
 import { DirectoryArtifactReader } from "../DirectoryArtifactReader.js";
 import { SafeOutputTree } from "../SafeOutputTree.js";
 import { SafeOutputTreeCreationFailure } from "../SafeOutputTreeCreationFailure.js";
@@ -23,7 +22,6 @@ import {
   artifactExtractionResultSchema,
   type ArtifactExtractionResult,
   type ArtifactGraphManifest,
-  type ArtifactNode,
   type ArtifactOccurrence,
   type IntegrityContradiction,
 } from "../../domain/artifactGraph.js";
@@ -32,13 +30,7 @@ import type {
   ArtifactResourceOwner,
   ArtifactResourceScope,
 } from "../ArtifactResourceScope.js";
-import {
-  isMachOFormat,
-  type BinaryTarget,
-} from "../../domain/binaryTargetTypes.js";
-import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
-import { scanArtifactInventoryInScope } from "../inventory/ArtifactInventory.js";
-import type { ArtifactIntegrityPolicyName } from "../../domain/artifactIntegrityPolicy.js";
+import { isMachOFormat } from "../../domain/binaryTargetTypes.js";
 
 /** Local extraction input with the output root chosen by the adapter. */
 

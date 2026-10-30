@@ -3,14 +3,8 @@ import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { Formatter, Help, z } from "incur";
 import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
-import { StringDecoder } from "node:string_decoder";
 
 import { createCatalogIdentity } from "./catalogIdentity.js";
-import {
-  compactPresentationForMcpInputSchemaProfile,
-  parseMcpInputSchemaProfile,
-} from "./config/mcpInputSchemaProfile.js";
-import { parseMcpOutputSchemaProfile } from "./config/mcpOutputSchemaProfile.js";
 import { PROMPT_CONTRACTS } from "./contracts/promptContracts.js";
 import { TOOL_CONTRACTS } from "./contracts/toolContracts.js";
 import { err, ok } from "./domain/result.js";
@@ -447,4 +441,3 @@ const parseOutputArguments = (
   }
   return { ok: true, format, fullOutput };
 };
-

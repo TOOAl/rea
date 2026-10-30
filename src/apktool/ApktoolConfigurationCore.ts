@@ -7,24 +7,10 @@ import { stat } from "node:fs/promises";
 import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import { ABORTED, waitForAbortable } from "../process/AbortablePromise.js";
 import { ProviderStartupDeadline } from "../process/ProviderDeadline.js";
-
-import { randomUUID } from "node:crypto";
-import {
-  OwnedCommandFailure,
-  runOwnedCommand,
-} from "../process/OwnedCommand.js";
-import type { ProviderProcessSupervisor } from "../process/ProviderProcess.js";
-import type { ProviderAvailability } from "../application/AnalysisProvider.js";
-import type { ProviderRejectionCode } from "../contracts/providerSelection.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import { gte, valid } from "semver";
-import {
-  isWindowsBatchFile,
-  windowsBatchCommand,
-  WindowsBatchCommandError,
-} from "../process/WindowsBatchCommand.js";
 
 /** Environment key selecting the caller's apktool launcher. */
+
 export const APKTOOL_COMMAND_ENV = "REA_APKTOOL_COMMAND";
 
 const VERSION_TIMEOUT_MS = 20_000;

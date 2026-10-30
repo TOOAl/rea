@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { providerSchema } from "../evidence.js";
 import { isSwiftMangledSymbolName } from "../swiftSymbolClassification.js";
 
 import {

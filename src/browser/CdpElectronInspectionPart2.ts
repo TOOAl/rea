@@ -1,15 +1,10 @@
 import { digestCanonicalValue } from "../domain/canonicalDigest.js";
 import type { ProgressReporter } from "../application/ProgressReporter.js";
-import type {
-  ElectronPageInspection,
-  InspectElectronPageInput,
-} from "../domain/javascript/electronObservation.js";
+import type { ElectronPageInspection } from "../domain/javascript/electronObservation.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
-import type { CdpConnection, CdpEvent } from "./CdpConnection.js";
-import type { CdpEndpointDiscovery, CdpEndpointTarget } from "./CdpEndpoint.js";
+import type { CdpEvent } from "./CdpConnection.js";
 import { CdpCaptureCompleteness } from "./CdpCaptureCompleteness.js";
 import {
-  delayWithCancellation,
   numberValue,
   recordValue,
   requiredRecord,
@@ -21,12 +16,6 @@ import {
   snapshotDocuments,
   walkFrameTrees,
 } from "./CdpCaptureDocuments.js";
-import {
-  ingestElectronScriptEvent,
-  type ElectronScriptDraft,
-} from "./CdpElectronScriptEvents.js";
-import { captureElectronScripts } from "./CdpElectronScripts.js";
-import { captureElectronWorkers } from "./CdpElectronWorkers.js";
 import { authorizedElectronFile } from "./ElectronFileScope.js";
 import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 

@@ -3,7 +3,6 @@ import {
   AnalysisArtifactChangedError,
   AnalysisCapabilityUnavailableError,
   AnalysisInputError,
-  AnalysisOutputError,
   AnalysisUnsupportedTargetError,
   AnalysisResourceConstraintError,
 } from "./analysisErrorCore.js";
@@ -13,7 +12,6 @@ import {
   ConfigurationError,
   NoBinaryOpenError,
 } from "./configurationErrors.js";
-import { BrowserObservationError } from "./browserObservationError.js";
 import {
   EvidenceFileError,
   EvidenceIntegrityError,
@@ -26,11 +24,9 @@ import {
   HopperStartError,
   HopperTimeoutError,
 } from "./hopperErrors.js";
-import { ProviderSelectionError } from "./providerSelectionError.js";
 import { UnknownRegistryError } from "./unknownRegistryError.js";
 import { providerRetryAction } from "./providerOperationHealth.js";
 import type { AnalysisError, AnalysisErrorTag } from "./analysisErrorBase.js";
-import type { AnalysisErrorProjection } from "./analysisErrorProjection.js";
 
 export const analysisErrorUserMessage = (error: AnalysisError): string => {
   if (error instanceof AnalysisSnapshotMismatchError) return error.message;

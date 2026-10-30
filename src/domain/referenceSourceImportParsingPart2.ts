@@ -3,7 +3,6 @@ import type {
   File,
   ImportExpression,
   Node,
-  StringLiteral,
 } from "@babel/types";
 import { traverseJavaScriptAst } from "./javascript/javascriptSemanticTraversal.js";
 import {
@@ -11,20 +10,15 @@ import {
   parserPluginsForPath,
 } from "./javascript/javascriptSourceParser.js";
 import { unshadowedReferenceSourceRequireCalls } from "./referenceSourceRequireBindings.js";
-import { isRelativeJavaScriptModuleSpecifier } from "./javascript/javascriptModuleSpecifier.js";
 import {
   isCallExpression,
-  isExportAllDeclaration,
   isExportNamedDeclaration,
   isIdentifier,
   isImport,
-  isImportDeclaration,
   isImportExpression,
   isMemberExpression,
   isStringLiteral,
-  isTSExternalModuleReference,
   isTSImportEqualsDeclaration,
-  isTSModuleDeclaration,
 } from "@babel/types";
 
 const isRequireCallee = (callee: Node | null | undefined): boolean => {

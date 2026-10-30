@@ -1,10 +1,8 @@
 import {
   ClientConfigurationShapeError,
   parseClientConfiguration,
-  serializeClientConfiguration,
   clientServerPath,
   legacyClientServerPath,
-  withClientServers,
   type ClientConfigurationDocument,
 } from "./ClientConfigurationDocument.js";
 import { copyFile, lstat, realpath, rm, rmdir } from "node:fs/promises";
@@ -13,19 +11,14 @@ import { homeDirectoryFromEnvironment } from "../config/homeDirectory.js";
 import { join } from "node:path";
 
 import writeFileAtomic from "write-file-atomic";
-import { z } from "zod";
 
 import { PRODUCT_IDENTITY } from "../identity.js";
 import {
-  isManagedSkillManifest,
   MANAGED_SKILL_FILES,
   readSkillFile,
   skillDestinations,
 } from "./SetupSkill.js";
-import { isOwnedClientRegistrationCommand } from "./ClientRegistrationIdentity.js";
-import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 import { dshDocument } from "./DshCordisPatch.js";
-import { resolveClientConfigTransactionPath } from "./ClientConfigPath.js";
 import {
   InvalidUtf8FileError,
   RegularFileCleanupFailure,
@@ -43,6 +36,7 @@ import {
   redirectedWriteBlocker,
   type MsixPackageView,
 } from "./MsixPackageStorage.js";
+
 export { isUninstallFailure } from "./UninstallFailure.js";
 
 interface ManagedPathStats {
@@ -431,4 +425,3 @@ const clientRegistrationRemoval = (
         : undefined,
   };
 };
-

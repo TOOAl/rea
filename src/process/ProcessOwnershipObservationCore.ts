@@ -1,25 +1,17 @@
-import { readFile } from "node:fs/promises";
-import { AnalysisCapabilityUnavailableError } from "../domain/analysisErrorCore.js";
-
 import { launcherIdentityFailure } from "./ProcessOwnershipIdentity.js";
 import { descendantsOf, liveProcesses } from "./ProcessOwnershipProcessTree.js";
-import { execFileOutput } from "./ExecFileOutput.js";
-import {
-  createDarwinProcessRunTokenReader,
-  type DarwinProcessReaderCompiler,
-} from "./DarwinProcessRunTokenReader.js";
 import { readProcessRunTokens } from "./ProcessRunTokenObservations.js";
 import type {
   OwnedProcessGroup,
   ProcessGroupObservation,
   ProcessLineageObservation,
   ProcessOwnershipHost,
-  ProcessIdentityObservation,
   ProcessOwnershipBaseline,
   ProcessTableEntry,
 } from "./ProcessOwnership.js";
 
 /** Observe multiple groups from one process snapshot and one token batch. */
+
 export const observeOwnedProcessGroups = async (
   runId: string,
   processGroupIds: readonly number[],

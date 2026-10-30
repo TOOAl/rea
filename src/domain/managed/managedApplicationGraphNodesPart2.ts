@@ -7,16 +7,11 @@ import type { ApplicationGraphEvidence } from "../javascript/javascriptApplicati
 import type { ApplicationNode } from "../javascript/javascriptApplicationGraphSchemas.js";
 import { managedSourceCoverage } from "./managedApplicationGraphCoverage.js";
 import type { Evidence } from "../evidence.js";
-import { managedTokenScopesMatch } from "./managedInspectionEvidence.js";
 import type {
   ManagedArtifactInspection,
   ManagedMemberInspection,
-  ManagedNativeBoundaryInspection,
 } from "./managedArtifact.js";
-import type {
-  GraphBuildState,
-  ParsedManagedGraphInput,
-} from "./managedApplicationGraph.js";
+import type { GraphBuildState } from "./managedApplicationGraph.js";
 type ManagedMethod = ManagedMemberInspection["methods"][number];
 
 // src/domain/managed/managedApplicationGraphNodesPart2.ts

@@ -1,23 +1,10 @@
-import { constants, type Stats } from "node:fs";
-import { createHash } from "node:crypto";
-import {
-  access,
-  lstat,
-  realpath,
-  stat,
-  type FileHandle,
-} from "node:fs/promises";
+import { lstat, stat, type FileHandle } from "node:fs/promises";
 import { extname } from "node:path";
 
 import { BinaryTargetError } from "../domain/configurationErrors.js";
-import {
-  openRegularFile,
-  sameRegularFileState,
-} from "../filesystem/RegularFile.js";
-import { AnalysisCancelledError } from "../domain/analysisErrorCore.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 
 // BinaryTargetResolverUtils.ts 436-693
+
 const resolveAppBundle = async (
   path: string,
 ): Promise<Result<ResolvedAppBundle, BinaryTargetError>> => {

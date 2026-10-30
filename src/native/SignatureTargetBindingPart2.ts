@@ -1,24 +1,17 @@
 import { createHash } from "node:crypto";
 import { constants, type BigIntStats } from "node:fs";
 import { lstat, open, type FileHandle } from "node:fs/promises";
-import { basename, join } from "node:path";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import { AnalysisError } from "../domain/analysisErrorBase.js";
 import {
-  AnalysisAccessDeniedError,
   AnalysisArtifactChangedError,
   AnalysisCancelledError,
-  AnalysisOutputError,
   AnalysisResourceConstraintError,
 } from "../domain/analysisErrorCore.js";
 import { ProviderAdapterError } from "../domain/providerAdapterError.js";
-import { ProviderCleanupError } from "../domain/providerCleanupError.js";
-import { analysisErrorWithCleanupFailure } from "../domain/analysisErrorCleanup.js";
 import { err, ok, type Result } from "../domain/result.js";
 import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
 import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
-import { PrivateRuntimeRoot } from "../process/PrivateRuntimeRoot.js";
-import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { NATIVE_MACOS_PROVIDER_IDENTITY } from "./NativeMacOSProviderMetadata.js";
 
 /** Binding of commands to the selected executable's registered content/version. */

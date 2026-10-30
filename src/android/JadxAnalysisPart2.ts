@@ -3,14 +3,11 @@ import type { AndroidRequest } from "../domain/android/androidAnalysis.js";
 import { androidResultSchemas } from "../domain/android/androidAnalysis.js";
 import {
   AnalysisCapabilityUnavailableError,
-  AnalysisInputError,
   AnalysisOutputError,
 } from "../domain/analysisErrorCore.js";
 import type { JsonValue } from "../domain/jsonValue.js";
 import {
-  jadxAppSchema,
   jadxClassPageSchema,
-  jadxClassSchema,
   jadxLoadSchema,
   jadxMethodSchema,
   jadxXrefsSchema,

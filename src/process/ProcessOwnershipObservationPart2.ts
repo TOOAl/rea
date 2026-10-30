@@ -1,8 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { AnalysisCapabilityUnavailableError } from "../domain/analysisErrorCore.js";
 
-import { launcherIdentityFailure } from "./ProcessOwnershipIdentity.js";
-import { descendantsOf, liveProcesses } from "./ProcessOwnershipProcessTree.js";
+import { liveProcesses } from "./ProcessOwnershipProcessTree.js";
 import { execFileOutput } from "./ExecFileOutput.js";
 import {
   createDarwinProcessRunTokenReader,
@@ -10,13 +9,10 @@ import {
 } from "./DarwinProcessRunTokenReader.js";
 import { readProcessRunTokens } from "./ProcessRunTokenObservations.js";
 import type {
-  OwnedProcessGroup,
   ProcessGroupObservation,
-  ProcessLineageObservation,
   ProcessOwnershipHost,
   ProcessIdentityObservation,
   ProcessOwnershipBaseline,
-  ProcessTableEntry,
 } from "./ProcessOwnership.js";
 
 // src/process/ProcessOwnershipObservationPart2.ts

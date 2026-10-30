@@ -6,18 +6,10 @@ import { z } from "zod";
 import { artifactComparisonResultSchema } from "./artifactComparison.js";
 import { artifactInventoryResultSchema } from "./artifactGraph.js";
 import { uniqueSorted } from "./canonicalOrdering.js";
-import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
-import {
-  comparisonSourceEvidenceSides,
-  assertComparisonFindingLinks,
-} from "./comparisonSourceEvidence.js";
+import { assertComparisonFindingLinks } from "./comparisonSourceEvidence.js";
 import { parseEvidence, type Evidence } from "./evidence.js";
-import { parseEvidenceBundle } from "./evidenceBundle.js";
 import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
-import {
-  PROCESS_PROVIDER,
-  isProcessEvidenceProvider,
-} from "./process/processEvidenceProvider.js";
+import { isProcessEvidenceProvider } from "./process/processEvidenceProvider.js";
 import { functionDossierSchema } from "./hopperValues.js";
 import { assessFunctionCallCoverage } from "./functionCallCoverage.js";
 import {
@@ -27,19 +19,11 @@ import {
 } from "./process/processComparison.js";
 import { parseProcessCapture } from "./process/processCaptureParsing.js";
 import {
-  reconstructionClaimResultSchema,
   reconstructionSpecificationSchema,
-  reconstructionVerificationResultSchema,
   type ReconstructionClaim as Claim,
   type ReconstructionClaimResult as ClaimResult,
   type ReconstructionObservedStatus as ObservedStatus,
-  type ReconstructionVerificationResult,
 } from "./reconstructionVerificationSchemas.js";
-import {
-  reconstructionClaimUnknowns,
-  reconstructionProbes,
-  reconstructionUnknownHeads,
-} from "./reconstructionUnknowns.js";
 import type { ResidualUnknown } from "./residualUnknown.js";
 
 const readValidatedSourceFacts = (

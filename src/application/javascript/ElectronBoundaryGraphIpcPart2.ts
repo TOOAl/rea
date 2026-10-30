@@ -12,7 +12,6 @@ import {
   staticInferenceEvidence,
 } from "./JavaScriptArtifactGraphEvidence.js";
 import {
-  collectElectronIpcRecords,
   unambiguousElectronIpcPairings,
   type ElectronIpcRecord,
 } from "./ElectronBoundaryAnalysis.js";
@@ -20,7 +19,6 @@ import {
   addElectronAstEdge,
   addElectronInferenceEdge,
   electronFindingSourceNode,
-  electronObservationIdentity,
   electronRangeContains,
   electronRangeKey,
 } from "./ElectronBoundaryGraphContext.js";

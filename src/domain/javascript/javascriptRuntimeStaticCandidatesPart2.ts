@@ -1,12 +1,10 @@
 import { posix, win32 } from "node:path";
 
 import type { ApplicationNode } from "./javascriptApplicationGraphSchemas.js";
-import type { JavaScriptApplicationGraph } from "./javascriptApplicationGraph.js";
 import {
   logicalPathEscapesRoot,
   normalizeJoinedLogicalPath,
 } from "../artifactIdentity.js";
-import { uniqueSorted } from "../canonicalOrdering.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { ParsedStaticLayer } from "./javascriptRuntimeReconciliationParsing.js";
 import type { RuntimeReconciliationEntity } from "./javascriptRuntimeReconciliationRuntime.js";

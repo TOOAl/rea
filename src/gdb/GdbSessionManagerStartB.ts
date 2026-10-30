@@ -1,36 +1,24 @@
 import { randomUUID } from "node:crypto";
-import { constants as fsConstants } from "node:fs";
-import { isUtf8 } from "node:buffer";
-import { readFile, readlink, realpath, stat } from "node:fs/promises";
 
 import {
   AnalysisCapabilityUnavailableError,
   AnalysisCancelledError,
-  AnalysisInputError,
   AnalysisResourceConstraintError,
   AnalysisTimeoutError,
 } from "../domain/analysisErrorCore.js";
-import {
-  AnalysisError,
-  type AnalysisErrorOptions,
-} from "../domain/analysisErrorBase.js";
-import { createEvidence, type Evidence } from "../domain/evidence.js";
+import { AnalysisError } from "../domain/analysisErrorBase.js";
+import { createEvidence } from "../domain/evidence.js";
 import { err, ok, type Result } from "../domain/result.js";
 import {
   ProviderProcessSupervisor,
-  spawnOwnedProviderProcess,
   type OwnedProviderProcessSpawnOptions,
   type SpawnedOwnedProviderProcess,
 } from "../process/ProviderProcess.js";
 import {
-  closeOwnedDebuggerSessions,
   stopOwnedDebuggerProcess,
-  type OwnedDebuggerDetachResult,
   type OwnedInferiorIdentity,
-  type ProcessStartTimeReader,
   verifyOwnedInferiorsEnded,
 } from "../process/ownedDebuggerSession.js";
-import { parseLinuxProcessStartTime } from "../process/ProcessOwnershipObservation.js";
 
 const STARTUP_TIMEOUT_MS = 10_000;
 import type { GdbSession } from "./GdbSessionManagerCore.js";

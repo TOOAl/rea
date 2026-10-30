@@ -1,9 +1,7 @@
 import type { ArtifactInventorySnapshot } from "../../domain/artifactInventorySnapshot.js";
 import type { JsonValue } from "../../domain/jsonValue.js";
-import { compositeKey } from "../../domain/unicodeCodePointOrder.js";
 import {
   completeApplicationCoverage,
-  partialApplicationCoverage,
   truncatedApplicationCoverage,
   type ApplicationGraphEvidence,
 } from "../../domain/javascript/javascriptApplicationEvidenceSchemas.js";
@@ -18,17 +16,14 @@ import { HTML_INLINE_SCRIPT_LOCATION_LIMIT } from "../../domain/javascript/htmlA
 import type {
   JavaScriptArtifactFile,
   JavaScriptArtifactFileSet,
-  JavaScriptArtifactFileKind,
 } from "../../domain/javascript/javascriptArtifactFiles.js";
 import { JavaScriptArtifactGraphAccumulator } from "./JavaScriptArtifactGraphAccumulator.js";
 import {
   artifactObservationEvidence,
   astObservationEvidence,
   staticInferenceEvidence,
-  unavailableAstEvidence,
 } from "./JavaScriptArtifactGraphEvidence.js";
 import {
-  artifactPathResolutionProperties,
   resolveArtifactPathByContext,
   type ArtifactPathResolution,
 } from "./JavaScriptArtifactPathResolution.js";

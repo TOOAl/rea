@@ -1,0 +1,634 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "import",
+    "unicorn",
+    "oxc"
+  ],
+  "rules": {
+    "complexity": [
+      "warn",
+      35
+    ],
+    "max-depth": [
+      "warn",
+      8
+    ],
+    "max-lines": [
+      "warn",
+      {
+        "max": 500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "max-lines-per-function": [
+      "warn",
+      {
+        "max": 200,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "max-params": [
+      "warn",
+      8
+    ],
+    "no-var": "warn",
+    "no-var-requires": "error",
+    "typescript/no-import-type-side-effects": "error",
+    "no-unused-vars": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "scripts/electron-active-hook*.cjs",
+        "tests/conformance/readiness/electron/*.js",
+        "website/public/examples/notes-electron/*.js"
+      ],
+      "rules": {
+        "no-var-requires": "off"
+      }
+    },
+    {
+      "files": [
+        "tests/**/*.ts",
+        "src/**/*.test.ts",
+        "src/**/*.fixture.ts"
+      ],
+      "rules": {
+        "max-lines": "off",
+        "max-lines-per-function": [
+          "error",
+          {
+            "max": 150,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/application/**/*.test.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/server/**",
+                  "**/cli.*",
+                  "**/main.*"
+                ],
+                "message": "Service tests must use application ports rather than CLI or MCP entrypoints."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "tests/composition/**/*.test.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/server/**",
+                  "**/cli.*",
+                  "**/main.*",
+                  "node:child_process",
+                  "node:net",
+                  "node:http",
+                  "node:https",
+                  "ws",
+                  "playwright"
+                ],
+                "message": "Composition tests may wire provider-neutral sessions but must not invoke CLI, MCP, process, network, or browser boundaries."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "scripts/ci/workflow-run.mjs",
+        "scripts/verify-package-setup.mjs",
+        "src/application/SetupHost.ts",
+        "src/application/SetupInstallFailure.ts",
+        "src/artifacts/SafeOutputTree.ts",
+        "src/contracts/fridaRemoteAddress.ts",
+        "src/contracts/native/nativeToolContracts.ts",
+        "src/domain/adb/adbDeviceAnalysis.ts",
+        "src/domain/apple/dylibResolution.ts",
+        "src/domain/javascript/electronActiveObservation.ts",
+        "src/domain/localPath.ts",
+        "src/domain/native/nativeCallObservation.ts",
+        "src/domain/portableSchemaPatterns.test.ts",
+        "src/domain/process/processScenario.ts",
+        "src/domain/recordedTransportUrl.ts",
+        "src/domain/reverseEngineering.ts",
+        "src/evm/EvmBytecodeCarrier.ts",
+        "src/flutter/FlutterPayloadScan.ts",
+        "src/ida/IdaJsonDiagnostic.ts",
+        "src/application/SetupHostPart2.ts",
+        "src/application/SetupHostCore.ts"
+      ],
+      "rules": {
+        "no-control-regex": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/lib/browser-capture-metadata-budget-e2e.mjs",
+        "scripts/lib/browser-scenario-service-worker-setup-e2e.mjs",
+        "scripts/lib/browser-scenario-service-workers-e2e.mjs",
+        "scripts/lib/real-ghidra-address-boundaries.mjs",
+        "scripts/lib/real-ghidra-file-offsets.mjs",
+        "scripts/verify-native-ui.mjs",
+        "scripts/verify-real-ghidra-windows.mjs",
+        "scripts/verify-real-ghidra.mjs",
+        "scripts/verify-real-hopper-deadlines.mjs",
+        "src/application/javascript/JavaScriptArtifactReconstruction.ts",
+        "src/artifacts/readStableArtifact.ts",
+        "src/cliBrowserScenarioCommands.ts",
+        "src/process/HopperLease.ts",
+        "src/process/LinuxResourceLimits.ts",
+        "src/sqlite/SqliteDatabaseSnapshot.ts",
+        "tests/acceptance/providers/hopperStartupRecovery.test.ts",
+        "tests/boundary/filesystem/directAnalysisSnapshotReplay.test.ts",
+        "tests/boundary/mcp/ghidraInventoryMcp.test.ts",
+        "tests/boundary/mcp/officialTools.test.ts",
+        "tests/boundary/process/processCaptureLifecycle.test.ts",
+        "tests/boundary/process/windowsOutputCapture.test.ts"
+      ],
+      "rules": {
+        "no-unsafe-finally": "off"
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/brains/reasoning.ts",
+        "arena-code/src/harness2/context7.ts",
+        "arena-code/src/harness2/harness.ts",
+        "arena-code/src/visual/imageGuard.ts",
+        "arena-code/src/visual/inspectionTeam.ts",
+        "arena-code/src/rag/embedder.ts",
+        "scripts/verify-solidity-metadata.mjs",
+        "src/cutter/CutterBridgeClient.ts"
+      ],
+      "rules": {
+        "no-useless-escape": "off",
+        "no-misleading-character-class": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/verify-real-kuna.mjs",
+        "src/flutter/FlutterBuildProvider.ts",
+        "src/frida/FridaInstrumentationManager.ts",
+        "arena-code/src/rag/embedder.ts",
+        "src/cutter/CutterBridgeClient.ts",
+        "arena-code/src/visual/imageGuard.ts"
+      ],
+      "rules": {
+        "unicorn/no-useless-spread": "off",
+        "unicorn/no-new-array": "off"
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/loop/structuralContext.ts",
+        "src/domain/process/processTraceSpecification.ts",
+        "src/inspector/V8InspectorCaptureProjection.ts",
+        "src/sqlite/SqliteDatabaseProvider.ts",
+        "src/kuna/KunaProjectCache.ts",
+        "src/kuna/KunaTargetCommands.ts",
+        "src/domain/javascript/electronWrappedCallPaths.ts"
+      ],
+      "rules": {
+        "no-useless-escape": "off",
+        "unicorn/no-new-array": "off",
+        "unicorn/no-useless-spread": "off",
+        "no-unused-expressions": "off"
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/tools/bash.ts",
+        "arena-code/src/harness2/proposer.ts",
+        "arena-code/src/sandbox/index.ts",
+        "arena-code/src/tools/browser.ts",
+        "arena-code/src/harness2/composer.ts",
+        "arena-code/src/harness2/fleetProbe.ts",
+        "arena-code/src/visual/externalEngines.ts"
+      ],
+      "rules": {
+        "no-useless-escape": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "tests/boundary/providers/hopper/hopperClient.externalExit.test.ts",
+        "tests/boundary/mcp/evidenceImportCancellation.test.ts",
+        "tests/boundary/pcap/pcapProvider.test.ts",
+        "src/ghidra/GhidraLoadImageValues.test.ts"
+      ],
+      "rules": {
+        "no-this-alias": "off",
+        "no-unused-expressions": "off"
+      }
+    },
+    {
+      "files": [
+        "experiments/**/*.mjs"
+      ],
+      "rules": {
+        "no-constant-condition": "off"
+      }
+    },
+    {
+      "files": [
+        "src/gdb/GdbSessionManager.ts",
+        "src/adb/AdbProvider.ts",
+        "src/domain/native/nativeAotPe.ts",
+        "src/domain/javascript/javascriptSemanticMemberMutations.ts",
+        "src/process/capture/ProcessCaptureLifecycle.ts",
+        "src/cutter/CutterBridgeClient.ts"
+      ],
+      "rules": {
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 150,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ],
+        "complexity": [
+          "warn",
+          30
+        ],
+        "max-depth": [
+          "warn",
+          6
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/adb/AdbProvider.ts",
+        "src/artifacts/apple/NibArchive.ts",
+        "src/application/SetupSkill.ts",
+        "src/ghidra/GhidraLoadImageValues.ts",
+        "src/pcap/PcapProvider.ts",
+        "src/windows/WindowsOwnedProcess.ts",
+        "src/application/javascript/JavaScriptArtifactAnalysis.ts"
+      ],
+      "rules": {
+        "max-params": [
+          "warn",
+          6
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/domain/javascript/javascriptSemanticMemberMutations.ts",
+        "src/domain/javascript/javascriptSymbolicBindings.ts",
+        "src/domain/native/nativeAotPe.ts",
+        "src/application/javascript/JavaScriptArtifactPathResolution.ts",
+        "src/domain/javascript/javascriptSemanticAnalysis.ts",
+        "src/domain/javascript/javascriptSemanticGraph.ts"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          30
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/process/capture/ProcessCaptureLifecycle.ts"
+      ],
+      "rules": {
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 250,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "arena-code/**",
+        "scripts/**",
+        "experiments/**"
+      ],
+      "rules": {
+        "max-lines": "off",
+        "max-lines-per-function": "off"
+      }
+    },
+    {
+      "files": [
+        "src/**"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          35
+        ],
+        "max-depth": [
+          "warn",
+          8
+        ],
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 200,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ],
+        "max-params": [
+          "warn",
+          8
+        ],
+        "no-unused-vars": "warn",
+        "no-unused-private-class-members": "warn",
+        "import/namespace": "off"
+      }
+    },
+    {
+      "files": [
+        "src/**/*Core.ts",
+        "src/**/*Part2.ts",
+        "src/**/*Part3.ts"
+      ],
+      "rules": {
+        "no-unused-vars": "off",
+        "no-unused-private-class-members": "off"
+      }
+    },
+    {
+      "files": [
+        "src/adb/AdbProviderHelpers.ts",
+        "src/application/BinaryTargetResolverCore.ts",
+        "src/application/BinaryTargetResolverUtils.ts",
+        "src/application/CapabilityInventoryTypes.ts",
+        "src/application/ClientConfigurationDocumentServers.ts",
+        "src/application/JsonInputFileUtils.ts",
+        "src/application/LinuxHopperUtils.ts",
+        "src/application/javascript/JavaScriptArtifactPathResolutionPackage.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/domain/native/nativeAotPeTable.ts",
+        "src/gdb/GdbSessionManagerExecute.ts",
+        "src/gdb/GdbSessionManagerHelpers.ts",
+        "src/gdb/GdbSessionManagerLifecycleA.ts",
+        "src/gdb/GdbSessionManagerLifecycleB.ts",
+        "src/gdb/GdbSessionManagerStartA.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts"
+      ],
+      "rules": {
+        "no-unused-vars": "off",
+        "no-unused-private-class-members": "off"
+      }
+    },
+    {
+      "files": [
+        "src/application/ClientConfigurationDocumentTomlCore.ts",
+        "src/application/ClientRegistrationStatusCore.ts",
+        "src/application/DirectAnalysisCore.ts",
+        "src/application/HermesConfigurationYamlCore.ts",
+        "src/application/MipsElfSharedLoad.ts",
+        "src/application/WebModuleTraceService.ts",
+        "src/application/javascript/JavaScriptArtifactAnalysisPart2.ts",
+        "src/application/javascript/JavaScriptArtifactReconstruction.ts",
+        "src/application/javascript/JavaScriptSemanticGraphBuilderPart2.ts",
+        "src/application/native/NativeUiActionTraceCore.ts",
+        "src/application/native/NativeValueTrace.ts",
+        "src/application/wasm/WasmInterfaceComparisonService.ts",
+        "src/artifacts/MachOSliceArtifactReader.ts",
+        "src/browser/history/HistoricalCaptureDecoder.ts",
+        "src/cli/adbCommands.ts",
+        "src/cli/coreNativeCommandsCore.ts",
+        "src/cli/reverseEngineeringCommandsPart2.ts",
+        "src/domain/analysisErrorPresentationCore.ts",
+        "src/domain/javascript/javascriptBundledRequireOriginCore.ts",
+        "src/domain/javascript/javascriptElectronMemberWrites.ts",
+        "src/domain/javascript/javascriptSemanticAnalysisReceivers.ts",
+        "src/domain/javascript/javascriptSemanticReturnedReferences.ts",
+        "src/domain/native/binaryLayoutPart2.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/domain/native/nativeInvestigationGraphPart2.ts",
+        "src/domain/process/processCaptureValidationCore.ts",
+        "src/flutter/ElfBuildId.ts",
+        "src/gdb/GdbSessionManagerCore.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/ghidra/GhidraLoadImageValuesPart2.ts",
+        "src/hopper/HopperMachOImage.ts",
+        "src/javascript/analysis/JavaScriptAnalysisTransferPart2.ts",
+        "src/javascript/recovery/WakaruProvider.ts",
+        "src/jeb/JebMcpConnectionPart2.ts",
+        "src/native/AppleDispatchCoverage.ts",
+        "src/native/pe/PeResourceParser.ts",
+        "src/native/pwndbg/PwndbgCoreContext.ts",
+        "src/process/OwnedCommand.ts",
+        "src/process/ProcessOwnershipObservationPart2.ts",
+        "src/sqlite/SqliteDatabaseInspectionCore.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts",
+        "src/wasm/WabtInterface.ts",
+        "src/wasm/WabtWat.ts"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          60
+        ],
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 400,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/artifacts/apple/InterfaceBuilderDecodeBudget.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/application/SetupCore.ts",
+        "src/browser/history/CaptureFailures.ts",
+        "src/ghidra/GhidraMipsProfileCore.ts",
+        "src/pcap/PcapOutput.ts",
+        "src/ghidra/GhidraAnalysisProfile.ts",
+        "src/pcap/PcapCommand.ts",
+        "src/evm/EvmoleFailures.ts",
+        "src/domain/native/recordedCrashPart2.ts",
+        "src/go/GoMachoImage.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/browser/PngVisualDiffCore.ts",
+        "src/domain/javascript/javascriptSemanticRequireOriginCore.ts",
+        "src/application/CapabilityInventoryRegistryCore.ts",
+        "src/application/MipsElfMetadata.ts",
+        "src/domain/native/nativeAotPeImagePart2.ts",
+        "src/process/DarwinProcessRunTokenReaderPart2.ts",
+        "src/gdb/GdbSessionManagerProtocolPart2.ts",
+        "src/cli/fridaCommands.ts",
+        "src/cli/adbCommands.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts",
+        "src/server/registerFridaTools.ts",
+        "src/native/AppleObjcDispatchFacets.ts"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          80
+        ],
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 350,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "arena-code/src/agents/transports/openaiCompat.ts",
+        "arena-code/src/brains/council.ts",
+        "arena-code/src/brains/visual.ts",
+        "arena-code/src/cli.ts",
+        "arena-code/src/config/resolve.ts",
+        "arena-code/src/fleet/cli.ts",
+        "arena-code/src/harness2/depth.ts",
+        "arena-code/src/harness2/engine.ts",
+        "arena-code/src/harness2/evolve.ts",
+        "arena-code/src/loop/queryLoop.ts",
+        "arena-code/src/providers/arena.ts",
+        "arena-code/src/providers/ollama.ts"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          180
+        ],
+        "max-lines-per-function": "off",
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "src/cli/adbCommands.ts",
+        "src/domain/native/nativeAotPeParser.ts",
+        "src/gdb/GdbSessionManagerStartB.ts",
+        "src/wasm/WabtArtifactProviderInspect.ts"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          70
+        ],
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 650,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ],
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "experiments/analysis-efficiency/measure.mjs",
+        "scripts/fetch_samsung.mjs",
+        "scripts/lib/clean-linux-hopper-runtime.mjs",
+        "scripts/validate-vocab-contract.mjs",
+        "scripts/verify/apple/dispatch.mjs",
+        "tests/conformance/ghidra/mips-relocatable-checks.mjs",
+        "tests/fixtures/go/image.ts",
+        "website/public/assets/dino-demo.js"
+      ],
+      "rules": {
+        "complexity": [
+          "warn",
+          60
+        ],
+        "max-lines-per-function": [
+          "warn",
+          {
+            "max": 400,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ],
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": [
+        "**"
+      ],
+      "rules": {
+        "unicorn/no-new-array": "off",
+        "unicorn/prefer-string-starts-ends-with": "off",
+        "unicorn/no-thenable": "off",
+        "unicorn/prefer-set-size": "off",
+        "unicorn/no-useless-fallback-in-spread": "off",
+        "unicorn/no-useless-spread": "off",
+        "no-ex-assign": "off",
+        "no-unsafe-optional-chaining": "off",
+        "require-yield": "off",
+        "import/namespace": "off",
+        "no-unused-private-class-members": "off"
+      }
+    },
+    {
+      "files": [
+        "src/domain/native/nativeAotPeParser.ts"
+      ],
+      "rules": {
+        "max-lines": "off"
+      }
+    }
+  ],
+  "env": {
+    "node": true,
+    "es2023": true
+  },
+  "ignorePatterns": [
+    "dist",
+    "build",
+    "node_modules",
+    "docs/api",
+    "coverage",
+    ".turbo",
+    ".cache",
+    ".codex",
+    ".devin",
+    ".factory",
+    "third_party"
+  ]
+}

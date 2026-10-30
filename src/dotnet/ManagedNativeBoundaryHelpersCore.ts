@@ -1,12 +1,6 @@
-import {
-  admitManagedProjection,
-  managedDecodeBudget,
-} from "./ManagedDecodeBudget.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
-import {
-  managedNativeBoundaryInspectionSchema,
-  type ManagedNativeBoundaryInspection,
-  type ManagedParseIssue,
+import type {
+  ManagedNativeBoundaryInspection,
+  ManagedParseIssue,
 } from "../domain/managed/managedArtifact.js";
 import type { ManagedMetadataLayout } from "./ManagedMetadataLayout.js";
 import {
@@ -16,14 +10,6 @@ import {
   metadataToken,
   readMetadataString,
 } from "./ManagedMetadataHeaps.js";
-import { managedTableRowCounts } from "./ManagedMetadataInventory.js";
-import type { ManagedMetadataInventory } from "./ManagedMetadataInventory.js";
-import {
-  managedCli32BitRequirement,
-  managedCliIsMixedClrNative,
-  type ManagedCliHeader,
-  type ManagedPeLayout,
-} from "./ManagedPeReader.js";
 import { readManagedValue } from "./ManagedReaderFailure.js";
 
 type ModuleRef = ManagedNativeBoundaryInspection["module_refs"][number];

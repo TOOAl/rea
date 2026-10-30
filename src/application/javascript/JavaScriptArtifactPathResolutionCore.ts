@@ -1,10 +1,6 @@
 // removed unused import: import { isBuiltin } from "node:module";  // isBuiltin unused
 // removed unused import: import { posix } from "node:path";  // posix unused
 
-import {
-  normalizeJoinedLogicalPath,
-  logicalPathEscapesRoot,
-} from "../../domain/artifactIdentity.js";
 import type {
   JavaScriptArtifactFile,
   JavaScriptUnanalyzedArtifactLookup,
@@ -12,16 +8,9 @@ import type {
 import {
   admitsCanonicalPathSyntax,
   hasScheme,
-  htmlUrlText,
   looksExternal,
-  percentDecodeUrlPath,
   stripQueryAndFragment,
 } from "../../domain/artifactPathSyntax.js";
-import {
-  classifyPackageImportSpecifier,
-  classifyPackageImportTargetString,
-  lookupExactPackageImport,
-} from "../../domain/javascript/javascriptPackageImportAliases.js";
 import {
   typescriptEmittedSourceCandidates,
   type TypeScriptEmittedSourceCandidate,

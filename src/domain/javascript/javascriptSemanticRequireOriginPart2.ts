@@ -1,5 +1,4 @@
 import * as t from "@babel/types";
-import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
 
 import { BUILTIN_RESOURCE_METHODS } from "./javascriptBuiltinResourceMethods.js";
 import type { JavaScriptModuleOrigin } from "./javascriptSemanticIr.js";
@@ -7,19 +6,13 @@ import {
   resolveSemanticBindingState,
   isUnmodifiedCommonJsWrapperBinding,
   semanticResolutionBlocked,
-  semanticStableInitializer,
   type JavaScriptSemanticAnalysisState,
 } from "./javascriptSemanticState.js";
-import {
-  semanticStaticPropertyKey,
-  unwrapJavaScriptExpression,
-} from "./javascriptAstValues.js";
-import { semanticPropertyPathKeyMatches } from "./javascriptSemanticPropertyPaths.js";
 import { stringValue } from "./javascriptStaticAnalysisHelpers.js";
 import { semanticTopLevelEffectFollowsCapture } from "./javascriptSemanticMutationInitializers.js";
-import { createSemanticModuleInterop } from "./javascriptModuleInterop.js";
 
 // src/domain/javascript/javascriptSemanticRequireOriginPart2.ts
+
 export const semanticRequireOrigin = (
   node: t.Node | null | undefined,
   state: JavaScriptSemanticAnalysisState,

@@ -10,19 +10,14 @@ import {
 import {
   AnalysisAccessDeniedError,
   AnalysisArtifactChangedError,
-  AnalysisCancelledError,
   AnalysisCapabilityUnavailableError,
   AnalysisUnsupportedTargetError,
   AnalysisInputError,
   AnalysisOutputError,
-  AnalysisTimeoutError,
   AnalysisResourceConstraintError,
 } from "./analysisErrorCore.js";
 import { ArtifactOperationError } from "./artifactOperationError.js";
-import {
-  BinaryTargetError,
-  ConfigurationError,
-} from "./configurationErrors.js";
+import { BinaryTargetError } from "./configurationErrors.js";
 import { BrowserObservationError } from "./browserObservationError.js";
 import {
   EvidenceFileError,
@@ -30,11 +25,9 @@ import {
   EvidenceReferenceError,
 } from "./evidenceErrors.js";
 import {
-  HopperCancelledError,
   HopperProcessError,
   HopperRemoteError,
   HopperStartError,
-  HopperTimeoutError,
 } from "./hopperErrors.js";
 import { ProviderAdapterError } from "./providerAdapterError.js";
 import { ProviderSelectionError } from "./providerSelectionError.js";
@@ -435,4 +428,3 @@ const providerErrorDetails = (
     };
   return undefined;
 };
-

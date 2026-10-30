@@ -5,36 +5,18 @@ import { ArtifactResourceScope } from "../artifacts/ArtifactResourceScope.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
 import { ConfigurationError } from "../domain/configurationErrors.js";
 // removed unused import: // removed unused import: import { PRODUCT_IDENTITY } from "../identity.js";  // PRODUCT_IDENTITY unused  // PRODUCT_IDENTITY unused
+import { systemDoctorHost, type DoctorHost } from "./Doctor.js";
 import {
-  invokingPackageRunner,
-  packageRunnerRegistrationCommand,
-  type PackageRunner,
-} from "./ClientRegistrationIdentity.js";
-import {
-  SUPPORTED_NODE_VERSION_PROSE,
-  supportsNodeVersion,
-} from "../domain/runtimeVersion.js";
-import { runDoctor, systemDoctorHost, type DoctorHost } from "./Doctor.js";
-import {
-  installLinuxHopper,
   LinuxHopperTemporaryCleanupOwner,
-  readLinuxDistribution,
   systemLinuxHopperInstallHost,
   type LinuxHopperInstallHost,
 } from "./LinuxHopper.js";
-import { installMacHopper, systemMacHopperInstallHost } from "./MacHopper.js";
-import { linuxHopperReleaseCacheDirectory } from "./LinuxHopperPublisher.js";
+import { systemMacHopperInstallHost } from "./MacHopper.js";
 import {
   clientEvidencePaths,
   supportedClients,
   type SetupClient,
 } from "./SupportedClients.js";
-import {
-  skillDestinations,
-  canonicalSkillNeedsInstall,
-  installCanonicalSkill,
-  validateCanonicalSkillDirectories,
-} from "./SetupSkill.js";
 import {
   clientConfigurationAligned,
   ClientConfigurationCleanupRollbackFailure,
@@ -42,27 +24,14 @@ import {
   inspectClientConfiguration,
 } from "./SetupClientConfiguration.js";
 import { failedConfigurationMessage } from "./SetupClients.js";
-import { setupInstallFailure } from "./SetupInstallFailure.js";
 import {
   RegularFileCleanupFailure,
   retryRegularFileCleanup,
 } from "./RegularFileRead.js";
-import {
-  explicitSetupRegistrationEnvironment,
-  providerRegistrationEnvironment,
-} from "./SetupRegistrationEnvironment.js";
-import {
-  msixPackagesDirectory,
-  packagePrivateLauncherBlocker,
-} from "./MsixPackageStorage.js";
 import type {
-  SetupHost,
   SetupInitialState,
   SetupProviderEnvironment,
 } from "./SetupTypes.js";
-import type { DoctorScope } from "./Doctor.js";
-import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
-import { analysisProviderSelectorSchema } from "../contracts/providerSelection.js";
 
 /** Resolve the executable and arguments used in a managed MCP registration. */
 

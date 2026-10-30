@@ -1,31 +1,8 @@
 import * as t from "@babel/types";
-import {
-  failedJavaScriptSemanticIr,
-  type JavaScriptSemanticIr,
-  type JavaScriptSemanticReference,
-} from "./javascriptSemanticIr.js";
-import {
-  collectSemanticModuleLink,
-  collectSemanticReferences,
-  collectSemanticReferencesSteps,
-  immutableSemanticBindings,
-  immutableSemanticScopes,
-} from "./javascriptSemanticProjection.js";
 import type { JavaScriptSemanticAnalysisState } from "./javascriptSemanticState.js";
-import {
-  completeSemanticSteps,
-  traverseJavaScriptAstSteps,
-} from "./javascriptSemanticTraversal.js";
+import { traverseJavaScriptAstSteps } from "./javascriptSemanticTraversal.js";
 import { semanticRequireOrigin } from "./javascriptSemanticRequireOrigin.js";
 import { semanticBundledRequireOrigin } from "./javascriptBundledRequireOrigin.js";
-import { collectSemanticMemberMutationsSteps } from "./javascriptSemanticMemberMutations.js";
-import { indexJavaScriptAmbientWritesSteps } from "./javascriptSemanticAmbientWrites.js";
-import { hasUncertainTypeOnlyModuleSideEffect } from "./javascriptModuleDeclaration.js";
-import {
-  collectSemanticReturns,
-  resolveSemanticModuleCallables,
-} from "./javascriptSemanticReturns.js";
-import { collectJavaScriptDerivedSemanticsSteps } from "./javascriptSemanticDerivedAnalysis.js";
 import { evaluateSemanticProvenance } from "./javascriptSemanticValues.js";
 import {
   collectJavaScriptIdentityWritesSteps,
@@ -33,24 +10,7 @@ import {
   electronMemberPath,
   ELECTRON_MODULE,
 } from "./javascriptElectronMemberWrites.js";
-import { semanticCoverage } from "./javascriptSemanticCoverage.js";
-import {
-  parseJavaScriptSource,
-  type ParsedJavaScriptSource,
-} from "./javascriptSourceParser.js";
 import { createSemanticModuleInterop } from "./javascriptModuleInterop.js";
-import { indexCommonJsExportReceiversSteps } from "./javascriptCommonJsExportReceivers.js";
-import type { JavaScriptModuleResolutionMode } from "./javascriptModuleResolutionMode.js";
-import {
-  createState,
-  collectDefinitionsSteps,
-} from "./javascriptSemanticAnalysisDefinitions.js";
-import {
-  classifyDefinitionReceiversSteps,
-  type JavaScriptReceiverFacts,
-  type JavaScriptReceiverIndex,
-  type JavaScriptOpenReceiverFact,
-} from "./javascriptSemanticAnalysisReceivers.js";
 import { SemanticPropertyPathCoverage } from "./javascriptSemanticPropertyPaths.js";
 import { semanticStableInitializer } from "./javascriptSemanticState.js";
 

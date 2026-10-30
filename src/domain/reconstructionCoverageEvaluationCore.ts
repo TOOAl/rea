@@ -4,10 +4,7 @@ import type {
   ReconstructionVerifierContract,
   ParsedReconstructionCoverage,
 } from "./reconstructionCoverage.js";
-import {
-  packageProofHasComparableEvidence,
-  verifierHasComparableEvidence,
-} from "./reconstructionCoverageEvidence.js";
+import { verifierHasComparableEvidence } from "./reconstructionCoverageEvidence.js";
 import {
   compareOffsetDateTimeInstants,
   offsetDateTimeInstantFromEpochMilliseconds,

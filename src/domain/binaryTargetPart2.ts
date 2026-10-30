@@ -1,25 +1,15 @@
 import type {
   BinaryArchitecture,
-  ElfFamilyMetadata,
   HeaderArchitecture,
-  MipsElfMetadata,
   PeCodeViewRecord,
-  RiscvElfMetadata,
   PowerPcElfMetadata,
-  UniversalMachOSlice,
 } from "./binaryTargetTypes.js";
 import { err, ok, type Result } from "./result.js";
-import { readElfFixedHeader } from "./elfFixedHeader.js";
-import { observeMzWindowsHeader, parseDosMzHeader } from "./dosMz.js";
-import { decodePeMachine } from "./peMachine.js";
-import {
-  classifyFatContainerIdentity,
-  readFatContainerHeader,
-} from "./apple/machoContainer.js";
 
 /** Format and architecture facts recovered from an executable header. */
 
 // src/domain/binaryTargetPart2.ts
+
 export const parsePeCodeViewFromBuffer = (
   fileBytes: Buffer,
   peOffset: number,

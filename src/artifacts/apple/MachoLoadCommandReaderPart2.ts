@@ -1,15 +1,8 @@
 import type {
   MachoDependency,
-  MachoImageFacts,
   MachoSlice,
 } from "../../domain/apple/dylibResolution.js";
 import { machoCpuSubtypeBase } from "../../domain/apple/machoCpuIdentity.js";
-import {
-  classifyFatContainerIdentity,
-  readFatContainerHeader,
-  validateFatSliceIdentity,
-  type FatSliceDeclaration,
-} from "../../domain/apple/machoContainer.js";
 
 /** Read `length` bytes at `offset`; shorter results mean end of file. */
 export type ReadAt = (offset: number, length: number) => Promise<Uint8Array>;

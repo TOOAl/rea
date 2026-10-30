@@ -1,5 +1,4 @@
 import { uniqueSorted } from "../canonicalOrdering.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import { absenceClaimable } from "../comparisonSemantics.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
 

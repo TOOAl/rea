@@ -3,7 +3,6 @@ import type {
   MachoImageFacts,
   MachoSlice,
 } from "../../domain/apple/dylibResolution.js";
-import { machoCpuSubtypeBase } from "../../domain/apple/machoCpuIdentity.js";
 import {
   classifyFatContainerIdentity,
   readFatContainerHeader,
@@ -429,4 +428,3 @@ const decodeCommand = (
   if (name !== undefined)
     slice.dependencies.push(decodeDependency(name, body, index));
 };
-

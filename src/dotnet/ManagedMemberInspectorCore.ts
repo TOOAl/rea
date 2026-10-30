@@ -1,47 +1,17 @@
-import {
-  admitManagedProjection,
-  managedDecodeBudget,
-} from "./ManagedDecodeBudget.js";
+import { admitManagedProjection } from "./ManagedDecodeBudget.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import {
   managedMemberInspectionSchema,
   type ManagedMemberInspection,
   type ManagedParseIssue,
 } from "../domain/managed/managedArtifact.js";
-import {
-  readManagedPeLayout,
-  type ManagedPeLayout,
-} from "./ManagedPeReader.js";
+import type { ManagedPeLayout } from "./ManagedPeReader.js";
 import {
   readManagedResourceDirectory,
-  managedTableRowCounts,
   readManagedMetadataInventory,
 } from "./ManagedMetadataInventory.js";
 import { readManagedMetadataLayout } from "./ManagedMetadataLayout.js";
-import {
-  appendManagedParseIssues,
-  ManagedReaderFailure,
-  uniqueManagedParseIssues,
-} from "./ManagedReaderFailure.js";
-import {
-  parseTypes,
-  typeRanges,
-  type TypeRange,
-} from "./ManagedMemberInspectorCore.js";
-import { edgeTargets } from "./ManagedMethodSpecs.js";
-import { managedTypeNameDigests } from "./ManagedTypeNameDigests.js";
-import { typeNameLookup } from "./ManagedTypeNames.js";
-import { managedTypeReferences } from "./ManagedTypeReferences.js";
-import { parseUserStrings } from "./ManagedUserStrings.js";
 import { readTypeMemberListFacts } from "./ManagedTypeMemberLists.js";
-import {
-  edges,
-  parseExportedTypes,
-  parseFields,
-  parseMemberRefs,
-  parseMethods,
-  type SelectedTypeTokens,
-} from "./ManagedMemberRows.js";
 
 const unavailable = (
   target: BinaryTarget,

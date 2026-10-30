@@ -1,12 +1,6 @@
-import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-
-import { execFileBoundedOutput } from "../process/ExecFileBoundedOutput.js";
-import { execFileOutput } from "../process/ExecFileOutput.js";
-import { downloadHopperPackage } from "./HopperDownload.js";
-import { hashStableFile } from "../filesystem/StableFileHash.js";
-import { err, type Result } from "../domain/result.js";
+import type { Result } from "../domain/result.js";
 import {
   HOPPER_RELEASES_URL,
   HOPPER_PUBLIC_KEY_URL,
@@ -17,10 +11,8 @@ import {
   type LinuxPackageFamily,
 } from "./HopperReleaseFeed.js";
 import {
-  LinuxHopperPublisher,
   retryLinuxHopperPublisherCleanup,
   type VerifiedLinuxHopperPackage,
-  type VerifiedLinuxHopperLauncher,
 } from "./LinuxHopperPublisher.js";
 
 export type { LinuxPackageFamily } from "./HopperReleaseFeed.js";

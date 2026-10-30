@@ -1,13 +1,7 @@
 import type { ElectronApplication, Page } from "playwright-core";
 import { z } from "zod";
 
-import type { ExecutionOptions } from "../application/AnalysisProvider.js";
 import { BrowserObservationError } from "../domain/browserObservationError.js";
-import {
-  electronActiveTimelineEventSchema,
-  type ElectronActiveObservationInput,
-  type ElectronActiveObservationResult,
-} from "../domain/javascript/electronActiveObservation.js";
 
 const actionWindowIndex = (action: ElectronAction): number | null => {
   switch (action.kind) {

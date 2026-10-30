@@ -1,18 +1,9 @@
-import {
-  canonicalExportShapeValue,
-  digestExportShapeValue,
-} from "./javascriptExportShapeComparisonIdentity.js";
+import { digestExportShapeValue } from "./javascriptExportShapeComparisonIdentity.js";
 import type {
   JavaScriptExportShapeComparisonChange,
   JavaScriptExportShapeComparisonResult,
-  JavaScriptExportShapePropertyInventory,
 } from "./javascriptExportShapeComparisonSchemas.js";
-import { uniqueSorted } from "../canonicalOrdering.js";
-import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
-import type {
-  SelectedJavaScriptExport,
-  RetainedJavaScriptExportShapes,
-} from "./javascriptExportShapeSelection.js";
+import type { RetainedJavaScriptExportShapes } from "./javascriptExportShapeSelection.js";
 
 type Primitive = string | number | boolean | null;
 type Shape = RetainedJavaScriptExportShapes["shapes"][number];

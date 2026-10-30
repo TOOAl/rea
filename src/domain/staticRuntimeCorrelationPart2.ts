@@ -5,24 +5,15 @@ import { z } from "zod";
 
 import { artifactComparisonResultSchema } from "./artifactComparison.js";
 import { uniqueSorted } from "./canonicalOrdering.js";
-import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
 import {
   comparisonSourceEvidenceIds,
   assertComparisonFindingLinks,
 } from "./comparisonSourceEvidence.js";
-import { evidenceSchema, parseEvidence, type Evidence } from "./evidence.js";
+import { parseEvidence, type Evidence } from "./evidence.js";
 import { functionComparisonResultSchema } from "./functionComparisonSchemas.js";
-import {
-  PROCESS_PROVIDER,
-  isProcessEvidenceProvider,
-} from "./process/processEvidenceProvider.js";
+import { isProcessEvidenceProvider } from "./process/processEvidenceProvider.js";
 import type { JsonValue } from "./jsonValue.js";
-import {
-  comparisonStatusSchema,
-  processCaptureComparisonSchema,
-} from "./process/processComparison.js";
-import { PROCESS_COMPARISON_DIMENSIONS } from "./process/processComparison.js";
-import { prefixedDigestSchema } from "./../domain/digests.js";
+import { processCaptureComparisonSchema } from "./process/processComparison.js";
 
 const correlate = (
   mapping: Mapping,

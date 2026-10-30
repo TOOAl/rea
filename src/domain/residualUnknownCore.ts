@@ -1,11 +1,6 @@
 import { createHash } from "node:crypto";
 
-import canonicalize from "canonicalize";
 import { z } from "zod";
-import {
-  compareUnicodeCodePoints,
-  compositeKey,
-} from "./unicodeCodePointOrder.js";
 import { prefixedDigestSchema } from "./../domain/digests.js";
 import { functionComparisonDimensionNameSchema } from "./functionComparisonSchemas.js";
 

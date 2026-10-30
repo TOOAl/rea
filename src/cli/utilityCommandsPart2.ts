@@ -1,6 +1,5 @@
 import { z } from "incur";
 
-import type { DirectAnalysis } from "../composition/directAnalysis.js";
 import type { ReferenceSourcePolicy } from "../domain/referenceSourcePolicy.js";
 import { createHistoricalSourceSummary } from "../domain/referenceSourceSummary.js";
 import { ArtifactReaderFailure } from "../artifacts/ArtifactReader.js";
@@ -11,17 +10,12 @@ import type { AnalysisCleanupObservation } from "../domain/analysisErrorBase.js"
 import { parseConfig } from "../config/parseConfig.js";
 import { projectAnalysisError } from "../domain/analysisErrorProjection.js";
 import { AnalysisInputError } from "../domain/analysisErrorCore.js";
-import { projectInputIssues } from "../domain/inputIssueProjection.js";
-import { safeParseJson } from "../domain/safeJson.js";
-import { nativeUiScenarioInputSchema } from "../domain/native/nativeUiObservation.js";
 import { PRODUCT_IDENTITY } from "../identity.js";
 import { logCliCommand } from "../cliLogging.js";
 import { CLI_COMMANDS } from "../cliCommandNames.js";
-import { swiftSymbolsSchema } from "../contracts/native/nativeToolContracts.js";
 import type { Logger } from "pino";
 import { isReferenceSourceImportCliFailure } from "./referenceSourceImportStatus.js";
 import type { CliInstance } from "./types.js";
-import { registerNativeCallCommands } from "./nativeCallCommands.js";
 
 const registerReferenceSourceCommand = (
   cli: CliInstance,

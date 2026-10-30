@@ -1,29 +1,15 @@
 import { classifyClientRegistrationCommand } from "./ClientRegistrationIdentity.js";
+import type { LinuxPackageFamily } from "./LinuxHopper.js";
+import type { SetupAction, SetupClientState, SetupHost } from "./SetupTypes.js";
 import {
-  linuxHopperInstallDisclosure,
-  type LinuxPackageFamily,
-} from "./LinuxHopper.js";
-import type { SkillDestination } from "./SetupSkill.js";
-import { macHopperInstallDisclosure } from "./MacHopper.js";
-import { macHopperUserApplicationPath } from "./MacHopperPaths.js";
-import type {
-  ClientConfigurationInspection,
-  SetupAction,
-  SetupClientState,
-  SetupHost,
-  SetupProviderEnvironment,
-} from "./SetupTypes.js";
-import {
-  appDataRedirection,
   registrationPersistenceDetail,
   type SetupClient,
 } from "./SupportedClients.js";
-import { redirectedWriteBlocker } from "./MsixPackageStorage.js";
 import type { DoctorReport } from "./Doctor.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
 import { CURRENT_ENTRYPOINT_PATH } from "../process/CurrentEntrypointPath.js";
 
 /** Read-only setup facts shared by client selection and preflight. */
+
 export interface SetupDiscovery {
   readonly initialDoctor: Awaited<ReturnType<SetupHost["doctor"]>>;
   readonly installHopper: boolean;

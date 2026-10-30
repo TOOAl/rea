@@ -11,8 +11,6 @@ import {
   type WebCaptureDiff,
   type WebCaptureDimension,
 } from "./webCaptureDiffSchemas.js";
-import type { WebMcpDiscovery } from "./webMcpDiscovery.js";
-import { fingerprintWebCaptureFrames } from "./webCaptureFrameComparison.js";
 
 type Dimension = WebCaptureDimension;
 type Change = WebCaptureChange;
@@ -365,4 +363,3 @@ const networkInventoryComplete = (
   sections.every(
     (section) => inspection.completeness.dropped_events[section] === 0,
   );
-

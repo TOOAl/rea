@@ -4,14 +4,10 @@ import {
   compareUnicodeCodePoints,
   compositeKey,
 } from "../unicodeCodePointOrder.js";
-import type { ApplicationNode } from "./javascriptApplicationGraphSchemas.js";
-import type { HistoricalSourceGraph } from "../referenceSourceGraph.js";
-import {
-  SOURCE_TO_BUNDLE_SIGNAL_WEIGHTS,
-  type SourceToBundleCandidate,
-  type SourceToBundleSignal,
+import type {
+  SourceToBundleCandidate,
+  SourceToBundleSignal,
 } from "./sourceToBundleComparisonSchemas.js";
-import { isDigest } from "../digests.js";
 
 const candidateSignals = (
   source: SourceFile,

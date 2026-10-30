@@ -1,12 +1,6 @@
 import { createHash } from "node:crypto";
 import { constants } from "node:fs";
-import {
-  mkdir,
-  open,
-  readdir,
-  realpath,
-  type FileHandle,
-} from "node:fs/promises";
+import { mkdir, open, realpath, type FileHandle } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join } from "node:path";
 import type { Readable } from "node:stream";
 import { OwnedFileHandle } from "../filesystem/OwnedFileHandle.js";
@@ -14,7 +8,6 @@ import { streamChunkToBuffer } from "./StreamBytes.js";
 
 import {
   ArtifactPathRegistry,
-  destinationCaseCollisionMessage,
   normalizeArtifactPath,
 } from "./ArtifactPaths.js";
 import { absoluteCallerPath } from "../filesystem/callerPath.js";
@@ -509,4 +502,3 @@ export class SafeOutputTree {
     }
   }
 }
-

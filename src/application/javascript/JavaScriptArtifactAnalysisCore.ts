@@ -1,12 +1,6 @@
-import { moduleResolutionModeForJavaScriptReference } from "../../domain/javascript/javascriptModuleResolutionMode.js";
 import { setImmediate } from "node:timers/promises";
-
-import { analyzeParsedJavaScriptStaticSourceSteps } from "../../domain/javascript/javascriptStaticAnalysis.js";
-import { analyzeParsedJavaScriptSemanticsSteps } from "../../domain/javascript/javascriptSemanticAnalysis.js";
 import type { JavaScriptSemanticIr } from "../../domain/javascript/javascriptSemanticIr.js";
 import { projectJavaScriptModuleSemantics } from "../../domain/javascript/javascriptModuleSemanticIr.js";
-import { parseJavaScriptSource } from "../../domain/javascript/javascriptSourceParser.js";
-import { failedJavaScriptStaticAnalysis } from "../../domain/javascript/javascriptStaticAnalysisHelpers.js";
 import type {
   JavaScriptArtifactFile,
   JavaScriptArtifactFileSet,
@@ -17,22 +11,10 @@ import type {
   JavaScriptModuleSemanticIr,
 } from "./JavaScriptArtifactAnalysisTypes.js";
 import { completeJavaScriptAnalysisSteps } from "./JavaScriptAnalysisControl.js";
-import type { JavaScriptSourceAnalysisPort } from "../../domain/javascript/javascriptSourceAnalysis.js";
-import type { JavaScriptSemanticGraphProjection } from "./JavaScriptSemanticGraphBuilder.js";
-import { AnalysisError } from "../../domain/analysisErrorBase.js";
-import { projectAnalysisError } from "../../domain/analysisErrorProjection.js";
 import {
-  AnalysisCancelledError,
-  AnalysisResourceConstraintError,
-  AnalysisTimeoutError,
-} from "../../domain/analysisErrorCore.js";
-import {
-  classifyOutsideAnalysisScope,
   addSourceMap,
   emptyArtifactAnalysis,
-  addStructuredObservations,
   parseHtmlScripts,
-  findingCount,
   finalizeArtifactAnalysis,
   type MutableArtifactAnalysis,
 } from "./JavaScriptArtifactAnalysisHelpers.js";

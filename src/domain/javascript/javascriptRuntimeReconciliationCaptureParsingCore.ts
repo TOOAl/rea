@@ -1,27 +1,15 @@
-import { z } from "zod";
-
-import {
-  browserAllowedOriginsSchema,
-  browserEndpointSchema,
-  recordedBrowserObservationEndpointSchema,
-} from "../browserObservation.js";
 import {
   webPageInspectionSchema,
   type WebPageInspection,
 } from "../browserObservationSchemas.js";
-import {
-  classifyBrowserCompleteness,
-  type BrowserCompleteness,
-} from "../browserCompleteness.js";
+import type { BrowserCompleteness } from "../browserCompleteness.js";
 import {
   electronPageInspectionSchema,
   type ElectronPageInspection,
 } from "./electronObservation.js";
 import {
-  javascriptRuntimeObservationSchema,
   javascriptRuntimeKindSchema,
   type JavaScriptRuntimeObservation,
-  type JavaScriptRuntimeTargetLocation,
 } from "./javascriptRuntimeObservation.js";
 import { digestCanonicalValue } from "../canonicalDigest.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";

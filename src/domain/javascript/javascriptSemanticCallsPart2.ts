@@ -1,16 +1,12 @@
 import * as t from "@babel/types";
 
 import type {
-  JavaScriptSemanticArgumentFlow,
   JavaScriptSemanticCallable,
-  JavaScriptSemanticCallResultFlow,
   JavaScriptSemanticCallReturnFlow,
   JavaScriptSemanticCallSite,
-  JavaScriptSemanticClosureCapture,
   JavaScriptSemanticFrontier,
 } from "./javascriptSemanticIr.js";
 import { semanticReferenceRole } from "./javascriptSemanticProjection.js";
-import { createSemanticCallableStack } from "./javascriptSemanticCallableStack.js";
 import { semanticStaticPropertyKey } from "./javascriptAstValues.js";
 import {
   resolveSemanticBindingState,
@@ -18,14 +14,8 @@ import {
   type JavaScriptSemanticAnalysisState,
   type JavaScriptSemanticBindingState,
 } from "./javascriptSemanticState.js";
-import {
-  type LocalCallableResolution,
-  parameterBindings,
-  resolveLocalCallables,
-} from "./javascriptSemanticCallResolution.js";
-import { traverseJavaScriptAst } from "./javascriptSemanticTraversal.js";
+import { parameterBindings } from "./javascriptSemanticCallResolution.js";
 import { range } from "./javascriptStaticAnalysisHelpers.js";
-import { assignedSemanticResultBindings } from "./javascriptSemanticDataEffectHelpers.js";
 
 /** Local call, flow, capture, and unsupported-frontier facts. */
 

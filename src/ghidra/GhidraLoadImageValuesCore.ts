@@ -7,10 +7,7 @@ import {
 } from "../domain/native/nativeLoadImage.js";
 import { parseDosMzHeader, type DosMzHeader } from "../domain/dosMz.js";
 import type { JsonValue } from "../domain/jsonValue.js";
-import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
-import { validateDosComLength } from "../domain/dosCom.js";
 import { err, ok, type Result } from "../domain/result.js";
-import { ghidraRawBinaryLanguage } from "./GhidraRawBinaryLanguage.js";
 
 const sha256 = (bytes: Buffer): string =>
   createHash("sha256").update(bytes).digest("hex");

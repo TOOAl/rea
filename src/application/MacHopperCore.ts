@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import {
   access,
@@ -13,15 +12,11 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 
-import { z } from "zod";
 import { homeDirectoryFromEnvironment } from "../config/homeDirectory.js";
 import { HOPPER_PUBLISHER } from "../domain/hopperPublisher.js";
 import { macDeveloperIdRequirement } from "../process/MacCodeSignature.js";
 import { macHopperUserApplicationPath } from "./MacHopperPaths.js";
-import {
-  downloadHopperPackage,
-  HOPPER_DOWNLOAD_BYTES,
-} from "./HopperDownload.js";
+import { downloadHopperPackage } from "./HopperDownload.js";
 import type { HopperInstallFailureReason } from "./SetupInstallFailure.js";
 
 const execFileAsync = promisify(execFile);
@@ -446,4 +441,3 @@ export const systemMacHopperInstallHost = (
     destination: () => macHopperUserApplicationPath(homeDirectory),
   };
 };
-

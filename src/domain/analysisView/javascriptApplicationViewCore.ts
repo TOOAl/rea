@@ -3,21 +3,11 @@ import {
   type AnalysisInputIssue,
 } from "../analysisErrorCore.js";
 import type { AnalysisError } from "../analysisErrorBase.js";
-import { jsonObjectSchema, type JsonValue } from "../jsonValue.js";
+import type { JsonValue } from "../jsonValue.js";
 import type { JavaScriptApplicationAnalysisResult } from "../javascript/javascriptApplicationAnalysis.js";
 import type { ApplicationNode } from "../javascript/javascriptApplicationGraphSchemas.js";
-import { err, ok, type Result } from "../result.js";
 import type { JavaScriptModuleReference } from "./javascriptModuleReferences.js";
-import {
-  boundedViewMessages,
-  completeWithinViewCoverage as completeCoverage,
-  pageViewCoverage as pageCoverage,
-} from "./analysisViewCoverage.js";
-import type {
-  AnalysisViewParent,
-  AnalysisViewRequest,
-  UnsignedAnalysisView,
-} from "./analysisView.js";
+import type { AnalysisViewRequest } from "./analysisView.js";
 
 const OPERATION = "inspect_analysis_view";
 

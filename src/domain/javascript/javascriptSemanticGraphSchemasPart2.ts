@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import {
-  applicationGraphEvidenceContextSchema,
   applicationGraphEvidenceLocationSchema,
   applicationGraphEvidenceSchema,
 } from "./javascriptApplicationEvidenceSchemas.js";

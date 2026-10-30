@@ -1,7 +1,4 @@
-import { createJavaScriptApplicationEdge } from "./javascriptApplicationGraph.js";
 import type { ApplicationEdge } from "./javascriptApplicationGraphSchemas.js";
-import type { ApplicationGraphEvidence } from "./javascriptApplicationEvidenceSchemas.js";
-import { digestCanonicalValue } from "../canonicalDigest.js";
 import type { ParsedStaticLayer } from "./javascriptRuntimeReconciliationParsing.js";
 import { compareUnicodeCodePoints } from "../unicodeCodePointOrder.js";
 import type { JavaScriptRuntimeReconciliationItem } from "./javascriptRuntimeReconciliationSchemas.js";

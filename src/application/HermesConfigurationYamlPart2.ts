@@ -5,7 +5,6 @@ import {
   isSeq,
   parseDocument,
   Document,
-  Schema,
   type ParsedNode,
   type Node,
   type ScalarTag,

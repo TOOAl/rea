@@ -1,10 +1,8 @@
-import {
-  artifactInventoryResultSchema,
-  type ArtifactInventoryCoverage,
-  type ArtifactInventoryResult,
-  type ArtifactNode,
-  type ArtifactOccurrence,
-  type IntegrityContradiction,
+import type {
+  ArtifactInventoryCoverage,
+  ArtifactInventoryResult,
+  ArtifactNode,
+  ArtifactOccurrence,
 } from "./artifactGraph.js";
 import { compareUnicodeCodePoints } from "./unicodeCodePointOrder.js";
 import { canonicalJson } from "./comparisonSemantics.js";
@@ -12,15 +10,9 @@ import {
   artifactContradictionId,
   artifactEdgeId,
   artifactGraphDigest,
-  artifactIdForContent,
   artifactManifestId,
   occurrenceIdForLocation,
 } from "./artifactIdentity.js";
-import { parseEvidence, type Evidence } from "./evidence.js";
-import {
-  artifactInspectionResultSchema,
-  type ArtifactInspectionResult,
-} from "./artifactInspection.js";
 
 /** Complete or partially assembled inventory used by comparison workflows. */
 

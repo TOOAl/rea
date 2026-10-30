@@ -1,12 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
-import type { ProcessSamplingCoverage } from "../../domain/process/processCaptureCoverage.js";
-import type {
-  ProcessSample,
-  RecordProcessCaptureEvent,
-} from "../../domain/process/processCapture.js";
 import { execFileOutput } from "../ExecFileOutput.js";
 import { readProcessRunId } from "../ProcessOwnership.js";
-import { monotonicProcessCaptureClock } from "./ProcessCaptureClock.js";
+
 const PROC_READ_CONCURRENCY = 64;
 
 interface ProcessRow {
@@ -418,4 +413,3 @@ const samplePs = async (
 
   return result;
 };
-

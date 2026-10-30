@@ -1,24 +1,12 @@
-import type { Evidence } from "../domain/evidence.js";
-import {
-  parseEvidenceBundle,
-  type EvidenceBundle,
-} from "../domain/evidenceBundle.js";
-import {
-  reconstructionObligationLedgerSchema,
-  type ReconstructionObligation,
-  type ReconstructionObligationLedger,
-  type ReconstructionObligationManifest,
+import type {
+  ReconstructionObligation,
+  ReconstructionObligationManifest,
 } from "../domain/reconstructionObligationLedgerSchemas.js";
-import { digestCanonicalValue } from "../domain/canonicalDigest.js";
 import {
-  reconstructionObligationCoverage,
   reconstructionObligationDependencyGraph,
-  reconstructionObligationLedgerClosureDigest,
   reconstructionObligationLedgerStatus,
   hasReconstructionObligationDiagnostic as hasDiagnostic,
-  reconstructionObligationOwnershipGraph,
   reconstructionObligationReports,
-  summarizeReconstructionObligations,
 } from "../domain/reconstructionObligationLedgerIntegrity.js";
 import type { ReconstructionObligationCandidate } from "./ReconstructionObligationCandidates.js";
 import {
@@ -28,17 +16,10 @@ import {
 } from "./ReconstructionObligationAuthority.js";
 import {
   addObligationDiagnostic as addDiagnostic,
-  contradictionDiagnostics,
   groupManifestBindings,
-  groupManifestContradictions,
   uniqueObligationDiagnostics as uniqueDiagnostics,
 } from "./ReconstructionObligationLedgerDiagnostics.js";
-import {
-  originalCaseDiagnostics,
-  originalCasesFor,
-} from "./ReconstructionObligationOriginalCases.js";
-import { obligationLedgerEvidenceLinks } from "./ReconstructionObligationLedgerProjection.js";
-import { compareUnicodeCodePoints } from "../domain/unicodeCodePointOrder.js";
+import { originalCasesFor } from "./ReconstructionObligationOriginalCases.js";
 
 const evaluateBinding = (
   candidate: ReconstructionObligationCandidate,

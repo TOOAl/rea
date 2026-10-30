@@ -2,34 +2,18 @@ import {
   createIdaDiagnosticRedactor,
   IDA_DIAGNOSTIC_SOURCE_BYTES,
 } from "./IdaDiagnosticRedactor.js";
-import { IdaDiagnosticResourceError } from "./IdaDiagnosticWriter.js";
-import { ChildProcess } from "node:child_process";
-import { Socket } from "node:net";
-import { snapshotEnvironment } from "../process/snapshotEnvironment.js";
 import {
-  Client,
   ProtocolError,
-  SdkError,
   SdkErrorCode,
   SdkHttpError,
-  StreamableHTTPClientTransport,
 } from "@modelcontextprotocol/client";
-import {
-  DEFAULT_INHERITED_ENV_VARS,
-  StdioClientTransport,
-} from "@modelcontextprotocol/client/stdio";
 import { z } from "zod";
-import type { IdaConfiguration } from "./IdaConfiguration.js";
 import { jsonValueSchema, type JsonValue } from "../domain/jsonValue.js";
 import { err, ok, type Result } from "../domain/result.js";
-import {
-  AnalysisTimeoutError,
-  AnalysisProtocolError,
-  AnalysisResourceConstraintError,
-} from "../domain/analysisErrorCore.js";
-import { ProviderAdapterError } from "../domain/providerAdapterError.js";
+import { AnalysisProtocolError } from "../domain/analysisErrorCore.js";
 
 /** Injectable MCP boundary used by the provider and transport conformance tests. */
+
 export interface IdaMcpConnection {
   connect(): Promise<readonly string[]>;
   call(

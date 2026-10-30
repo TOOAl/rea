@@ -1,13 +1,6 @@
 import { constants, type Stats } from "node:fs";
 import { createHash } from "node:crypto";
-import {
-  access,
-  lstat,
-  realpath,
-  stat,
-  type FileHandle,
-} from "node:fs/promises";
-import { extname } from "node:path";
+import { access, lstat, realpath, type FileHandle } from "node:fs/promises";
 
 import { BinaryTargetError } from "../domain/configurationErrors.js";
 import {
@@ -17,11 +10,6 @@ import {
 import { AnalysisCancelledError } from "../domain/analysisErrorCore.js";
 import type { BinaryTarget } from "../domain/binaryTargetTypes.js";
 import { err, ok, type Result } from "../domain/result.js";
-import { readMipsElfMetadata } from "./MipsElfMetadata.js";
-import {
-  resolveAppBundleExecutable,
-  type ResolvedAppBundle,
-} from "./AppBundleExecutable.js";
 import {
   validateDosComLength,
   type ExecutableFormatHint,
@@ -31,7 +19,6 @@ import {
   rawBinarySelectionError,
 } from "../domain/rawBinary.js";
 import type { BinaryArchitecture } from "../domain/binaryTargetTypes.js";
-import { observeMzWindowsHeader } from "../domain/dosMz.js";
 import {
   createXmlPlistSignatureProbe,
   hasBinaryPlistSignature,
@@ -42,16 +29,6 @@ import {
   isZipPackageFormat,
   zipPackageFormatForPath,
 } from "../domain/zipPackageFormat.js";
-
-import {
-  parseCodeViewData,
-  parseExecutableHeader,
-  parsePeRecord,
-  peDebugDirectoryEntry,
-  peRvaToFileOffset,
-  type ExecutableMetadata,
-} from "../domain/binaryTarget.js";
-import type { PeCodeViewRecord } from "../domain/binaryTargetTypes.js";
 import { absoluteCallerPath } from "../filesystem/callerPath.js";
 
 const XML_PLIST_PROBE_CHUNK_BYTES = 64 * 1024;
@@ -432,4 +409,3 @@ const sha256Handle = async (
     throw new BinaryTargetError(path, "target changed while being read");
   return hash.digest("hex");
 };
-
