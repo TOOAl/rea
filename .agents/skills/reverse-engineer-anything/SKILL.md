@@ -13,6 +13,20 @@ behavior not established by available source. For ordinary analysis of a
 complete source repository, use normal repository tools and do not run REA
 readiness or provider commands.
 
+## Brain Principles Preflight (md → agent → code)
+
+Before any REA task, run the 5-step preflight per `docs/BRAIN_PRINCIPLES.md`:
+
+1. **정확하게** — claim + evidence_id, no invented target
+2. **모순 금지** — check `verify:module-boundaries` + CWE consistency
+3. **오류 탐지** — `carbonSecureScanner` / `carbonInjectionShield` BLOCKED patterns, IPI 0.0% gate
+4. **다음 설계** — `carbonLongHorizonPlanner` remaining + `carbonTransparencyGate` caveat present
+5. **기억 연장** — `carbonTypes.ts` LIMITATIONS + `docs/carbon-absorption.md` evidence links
+
+```bash
+npm run verify:brain   # 30-sec gate — fix producing boundary before downstream work
+```
+
 ## Connect only when needed
 
 Installing this skill supplies instructions; it does not register the REA MCP

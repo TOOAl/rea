@@ -1,5 +1,20 @@
 # Repository Guidelines
 
+## Brain Principles — Preflight (Always Verify Before Work)
+
+> **Source of truth:** `docs/BRAIN_PRINCIPLES.md`
+
+Before any task, verify the 5-step pipeline and trust principle:
+
+1. ***정확하게 만든다 → 모순을 안 만든다 → 오류를 찾는다 → 다음을 설계한다 → 기억을 늘린다*** — `docs/BRAIN_PRINCIPLES.md#원칙-1-5단계-파이프라인`
+2. ***정확성, 무모순, 오류탐지+설계, 기억연장 — 이 4개는 사실 “신뢰”라는 하나의 능력이에요.*** — `docs/BRAIN_PRINCIPLES.md#원칙-2-신뢰-4개는-하나다`
+
+**30-second preflight:**
+```bash
+npm run verify:brain  # checks: lint 0, boundaries 2989 PASS, evidence provenance, limitations present, docs/BRAIN_PRINCIPLES.md readable
+```
+If any check fails, fix the producing boundary before adding downstream work. See `docs/BRAIN_PRINCIPLES.md#Preflight-Checklist-작업-시작-전-30초`.
+
 ## Product and Authority
 
 REA is a local-only reverse-engineering tool with shared CLI/MCP workflows. Distinguish observations, derivations, inferences, and unknowns; preserve Evidence provenance and session semantics through both adapters. Provider support and setup live in [README.md](README.md#choosing-a-deep-analysis-provider) and its linked guides.

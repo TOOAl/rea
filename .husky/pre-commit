@@ -1,1 +1,2 @@
 npx --no-install lint-staged
+node scripts/verify-brain-principles.mjs
