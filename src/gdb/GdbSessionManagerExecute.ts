@@ -1,6 +1,3 @@
-import { constants as fsConstants } from "node:fs";
-import { readFile, readlink, realpath, stat } from "node:fs/promises";
-
 import {
   AnalysisCapabilityUnavailableError,
   AnalysisCancelledError,
@@ -10,14 +7,6 @@ import {
 import { AnalysisError } from "../domain/analysisErrorBase.js";
 import { createEvidence, type Evidence } from "../domain/evidence.js";
 import { err, ok, type Result } from "../domain/result.js";
-import {
-  closeOwnedDebuggerSessions,
-  stopOwnedDebuggerProcess,
-  type OwnedDebuggerDetachResult,
-  type OwnedInferiorIdentity,
-  type ProcessStartTimeReader,
-  verifyOwnedInferiorsEnded,
-} from "../process/ownedDebuggerSession.js";
 
 const STARTUP_TIMEOUT_MS = 10_000;
 

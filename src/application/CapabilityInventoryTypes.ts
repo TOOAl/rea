@@ -1,5 +1,3 @@
-import { sqliteDatabaseCapability } from "./sqlite/SqliteDatabaseCapability.js";
-
 import {
   providerCapabilitySet,
   TOOL_ANNOTATION_NAMES,
@@ -7,9 +5,9 @@ import {
   type ToolAvailabilityInventory,
   type ToolAvailabilityMode,
 } from "../contracts/toolOutputSchemaPrimitives.js";
-import type { JsonValue } from "../domain/jsonValue.js";
 
 // CapabilityInventoryTypes.ts 751-835
+
 const navigationContextAvailability = (
   descriptors: ReadonlyMap<string, ProviderDescriptor>,
 ): Availability => {

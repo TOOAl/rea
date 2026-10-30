@@ -1,6 +1,3 @@
-import { constants as fsConstants } from "node:fs";
-import { readFile, readlink, realpath, stat } from "node:fs/promises";
-
 import {
   AnalysisCancelledError,
   AnalysisInputError,

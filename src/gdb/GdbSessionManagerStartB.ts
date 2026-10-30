@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { isUtf8 } from "node:buffer";
 
 import {
   AnalysisCapabilityUnavailableError,

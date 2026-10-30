@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { isUtf8 } from "node:buffer";
 
 import {
   AnalysisCapabilityUnavailableError,
@@ -9,14 +8,6 @@ import {
 } from "../domain/analysisErrorCore.js";
 import { AnalysisError } from "../domain/analysisErrorBase.js";
 import { err, type Result } from "../domain/result.js";
-import {
-  closeOwnedDebuggerSessions,
-  stopOwnedDebuggerProcess,
-  type OwnedDebuggerDetachResult,
-  type OwnedInferiorIdentity,
-  type ProcessStartTimeReader,
-  verifyOwnedInferiorsEnded,
-} from "../process/ownedDebuggerSession.js";
 
 const STARTUP_TIMEOUT_MS = 10_000;
 

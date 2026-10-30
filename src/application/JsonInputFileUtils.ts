@@ -1,15 +1,11 @@
-import { createHash } from "node:crypto";
 import type { FileHandle } from "node:fs/promises";
 import { getHeapStatistics } from "node:v8";
-
-import fun from "stream-chain/fun.js";
 import parser from "stream-json/parser.js";
-import streamArray from "stream-json/streamers/stream-array.js";
 
 import { RegularFileChangedError } from "../filesystem/RegularFile.js";
-import { withRegularFile } from "./RegularFileRead.js";
 
 // JsonInputFileUtils.ts 424-601
+
 const admitJsonAssembly = (
   operation: string,
   inputFileBytes: number,

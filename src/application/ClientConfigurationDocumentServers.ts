@@ -1,5 +1,3 @@
-import { isDeepStrictEqual } from "node:util";
-
 import {
   serializeDshDocument,
   dshClientRegistrationEntry,
@@ -20,6 +18,7 @@ import { z } from "zod";
 import { PRODUCT_IDENTITY } from "../identity.js";
 
 // ClientConfigurationDocumentServers.ts 1287-1565
+
 const deleteJsonPropertyPreservingComments = (
   text: string,
   path: readonly string[],
