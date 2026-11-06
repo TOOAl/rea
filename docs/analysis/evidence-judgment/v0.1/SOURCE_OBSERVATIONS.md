@@ -1,0 +1,210 @@
+# Korean population and housing: live source observations
+
+**Initial observation date:** 2026-11-05 (Asia/Seoul)
+**Latest update:** 2026-11-06 (Asia/Seoul)
+**Purpose:** retain what was actually read during official-source discovery. This is a discovery/provenance log only—not a downloaded dataset, approved source manifest, evidence packet, or evaluation result.
+
+## Access and preservation status
+
+- Official MODS/Census pages, attached PDF text, and the 2025 XLS table text were read with the available web-page reader (`functions.fetch_page`); official portal pages were identified through their own navigation and published links. This does **not** establish that the application runtime or Playwright collector can retrieve the same resources.
+- No direct HTTP download of an official Census attachment was completed by this environment. **Exception:** the user supplied the named 2025 Census XLS as a Base64 text upload; strict decoding reproduced a valid 110,592-byte OLE/BIFF workbook, SHA-256 `9c4171fe8192158971ffc9f1e918ed632765ab76a410bf79ea087dc5ceed355b`, saved under the ignored `_reference/` directory. This is exactly 108 KiB, matching the portal's displayed 108KB label. The hash identifies the recovered bytes; no publisher-provided checksum was available for official-origin comparison. Other PDF/XLS attachments remain page-reader-only unless separately stated.
+- Use rights are `pending`. The MODS copyright policy says rights depend on the work-specific KOGL mark. The 2025 XLS release page specifically directs users to the type shown in its attachment, but the reader did not expose the exact mark/type; no specific census PDF mark was verified either. The Census site's footer says “Copyright Statistics Korea All rights reserved.” Do not use these findings in a reviewer packet or redistribute source excerpts until the specific material's terms are reviewed.
+- Dates below are release-list dates when shown by the official list. Reference date is separately recorded. Do not treat publication date as the statistical reference date.
+- The current MODS site identifies itself as the Ministry of Data and Statistics; the Census portal footer names Statistics Korea. The 2021 release PDFs are hosted and listed on MODS, but the original issuer/byline on each PDF cover was not independently confirmed from the extracted text. Keep the portal/issuer field qualified until the actual cover and agency succession metadata are checked.
+
+## Source records
+
+### KR-PHC-2020-WEB-SUMMARY — Census result summary
+
+- **Portal/page:** [2020 Population and Housing Census — Results](https://m.census.go.kr/lang/contentView/realSurvRsltEng.do?q_menu=1&q_sub=11)
+- **Page identity:** English 2020 results page on the Census portal; footer names Statistics Korea. It is not a KOSIS table extract.
+- **Release/publication date:** not stated on this page.
+- **Observed summary figures:** female population **25.161 million**; unmarried one-person households **3.341 million**, or **50.3%** of one-person households; average residence period **8.7 years**; vacant houses **1.511 million units**.
+- **Linked table IDs observed on the page:** sample-enumeration tables `DT_1PE2009` (population, households, housing units) and `DT_1PS2001` (housing units by type).
+- **Use in cross-checks:** the women and one-person/housing PDF releases below repeat these figures. Those are corresponding official releases, not independent source families.
+
+### KR-PHC-2020-WOMEN — 2020 women/fertility/children/migration/commuting release
+
+- **Official release list:** [MODS Population Census releases](https://mods.go.kr/board.es?amp=&bid=11747&mid=a20108070000)
+- **List entry:** “Results of the 2020 Population and Housing Census (Women, Fertility, Children, Internal Migration and Commuting),” dated **2021-11-29**.
+- **Attachment:** [PDF, list_no=416465, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=416465&seq=1)
+- **Observed statement:** female population **25.161 million** as of November 1, 2020; 2015 comparison **24.886 million**.
+- **Series/method qualification:** the Census portal places this among characteristic results and separately says some characteristics are obtained from its 20% sample survey. The PDF text read here does not itself establish the method and population coverage for every indicator. Do not label this specific count “sample estimate” or “complete enumeration” without the table/indicator notes.
+- **Cross-check:** matches the Census portal's summary, but the two views are not independent.
+
+### KR-PHC-2020-REGISTER-CENSUS — 2020 complete-enumeration/register-based Census release
+
+- **Official release list:** [MODS Population Census releases](https://mods.go.kr/board.es?amp=&bid=11747&mid=a20108070000)
+- **List entry:** “2020 Population and Housing Census (Register-based Census),” dated **2021-07-29**.
+- **Attachment:** [PDF, list_no=391585, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=391585&seq=1)
+- **Reference date:** November 1, 2020.
+- **Observed table values and units:**
+
+| Concept | PDF table value | Table unit | Also stated in release text |
+| --- | ---: | --- | --- |
+| Total population, including foreigners | 51,829 | 1,000 persons | 51.83 million |
+| Female population | 25,914 | 1,000 persons | 25.91 million |
+| Total households | 21,485 | 1,000 households | 21.48 million |
+| General households | — | — | 20.93 million |
+| Total housing units | 18,526 | 1,000 units | 18.53 million |
+
+- **Precision note:** the household headline is printed as 21.48 million while the table gives 21,485 thousand. Preserve both published forms; do not silently round or truncate until the source's precision convention is checked.
+- **Series note:** this release is explicitly a register-based **Census**. The Census methodology page says administrative records are used for complete enumeration. This is not interchangeable with the separate resident-registration population time series.
+- **Non-comparable figure:** this release's 25.914 million female total differs from the 25.161 million in the other 2020 Census results release. The latter's coverage/method for that indicator remains unconfirmed here. Do not call the difference a contradiction or combine the figures without indicator-level definitions.
+
+### KR-PHC-2020-HOUSEHOLD-HOUSING — 2020 one-person households, housing status, and vacant houses release
+
+- **Official release list:** [MODS Population Census releases](https://mods.go.kr/board.es?amp=&bid=11747&mid=a20108070000)
+- **List entry:** “Results of the 2020 Population and Housing Census (One-person households, housing status and vacant houses),” dated **2021-12-24**.
+- **Attachment:** [PDF, list_no=420171, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=420171&seq=1)
+- **Observed statements:** unmarried one-person households **3.341 million (50.3%)**; average residence period **8.7 years**; vacant houses **1.511 million units**.
+- **Cross-check:** values match the Census result-summary page. As above, the summary and PDF belong to the same result release and are not independent evidence.
+
+### KR-PHC-2021-REGISTER-CENSUS — annual register-based Census release
+
+- **Official release list:** [MODS Population Census releases](https://mods.go.kr/board.es?amp=&bid=11747&mid=a20108070000); entry dated **2022-07-28**.
+- **Attachment:** [PDF, list_no=419981, seq=2](https://mods.go.kr/boardDownload.es?bid=11747&list_no=419981&seq=2).
+- **Reference date:** November 1, 2021.
+- **Observed table values and units:**
+
+| Reference year | Total population (1,000 persons) | Total households (1,000 households) | Total housing units (1,000 units) |
+| --- | ---: | ---: | ---: |
+| 2020 | 51,829 | 21,485 | 18,526 |
+| 2021 | 51,738 | 22,023 | 18,812 |
+
+- **Use:** overlaps the 2020 release at 2020 and the 2022 release at 2021; useful for same-program adjacent-release checks, not independent-source corroboration.
+
+### KR-PHC-2022-REGISTER-CENSUS — annual register-based Census release
+
+- **Attachment:** [PDF, list_no=426676, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=426676&seq=1). The release cover states release date **2023-07-27**.
+- **Reference date:** November 1, 2022.
+- **Observed table values and units:** total population **51,692** (1,000 persons), total households **22,383** (1,000 households), and housing units **19,156** (1,000 units). Its summary table also repeats the 2020 and 2021 values.
+- **Use:** bridges the 2020 release to the 2023 release and supports adjacent-release consistency checks below. It is not an independent producer/source family.
+
+### KR-PHC-2023-REGISTER-CENSUS — immediately prior annual register-based Census release
+
+- **Attachment:** [PDF, list_no=432395, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=432395&seq=1). The release itself states embargo/release date **2024-07-29**.
+- **Reference date:** November 1, 2023.
+- **Observed table values and units:** total population **51,775** (1,000 persons), total households **22,728** (1,000 households), and housing units **19,546** (1,000 units). The release text gives headline presentations of 51.77 million, 22.73 million, and 19.55 million, respectively.
+- **Use:** a previous-year release for cross-checking the 2023 column repeated in the next annual release. It is not an independent producer/source family.
+
+### KR-PHC-2024-REGISTER-CENSUS — annual register-based Census release
+
+- **Official release page:** [2024 Population and Housing Census (Register-based Census)](https://mods.go.kr/board.es?act=view&bid=11739&list_no=439063&mid=a20107020000&nPage=1&ref_bid=&tag=); the page gives writer `admin`, date **2025-07-29**, and attachment filename `2024phc(rc).pdf` with listed size **823.42 KB**.
+- **Official article attachment route:** [PDF, list_no=439063, seq=1](https://mods.go.kr/boardDownload.es?bid=11739&list_no=439063&seq=1).
+- **Official Census category list:** [MODS Population Census releases](https://mods.go.kr/board.es?amp=&bid=11747&mid=a20108070000), which also links a category-list attachment route [PDF, list_no=439064, seq=1](https://mods.go.kr/boardDownload.es?bid=11747&list_no=439064&seq=1). The page reader returned the same summary-table text from both routes; without local file hashes, byte identity is not asserted.
+- **Reference date:** November 1, 2024.
+- **Readable release-page headline values:** total population **51.81 million** (+30 thousand, +0.1%); total households **23.00 million** (+270 thousand, +1.2%); housing units **19.87 million** (+330 thousand, +1.7%). The page also reports 1-person households **8.04 million (36.1%)**.
+- **Readable PDF summary table** (unit: thousands): population 2022 **51,692**, 2023 **51,775**, 2024 **51,806**; total households 2022 **22,383**, 2023 **22,728**, 2024 **22,997**; housing units 2022 **19,156**, 2023 **19,546**, 2024 **19,873**. The same table's change columns show population +82/+31, households +345/+269, and housing +391/+326 (thousands). Keep the source's displayed values and change columns as printed; differences of a thousand from arithmetic on rounded rows may reflect unrounded source values and are not evidence of a contradiction by themselves.
+- **PDF extraction caution:** some other historical tables in the PDF text extraction are visibly malformed/misaligned (including repeated population values and blank/misaligned rows). The final summary table above is readable in the extracted text, but must still be checked against the rendered table and its footnotes before machine ingestion. The MODS HTML headline and PDF are the same release, not independent confirmation.
+- **Cross-release check:** the 2023 release's 2023 table values (51,775; 22,728; 19,546, in the respective thousand-unit columns) match the 2023 column carried in the 2024 release summary table. This is a successful same-program release-to-release consistency check, but not independent-source corroboration. Printed headline rounding differs in precision; compare the table units and stated release text, not rounded headline strings.
+
+### KR-PHC-2025-REGISTER-CENSUS — latest located annual register-based Census candidate
+
+- **Official release page:** [2025 Population and Housing Census (Register-based Census)](https://mods.go.kr/board.es?act=view&bid=11739&list_no=446724&mid=a20108070000&nPage=1&ref_bid=11739%2C11747&tag=), MODS press release dated **2026-07-28**; attachment `2025phc(rc).pdf`, displayed size **808.34 KB**.
+- **Official attachment:** [PDF, list_no=446724, seq=1](https://mods.go.kr/boardDownload.es?bid=11739&list_no=446724&seq=1).
+- **Actual page-reader retrieval (2026-11-06):** fetched the official attachment URL above and read its PDF text over three returned chunks. The final summary table explicitly reports (unit: 1,000 persons/households/units): population 2023/2024/2025 = 51,775/51,806/51,817, with 2025 table change +12; households = 22,728/22,997/23,246, with change +249; housing units = 19,546/19,873/20,181, with change +309. This is real official-page content read, not a mock. The web reader did not provide original PDF bytes for local archival or SHA-256, so it is not yet a byte-preserved acquisition. The structured observation is retained in [`KR-PHC-2025-REGISTER-CENSUS.observation.json`](./KR-PHC-2025-REGISTER-CENSUS.observation.json) with rights, revision, and raw-source gates explicitly unset.
+- **Reference date:** November 1, 2025, stated in release headlines and PDF.
+- **Observed summary-table values and units:** 2025 total population **51,817** (1,000 persons), total households **23,246** (1,000 households), and housing units **20,181** (1,000 units). The HTML headlines round these to 51.82 million, 23.25 million, and 20.18 million.
+- **Observed prior-year column:** the PDF summary table gives 2024 population **51,806**, households **22,997**, and housing units **19,873** in the corresponding thousand-unit columns. These match exactly the 2024 release's final summary table. Shared-year agreement is same-program cross-release consistency, not independent-source corroboration.
+- **Population-change reconciliation (resolved 2026-11-06):** the 2024 official statistics-table XLS ([list_no=437767, seq=4](https://mods.go.kr/boardDownload.es?bid=203&list_no=437767&seq=4)) gives exact national population **51,805,547**; the byte-hashed 2025 XLS below gives **51,817,499**. Exact subtraction is **+11,952** people, or **+0.0230708885%** of the 2024 base. That rounds to **+12 thousand** and **0.02%**; the headline's **+1만명** is consistent with expressing the increase in ten-thousand-person units. The separately rounded thousand-unit totals, **51,817** and **51,806**, subtract to **+11천**. These are consistent rounded presentations, not an unresolved discrepancy. The 2025 PDF notes that published figures are rounded and table totals may not sum. The 2024 XLS value was read through the official page reader, not byte-archived; all sources belong to the same Census family.
+- **Other headline values:** the release reports 8.24 million one-person households (36.6%), and 20.18 million housing units; these are headline presentations, not additional independent observations.
+- **Preview/rights observation:** the official [attachment preview](https://mods.go.kr/attachPreview.es?bid=11739&list_no=446724&seq=1) opened an 11-page Synap document viewer, but the page images were removed from the reader output. The exact first-page image URL exposed by that viewer, `https://mods.go.kr/synap/preview/board/11739/defe06703025254b3211f440e5065397f905d8f8eeaf3cbdcde1f3c5b1ce9e80.files/1.png?`, returned HTTP 500 through the page reader on 2026-11-06. This is an access failure, not evidence of a missing mark. No individual KOGL/AI-use mark could therefore be visually confirmed; do not retry this same image URL.
+- **Extraction and scope limits:** the PDF web-reader extraction provides its final summary table text, but the rendered table, footnotes, detailed definitions, revision policy, and individual file reuse marking remain unverified. This is a discovery observation, not approved evaluation material or an archived/hash-verified source.
+
+### KR-PHC-2025-REGISTER-CENSUS-XLS — official exact-count workbook attachment
+
+- **Official release page:** [2025 Population and Housing Census (Register-based Census) statistical tables](https://mods.go.kr/board.es?mid=a10301020200&bid=203&act=view&list_no=446219), dated **2026-07-28**.
+- **Attachment:** [XLS, list_no=446219, seq=12](https://mods.go.kr/boardDownload.es?bid=203&list_no=446219&seq=12), named `2025년 인구주택총조사 결과(등록센서스 방식) 통계표.xls`; the page displays **108KB**. This is a separate table-workbook attachment in the same official Census release family as the PDF above.
+- **Byte and structure verification (2026-11-06):** the official attachment route was read in six page-reader chunks, and the official preview listed seven table sections. The user then supplied the named XLS as Base64 text; strict decoding yielded a valid OLE/BIFF workbook of **110,592 bytes**, SHA-256 **`9c4171fe8192158971ffc9f1e918ed632765ab76a410bf79ea087dc5ceed355b`**. Its size equals the page's 108KB label; this is a consistency signal, not a publisher checksum. The recovered file is hash-verified locally but was not acquired through this environment's HTTP collector. The exact 2025 counts and population-change calculation are recorded in [`KR-PHC-2025-REGISTER-CENSUS-XLS.observation.json`](./KR-PHC-2025-REGISTER-CENSUS-XLS.observation.json).
+- **Visual review:** reconstructed HTML cell-grid previews of worksheets 1, 2, 5, 6, and 7 were visually inspected from the XLS cells. Table titles, units, and key totals were legible; worksheet 5's 18+ Korean-national scope and below-five suppression note were visible. This was not native Excel/LibreOffice rendering, so exact native styling and hidden objects are not asserted.
+- **Exact national values extracted from table 1** (persons / households / housing units): population **51,817,499**, total households **23,245,980**, and total housing units **20,181,352**. A separate table 3 repeats the same population total within the workbook, alongside male **25,935,769** and female **25,881,730**.
+- **Other national rows read:** table 3 gives ages 0–14 **5,224,936**, ages 15–64 **35,870,006**, and ages 65+ **10,722,557**; table 4 reports foreign population **2,109,057**. Table 5's **43,233,902** total is a narrower table, with an extracted footnote specifying Korean nationals aged 18 or older; it must not be confused with all-age total population.
+- **Household decomposition (table 6):** 22,495,096 general households, 22,638 group households, and 728,246 foreigner households sum to 23,245,980 total households. The general-household size categories—1 person **8,244,308**, 2 persons **6,623,694**, 3 persons **4,219,043**, 4 persons **2,732,400**, and 5+ persons **675,651**—sum to 22,495,096.
+- **Housing decomposition (table 7):** detached-house categories **2,644,507 + 738,021 + 447,040**, apartments **13,289,220**, row houses **544,476**, multi-unit houses **2,306,803**, and houses in non-residential buildings **211,285** sum to **20,181,352**. The separate “non-housing living quarters” column is **1,261,218** and is not part of the housing-unit total.
+- **Cross-checks:** the three exact workbook totals round to the corresponding 2025 PDF summary values **51,817 / 23,246 / 20,181 thousand**. Workbook housing **20,181,352** exactly matches the KOSIS 2025 housing indicator, and workbook households **23,245,980** exactly matches the KOSIS related-card observation. These are useful precision and consistency checks, but they belong to the same Population and Housing Census source family and are **not independent-producer corroboration**. Within-workbook sum identities are arithmetic checks, not additional evidence sources.
+- **Rights review attempts (2026-11-06):** the MODS page says use is governed by the KOGL type shown in an attachment, but does not name the type. The XLS cells and reconstructed preview contain no type. The PDF attachment preview (`seq=11`) and direct HWP attachment (`seq=9`) returned HTTP 500. The HWPX attachment (`seq=10`) opened a 107-page Synap viewer, but its page images were removed from reader output; the exposed page-1 image route returned HTTP 500 and was not retried. The direct PDF reader exposed text in chunks 0–2, 4, and 5; chunk 3 returned HTTP 500, and no exact KOGL type was visible in the accessible text. These are route-specific access failures, not evidence that the source lacks a mark.
+- **Rights and preservation:** `rights_status=pending_exact_item_specific_KOGL_type_review`; no reuse approval is inferred from the catalog notice, byte hash, or table review. The local hash identifies the recovered user-supplied bytes, not an official-origin checksum or rights clearance. Do not redistribute or include the workbook in a reviewer packet until the exact mark/permission is confirmed.
+
+### KR-PHC-2025-KDI-REHOST — alternate official repository access for the 2025 release
+
+- **KDI catalog record:** [2025 Population and Housing Census results](https://eiec.kdi.re.kr/policy/materialView.do?num=284799) identifies the issuing Ministry, release date **2026-07-28**, and two attached PDFs: `D26070156.pdf` and `D26070156-1.pdf` (statistical tables).
+- **Actual alternate page-reader access (2026-11-06):** both exact attachment links published by the KDI page were opened through the available page reader; all six returned text chunks for each PDF were read. The report text states the reference moment is **2025-11-01 00:00**, describes the register-based complete-enumeration method, and says it links 27 kinds of administrative records from 13 institutions and 500+ universities. Its methodological note explicitly warns that register-based and traditional field-enumeration results can differ conceptually.
+- **Exact table values observed in the statistical-tables PDF:** population **51,817,499** (male **25,935,769**, female **25,881,730**), Korean nationals **49,708,442**, foreign residents **2,109,057**, total households **23,245,980**, one-person households **8,244,308**, and total housing units **20,181,352**. The population, sex, household, and dwelling totals match the existing MODS XLS page-reader observation. This helps check transcription across representations but remains the same Ministry release—not independent-producer corroboration. Its table 5 total **43,233,902** has a footnote that it covers Korean nationals aged 18 or older; it is not the all-population denominator.
+- **Precision note (resolved):** the report table's **+12 thousand**, subtraction of rounded levels **+11 thousand**, and headline **+1만명 / 0.02%** reconcile to the exact 2024/2025 totals **51,805,547 / 51,817,499**, giving **+11,952 (0.0230709%)**. See the worked calculation in the 2025 XLS record above. The KDI copy is the same Census release and not independent corroboration.
+- **Limits:** this is a useful alternate **page-reader route** to the complete official report and tables, not an original-file download. The reader returned extracted PDF text, with some OCR/character errors in headings; no original PDF bytes, byte count, SHA-256, rendered-table visual check, product-runtime access, or specific reuse mark was obtained. KDI's hosting does not clear reuse rights; status remains pending. The structured record is [`KR-PHC-2025-KDI-REHOST.reader-observation.json`](./KR-PHC-2025-KDI-REHOST.reader-observation.json).
+
+### KR-PHC-2025-CENTENARIAN-RELEASE — 100-and-over population summary
+
+- **Official release page:** [2025 Population and Housing Census: results for people aged 100 and over](https://mods.go.kr/board.es?mid=a10301020100&bid=203&act=view&list_no=446542&tag=&nPage=1&ref_bid=), posted **2026-08-20** by the Population Census Division; reference date **2025-11-01**.
+- **Linked attachment:** [PDF, list_no=446542, seq=7](https://mods.go.kr/boardDownload.es?bid=203&list_no=446542&seq=7), displayed as **1.5MB**. The release page itself states that there were **8,604** people aged 100 or over, or **17.3 per 100,000**; Gyeonggi-do had the largest count (**2,052**), Jeollanam-do the highest rate (**31.8**), Goyang-si the largest city/county count (**188**), and Goheung-gun the highest city/county rate (**91.8**). These are release-page statements, not values read from the PDF table.
+- **Actual path results (2026-11-06):** the page-reader request to the direct PDF attachment failed once and was not retried. The separate official [PDF preview route](https://mods.go.kr/attachPreview.es?bid=203&list_no=446542&seq=7) opened a 27-page Synap viewer, but the page images were removed from reader output; exact page-1 and page-2 image URLs each returned HTTP 500 and must not be retried. The official HWPX and HWP direct attachment routes (`seq=8` and `seq=9`) each returned HTTP 500 and were not retried. The distinct [HWPX preview route](https://mods.go.kr/attachPreview.es?bid=203&list_no=446542&seq=8) opened a viewer but yielded only toolbar text, no document content. These are separate attempted official routes, not grounds to infer all MODS content is unavailable; the release-page statements above remain readable. No attachment bytes, SHA-256, table text, footnotes, or item-level license mark were obtained. The record is [`KR-PHC-2025-CENTENARIAN-RELEASE.reader-observation.json`](./KR-PHC-2025-CENTENARIAN-RELEASE.reader-observation.json).
+- **Denominator diagnostic, not a contradiction finding:** dividing 8,604 by the all-population XLS total **51,817,499** yields **16.604 per 100,000**, which does not round to the page's 17.3. The XLS gives foreign population **2,109,057**; subtracting this from all-population total gives **49,708,442**, and 8,604 divided by that value yields **17.309 per 100,000**, which rounds to 17.3. The KDI-hosted tables also reproduce the 49,708,442 Korean-national total and 2,109,057 foreign total via an alternate reader route, but they are the same Census release—not independent corroboration. An excluding-foreigners denominator is therefore a numerically plausible hypothesis; the centenarian release's own numerator/denominator definition remains unread and unverified. Do not assert it as the definition or label a contradiction until its notes are read.
+- **Rights:** the page states that use follows the Public Nuri/KOGL type shown in the attachment. Since the attachment's mark was not readable, rights remain `pending`; `approved_for_packet=false`.
+
+### KR-KOSIS-PHC-HOUSING — additional official table view for cross-checking
+
+- **Official page:** [KOSIS 100대 지표 — 주택수](https://kosis.kr/visual/nsportalStats/detailContents.do?statJipyoId=3714&listId=L&vStatJipyoId=4834), successfully read and rechecked with the web-page reader on 2026-11-06. The page title identifies KOSIS; footer says “Copyright Ministry of Data and Statistics. All rights reserved.”
+- **Source series/table named by KOSIS:** National Data and Statistics Agency, Housing Census, `주택의 종류별 주택 - 읍면동(연도 끝자리 0, 5), 시군구(그 외 연도)` (Houses by type; eup/myeon/dong for years ending in 0 or 5, si/gun/gu for other years). An official KOSIS Q&A search result dated 2021-03-18 identifies this exact table as `orgId=101`, `tblId=DT_1JU1501`, and links the [KOSIS table route](https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1JU1501&conn_path=I2). A current page-reader request to that route redirected to a `sso=ok` loading page and yielded no table cells.
+- **Fresh reader observation (2026-11-06):** the accessible visual page again rendered the exact 2015–2025 statistical table and exact counts below. It also exposes UI labels for saving `차트`, `통계표`, and `연관지표`, but the page-reader output supplies no download URL or raw file bytes. This proves that page-reader content access remains available; it does not provide a verified collector/API/export route or a source artifact hash. A structured table observation is retained in [`KR-KOSIS-PHC-HOUSING.reader-observation.json`](./KR-KOSIS-PHC-HOUSING.reader-observation.json), with the exact access, rights, series-dependency, and raw-byte limits.
+- **Published period and unit:** 2015–2025, national housing-unit counts in individual units (`호`). The page exposes a table with the annual values and cites the source series above.
+- **Selected exact values observed:** 2020 **18,525,844**; 2021 **18,811,627**; 2022 **19,155,585**; 2023 **19,546,299**; 2024 **19,872,674**; 2025 **20,181,352** housing units.
+- **Cross-check:** each KOSIS exact count rounds to the corresponding MODS release-summary count in thousands for 2020–2025. This is a second official table presentation from the same Population and Housing Census source family, not independent-producer corroboration. Do not inflate the evidence count by treating KOSIS and the MODS release as independent sources.
+- **Related indicator observed on the same KOSIS page:** “households” is shown as **23,245,980** for 2025 with a rise of **248,860** from 2024; its KOSIS page-level source label identifies Population Census. This related-card observation rounds to the 2025 MODS total-household figure (23,246 thousand), but the card's own linked table was not exposed by the reader, so keep it as a secondary page observation rather than a fully inspected table record.
+- **Limits:** the official Q&A identifies a matching KOSIS table ID, but the current table page redirected to SSO/loading and exposed no cells, classification/item codes, or current table metadata; a verified API request cannot yet be formed from observed information. The successful visual-indicator route does not resolve failures of the other exact KOSIS table URLs, prove a product-runtime collector can access the page, establish a snapshot/hash, or verify reuse rights. The current KOSIS page contains no observed item-specific open license mark.
+
+### KR-KOSIS-TERMS — portal-wide use terms and API-access gate
+
+- **Official terms page:** [KOSIS statistical information use terms](https://kosis.kr/openapi/introduce/introduce_02List.do), read on 2026-11-06. The page describes covered statistical information as approved-statistics database content and its tables, table files, and online publications.
+- **Observed conditions:** the displayed terms require source attribution; prohibit certain direct paid redistribution without a specific service platform; state statistical information may be used commercially subject to exceptions; and provide data as-is, without quality/error warranties. The displayed terms state an effective date of 2013-09-03. They may be amended and require user assent.
+- **Rights decision:** this is a portal-wide terms observation, not a legal finding that any specific KOSIS table, MODS PDF, or excerpt is cleared for this evaluation dataset. Scope, current version, attribution placement, reviewer sharing, caching/archive, and derivative-excerpt use remain for human rights review; status stays **pending**.
+- **API path:** KOSIS's [OpenAPI service description](https://kosis.kr/openapi/introduce/introduce_01List.do) says statistical tables and metadata are offered through HTTPS REST services (JSON/SDMX and other formats). Its [statistical-data developer guide](https://kosis.kr/openapi/devGuide/devGuide_0201List.do) marks `apiKey` as required; a table-selection request also needs item and classification parameters, while a registered-table request uses `userStatsId`. An older KOSIS Q&A provides `orgId=101` and `tblId=DT_1JU1501` for the matching housing table, but the item/classification codes and current table metadata have not been verified. The official [API application route](https://kosis.kr/openapi/serviceUse/serviceUseUnityReg_01Detail.do) redirected to the ONE-ID login page during the reader check. No login, API-key application, or API request was made. The public-data API is not credential-free in the documented call format; do not request or store user credentials in chat.
+- **Collection implication:** public KOSIS visual pages may be discovered and read without an API key, but this observation does not prove product-runtime browser access. API access cannot be assumed credential-free; keep the uncredentialed public-page route as a distinct candidate pending a real, safe runtime test.
+
+### KR-MODS-KOGL-POLICY — current general reuse rules, not file-specific clearance
+
+- **Official policy page:** [MODS Korean copyright policy](https://mods.go.kr/menu.es?mid=a10706000000), read on 2026-11-06. It says items the agency can freely license carry an individual Public Works Free Use (KOGL) mark; use rights and conditions depend on the mark attached to each work.
+- **Mark types described:** KOGL 0 (free use), 1 (attribution; commercial use and adaptation allowed), 2 (attribution; commercial use prohibited), 3 (attribution; adaptation prohibited), 4 (attribution; both commercial use and adaptation prohibited), and a separate **AI-use type**.
+- **AI-type conditions shown:** use as AI-training data is allowed subject to safeguards against identical/substantially similar outputs; attribution is needed when outputs directly quote the work; commercial use of a model trained on the material is allowed; resale of the training dataset is prohibited. This is the policy's general description, not evidence that the 2025 Census PDF or KOSIS visual table carries the AI mark, nor a determination that an evaluation evidence packet is legally categorized as AI-training data.
+- **Decision:** the policy explicitly directs users to seek prior coordination with the copyright contact for works without an attached KOGL mark. It lists the public-works copyright contact as the Information & Intelligence Team's Kim Ju-young (김주영), **042-481-6963**. Since the 2025 PDF's mark could not be seen and no item-specific mark was extracted from KOSIS, reuse rights remain **pending**. Do not infer an AI-use license or blanket public-domain status from the policy page alone.
+- **Unresolved rights questions for that office:** confirm whether `2025phc(rc).pdf` (`list_no=446724`), the 2025 workbook `2025년 인구주택총조사 결과(등록센서스 방식) 통계표.xls` (`list_no=446219`, `seq=12`), and/or the KOSIS table `DT_1JU1501` carry a KOGL or AI-use mark and its exact type; whether copying a small excerpt or numeric table into a private evidence-evaluation set, storing an archived source copy, and showing it to human reviewers are permitted; whether evaluation use is distinct from AI training under the AI mark; required source attribution; and any retention or redistribution restrictions. The workbook release page states that use follows the KOGL type shown in its attachment, but the exact mark/type has not been read. No contact has been made from this environment.
+
+### Candidate longitudinal comparison (not yet an evaluation case)
+
+The 2020–2025 releases below are explicitly titled register-based Population and Housing Census releases and publish population, household, and housing totals in thousand-unit table columns. The observed year points are:
+
+| Reference date | Release date | Total population (1,000 persons) | Total households (1,000 households) | Total housing units (1,000 units) | Source |
+| --- | --- | ---: | ---: | ---: | --- |
+| 2020-11-01 | 2021-07-29 | 51,829 | 21,485 | 18,526 | [2020 release PDF](https://mods.go.kr/boardDownload.es?bid=11747&list_no=391585&seq=1) |
+| 2021-11-01 | 2022-07-28 | 51,738 | 22,023 | 18,812 | [2021 release PDF](https://mods.go.kr/boardDownload.es?bid=11747&list_no=419981&seq=2) |
+| 2022-11-01 | 2023-07-27 | 51,692 | 22,383 | 19,156 | [2022 release PDF](https://mods.go.kr/boardDownload.es?bid=11747&list_no=426676&seq=1) |
+| 2023-11-01 | 2024-07-29 | 51,775 | 22,728 | 19,546 | [2023 release PDF](https://mods.go.kr/boardDownload.es?bid=11747&list_no=432395&seq=1) |
+| 2024-11-01 | 2025-07-29 | 51,806 | 22,997 | 19,873 | [2024 release PDF](https://mods.go.kr/boardDownload.es?bid=11747&list_no=439064&seq=1) |
+| 2025-11-01 | 2026-07-28 | 51,817 | 23,246 | 20,181 | [2025 release PDF](https://mods.go.kr/boardDownload.es?bid=11739&list_no=446724&seq=1) |
+
+**Adjacent-release overlap checks:** the 2020 totals repeat in the 2021 and 2022 release tables; the 2021 totals repeat in the 2022 and 2023 tables; the 2022 totals repeat in the 2023 and 2024 tables; the 2023 totals repeat in the 2024 and 2025 tables; and the 2024 totals repeat in the 2025 table. Population, household, and housing counts match exactly in the shared-year thousand-unit columns. This is strong same-program release-to-release consistency across the observed 2020–2025 chain, but not independent-source corroboration and not a substitute for confirming definitions, revision policy, and rendered-table fidelity.
+
+This is a concrete candidate for longitudinal evidence work, not an approved time-series dataset: inspect table footnotes, coverage, revision policy, and rendered-table extraction before treating the values as fully comparable. Keep this register-based Census series distinct from any resident-registration population series.
+
+## Method and scope observations
+
+- The Census portal's [Survey items page](https://m.census.go.kr/lang/contentView/cdsSurvItmViewEng.do?q_menu=1&q_sub=12) says the sample survey selects 20% of households for characteristics not identified by complete enumeration. Its 2020 table presents 16 complete-survey items and 55 sample-survey items.
+- The MODS [Population Census survey outline](https://mods.go.kr/menu.es?mid=a20208050000) describes the complete enumeration as using 25 kinds of administrative data from 14 agencies, and the sample as 20%; it lists 16 complete items and 45 sample items (31 population + 14 household). It also gives annual complete-enumeration and once-in-five-years sample-survey publication frequencies.
+- The 55-versus-45 sample-item counts are an unresolved classification/counting difference between pages. They are not a data contradiction and must not be used as an evaluation case.
+- The MODS outline's target population is Korean and foreign residents within Korean territory and their residences, including empty houses. It states nationwide coverage, a reference period from November 1 through May 31 of the following year, and reference time November 1 at 00:00. That description is broader than “registered Korean citizens”; the item-level table definitions still need inspection. This is the general survey-outline page, not a 2024 release-specific footnote.
+
+## KOSIS table routes that did not yield data
+
+The first two routes were linked from the official Census portal and were each attempted once via the page reader. A third housing-table candidate surfaced in official KOSIS search and was also attempted once; its exact table meaning was not established:
+
+- `DT_1IN1502`: [linked KOSIS page](https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1IN1502&vw_cd=&list_id=&seqNo=&lang_mode=en&language=en&obj_var_id=&itm_id=&conn_path=I2) — HTTP 500.
+- `DT_1PE2009`: [linked KOSIS page](https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1PE2009&vw_cd=MT_ZTITLE&list_id=A12_2015_1_001_001&scrId=&seqNo=&lang_mode=en&language=en&obj_var_id=&itm_id=&conn_path=MT_ZTITLE&path=%252FstatisticsList%252FstatisticsListIndex.do) — redirected to a KOSIS error page.
+- `DT_1JU1503`: [KOSIS table candidate](https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1JU1503&conn_path=I3) — page reader redirected to `sso=ok` loading content and exposed no table title, cells, or current metadata. Search had surfaced a file-service notice for this table, but its relationship to the already observed Housing Census indicator is unverified. Do not retry this exact URL or assume it is a usable download endpoint.
+
+These failures apply to these table-rendering routes only. The separate official KOSIS 100-indicator housing page, official Census HTML, MODS HTML releases, and MODS/KDI-hosted PDF text remain accessible through the web-page reader. Do not infer that all official source content is blocked.
+
+## Rights, status, and next acquisition step
+
+- The [MODS copyright policy](https://mods.go.kr/menu.es?mid=a20702040300) states that works marked as Public Domain/KOGL may be freely used. No such mark has been confirmed on the specific 2020/2023/2024 attachments read here; the Census portal also displays “Copyright Statistics Korea All rights reserved.” Attachment previews resolve to a document viewer, but this reader strips the rendered page images; a published 2024 preview-image URL returned HTTP 500. This is an access limitation for visual mark inspection, not evidence that the mark is absent.
+- Candidate rights status: **pending**. `approved_for_packet=false`; the 2025 Census XLS is preserved locally as a hash-verified user-transferred artifact, but its exact item-level KOGL type remains unverified. Other PDF/XLS attachments remain reader-only unless separately stated. This log does not satisfy `official-statistics-source.schema.json` and must not be substituted for its approved private intake manifest.
+- **Next:** to finish this rights gate, obtain visual confirmation of the KOGL mark on an official attachment or authoritative written permission. The available reader strips the relevant page images and the alternative HWP/PDF routes failed; a screenshot of the official report cover showing the mark (or the exact type transcribed from that cover) would let us continue the item-specific review. If an official-origin checksum/direct download becomes available, compare it to the preserved XLS hash. Separately inspect the 2020 indicator definitions before comparing its 25.161m and 25.914m female figures. Do not start evaluation packets or label an evolution run from these observations alone.

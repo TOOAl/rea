@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "observation_id": "KR-PHC-2025-REGISTER-CENSUS",
+  "observation_status": "live_page_reader_content_not_byte_archived",
+  "issuing_body_as_published": "Ministry of Data and Statistics",
+  "series_kind": "register_based_population_housing_census",
+  "title": "2025 Population and Housing Census (Register-based Census)",
+  "published_at": "2026-07-28",
+  "revision_id": null,
+  "revision_status": "not identified in the inspected release page or extracted PDF text",
+  "reference_date": "2025-11-01",
+  "source": {
+    "release_page_url": "https://mods.go.kr/board.es?act=view&bid=11739&list_no=446724&mid=a20108070000&nPage=1&ref_bid=11739%2C11747&tag=",
+    "attachment_url": "https://mods.go.kr/boardDownload.es?bid=11739&list_no=446724&seq=1",
+    "attachment_filename": "2025phc(rc).pdf",
+    "list_no": 446724,
+    "sequence": 1,
+    "accessed_at_date": "2026-11-06",
+    "access_method": "available web-page reader fetched the official PDF route and returned parsed text in three chunks"
+  },
+  "summary_table": {
+    "table_title": "Major indicators of the Population and Housing Census",
+    "unit_basis": "thousands",
+    "columns": [
+      2023,
+      2024,
+      2025
+    ],
+    "measures": [
+      {
+        "concept": "total_population",
+        "unit": "1,000 persons",
+        "values": [
+          51775,
+          51806,
+          51817
+        ],
+        "published_change_2025_vs_2024": 12,
+        "published_percent_change_2025_vs_2024": 0.0,
+        "precision_note": "Reconciled using exact register-based Census endpoint totals: official 2024 XLS table 1 gives 51,805,547 and the byte-hashed 2025 XLS gives 51,817,499, an exact increase of 11,952 (0.0230708885%). This rounds to +12 thousand and 0.02%; the PDF table reports 0.0% to one decimal. The independently rounded displayed levels (51,817 minus 51,806 thousand) differ by 11 thousand, while the headline expresses the increase as 1만. These are consistent precision presentations, not a data discrepancy."
+      },
+      {
+        "concept": "total_households",
+        "unit": "1,000 households",
+        "values": [
+          22728,
+          22997,
+          23246
+        ],
+        "published_change_2025_vs_2024": 249,
+        "published_percent_change_2025_vs_2024": 1.1
+      },
+      {
+        "concept": "total_housing_units",
+        "unit": "1,000 units",
+        "values": [
+          19546,
+          19873,
+          20181
+        ],
+        "published_change_2025_vs_2024": 309,
+        "published_percent_change_2025_vs_2024": 1.6
+      }
+    ]
+  },
+  "access_and_preservation": {
+    "actual_source_page_content_read": true,
+    "original_source_bytes_saved": false,
+    "original_source_byte_length": null,
+    "original_source_sha256": null,
+    "complete_page_reader_text_capture_saved": false,
+    "rendered_table_verified": false,
+    "item_specific_license_mark_verified": false,
+    "rights_status": "pending",
+    "authority_status": "pending_review",
+    "approved_for_packet": false,
+    "limitations": [
+      "Page-reader text is genuine source-page content but is not the original PDF byte stream.",
+      "The PDF table's rendered appearance and footnotes have not been visually checked.",
+      "No source-artifact hash can be claimed from extracted text or from this observation record.",
+      "The page-reader path does not verify the product runtime collector or Playwright browser."
+    ]
+  },
+  "population_change_reconciliation": {
+    "status": "resolved_as_rounding_consistency",
+    "exact_2024_total_persons": 51805547,
+    "exact_2025_total_persons": 51817499,
+    "exact_change_persons": 11952,
+    "exact_change_percent": 0.023070888528597143,
+    "rounding": {
+      "published_change_thousand_persons": 12,
+      "headline_ten_thousand_persons": 1,
+      "difference_of_displayed_level_thousands": 11,
+      "headline_percent_two_decimals": 0.02,
+      "table_percent_one_decimal": 0.0
+    },
+    "exact_2024_source_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=437767&seq=4",
+    "exact_2024_source_access": "Official XLS page-reader table row; original 2024 XLS bytes not archived.",
+    "interpretation": "All figures reconcile through rounding. The official documents do not explicitly state the headline rounding granularity; 1만 is numerically consistent with the exact change rounded to ten-thousand-person units.",
+    "independence_note": "Same register-based Census source family; not independent-producer corroboration."
+  }
+}

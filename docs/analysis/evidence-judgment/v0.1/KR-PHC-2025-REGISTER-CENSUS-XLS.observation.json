@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "observation_id": "KR-PHC-2025-REGISTER-CENSUS-XLS",
+  "observation_status": "user_supplied_original_bytes_hash_verified_visual_cell_grid_reviewed_population_change_reconciled_rights_pending",
+  "issuing_body_as_published": "Ministry of Data and Statistics",
+  "series_kind": "register_based_population_housing_census",
+  "title": "2025 Population and Housing Census (Register-based Census) statistical tables",
+  "published_at": "2026-07-28",
+  "revision_id": null,
+  "revision_status": "no revision identifier or revision notice observed on the inspected release page or extracted table text",
+  "reference_date": "2025-11-01",
+  "source": {
+    "release_page_url": "https://mods.go.kr/board.es?mid=a10301020200&bid=203&act=view&list_no=446219",
+    "attachment_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=446219&seq=12",
+    "attachment_preview_url": "https://mods.go.kr/attachPreview.es?bid=203&list_no=446219&seq=12",
+    "attachment_filename": "2025년 인구주택총조사 결과(등록센서스 방식) 통계표.xls",
+    "file_format": "XLS",
+    "displayed_file_size": "108KB",
+    "list_no": 446219,
+    "sequence": 12,
+    "accessed_at_date": "2026-11-06",
+    "page_reader_chunks_total": 6,
+    "page_reader_chunks_read": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "access_method": "The official XLS attachment route returned table text in six page-reader chunks and its preview listed seven worksheet sections. The user supplied the named XLS as Base64 text; strict decoding yielded a valid OLE/BIFF workbook. The recovered bytes were parsed and checked against the official page-reader content, titles, and displayed 108KB size. This is not an environment-originated HTTP download; no MODS-origin checksum was available.",
+    "release_page_reader": {
+      "accessed_at_date": "2026-11-06",
+      "page_reader_chunks_total": 5,
+      "page_reader_chunks_read": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "observed_headline": "2025년 총인구는 5,182만 명, 전년 대비 0.02%(1만 명) 증가",
+      "exact_rights_notice_ko": "국가데이터처 \"2025년 인구주택총조사 등록센서스 방식 결과\" 저작물은 \"첨부파일 안의 공공누리유형\" 조건에 따라 이용할 수 있습니다.",
+      "rights_finding": "The page names the attachment-contained KOGL type as controlling but does not state the exact type."
+    }
+  },
+  "tables": [
+    {
+      "table_number": 1,
+      "title_as_previewed": "시도별 인구, 가구 및 주택",
+      "unit_basis": "persons, households, housing units",
+      "national_values": {
+        "total_population_persons": 51817499,
+        "total_households": 23245980,
+        "total_housing_units": 20181352
+      },
+      "read_from_chunk": 0
+    },
+    {
+      "table_number": 2,
+      "title_as_previewed": "시군구별 인구(총인구, 내국인, 외국인)",
+      "read_from_chunks": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "table_number": 3,
+      "title_as_previewed": "시도별 유소년인구,생산연령인구,고령인구",
+      "national_values": {
+        "total_population_persons": 51817499,
+        "male_persons": 25935769,
+        "female_persons": 25881730,
+        "youth_0_to_14_persons": 5224936,
+        "working_age_15_to_64_persons": 35870006,
+        "older_65_plus_persons": 10722557,
+        "aging_index_per_100_persons": 205.2,
+        "older_population_percent": 20.7
+      },
+      "read_from_chunk": 3
+    },
+    {
+      "table_number": 4,
+      "title_as_previewed": "시도 및 국적별 외국인 인구",
+      "national_values": {
+        "foreign_population_persons": 2109057
+      },
+      "read_from_chunk": 4
+    },
+    {
+      "table_number": 5,
+      "title_as_previewed": "성 및 연령 및 혼인상태별 인구",
+      "scope_note": "The national total row in the extracted table is 43,233,902; this is not the all-ages total-population measure. The extracted page includes a footnote stating the table covers Korean nationals aged 18 or older. Preserve that table-specific scope; do not compare it as if it were the all-population total.",
+      "read_from_chunks": [
+        4,
+        5
+      ]
+    },
+    {
+      "table_number": 6,
+      "title_as_previewed": "시도별 가구형태 및 가구원수별 가구",
+      "unit": "households",
+      "national_values": {
+        "total_households": 23245980,
+        "general_households": 22495096,
+        "one_person_households": 8244308,
+        "two_person_households": 6623694,
+        "three_person_households": 4219043,
+        "four_person_households": 2732400,
+        "five_or_more_person_households": 675651,
+        "group_households": 22638,
+        "foreigner_households": 728246
+      },
+      "read_from_chunk": 5
+    },
+    {
+      "table_number": 7,
+      "title_as_previewed": "시도 및 주택종류별 주택",
+      "unit": "housing units",
+      "national_values": {
+        "total_housing_units": 20181352,
+        "general_detached_houses": 2644507,
+        "multi_household_detached_houses": 738021,
+        "business_and_residential_detached_houses": 447040,
+        "apartments": 13289220,
+        "row_houses": 544476,
+        "multi_unit_houses": 2306803,
+        "non_residential_building_houses": 211285,
+        "non_housing_living_quarters": 1261218
+      },
+      "read_from_chunk": 5
+    }
+  ],
+  "cross_checks": [
+    {
+      "check": "rounded headline totals against the related 2025 MODS PDF summary table",
+      "observed_xls_values": [
+        51817499,
+        23245980,
+        20181352
+      ],
+      "pdf_values_in_thousands": [
+        51817,
+        23246,
+        20181
+      ],
+      "result": "All three exact XLS counts round to the corresponding PDF thousands values.",
+      "relationship": "same Census program and release family; consistency check, not independent-source corroboration"
+    },
+    {
+      "check": "housing-unit exact count against the KOSIS 2025 housing indicator observation",
+      "xls_value": 20181352,
+      "kosis_value": 20181352,
+      "result": "Exact count matches.",
+      "relationship": "KOSIS table is sourced to the Population and Housing Census; not independent-producer corroboration"
+    },
+    {
+      "check": "household exact count against the KOSIS related-card observation",
+      "xls_value": 23245980,
+      "kosis_value": 23245980,
+      "result": "Exact count matches.",
+      "relationship": "KOSIS related indicator is labeled as Population Census; its linked table was not exposed, so this is a page-level consistency check"
+    },
+    {
+      "check": "within-workbook national arithmetic identities",
+      "results": {
+        "male_plus_female_equals_population": true,
+        "youth_plus_working_age_plus_older_equals_population": true,
+        "general_plus_group_plus_foreigner_households_equals_total_households": true,
+        "household_size_categories_sum_to_general_households": true,
+        "housing_type_categories_sum_to_total_housing_units": true
+      },
+      "relationship": "Arithmetic consistency among extracted tables from the same official attachment; not an independent data-source check"
+    },
+    {
+      "check": "exact 2024-to-2025 total-population change and rounded-presentation reconciliation",
+      "exact_2024_persons": 51805547,
+      "exact_2025_persons": 51817499,
+      "exact_difference_persons": 11952,
+      "exact_difference_percent": 0.023070888528597143,
+      "result": "Exact change rounds to +12 thousand and 0.02%; consistent with the +1만 headline and +11천 difference between displayed rounded levels.",
+      "relationship": "2024 official XLS page-reader row plus repeated 2024 report figure; 2025 byte-hashed user-supplied XLS; same Census family."
+    }
+  ],
+  "access_and_preservation": {
+    "actual_official_page_reader_content_read": true,
+    "all_page_reader_chunks_requested": true,
+    "original_source_bytes_saved": true,
+    "original_source_byte_length": 110592,
+    "original_source_sha256": "9c4171fe8192158971ffc9f1e918ed632765ab76a410bf79ea087dc5ceed355b",
+    "complete_page_reader_text_capture_saved": false,
+    "rendered_table_visually_verified": true,
+    "preview_viewer_opened": true,
+    "preview_listed_all_seven_table_sections": true,
+    "item_specific_license_type_verified": false,
+    "rights_notice_as_published": "국가데이터처 \"2025년 인구주택총조사 등록센서스 방식 결과\" 저작물은 \"첨부파일 안의 공공누리유형\" 조건에 따라 이용할 수 있습니다.",
+    "rights_status": "pending_exact_item_specific_KOGL_type_review",
+    "authority_status": "pending_rights_review",
+    "approved_for_packet": false,
+    "limitations": [
+      "The XLS was reconstructed from user-supplied Base64; no MODS-origin checksum or direct environment HTTP acquisition is available.",
+      "The exact KOGL type is not named in the page text, parsed XLS, or available reconstructed preview. PDF/HWPX preview images are inaccessible through the reader; rights remain pending.",
+      "A local hash identifies the recovered bytes but does not authenticate origin or clear reuse rights.",
+      "Native Excel/LibreOffice rendering was not available.",
+      "All Census/KOSIS/KDI comparisons are same-source-family consistency checks, not independent-producer corroboration."
+    ],
+    "render_method": "Reconstructed HTML cell-grid; not native Office rendering."
+  },
+  "original_file_evidence": {
+    "artifact_path": "_reference/evidence-judgment/KR-PHC-2025-REGISTER-CENSUS-XLS/2025년 인구주택총조사 결과(등록센서스 방식) 통계표.xls",
+    "artifact_storage": "local ignored reference directory; not part of Git patch",
+    "file_size_bytes": 110592,
+    "sha256": "9c4171fe8192158971ffc9f1e918ed632765ab76a410bf79ea087dc5ceed355b",
+    "ole_signature_hex": "d0cf11e0a1b11ae1",
+    "base64_transport": {
+      "upload_filename": "census-original-base64.txt",
+      "upload_bytes": 147456,
+      "upload_sha256": "5fdd2e23969839ea0b6e4d2eefe52080bb31d0c9152663b42ab020c031e05d14",
+      "strict_base64_decode_succeeded": true,
+      "decoded_file_bytes_match_sha256": true
+    },
+    "official_catalog_size_comparison": "The portal displayed 108KB; the recovered file is exactly 108 KiB. This is a consistency signal, not a publisher checksum.",
+    "workbook_parser": "xlrd 2.0.2",
+    "workbook_sheets": [
+      {
+        "number": 1,
+        "title": "1.시도별 인구, 가구 및 주택",
+        "rows": 42,
+        "columns": 7
+      },
+      {
+        "number": 2,
+        "title": "2.시군구별 인구(총인구, 내국인, 외국인)",
+        "rows": 290,
+        "columns": 10
+      },
+      {
+        "number": 3,
+        "title": "3.시도별 유소년인구,생산연령인구,고령인구",
+        "rows": 33,
+        "columns": 15
+      },
+      {
+        "number": 4,
+        "title": "4.시도 및 국적별 외국인 인구",
+        "rows": 27,
+        "columns": 23
+      },
+      {
+        "number": 5,
+        "title": "5.성 및 연령 및 혼인상태별 인구",
+        "rows": 26,
+        "columns": 22
+      },
+      {
+        "number": 6,
+        "title": "6.시도별 가구형태 및 가구원수별 가구",
+        "rows": 29,
+        "columns": 10
+      },
+      {
+        "number": 7,
+        "title": "7.시도 및 주택종류별 주택",
+        "rows": 28,
+        "columns": 10
+      }
+    ],
+    "source_identity_limit": "The recovered user-supplied bytes match the named official attachment in title, table content, structure, and catalog size. No independent checksum from MODS was available; official-origin byte identity is not cryptographically established."
+  },
+  "visual_review": {
+    "status": "cell_grid_preview_visually_reviewed_with_native_office_rendering_limit",
+    "method": "Reconstructed HTML cell-grid previews from parsed XLS cells, captured with headless Chromium and Noto Sans KR; worksheets visually inspected.",
+    "native_excel_or_libreoffice_rendering": false,
+    "worksheets_visually_reviewed": [
+      1,
+      2,
+      5,
+      6,
+      7
+    ],
+    "observations": [
+      "Worksheet 1: national population/household/housing totals and units visible.",
+      "Worksheet 2: national population, sex, Korean/foreign group labels and person units visible.",
+      "Worksheet 5: 18+ Korean-national scope and below-five suppression note visible.",
+      "Worksheet 6: household categories and one-person total visible.",
+      "Worksheet 7: housing categories and separate non-housing living quarters visible."
+    ],
+    "limitation": "HTML reconstructs grid styling; it is not a native Office render and does not prove exact original styling or hidden-object display."
+  },
+  "population_change_reconciliation": {
+    "status": "resolved_as_rounding_consistency",
+    "sources": [
+      {
+        "reference_year": 2024,
+        "source_title": "2024년 인구주택총조사 결과(등록센서스 방식) 통계표.xls",
+        "official_release_page_url": "https://mods.go.kr/board.es?mid=a10301020100&bid=203&act=view&list_no=437767",
+        "official_attachment_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=437767&seq=4",
+        "list_no": 437767,
+        "sequence": 4,
+        "portal_displayed_size": "186KB",
+        "access": "Official page-reader returned table 1 and the exact national population row; 2024 XLS bytes not archived.",
+        "exact_total_population_persons": 51805547
+      },
+      {
+        "reference_year": 2025,
+        "source_title": "2025년 인구주택총조사 결과(등록센서스 방식) 통계표.xls",
+        "official_release_page_url": "https://mods.go.kr/board.es?mid=a10301020200&bid=203&act=view&list_no=446219",
+        "official_attachment_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=446219&seq=12",
+        "access": "User-supplied Base64-recovered, locally byte-hashed workbook.",
+        "exact_total_population_persons": 51817499
+      },
+      {
+        "source_title": "2025년 인구주택총조사 결과(등록센서스 방식) press-release PDF",
+        "official_attachment_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=446219&seq=11",
+        "reader_chunks_read": [
+          0,
+          1,
+          2,
+          4,
+          5
+        ],
+        "reader_chunk_3": "HTTP 500; not retried",
+        "observed_presentations": {
+          "headline": "0.02%(1만 명) 증가",
+          "table_change_thousand_persons": 12,
+          "displayed_2024_total_thousand_persons": 51806,
+          "displayed_2025_total_thousand_persons": 51817,
+          "table_percent_change_one_decimal": 0.0,
+          "rounding_note": "The report says published figures are rounded and table totals may not match."
+        }
+      },
+      {
+        "source_title": "2024년 이주배경인구 통계 결과, 표 1",
+        "official_attachment_url": "https://mods.go.kr/boardDownload.es?bid=203&list_no=439619&seq=2",
+        "reader_chunks_read": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "exact_2024_total_population_persons": 51805547,
+        "relationship": "Same Census source family; repeated figure, not independent corroboration."
+      }
+    ],
+    "calculations": {
+      "exact_change_persons": 11952,
+      "exact_change_percent_of_2024_base": 0.023070888528597143,
+      "rounded_change_to_nearest_thousand_persons": 12000,
+      "rounded_change_to_nearest_ten_thousand_persons": 10000,
+      "percent_rounded_to_two_decimal_places": 0.02,
+      "difference_of_displayed_rounded_levels_thousand_persons": 11
+    },
+    "interpretation": "The +1만 headline, +11천 subtraction of independently rounded levels, and +12천 table change are consistent presentations of the exact +11,952-person increase; no discrepancy remains.",
+    "rounding_rule_caveat": "The official materials do not explicitly document the headline rounding granularity; +1만 is numerically consistent with expressing 11,952 people in ten-thousand-person units.",
+    "independence_caveat": "All records belong to the same official register-based Census source family; this is not independent-producer corroboration."
+  },
+  "rights_review_attempts": [
+    {
+      "route": "MODS release page list_no=446219",
+      "result": "The exact notice says use follows the KOGL type inside an attachment; page text does not name the type."
+    },
+    {
+      "route": "PDF preview attachPreview.es?bid=203&list_no=446219&seq=11",
+      "result": "HTTP 500; not retried."
+    },
+    {
+      "route": "HWP direct attachment boardDownload.es?bid=203&list_no=446219&seq=9",
+      "result": "HTTP 500; not retried."
+    },
+    {
+      "route": "HWPX attachment boardDownload.es?bid=203&list_no=446219&seq=10",
+      "result": "Opened a 107-page Synap viewer; rendered page images were removed from page-reader output."
+    },
+    {
+      "route": "HWPX viewer first-page image https://mods.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png?",
+      "result": "HTTP 500; not retried."
+    },
+    {
+      "route": "2025 XLS cells and reconstructed visual preview",
+      "result": "No exact KOGL type visible; BIFF scan found no embedded drawing/object records or common image signatures."
+    },
+    {
+      "route": "2025 PDF page-reader chunks 0,1,2,4,5",
+      "result": "Extracted text did not expose an exact KOGL type; chunk 3 returned HTTP 500."
+    }
+  ]
+}
