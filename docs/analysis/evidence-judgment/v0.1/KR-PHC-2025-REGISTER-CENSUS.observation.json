@@ -98,5 +98,19 @@
     "exact_2024_source_access": "Official XLS page-reader table row; original 2024 XLS bytes not archived.",
     "interpretation": "All figures reconcile through rounding. The official documents do not explicitly state the headline rounding granularity; 1만 is numerically consistent with the exact change rounded to ten-thousand-person units.",
     "independence_note": "Same register-based Census source family; not independent-producer corroboration."
+  },
+  "alternate_official_attachment_route": {
+    "portal": "대한민국 정책브리핑 (Korea.kr)",
+    "release_page_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156772417&call_from=seoul_paper",
+    "pdf_attachment_url": "https://www.korea.kr/common/download.do?fileId=198515760&tblKey=GMN",
+    "page_reader_chunks_read": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "finding": "The full text of the same report was accessible, including the displayed +12-thousand change. No exact KOGL mark was extracted from the cover image. Korea.kr states its own KOGL-1 permission applies to page text only; do not extend that notice to the source attachment."
   }
 }

@@ -42,6 +42,24 @@
       "observed_headline": "2025년 총인구는 5,182만 명, 전년 대비 0.02%(1만 명) 증가",
       "exact_rights_notice_ko": "국가데이터처 \"2025년 인구주택총조사 등록센서스 방식 결과\" 저작물은 \"첨부파일 안의 공공누리유형\" 조건에 따라 이용할 수 있습니다.",
       "rights_finding": "The page names the attachment-contained KOGL type as controlling but does not state the exact type."
+    },
+    "alternate_official_republication": {
+      "government_portal": "대한민국 정책브리핑 (Korea.kr)",
+      "page_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156772417&call_from=seoul_paper",
+      "page_title": "2025년 인구주택총조사 등록센서스 방식 결과",
+      "page_lists_same_named_attachments": true,
+      "pdf_attachment_route": "https://www.korea.kr/common/download.do?fileId=198515760&tblKey=GMN",
+      "pdf_attachment_page_reader_chunks_read": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "pdf_reader_license_finding": "No exact KOGL mark exposed in the extracted PDF text; the cover image is not included by the page reader.",
+      "portal_footer_ko": "이 자료는 텍스트에 한하여 공공누리 제1유형(출처표시)의 조건에 따라 이용할 수 있습니다. 단, 텍스트를 제외한 사진·이미지·일러스트·동영상 등 자료의 대부분은 정책브리핑이 저작권을 보유하고 있지 않으므로, 이용 전 해당 저작권자의 허락을 반드시 받으셔야 합니다.",
+      "footer_scope": "The Korea.kr type-1 footer expressly applies to Korea.kr page text only; it does not establish a KOGL type for the attached MODS report/XLS."
     }
   },
   "tables": [
@@ -384,6 +402,18 @@
     {
       "route": "2025 PDF page-reader chunks 0,1,2,4,5",
       "result": "Extracted text did not expose an exact KOGL type; chunk 3 returned HTTP 500."
+    },
+    {
+      "route": "Official Korea.kr republication page newsId=156772417",
+      "result": "The page lists the same HWP/HWPX/PDF/XLS attachments. Its own KOGL-1 notice explicitly limits itself to page text and does not identify the attached report license."
+    },
+    {
+      "route": "Korea.kr direct PDF attachment https://www.korea.kr/common/download.do?fileId=198515760&tblKey=GMN",
+      "result": "All six page-reader chunks returned report text; no exact KOGL type appeared because the cover mark image was not exposed."
+    },
+    {
+      "route": "Korea.kr direct HWPX attachment https://www.korea.kr/common/download.do?fileId=198515759&tblKey=GMN",
+      "result": "HTTP 500; not retried."
     }
   ]
 }
