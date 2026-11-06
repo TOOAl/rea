@@ -108,8 +108,9 @@ The contract is accepted only when all criteria hold:
 - `tests/brainCoreJudgment.test.ts` — explicit comparison and aggregate outcomes.
 - `tests/brainCoreToolCatalog.test.ts` — catalog and tool-eligibility boundaries.
 - `tests/brainCoreCycleContract.test.ts` — whole-path determinism, read-only inputs, no-tool authorization, non-comparable evidence retention, and caller-mediated re-entry.
+- `evals/brainCore-v0.1/known-answer-cases.json` + `scripts/brainCoreKnownAnswerEval.ts` — standalone, visible synthetic input/expected-output fixture and provider-free evaluator, separate from unit-test assertions; run with `npx tsx scripts/brainCoreKnownAnswerEval.ts` from `arena-code/`.
 
-The six-file BrainCore suite passed on 2026-11-07: **33 tests**. Passing tests verify code-level cases only; source review remains required for the closed-boundary criterion. Neither tests nor source review establish source authenticity or broad reasoning capability.
+The six-file BrainCore suite passed on 2026-11-07: **33 tests**. The separate known-answer evaluator passed **12/12** cases (exact support, polarity conflict, mixed evidence, field mismatches, non-comparable retention, missing evidence, and invalid provenance/IDs). These are visible synthetic contract regressions—not held-out evaluation, real-source verification, or a general capability score. Source review remains required for the closed-boundary criterion.
 
 ## Change control / next gate
 

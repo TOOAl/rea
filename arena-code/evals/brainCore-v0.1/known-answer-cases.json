@@ -1,0 +1,338 @@
+{
+  "suiteId": "REA-BRAINCORE-KA-0.1",
+  "version": "0.1.0",
+  "description": "Visible synthetic known-answer regression set for structured exact-field judgment. Not a held-out benchmark or real-source verification.",
+  "targetClaim": {
+    "subject": "batch-41",
+    "predicate": "checksum status",
+    "object": "valid",
+    "polarity": "positive",
+    "scope": "ingest-region-east",
+    "timeScope": "2026-11-06T09:00Z"
+  },
+  "cases": [
+    {
+      "id": "exact-support",
+      "evidence": [
+        {
+          "id": "ka-01",
+          "sourceId": "synthetic-log-01",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "supported",
+        "assessments": [
+          { "evidenceId": "ka-01", "relation": "supports", "reason": "claim-match" }
+        ]
+      }
+    },
+    {
+      "id": "opposite-polarity-refutes",
+      "evidence": [
+        {
+          "id": "ka-02",
+          "sourceId": "synthetic-log-02",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "negative",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "refuted",
+        "assessments": [
+          { "evidenceId": "ka-02", "relation": "contradicts", "reason": "polarity-conflict" }
+        ]
+      }
+    },
+    {
+      "id": "mixed-evidence-is-contested",
+      "evidence": [
+        {
+          "id": "ka-03a",
+          "sourceId": "synthetic-log-03a",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        },
+        {
+          "id": "ka-03b",
+          "sourceId": "synthetic-log-03b",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "negative",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "contested",
+        "assessments": [
+          { "evidenceId": "ka-03a", "relation": "supports", "reason": "claim-match" },
+          { "evidenceId": "ka-03b", "relation": "contradicts", "reason": "polarity-conflict" }
+        ]
+      }
+    },
+    {
+      "id": "scope-mismatch-not-comparable",
+      "evidence": [
+        {
+          "id": "ka-04",
+          "sourceId": "synthetic-log-04",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-west",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "insufficient",
+        "assessments": [
+          { "evidenceId": "ka-04", "relation": "not-comparable", "reason": "scope-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "time-scope-mismatch-not-comparable",
+      "evidence": [
+        {
+          "id": "ka-05",
+          "sourceId": "synthetic-log-05",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T10:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "insufficient",
+        "assessments": [
+          { "evidenceId": "ka-05", "relation": "not-comparable", "reason": "time-scope-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "subject-mismatch-not-comparable",
+      "evidence": [
+        {
+          "id": "ka-06",
+          "sourceId": "synthetic-log-06",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-42",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "insufficient",
+        "assessments": [
+          { "evidenceId": "ka-06", "relation": "not-comparable", "reason": "subject-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "predicate-mismatch-not-comparable",
+      "evidence": [
+        {
+          "id": "ka-07",
+          "sourceId": "synthetic-log-07",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "signature status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "insufficient",
+        "assessments": [
+          { "evidenceId": "ka-07", "relation": "not-comparable", "reason": "predicate-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "object-mismatch-not-comparable",
+      "evidence": [
+        {
+          "id": "ka-08",
+          "sourceId": "synthetic-log-08",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "invalid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "insufficient",
+        "assessments": [
+          { "evidenceId": "ka-08", "relation": "not-comparable", "reason": "object-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "support-retained-alongside-non-comparable",
+      "evidence": [
+        {
+          "id": "ka-09a",
+          "sourceId": "synthetic-log-09a",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        },
+        {
+          "id": "ka-09b",
+          "sourceId": "synthetic-log-09b",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-west",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": {
+        "invocationStatus": "judged",
+        "judgmentStatus": "supported",
+        "assessments": [
+          { "evidenceId": "ka-09a", "relation": "supports", "reason": "claim-match" },
+          { "evidenceId": "ka-09b", "relation": "not-comparable", "reason": "scope-mismatch" }
+        ]
+      }
+    },
+    {
+      "id": "missing-evidence-stops",
+      "evidence": [],
+      "expected": { "invocationStatus": "needs-information" }
+    },
+    {
+      "id": "unresolved-collection-step-stops",
+      "evidence": [
+        {
+          "id": "ka-11",
+          "sourceId": "synthetic-log-11",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-not-in-plan",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": { "invocationStatus": "invalid" }
+    },
+    {
+      "id": "duplicate-evidence-id-stops",
+      "evidence": [
+        {
+          "id": "ka-12",
+          "sourceId": "synthetic-log-12a",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        },
+        {
+          "id": "ka-12",
+          "sourceId": "synthetic-log-12b",
+          "informationNeedId": "need-checksum",
+          "collectionStepId": "step-inspect",
+          "claim": {
+            "subject": "batch-41",
+            "predicate": "checksum status",
+            "object": "valid",
+            "polarity": "positive",
+            "scope": "ingest-region-east",
+            "timeScope": "2026-11-06T09:00Z"
+          }
+        }
+      ],
+      "expected": { "invocationStatus": "invalid" }
+    }
+  ]
+}
