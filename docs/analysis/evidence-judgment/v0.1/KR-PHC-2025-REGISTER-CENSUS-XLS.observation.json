@@ -430,12 +430,24 @@
         "https://www.kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png"
       ],
       "result": "Both returned HTTP 500. Exact page-image visual verification remains unavailable."
+    },
+    {
+      "route": "Official MODS copyright policy https://mods.go.kr/menu.es?mid=a10706000000",
+      "result": "Names copyright-practice contact Kim Ju-young, Digital Information Team (042-481-6963), and management officer Woo Young-je, Statistics Services Bureau (042-481-6902); the policy says unmarked works should be discussed with these contacts. The source release lists Sim Su-jin, Population Census Division (042-481-3756). An item-specific inquiry draft exists at docs/analysis/evidence-judgment/v0.1/KR-PHC-2025-KOGL-INQUIRY.md; it has not been sent."
     }
   ],
   "rights_status_last_attempt": {
     "date": "2026-11-07",
-    "outcome": "The direct first-page image paths also returned HTTP 500 when requested without the empty trailing query marker; no official visual KOGL mark has been obtained.",
+    "outcome": "Exact attachment KOGL type remains unverified; waiting for official file-by-file confirmation or cover image.",
     "latest_distinct_route": "Kostat legacy-domain attachPreview redirected to current official MODS Synap viewer; the first-page image could not be retrieved through the MODS or legacy KOSTAT hostnames.",
-    "no_inference": "No KOGL type inferred from the Korea.kr text-only footer, unrelated 2025 Census notices, or the generic KOGL registry information."
+    "no_inference": "No KOGL type inferred from the Korea.kr text-only footer, unrelated 2025 Census notices, or the generic KOGL registry information.",
+    "official_contact_route_found": {
+      "copyright_practice_contact": "Kim Ju-young, Digital Information Team, 042-481-6963",
+      "copyright_management_officer": "Woo Young-je, Statistics Services Bureau, 042-481-6902",
+      "release_contact": "Sim Su-jin, Population Census Division, 042-481-3756",
+      "inquiry_draft": "docs/analysis/evidence-judgment/v0.1/KR-PHC-2025-KOGL-INQUIRY.md",
+      "sent": false,
+      "reason": "No phone-call or email-submission capability in this environment."
+    }
   }
 }
