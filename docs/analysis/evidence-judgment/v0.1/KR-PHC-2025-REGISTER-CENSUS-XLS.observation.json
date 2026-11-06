@@ -449,5 +449,14 @@
       "sent": false,
       "reason": "No phone-call or email-submission capability in this environment."
     }
+  },
+  "rights_gate_alternative_review": {
+    "document": "docs/analysis/evidence-judgment/v0.1/KR-PHC-2025-KOGL-ALTERNATIVE-REVIEW.md",
+    "status": "analysis_complete_inquiry_draft_not_sent",
+    "recommended_first_path": "Official MODS copyright-practice response giving separate exact KOGL types/conditions for PDF seq=11 and XLS seq=12, matched to intended use.",
+    "fallback_path": "Open.go.kr information-disclosure request for existing cover scans, attachment-level rights records, or existing rights determinations; the request itself is not a license grant.",
+    "statutory_route": "Copyright Act Article 24-2 is a possible legal analysis, not a current clearance, because applicability to each attachment and included material/exceptions is not established; MODS policy directs consultation for unmarked material.",
+    "narrow_use_fallback": "Citing factual population values without redistributing the workbook/document may narrow the use question, but does not clear the source packet or approve source-artifact reuse.",
+    "rights_status_unchanged": "pending_exact_item_specific_KOGL_type_review"
   }
 }
