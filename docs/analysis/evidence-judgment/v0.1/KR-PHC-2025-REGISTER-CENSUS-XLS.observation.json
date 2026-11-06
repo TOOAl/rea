@@ -422,11 +422,19 @@
     {
       "route": "First-page image through legacy official hosts https://www.kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png? and https://kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png?",
       "result": "Both returned HTTP 500. Do not retry these exact URLs. The already-tried MODS-host first-page image URL also returned HTTP 500."
+    },
+    {
+      "route": "First-page Synap image URLs without a trailing query marker on official MODS and legacy KOSTAT hosts",
+      "urls": [
+        "https://mods.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png",
+        "https://www.kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png"
+      ],
+      "result": "Both returned HTTP 500. Exact page-image visual verification remains unavailable."
     }
   ],
   "rights_status_last_attempt": {
     "date": "2026-11-07",
-    "outcome": "Exact attachment KOGL type still not visually verified.",
+    "outcome": "The direct first-page image paths also returned HTTP 500 when requested without the empty trailing query marker; no official visual KOGL mark has been obtained.",
     "latest_distinct_route": "Kostat legacy-domain attachPreview redirected to current official MODS Synap viewer; the first-page image could not be retrieved through the MODS or legacy KOSTAT hostnames.",
     "no_inference": "No KOGL type inferred from the Korea.kr text-only footer, unrelated 2025 Census notices, or the generic KOGL registry information."
   }
