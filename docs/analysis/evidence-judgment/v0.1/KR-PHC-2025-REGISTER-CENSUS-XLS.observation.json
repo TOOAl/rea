@@ -414,6 +414,20 @@
     {
       "route": "Korea.kr direct HWPX attachment https://www.korea.kr/common/download.do?fileId=198515759&tblKey=GMN",
       "result": "HTTP 500; not retried."
+    },
+    {
+      "route": "Legacy official domain preview https://www.kostat.go.kr/attachPreview.es?bid=203&list_no=446219&seq=11",
+      "result": "Redirected to the current MODS 107-page Synap viewer for the same named official PDF. The viewer exposed page-image URLs, but page-reader output stripped the rendered images."
+    },
+    {
+      "route": "First-page image through legacy official hosts https://www.kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png? and https://kostat.go.kr/synap/preview/board/203/a278866746bca931e74f42db2701f5430b514ad3c3c1ddb2be3c7a1775d173fa.files/1.png?",
+      "result": "Both returned HTTP 500. Do not retry these exact URLs. The already-tried MODS-host first-page image URL also returned HTTP 500."
     }
-  ]
+  ],
+  "rights_status_last_attempt": {
+    "date": "2026-11-07",
+    "outcome": "Exact attachment KOGL type still not visually verified.",
+    "latest_distinct_route": "Kostat legacy-domain attachPreview redirected to current official MODS Synap viewer; the first-page image could not be retrieved through the MODS or legacy KOSTAT hostnames.",
+    "no_inference": "No KOGL type inferred from the Korea.kr text-only footer, unrelated 2025 Census notices, or the generic KOGL registry information."
+  }
 }
