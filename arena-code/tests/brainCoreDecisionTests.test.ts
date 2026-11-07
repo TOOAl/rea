@@ -55,6 +55,87 @@ function outcomeEntropy(test: DecisionTestSelectionInput["tests"][number]): numb
   );
 }
 
+function makeSensitivityInput(
+  priorStop: number,
+  boundaryReliability: number,
+  costPenalty: number,
+): DecisionTestSelectionInput {
+  return {
+    hypotheses: [
+      { id: "H-a", prior: (1 - priorStop) / 2, decisionRegionId: "continue" },
+      { id: "H-b", prior: (1 - priorStop) / 2, decisionRegionId: "continue" },
+      { id: "H-stop", prior: priorStop, decisionRegionId: "stop" },
+    ],
+    tests: [
+      {
+        id: "within-region-detail",
+        cost: 0,
+        outcomes: [
+          { id: "a", likelihoodByHypothesis: { "H-a": 1, "H-b": 0, "H-stop": 0.5 } },
+          { id: "b", likelihoodByHypothesis: { "H-a": 0, "H-b": 1, "H-stop": 0.5 } },
+        ],
+      },
+      {
+        id: "decision-boundary",
+        cost: 1,
+        outcomes: [
+          {
+            id: "continue",
+            likelihoodByHypothesis: {
+              "H-a": boundaryReliability,
+              "H-b": boundaryReliability,
+              "H-stop": 1 - boundaryReliability,
+            },
+          },
+          {
+            id: "stop",
+            likelihoodByHypothesis: {
+              "H-a": 1 - boundaryReliability,
+              "H-b": 1 - boundaryReliability,
+              "H-stop": boundaryReliability,
+            },
+          },
+        ],
+      },
+    ],
+    costPenalty,
+  };
+}
+
+function expectedCorrectUnderAssumedBoundaryPolicy(
+  assumedPriorStop: number,
+  assumedReliability: number,
+  truePriorStop: number,
+  trueReliability: number,
+): number {
+  const assumedActions = [
+    {
+      continue: (1 - assumedPriorStop) * assumedReliability,
+      stop: assumedPriorStop * (1 - assumedReliability),
+    },
+    {
+      continue: (1 - assumedPriorStop) * (1 - assumedReliability),
+      stop: assumedPriorStop * assumedReliability,
+    },
+  ].map(({ continue: continueMass, stop: stopMass }) =>
+    continueMass >= stopMass ? "continue" : "stop",
+  );
+  const trueMasses = [
+    {
+      continue: (1 - truePriorStop) * trueReliability,
+      stop: truePriorStop * (1 - trueReliability),
+    },
+    {
+      continue: (1 - truePriorStop) * (1 - trueReliability),
+      stop: truePriorStop * trueReliability,
+    },
+  ];
+  return trueMasses.reduce(
+    (correct, masses, index) => correct + masses[assumedActions[index] as "continue" | "stop"],
+    0,
+  );
+}
+
 describe("REA-BRAINCORE-DTS-0.1 experiment", () => {
   it("prefers information that separates decisions over greater within-decision entropy", () => {
     const result = selectDecisionFocusedTest(input);
@@ -91,6 +172,30 @@ describe("REA-BRAINCORE-DTS-0.1 experiment", () => {
     if (result.status === "no-positive-value-test") {
       expect(result.assessments[1]?.netValue).toBeCloseTo(-0.1);
     }
+  });
+
+  it("shows selection sensitivity to prior, likelihood, cost, and likelihood misspecification", () => {
+    const nominal = selectDecisionFocusedTest(makeSensitivityInput(0.1, 0.99, 0.02));
+    expect(nominal.status).toBe("selected");
+    if (nominal.status === "selected") {
+      expect(nominal.selectedTestId).toBe("decision-boundary");
+      expect(nominal.assessments[1]?.expectedDecisionErrorReduction).toBeCloseTo(0.09);
+      expect(nominal.assessments[1]?.netValue).toBeCloseTo(0.07);
+    }
+
+    expect(selectDecisionFocusedTest(makeSensitivityInput(0.1, 0.9, 0)).status).toBe(
+      "no-positive-value-test",
+    );
+    expect(selectDecisionFocusedTest(makeSensitivityInput(0.1, 0.8, 0)).status).toBe(
+      "no-positive-value-test",
+    );
+    expect(selectDecisionFocusedTest(makeSensitivityInput(0.1, 0.99, 0.09)).status).toBe(
+      "no-positive-value-test",
+    );
+
+    const actualCorrect = expectedCorrectUnderAssumedBoundaryPolicy(0.1, 0.99, 0.1, 0.8);
+    expect(actualCorrect).toBeCloseTo(0.8);
+    expect(actualCorrect - 0.9).toBeCloseTo(-0.1);
   });
 
   it("computes expected decision benefit for a stochastic caller-supplied test model", () => {

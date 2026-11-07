@@ -51,6 +51,14 @@ Three hypotheses have priors `0.45, 0.45, 0.10`. The first two map to one decisi
 
 The expected behavior is to choose `cross-decision-boundary`, while a pure outcome-entropy heuristic would prefer `detail-within-action`. This is a fixture-specific property, not an empirical utility claim.
 
+## Sensitivity and misspecification probe
+
+A second synthetic fixture varies the modeled prior mass of the `stop` region, boundary-test reliability, and cost penalty. With prior stop mass `0.10`, reliability `0.99`, and cost penalty `0.02`, the modeled decision-error reduction is `0.09` and the net value is `0.07`; the boundary test is selected. At assumed reliability `0.90`, the rare region is exactly at the modeled decision threshold and the test has no positive decision gain. At `0.80`, it also has no modeled value. With reliability `0.99` but cost penalty `0.09` per cost unit, net value is zero and no test is selected.
+
+A separate decision-policy calculation illustrates likelihood misspecification: if the assumed model is prior `0.10` / reliability `0.99`, but the actual reliability is `0.80` at the same prior, following the assumed posterior would yield expected correctness `0.80`, compared with `0.90` from always choosing the prior-dominant `continue` region. That is a **10 percentage-point harm** in this constructed case. The selector itself does not execute the follow-up decision; this is a synthetic warning about downstream use of unverified likelihoods, not an observed REA performance result.
+
+This sensitivity result is a reason to keep the function isolated. Before any integration, caller-supplied priors and likelihoods need an explicit source/estimation contract, calibration evidence, and a fail-safe behavior under uncertain models. The current experiment has no robustness guarantee under model misspecification.
+
 ## Acceptance criteria
 
 1. Invalid priors, incomplete likelihood maps, out-of-range probabilities, and non-normalized likelihoods return `invalid`.

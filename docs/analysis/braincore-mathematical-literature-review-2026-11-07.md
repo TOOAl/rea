@@ -146,7 +146,9 @@ Tversky & Kahneman, “Judgment under Uncertainty: Heuristics and Biases,” _Sc
 
 기본 합성 사례에서 더 많은 결과 엔트로피를 주는 “같은 행동 구역 안의 세부 구분” 검사 대신, 더 적은 엔트로피지만 행동 구역 경계를 가르는 검사를 선택하도록 확인했다. 결정 오류 감소가 비용 페널티보다 작거나 같은 경우에는 검사를 억지로 선택하지 않는다. prior/likelihood 입력은 검증하지만 외부 사실에 대한 확률 보정이나 진실도를 검증하지 않는다.
 
-검증 결과: 코어 직접 테스트 **6개 파일, 31개 통과**; `npm run typecheck` 통과; `REA-BRAINCORE-KA-0.1` 합성 회귀 **12/12 통과**; 변경 파일의 Prettier 검사 통과. 이는 계약·수식의 결정적 합성 테스트이지 실제 정보 수집 효용, 일반 인지 능력, 혹은 probability calibration의 증거가 아니다.
+추가 민감도 probe에서 중단 구역의 사전확률을 0.10으로 두면 검사 신뢰도 가정 0.99는 오류 감소 0.09를 만들어 선택되지만, 신뢰도 0.90 또는 0.80에서는 예상 이득이 없어 선택되지 않았다. 같은 0.99 신뢰도에서도 비용 페널티 0.09면 순이득이 0이 되어 보류한다. 더 중요한 반례로, 가정 신뢰도 0.99에 따라 결과 후 행동하지만 실제 신뢰도가 0.80이라면 정확도는 0.90의 검사 전 기본 행동보다 0.80으로 낮아져 이 합성 사례에서 10%p 손해가 난다. 따라서 실제 likelihood의 근거·보정·불확실성 처리가 마련되기 전에는 계획 경로에 통합하지 않는 것이 맞다.
+
+검증 결과: 코어 직접 테스트 **6개 파일, 32개 통과**; `npm run typecheck` 통과; `REA-BRAINCORE-KA-0.1` 합성 회귀 **12/12 통과**; 변경 파일의 Prettier 검사 통과. 이는 계약·수식의 결정적 합성 테스트이지 실제 정보 수집 효용, 일반 인지 능력, 혹은 probability calibration의 증거가 아니다.
 
 실험 계약: [`arena-code/docs/DECISION_FOCUSED_TEST_SELECTION_EXPERIMENT_V0_1.md`](../../arena-code/docs/DECISION_FOCUSED_TEST_SELECTION_EXPERIMENT_V0_1.md). 코드: [`arena-code/src/brainCore/decisionTests.ts`](../../arena-code/src/brainCore/decisionTests.ts). 테스트: [`arena-code/tests/brainCoreDecisionTests.test.ts`](../../arena-code/tests/brainCoreDecisionTests.test.ts).
 
