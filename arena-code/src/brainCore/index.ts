@@ -3,6 +3,17 @@ export { inspectJudgmentReadiness, judgeAtomicClaimWhenReady } from "./readiness
 export { inspectPreparationPlanReadiness } from "./planning.js";
 export { inspectPreJudgmentReadiness, judgeAtomicClaimAfterPreparation } from "./pre-judgment.js";
 export { evaluateHypothesisSetAfterPreparation } from "./hypotheses.js";
+export { selectDecisionFocusedTest } from "./decisionTests.js";
+export type {
+  CandidateDecisionTest,
+  DecisionHypothesis,
+  DecisionTestAssessment,
+  DecisionTestFinding,
+  DecisionTestFindingCode,
+  DecisionTestSelection,
+  DecisionTestSelectionInput,
+  TestOutcomeModel,
+} from "./decisionTests.js";
 export type {
   CandidateHypothesis,
   HypothesisFindingCode,
