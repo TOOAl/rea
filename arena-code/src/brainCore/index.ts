@@ -2,6 +2,16 @@ export { judgeAtomicClaim } from "./judgment.js";
 export { inspectJudgmentReadiness, judgeAtomicClaimWhenReady } from "./readiness.js";
 export { inspectPreparationPlanReadiness } from "./planning.js";
 export { inspectPreJudgmentReadiness, judgeAtomicClaimAfterPreparation } from "./pre-judgment.js";
+export { evaluateHypothesisSetAfterPreparation } from "./hypotheses.js";
+export type {
+  CandidateHypothesis,
+  HypothesisFindingCode,
+  HypothesisJudgment,
+  HypothesisSetAttempt,
+  HypothesisSetFinding,
+  HypothesisSetStopStatus,
+  HypothesisSetSummary,
+} from "./hypotheses.js";
 export type {
   JudgmentAttempt,
   JudgmentReadiness,
